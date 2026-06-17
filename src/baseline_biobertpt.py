@@ -22,10 +22,13 @@ Metrica: macro-F1, micro-F1 e F1 por classe (sklearn). Sem bootstrap/IC por
 opcao de escopo -- o numero que interessa para "detecta bem negacao?" e o F1
 da classe `negation_of`.
 
+Logging: tudo passa pelo logger central (src/utils/logger.py) -> terminal +
+logs/pipeline.log.
+
 Uso (CPU funciona, mas e lento; ideal GPU/Colab):
     python src/baseline_biobertpt.py --splits-dir data/splits \
-        --model pucpr/biobertpt-all --epochs 3 --batch-size 16 \
-        --out results/baseline_biobertpt.json
+        --model pucpr/biobertpt-all --epochs 3 --batch-size 32 \
+        --out results/baseline_biobertpt.json [--save-model results/model]
 """
 from __future__ import annotations
 
@@ -33,12 +36,16 @@ import argparse
 import json
 import random
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from candidates import iter_candidate_pairs  # noqa: E402
+from utils.logger import get_logger  # noqa: E402
+
+log = get_logger("baseline_biobertpt")
 
 LABELS = ["negation_of", "associated_with", "no_relation"]
 LABEL2ID = {l: i for i, l in enumerate(LABELS)}
@@ -138,6 +145,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--splits-dir", default="data/splits")
     ap.add_argument("--out", default="results/baseline_biobertpt.json")
+    ap.add_argument("--save-model", default=None,
+                    help="Se informado, salva o melhor modelo (save_pretrained) nesta pasta.")
     ap.add_argument("--model", default="pucpr/biobertpt-all")
     ap.add_argument("--max-gap", type=int, default=75)
     ap.add_argument("--ctx-chars", type=int, default=128)
@@ -151,6 +160,13 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
+    t0 = time.time()
+    log.info("=== Baseline BioBERTpt iniciado ===")
+    log.info("Config: model=%s | epochs=%d | batch_size=%d | max_length=%d | "
+             "lr=%g | class_weight=%s | max_gap=%d | ctx_chars=%d | seed=%d",
+             args.model, args.epochs, args.batch_size, args.max_length, args.lr,
+             args.class_weight, args.max_gap, args.ctx_chars, args.seed)
+
     import torch
     from sklearn.metrics import classification_report, f1_score
     from transformers import (AutoModelForSequenceClassification, AutoTokenizer,
@@ -158,43 +174,71 @@ def main() -> int:
 
     set_all_seeds(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if device.type == "cuda":
+        log.info("Dispositivo: CUDA (%s)", torch.cuda.get_device_name(0))
+    else:
+        log.warning("Dispositivo: CPU (sem GPU) -- treino sera lento")
 
+    # ----- dados -----
     sp = Path(args.splits_dir)
+    log.info("Carregando splits de %s", sp)
     Xtr, ytr = build_dataset(list(read_jsonl(sp / "train.jsonl")), args.max_gap, args.ctx_chars)
     Xdv, ydv = build_dataset(list(read_jsonl(sp / "dev.jsonl")), args.max_gap, args.ctx_chars)
     Xte, yte = build_dataset(list(read_jsonl(sp / "test.jsonl")), args.max_gap, args.ctx_chars)
+    log.info("Candidatos gerados: train=%d | dev=%d | test=%d", len(ytr), len(ydv), len(yte))
+    tr_dist = {l: int(np.sum(np.array(ytr) == LABEL2ID[l])) for l in LABELS}
+    log.info("Distribuicao (train): %s", tr_dist)
 
+    # ----- tokenizer -----
+    log.info("Carregando tokenizer: %s", args.model)
     tok = AutoTokenizer.from_pretrained(args.model)
-    tok.add_special_tokens({"additional_special_tokens": MARKER_TOKENS})
+    n_added = tok.add_special_tokens({"additional_special_tokens": MARKER_TOKENS})
+    log.info("Tokenizer carregado | tokens de marcacao adicionados: %d", n_added)
+
+    # ----- modelo -----
+    log.info("Carregando modelo (3 classes): %s", args.model)
     model = AutoModelForSequenceClassification.from_pretrained(
         args.model, num_labels=len(LABELS), id2label=ID2LABEL, label2id=LABEL2ID)
     model.resize_token_embeddings(len(tok))
     model.to(device)
+    n_params = sum(p.numel() for p in model.parameters())
+    log.info("Modelo carregado | parametros: %.1fM | vocab: %d", n_params / 1e6, len(tok))
 
     tr_loader = make_loader(tok, Xtr, ytr, args.max_length, args.batch_size, True, args.seed)
     dv_loader = make_loader(tok, Xdv, ydv, args.max_length, args.batch_size, False, args.seed)
     te_loader = make_loader(tok, Xte, yte, args.max_length, args.batch_size, False, args.seed)
 
+    # ----- loss com peso de classe -----
     if args.class_weight == "balanced":
         counts = np.bincount(ytr, minlength=len(LABELS)).astype(float)
         counts[counts == 0] = 1.0
         w = counts.sum() / (len(LABELS) * counts)
         weights = torch.tensor(w, dtype=torch.float).to(device)
+        log.info("Pesos de classe (balanced): %s",
+                 {l: round(float(w[i]), 3) for i, l in enumerate(LABELS)})
     else:
         weights = None
+        log.info("Sem pesos de classe (class_weight=none)")
     loss_fn = torch.nn.CrossEntropyLoss(weight=weights)
 
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     total = len(tr_loader) * args.epochs
     sched = get_linear_schedule_with_warmup(
         opt, int(args.warmup_ratio * total), total)
+    log.info("Otimizador AdamW | passos totais=%d | warmup=%d",
+             total, int(args.warmup_ratio * total))
 
     ydv_str = [ID2LABEL[i] for i in ydv]
     best_f1, best_state, history = -1.0, None, []
+
+    log.info("--- Inicio do treino (%d epocas, %d passos/epoca) ---",
+             args.epochs, len(tr_loader))
     for ep in range(1, args.epochs + 1):
+        ep_t0 = time.time()
+        log.info("Epoca %d/%d: inicio", ep, args.epochs)
         model.train()
         running = 0.0
-        for ids, attn, lab in tr_loader:
+        for step, (ids, attn, lab) in enumerate(tr_loader, 1):
             opt.zero_grad()
             logits = model(input_ids=ids.to(device),
                            attention_mask=attn.to(device)).logits
@@ -204,17 +248,34 @@ def main() -> int:
             opt.step()
             sched.step()
             running += loss.item()
+            if step % 20 == 0:
+                log.info("  epoca %d | passo %d/%d | loss media=%.4f",
+                         ep, step, len(tr_loader), running / step)
+
+        train_loss = running / max(1, len(tr_loader))
+        log.info("Epoca %d: avaliando no dev...", ep)
         dev_pred = [ID2LABEL[i] for i in predict(model, dv_loader, device)]
         macro = f1_score(ydv_str, dev_pred, labels=LABELS, average="macro", zero_division=0)
-        history.append({"epoch": ep, "train_loss": running / max(1, len(tr_loader)),
-                        "dev_macro_f1": macro})
-        print(f"[epoca {ep}] loss={running/max(1,len(tr_loader)):.4f} dev_macro_f1={macro:.4f}")
+        neg = f1_score(ydv_str, dev_pred, labels=["negation_of"], average="macro", zero_division=0)
+        dur = time.time() - ep_t0
+        history.append({"epoch": ep, "train_loss": train_loss,
+                        "dev_macro_f1": macro, "dev_negation_of_f1": neg,
+                        "duration_s": round(dur, 1)})
+        log.info("Epoca %d: fim | train_loss=%.4f | dev_macro_f1=%.4f | "
+                 "dev_negation_of_f1=%.4f | duracao=%.1fs",
+                 ep, train_loss, macro, neg, dur)
         if macro > best_f1:
             best_f1 = macro
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+            log.info("Epoca %d: novo MELHOR modelo (dev_macro_f1=%.4f) -- checkpoint atualizado",
+                     ep, macro)
 
+    # ----- restaura melhor epoca e avalia no test -----
     if best_state:
         model.load_state_dict(best_state)
+        log.info("Melhor modelo (dev_macro_f1=%.4f) restaurado para avaliacao final", best_f1)
+
+    log.info("--- Avaliacao final no TEST ---")
     y_pred = [ID2LABEL[i] for i in predict(model, te_loader, device)]
     y_true = [ID2LABEL[i] for i in yte]
 
@@ -239,17 +300,23 @@ def main() -> int:
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2,
                                          sort_keys=True), encoding="utf-8")
+    log.info("Resultados salvos em %s", args.out)
 
-    print("=" * 60)
-    print("BASELINE BioBERTpt (3 classes)")
-    print("=" * 60)
-    print(f"  candidatos: train={len(ytr)} dev={len(ydv)} test={len(yte)}")
-    print(f"  Macro-F1: {macro:.4f}   Micro-F1: {micro:.4f}")
-    print(f"  >> negation_of F1: {per_class['negation_of']:.4f} <<")
-    print("  F1 por classe:")
+    # ----- salvamento opcional do modelo -----
+    if args.save_model:
+        mdir = Path(args.save_model)
+        mdir.mkdir(parents=True, exist_ok=True)
+        model.save_pretrained(mdir)
+        tok.save_pretrained(mdir)
+        log.info("Modelo e tokenizer salvos em %s", mdir)
+
+    # ----- resumo final -----
+    log.info("=== RESULTADO (test) ===")
+    log.info("Macro-F1=%.4f | Micro-F1=%.4f", macro, micro)
     for l in LABELS:
-        print(f"    {l:<18s} {per_class[l]:.4f}")
-    print(f"  resultado -> {args.out}")
+        marca = "  <<< NEGACAO" if l == "negation_of" else ""
+        log.info("  F1 %-18s %.4f%s", l, per_class[l], marca)
+    log.info("Tempo total: %.1fs", time.time() - t0)
     return 0
 
 

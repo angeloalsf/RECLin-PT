@@ -23,9 +23,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from lxml import etree
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from utils.logger import get_logger  # noqa: E402
+
+log = get_logger("parse_semclinbr")
 
 
 def _natural(p: Path):
@@ -91,22 +97,26 @@ def main() -> int:
     ap.add_argument("--out", default="data/processed/dataset.jsonl")
     args = ap.parse_args()
 
+    log.info("Iniciando parse | xml-dir=%s | out=%s", args.xml_dir, args.out)
+
     files = sorted(Path(args.xml_dir).glob("*.xml"), key=_natural)
     if not files:
-        print(f"ERRO: nenhum .xml em {args.xml_dir}")
+        log.error("Nenhum .xml encontrado em %s", args.xml_dir)
         return 2
+    log.info("%d arquivos XML encontrados", len(files))
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
 
-    n_docs = n_rel = tot_mismatch = tot_orphan = 0
+    n_docs = n_rel = tot_mismatch = tot_orphan = n_skip = 0
     rel_by_type: dict[str, int] = {}
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         for p in files:
             try:
                 rec, mm, orph = parse_one(p)
             except Exception as e:  # noqa: BLE001
-                print(f"[skip] {p.name}: {e}")
+                log.warning("Documento ignorado %s: %s", p.name, e)
+                n_skip += 1
                 continue
             f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True,
                                separators=(",", ":")) + "\n")
@@ -117,12 +127,15 @@ def main() -> int:
             for r in rec["relations"]:
                 rel_by_type[r["type"]] = rel_by_type.get(r["type"], 0) + 1
 
-    print(f"[parse] {n_docs} docs -> {out}")
-    print(f"[parse] {n_rel} relacoes  |  offsets divergentes: {tot_mismatch}  "
-          f"|  relacoes orfas descartadas: {tot_orphan}")
-    print("[parse] relacoes por tipo:")
+    log.info("Parse concluido: %d docs gravados em %s (%d ignorados)",
+             n_docs, out, n_skip)
+    log.info("Total de relacoes: %d", n_rel)
+    if tot_mismatch:
+        log.warning("Offsets divergentes (anotacao != texto): %d", tot_mismatch)
+    if tot_orphan:
+        log.warning("Relacoes orfas descartadas (entidade inexistente): %d", tot_orphan)
     for t, c in sorted(rel_by_type.items(), key=lambda kv: -kv[1]):
-        print(f"         {c:>7d}  {t}")
+        log.info("  relacao %-18s %d", t, c)
     return 0
 
 

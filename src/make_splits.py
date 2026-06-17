@@ -18,8 +18,14 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import sys
 from collections import Counter
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from utils.logger import get_logger  # noqa: E402
+
+log = get_logger("make_splits")
 
 
 def read_jsonl(path):
@@ -71,15 +77,21 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
+    log.info("Iniciando splits | input=%s | out-dir=%s | seed=%d",
+             args.input, args.out_dir, args.seed)
+
     docs = sorted(read_jsonl(args.input), key=lambda d: int(d["doc_id"])
                   if d["doc_id"].isdigit() else d["doc_id"])
     if not docs:
-        print("ERRO: dataset vazio")
+        log.error("Dataset vazio: %s", args.input)
         return 2
+    log.info("%d documentos carregados", len(docs))
 
     has_neg = [d for d in docs if any(r["type"] == "negation_of"
                                       for r in d["relations"])]
     no_neg = [d for d in docs if d not in has_neg]
+    log.info("Estratificacao por negacao: %d docs com negation_of, %d sem",
+             len(has_neg), len(no_neg))
 
     rng = random.Random(args.seed)
     rng.shuffle(has_neg)
@@ -104,19 +116,13 @@ def main() -> int:
     n_te = write_jsonl(out / "test.jsonl", test)
 
     n = len(docs)
-    print("=" * 60)
-    print(f"SPLITS 80/10/10 (doc-level, seed={args.seed})")
-    print("=" * 60)
-    print(f"  total docs: {n}")
-    print(f"  train: {n_tr} ({100*n_tr/n:.1f}%)  "
-          f"dev: {n_dv} ({100*n_dv/n:.1f}%)  test: {n_te} ({100*n_te/n:.1f}%)")
-    print()
+    log.info("Splits 80/10/10 (doc-level, seed=%d) gravados em %s", args.seed, out)
+    log.info("  train: %d (%.1f%%) | dev: %d (%.1f%%) | test: %d (%.1f%%)",
+             n_tr, 100 * n_tr / n, n_dv, 100 * n_dv / n, n_te, 100 * n_te / n)
     for name, docs_ in (("train", train), ("dev", dev), ("test", test)):
         _, nd, wn, rels = summarize(name, docs_)
-        neg = rels.get("negation_of", 0)
-        asc = rels.get("associated_with", 0)
-        print(f"  {name:<6s} docs={nd:<5d} docs_com_negacao={wn:<4d} "
-              f"| negation_of={neg:<5d} associated_with={asc}")
+        log.info("  %-6s docs=%-5d docs_com_negacao=%-4d | negation_of=%-5d associated_with=%d",
+                 name, nd, wn, rels.get("negation_of", 0), rels.get("associated_with", 0))
     return 0
 
 

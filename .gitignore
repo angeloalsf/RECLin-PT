@@ -3,3 +3,4 @@ __pycache__/
 data/processed/
 SemClinBr-xml-public-v1/
 results/
+logs/
