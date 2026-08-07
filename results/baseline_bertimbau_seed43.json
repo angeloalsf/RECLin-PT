@@ -1,0 +1,112 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 20,
+    "max_length": 128
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        134,
+        4,
+        13
+      ],
+      [
+        4,
+        694,
+        266
+      ],
+      [
+        80,
+        1399,
+        13480
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.4612198099344969,
+      "dev_macro_f1": 0.5827201192438639,
+      "dev_negation_of_f1": 0.5482456140350878,
+      "duration_s": 3252.2,
+      "epoch": 1,
+      "train_loss": 0.7211578478544565
+    },
+    {
+      "dev_loss": 0.4370800799429417,
+      "dev_macro_f1": 0.6242297546922347,
+      "dev_negation_of_f1": 0.6432160804020101,
+      "duration_s": 3264.4,
+      "epoch": 2,
+      "train_loss": 0.4188429533243031
+    },
+    {
+      "dev_loss": 0.48947946799919007,
+      "dev_macro_f1": 0.6741756938328285,
+      "dev_negation_of_f1": 0.6994535519125683,
+      "duration_s": 3263.8,
+      "epoch": 3,
+      "train_loss": 0.31581199361644646
+    }
+  ],
+  "device": "cuda",
+  "model": "neuralmind/bert-base-portuguese-cased",
+  "n_candidates": {
+    "dev": 15994,
+    "test": 16074,
+    "train": 128380
+  },
+  "n_params": 108928515,
+  "seed": 43,
+  "sklearn_report": {
+    "accuracy": 0.8901331342540749,
+    "associated_with": {
+      "f1-score": 0.45344658608297944,
+      "precision": 0.33094897472579876,
+      "recall": 0.7199170124481328,
+      "support": 964.0
+    },
+    "macro avg": {
+      "f1-score": 0.706172628947085,
+      "precision": 0.6417834124507432,
+      "recall": 0.8361546618846413,
+      "support": 16074.0
+    },
+    "negation_of": {
+      "f1-score": 0.7262872628726287,
+      "precision": 0.6146788990825688,
+      "recall": 0.8874172185430463,
+      "support": 151.0
+    },
+    "no_relation": {
+      "f1-score": 0.9387840378856467,
+      "precision": 0.9797223635438622,
+      "recall": 0.9011297546627448,
+      "support": 14959.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9076808702506625,
+      "precision": 0.9373844818744415,
+      "recall": 0.8901331342540749,
+      "support": 16074.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.45344658608297944,
+    "negation_of": 0.7262872628726287,
+    "no_relation": 0.9387840378856467
+  },
+  "test_macro_f1": 0.706172628947085,
+  "test_mcc": 0.4741863156259873,
+  "test_micro_f1": 0.8901331342540749,
+  "test_weighted_f1": 0.9076808702506625
+}

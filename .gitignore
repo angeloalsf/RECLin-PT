@@ -1,6 +1,60 @@
+# --- Python ---
 __pycache__/
-*.pyc
-data/processed/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Ambientes virtuais ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Dados: corpus restrito e derivados diretos ---
+# SemClinBr tem licenca restrita: NUNCA versionar.
 SemClinBr-xml-public-v1/
-results/
+data/processed/
+# NOTA: data/splits/ E versionado de proposito (congela o test entre os modelos).
+
+# --- Modelos e checkpoints (centenas de MB) ---
+checkpoints/
+best_model/
+last_checkpoint/
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# --- Logs ---
 logs/
+gcm-diagnose.log
+*.log
+!experiments/**/*.log
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- LaTeX (artefatos de compilacao; artigo.bbl E versionado) ---
+*.aux
+*.blg
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# --- SO e editores ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# NOTA: results/ NAO esta ignorado. Sao ~400 KB que custaram ~10 h de GPU e
+# sustentam os numeros do artigo. Apenas pesos eventualmente salvos la sao
+# excluidos pelas regras de *.pt / *.safetensors acima.
