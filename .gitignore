@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+data/processed/
+SemClinBr-xml-public-v1/
+results/
+logs/
