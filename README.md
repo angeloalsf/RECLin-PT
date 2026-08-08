@@ -75,21 +75,31 @@ python src/parse_semclinbr.py --xml-dir SemClinBr-xml-public-v1 \
 # 2) splits 80/10/10 (doc-level, seed 42)
 python src/make_splits.py
 
-# 3a) baseline CLINICO (BioBERTpt)
-python src/baseline_biobertpt.py --epochs 3 --batch-size 16 \
-    --out results/baseline_biobertpt.json
+# 3a) baseline CLINICO (BioBERTpt) -- hiperparametros do artigo
+python src/baseline_biobertpt.py --splits-dir data/splits \
+    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --ckpt-dir checkpoints/biobertpt_seed42 \
+    --out results/baseline_biobertpt_seed42.json
 
-# 3b) baseline GERAL (BERTimbau) -- MESMOS hiperparametros
-python src/baseline_bertimbau.py --epochs 3 --batch-size 16 \
-    --out results/baseline_bertimbau.json
+# 3b) baseline GERAL (BERTimbau) -- MESMOS hiperparametros, so muda o modelo
+python src/baseline_bertimbau.py --splits-dir data/splits \
+    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --ckpt-dir checkpoints/bertimbau_seed42 \
+    --out results/baseline_bertimbau_seed42.json
 
 # 4) significancia (usa os *.preds.json gerados em 3a/3b)
 python src/significance.py \
-    --a results/baseline_biobertpt.preds.json \
-    --b results/baseline_bertimbau.preds.json \
-    --target negation_of \
+    --a results/baseline_biobertpt_seed42.preds.json \
+    --b results/baseline_bertimbau_seed42.preds.json \
+    --target negation_of --n-boot 10000 --seed 42 \
     --out results/significance_biobertpt_vs_bertimbau.json
 ```
+
+> Os valores acima (`--batch-size 64 --max-gap 20 --max-length 128`) são os que
+> produziram os números do artigo, e **não** coincidem com os defaults do
+> `argparse` (32 / 75 / 192). Passe-os explicitamente. `max_gap=20` é a
+> decisão de maior impacto: controla quantos pares negativos entram no
+> dataset e, portanto, o desbalanceamento de classes.
 
 ou simplesmente `bash run.sh` (passos 1-3). No Colab (GPU T4), use os notebooks
 em `notebooks/`: rode primeiro os dois de treino (`baseline_*_colab.ipynb`) —

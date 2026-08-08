@@ -15,11 +15,21 @@ python src/make_splits.py --input data/processed/dataset.jsonl \
     --out-dir data/splits
 
 # 3a) Baseline CLINICO: BioBERTpt (precisa baixar o modelo; GPU recomendada)
+#     Hiperparametros do artigo -- NAO sao os defaults do argparse.
 python src/baseline_biobertpt.py --splits-dir data/splits \
-    --epochs 3 --batch-size 16 \
-    --out results/baseline_biobertpt.json
+    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --ckpt-dir checkpoints/biobertpt_seed42 \
+    --out results/baseline_biobertpt_seed42.json
 
 # 3b) Baseline GERAL: BERTimbau -- MESMOS hiperparametros (paridade total)
 python src/baseline_bertimbau.py --splits-dir data/splits \
-    --epochs 3 --batch-size 16 \
-    --out results/baseline_bertimbau.json
+    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --ckpt-dir checkpoints/bertimbau_seed42 \
+    --out results/baseline_bertimbau_seed42.json
+
+# 4) Significancia (teste pareado, usa os *.preds.json gerados em 3a/3b)
+python src/significance.py \
+    --a results/baseline_biobertpt_seed42.preds.json \
+    --b results/baseline_bertimbau_seed42.preds.json \
+    --target negation_of --n-boot 10000 --seed 42 \
+    --out results/significance_biobertpt_vs_bertimbau.json
