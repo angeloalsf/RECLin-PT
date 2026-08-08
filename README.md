@@ -63,6 +63,38 @@ results/
 run.sh                     # pipeline fim a fim (parse -> splits -> os dois baselines)
 ```
 
+## Pré-requisitos
+
+**Python 3.10.** Foi a versão usada em todas as execuções deste repositório.
+Versões mais novas não foram testadas — atenção se o `python` do seu PATH
+for 3.12+.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e
+precisa ser solicitado aos autores do corpus (Oliveira et al.). Coloque os
+1.000 arquivos `.xml` em `SemClinBr-xml-public-v1/` na raiz do projeto.
+A pasta está no `.gitignore` — os dados clínicos nunca devem ser versionados.
+
+Você **não precisa do corpus** para reproduzir os baselines: os splits
+derivados (`data/splits/*.jsonl`) são versionados no repositório. O corpus só
+é necessário para reexecutar os passos 1 e 2 (parse e splits).
+
+**Hardware e tempo.** Treino validado em **GPU NVIDIA T4** (Google Colab,
+~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva
+**≈2h25**. Reproduzir os quatro experimentos do artigo (2 modelos × 2 seeds)
+custa **≈10 h de GPU**. Em CPU o treino roda, mas é impraticável para o
+tamanho do dataset (128.380 candidatos de treino).
+
+Use `--ckpt-dir` apontando para o Google Drive: o treino grava
+`last_checkpoint/` ao fim de cada época e **retoma automaticamente** se o
+runtime do Colab cair. Siga a convenção `checkpoints/<modelo>_seed<N>` para as
+execuções não colidirem entre si.
+
 ## Como rodar (local)
 
 ```bash
@@ -108,6 +140,39 @@ epoca, plota as curvas, publica `results/*.preds.json` e (opcional) envia o
 modelo final ao Hugging Face Hub. Depois rode `significance_colab.ipynb` (CPU,
 sem GPU/Drive) para o teste pareado entre os dois.
 
+## Regerar as tabelas e figuras do artigo
+
+Dois scripts derivam os artefatos de `artigo-sbc/` diretamente de
+`results/*.json`, em vez de transcrever os números à mão:
+
+```bash
+python scripts/make_tables.py      # -> artigo-sbc/tables_generated/
+python scripts/make_figures.py     # -> artigo-sbc/figs_generated/
+```
+
+**`make_tables.py`** grava um fragmento `.tex` por tabela: `tab_resultados.tex`
+(métricas dos dois baselines no teste, com o melhor valor de cada coluna em
+negrito) e `tab_signif.tex` (comparação pareada — McNemar e bootstrap no F1 de
+`negation_of`). Cada fragmento é um ambiente `table` completo, com `\caption` e
+`\label`, pronto para `\input{}`.
+
+**`make_figures.py`** grava os três PDFs do artigo: `f1_por_classe.pdf` (barras
+agrupadas, F1 por classe nos dois baselines) e `cm_biobertpt.pdf` /
+`cm_bertimbau.pdf` (matrizes de confusão normalizadas por linha — a diagonal é
+o recall por classe).
+
+Os dois aceitam `--seed` (padrão 42, a semente do artigo), `--results-dir`
+(padrão `results/`) e `--out-dir`. Além disso, `make_tables.py` aceita
+`--check`, que imprime as tabelas no terminal sem gravar nada, e
+`make_figures.py` aceita `--format {pdf,png,svg}` e `--dpi`. Nenhum dos dois
+treina nada: só leem `results/` e escrevem nas pastas de saída.
+
+> **As pastas `*_generated/` existem para conferência, não para compilação.**
+> `artigo.tex` continua com as tabelas escritas no próprio `.tex` e apontando
+> para as figuras de `artigo-sbc/figs/` — nada do que os scripts geram entra no
+> artigo automaticamente. Trocar os originais pelos gerados é uma decisão
+> manual, ainda não tomada.
+
 ## Metricas e como interpretar
 
 - Compare o **F1 de `negation_of`** e o **Macro-F1** dos dois `results/*.json`.
@@ -150,7 +215,32 @@ print(f"negation_of F1: {st.mean(v):.4f} ± {st.pstdev(v):.4f} (n={len(v)})")
   classificacao em 3 classes, CrossEntropy com `class_weight=balanced`. Melhor
   epoca pelo macro-F1 no dev; teste reportado uma unica vez.
 
-## O que foi deixado de fora (de proposito)
+## Limitacoes conhecidas e proximos passos
 
-Hashes SHA dos splits, intervalos de confianca multi-seed automatizados e
-geracao de tabelas LaTeX. Sao adicoes diretas depois.
+**Ainda nao feito, por escopo:**
+
+- **Hashes SHA dos splits.** `make_splits.py` nao grava manifesto com o SHA de
+  cada particao. Sem isso, nao ha prova criptografica de que o test usado nas
+  quatro execucoes foi o mesmo arquivo (a evidencia hoje e indireta: os quatro
+  `.preds.json` tem exatamente 16.074 exemplos e `significance.py` aborta se
+  os `y_true` divergirem).
+- **Agregacao multi-seed automatizada.** As seeds 42 e 43 ja foram rodadas para
+  os dois modelos, mas media e desvio sao calculados a mao (snippet acima).
+- **Adocao das tabelas e figuras geradas.** O caminho de `results/*.json` ate o
+  `.tex`/`.pdf` deixou de ser uma lacuna: `scripts/make_tables.py` e
+  `scripts/make_figures.py` regeneram os cinco artefatos, e a saida foi
+  conferida contra o que esta publicado — as duas tabelas batem celula a celula
+  (inclusive quais valores estao em negrito) e as tres figuras batem por
+  extracao de conteudo do PDF, com **zero divergencias**. O que falta e so a
+  decisao de trocar: `artigo.tex` ainda embute as tabelas escritas a mao e
+  aponta para `artigo-sbc/figs/`.
+
+**Limitacoes de metodo (discutidas no artigo):**
+
+- Duas sementes por modelo. O teste pareado foi refeito dentro de cada semente
+  (42x42 e 43x43), mas duas execucoes nao bastam para estimar a variancia de
+  inicializacao com intervalo de confianca.
+- Uma unica arquitetura de cabeca de classificacao; sem busca de
+  hiperparametros (por design — a busca quebraria a paridade).
+- `max_gap=20` limita os pares candidatos a entidades proximas; relacoes de
+  longa distancia estao fora do espaco de avaliacao.

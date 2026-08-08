@@ -1,0 +1,22 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tables.py -- nao edite a mao.
+%% Fonte: results/significance_biobertpt_vs_bertimbau (semente 42)
+\begin{table}[ht]
+\centering
+\caption{Comparação pareada BioBERTpt (clínico) vs.\ BERTimbau (geral) no teste
+($n=16.074$, semente 42).}
+\label{tab:signif}
+\begin{tabular}{lc}
+\toprule
+\textbf{Medida} & \textbf{Valor} \\
+\midrule
+F1 \texttt{negation\_of} --- BioBERTpt (A) & 0,724 \\
+F1 \texttt{negation\_of} --- BERTimbau (B) & 0,734 \\
+Diferença observada (A $-$ B) & $-0,010$ \\
+McNemar: $b$ (só A acerta) / $c$ (só B acerta) & 494 / 452 \\
+McNemar: valor-$p$ (binomial exato) & 0,18 \\
+\emph{Bootstrap} pareado: IC95\% da diferença & $[-0,047;\,+0,026]$ \\
+\emph{Bootstrap} pareado: valor-$p$ & 0,57 \\
+\textbf{Diferença significativa ($\alpha=0,05$)?} & \textbf{Não} \\
+\bottomrule
+\end{tabular}
+\end{table}
