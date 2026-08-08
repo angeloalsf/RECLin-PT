@@ -245,6 +245,10 @@ def save_last_checkpoint(ckpt_dir, *, epoch, model, optimizer, scheduler,
             "cuda": cuda_rng,
         },
         "config_guard": _config_guard(args),
+        # Seed tambem no topo do payload (alem de dentro de config_guard): a
+        # guarda de retomada precisa distinguir "seed divergente" (erro) de
+        # "checkpoint antigo, sem seed registrada" (so aviso).
+        "seed": args.seed,
     }
     final = last / STATE_FILE
     tmp = last / (STATE_FILE + ".tmp")
@@ -281,6 +285,25 @@ def load_last_checkpoint(ckpt_dir, *, model, optimizer, scheduler, args):
         return None
 
     ckpt = torch.load(final, map_location="cpu", weights_only=False)
+
+    # --- guarda de seed: divergencia aqui e ERRO, nao "comeca do zero" ---
+    # Retomar epocas treinadas sob outra seed produz um treino que nao
+    # corresponde a nenhuma das duas seeds -- e o resultado seria irreprodutivel
+    # sem que nada no log denunciasse. Checkpoints gravados antes desta guarda
+    # podem nao ter a seed registrada: nesse caso avisamos e seguimos, para nao
+    # invalidar o que ja esta salvo em disco / no Drive.
+    saved_seed = ckpt.get("seed", ckpt.get("config_guard", {}).get("seed"))
+    if saved_seed is None:
+        log.warning("last_checkpoint em %s nao tem seed registrada (formato "
+                    "antigo) -- nao foi possivel validar contra --seed %s; "
+                    "prosseguindo.", ckpt_dir, args.seed)
+    elif int(saved_seed) != int(args.seed):
+        raise RuntimeError(
+            f"Checkpoint em {ckpt_dir} foi salvo com seed={saved_seed}, mas esta "
+            f"execucao esta usando --seed {args.seed}. Retomar assim geraria um "
+            f"treino inconsistente. Use a seed correta ou aponte para outro "
+            f"--ckpt-dir (ex.: checkpoints/<modelo>_seed{args.seed})."
+        )
 
     guard = ckpt.get("config_guard", {})
     want = _config_guard(args)

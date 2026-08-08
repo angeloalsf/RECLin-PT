@@ -479,7 +479,13 @@ checkpoints/<modelo>_seed<N>/best_model/        # pesos do melhor epoch (save_pr
 checkpoints/<modelo>_seed<N>/last_checkpoint/   # estado completo de retomada
 ```
 
-Hoje os notebooks usam `MyDrive/RECLin-PT-Min/checkpoints_biobertpt` (sem seed) — duas seeds do mesmo modelo colidem, e a lógica de `load_last_checkpoint` (que compara a config, mas **não** a seed) pode retomar da seed errada silenciosamente. Incluir a seed no caminho resolve sem tocar no código. `checkpoints/` inteiro vai para o `.gitignore`.
+Hoje os notebooks usam `MyDrive/RECLin-PT-Min/checkpoints_biobertpt` (sem seed) — duas seeds do mesmo modelo colidem no mesmo `last_checkpoint/`. Incluir a seed no caminho resolve sem tocar no código. `checkpoints/` inteiro vai para o `.gitignore`.
+
+> **Correção (versão anterior deste relatório).** Estava escrito aqui que `load_last_checkpoint` "compara a config, mas **não** a seed" e por isso "pode retomar da seed errada silenciosamente". Isso está errado: `_config_guard` já incluía `"seed": args.seed` desde o início, e o `mismatch` itera todas as chaves do guard, seed inclusive. O comportamento real com seed divergente era `log.warning("config divergente em ['seed']")` seguido de **descarte do checkpoint e treino do zero** — nunca uma retomada com a seed errada.
+>
+> O risco real, portanto, não era inconsistência numérica: era **perder progresso de treino sem perceber**. Horas de GPU descartadas e o `last_checkpoint` sobrescrito, sinalizados apenas por um WARNING no meio do log — fácil de não ver numa saída longa de Colab.
+>
+> **Corrigido nesta sessão.** `save_last_checkpoint` passou a gravar `"seed"` também no topo do payload, e `load_last_checkpoint` ganhou uma guarda de seed **antes** da comparação de config: seed divergente agora levanta `RuntimeError` explícito (com o `--ckpt-dir` sugerido já com o sufixo da seed correta) em vez de warning + descarte silencioso. Checkpoints antigos sem seed registrada apenas emitem aviso e seguem, para não invalidar o que já está em disco/no Drive. A comparação de config existente ficou intocada.
 
 **Notebooks:**
 
@@ -627,7 +633,7 @@ python src/baseline_biobertpt.py --splits-dir data/splits \
 # idem para bertimbau com --seed 43
 ```
 
-⚠️ **`--ckpt-dir` precisa mudar junto com a seed.** `load_last_checkpoint` compara a *config* mas **não** a seed — apontar para o mesmo diretório faria a seed 43 retomar do checkpoint da 42 sem avisar.
+⚠️ **`--ckpt-dir` precisa mudar junto com a seed.** Apontar para o diretório da seed 42 rodando com `--seed 43` agora aborta com `RuntimeError` (guarda de seed em `load_last_checkpoint`). Antes da correção não havia retomada errada — o checkpoint era descartado e o treino recomeçava do zero, avisado só por um WARNING no log; o custo era perder horas de GPU sem perceber. Ver a nota em "Checkpoints" (Seção 4.1).
 
 ### Passo 4 — Significância
 
@@ -1077,8 +1083,10 @@ avaliados exatamente no mesmo teste, inclusive no Colab, sem precisar do corpus.
 1. **Hiperparâmetros divergem entre fontes.** Os defaults do `argparse` (batch 32,
    max_gap 75, max_length 192) **não** são os do artigo (64/20/128). Passe sempre
    explicitamente. Confira o campo `config` dos `results/*.json` em caso de dúvida.
-2. **`--ckpt-dir` precisa incluir a seed.** `load_last_checkpoint` compara a config
-   mas não a seed — reusar o diretório faz a seed 43 retomar do checkpoint da 42.
+2. **`--ckpt-dir` precisa incluir a seed.** Reusar o diretório de outra seed agora
+   levanta `RuntimeError` na retomada. Antes da correção o checkpoint era
+   descartado em silêncio (só um WARNING): a seed 43 nunca retomava da 42, mas
+   você perdia o progresso já treinado sem notar.
 3. **`make_splits.py` sobrescreve `data/splits/`.** Se rodar por engano,
    `git checkout data/splits/`.
 4. **`logs/pipeline.log` contém um smoke test antigo** (22/06, n=2000, "A-clinico"

@@ -18,9 +18,9 @@ mesmo nucleo.
 
 Uso (CPU funciona, mas e lento; ideal GPU/Colab):
     python src/baseline_bertimbau.py --splits-dir data/splits \
-        --epochs 3 --batch-size 32 \
-        --ckpt-dir /content/drive/MyDrive/RECLin-PT-Min/checkpoints_bertimbau \
-        --out results/baseline_bertimbau.json
+        --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+        --ckpt-dir checkpoints/bertimbau_seed42 \
+        --out results/baseline_bertimbau_seed42.json
 """
 from __future__ import annotations
 
@@ -34,12 +34,17 @@ from utils.logger import get_logger  # noqa: E402
 log = get_logger("baseline_bertimbau")
 
 DEFAULT_MODEL = "neuralmind/bert-base-portuguese-cased"
-DEFAULT_OUT = "results/baseline_bertimbau.json"
+# Sem default fixo no argparse: o caminho so pode ser montado DEPOIS do
+# parse_args(), quando a seed real e conhecida -- assim o nome do arquivo nunca
+# mente sobre a seed que o gerou (convencao `_seed<N>` do README).
+OUT_TEMPLATE = "results/baseline_bertimbau_seed{seed}.json"
 
 
 def main() -> int:
-    ap = build_arg_parser(default_model=DEFAULT_MODEL, default_out=DEFAULT_OUT)
+    ap = build_arg_parser(default_model=DEFAULT_MODEL, default_out=None)
     args = ap.parse_args()
+    if args.out is None:
+        args.out = OUT_TEMPLATE.format(seed=args.seed)
     return run(args, log)
 
 
