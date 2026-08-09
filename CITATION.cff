@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: >-
+  Se voce usar este software, por favor cite-o usando os metadados abaixo.
+  If you use this software, please cite it using the metadata below.
+type: software
+title: >-
+  RECLin-PT: Extracao de Relacoes em Notas Clinicas em Portugues sobre o
+  Corpus SemClinBr
+abstract: >-
+  Codigo e artefatos de um estudo controlado sobre extracao de relacoes em
+  notas clinicas em portugues, comparando um encoder clinico (BioBERTpt) e um
+  encoder de dominio geral (BERTimbau) na mesma tarefa, variando somente o
+  checkpoint de pre-treino. O foco da avaliacao e o F1 da classe negation_of.
+  IMPORTANTE: esta licenca cobre apenas o codigo e a documentacao. O corpus
+  SemClinBr nao e distribuido neste repositorio, possui licenca propria e
+  restrita, e deve ser obtido separadamente junto aos autores do corpus.
+authors:
+  - given-names: Angelo Antonio Lima
+    family-names: Silveira Filho
+    affiliation: >-
+      Instituto Federal de Educacao, Ciencia e Tecnologia do Espirito Santo
+      (IFES), Campus Cachoeiro de Itapemirim, Bacharelado em Sistemas de
+      Informacao
+version: 1.0.0
+date-released: '2026-08-08'
+repository-code: 'https://github.com/angeloalsf/RECLin-PT'
+license: MIT
+keywords:
+  - processamento de linguagem natural
+  - extracao de relacoes
+  - deteccao de negacao
+  - portugues
+  - textos clinicos
+  - SemClinBr
+  - BioBERTpt
+  - BERTimbau

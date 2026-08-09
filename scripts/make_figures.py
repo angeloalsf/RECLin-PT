@@ -6,12 +6,12 @@ POR QUE ESTE SCRIPT EXISTE
 As tres figuras de `artigo-sbc/figs/` foram produzidas fora do repositorio,
 em notebooks descartados. Nao havia caminho de `results/*.json` ate o PDF --
 a maior lacuna de reprodutibilidade do projeto. Este script fecha esse
-caminho.
+caminho: as figuras que o artigo compila sao as que ele gera.
 
 O QUE GERA
 ----------
-Em `artigo-sbc/figs_generated/`, em PDF (vetorial, mesmo formato dos
-originais):
+Em `artigo-sbc/figs/` -- as figuras que `artigo.tex` de fato inclui --, em
+PDF (vetorial):
 
   f1_por_classe.pdf   -> Figura 1 (\\label{fig:f1classe})
                          barras agrupadas: F1 por classe, os dois baselines
@@ -24,8 +24,9 @@ Normalizacao por linha: cada celula e a fracao das instancias de uma classe
 verdadeira atribuida a cada classe predita, entao a diagonal e o recall por
 classe. E a leitura declarada nas legendas do artigo.
 
-Este script NUNCA escreve em `artigo-sbc/figs/`. A substituicao dos originais
-e uma decisao manual.
+Este script e a fonte unica das figuras: rodar sem argumentos sobrescreve
+`artigo-sbc/figs/`. Para gerar em outro lugar (conferencia, inspecao), use
+`--out-dir`.
 
 ESTILO
 ------
@@ -35,9 +36,11 @@ TrueType (fonttype 42), exigencia comum de submissao.
 
 USO
 ---
-    python scripts/make_figures.py                 # semente 42 (a do artigo)
+    python scripts/make_figures.py                 # semente 42 (a do artigo),
+                                                   # sobrescreve artigo-sbc/figs/
     python scripts/make_figures.py --seed 43
     python scripts/make_figures.py --format png    # para inspecao rapida
+    python scripts/make_figures.py --out-dir /tmp/figs_conferencia
 
 Opcoes: --results-dir, --out-dir, --seed, --format, --dpi.
 """
@@ -69,7 +72,7 @@ from _artifacts import (
     slug_for,
 )
 
-DEFAULT_OUT_DIR = REPO_ROOT / "artigo-sbc" / "figs_generated"
+DEFAULT_OUT_DIR = REPO_ROOT / "artigo-sbc" / "figs"
 
 # Cinzas das barras: escuro para o encoder clinico, claro para o geral.
 # Contraste suficiente para sobreviver a impressao em preto e branco.
@@ -175,7 +178,15 @@ def main(argv: list[str] | None = None) -> int:
         description="Gera as figuras do artigo a partir de results/*.json.",
     )
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
-    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--out-dir",
+        type=Path,
+        default=DEFAULT_OUT_DIR,
+        help=(
+            "diretório de saída (padrão: artigo-sbc/figs, as figuras que o "
+            "artigo inclui). Aponte para outro lugar se quiser só conferir."
+        ),
+    )
     parser.add_argument(
         "--seed",
         type=int,

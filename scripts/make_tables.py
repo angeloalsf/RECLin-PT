@@ -3,34 +3,39 @@ Regenera as tabelas do artigo a partir de `results/*.json`.
 
 POR QUE ESTE SCRIPT EXISTE
 --------------------------
-As tabelas de `artigo-sbc/artigo.tex` foram digitadas a mao a partir dos
-JSONs de resultado. Isso significa que (a) nao ha como verificar se o que
-esta publicado corresponde ao que foi medido, e (b) rodar uma semente nova
-exige reeditar LaTeX na mao. Este script fecha as duas lacunas: os numeros
-passam a ser derivados, nao transcritos.
+As tabelas de `artigo-sbc/artigo.tex` eram digitadas a mao a partir dos
+JSONs de resultado. Isso significava que (a) nao havia como verificar se o
+que estava publicado correspondia ao que foi medido, e (b) rodar uma semente
+nova exigia reeditar LaTeX na mao. Este script fecha as duas lacunas: os
+numeros do artigo passam a ser derivados, nao transcritos.
 
 O QUE GERA
 ----------
-Um fragmento `.tex` por tabela, em `artigo-sbc/tables_generated/`:
+Um fragmento `.tex` por tabela, em `artigo-sbc/tables/` -- os arquivos que
+`artigo.tex` puxa por `\\input{}`:
 
   tab_resultados.tex   -> Tabela 1 (\\label{tab:resultados})
                           metricas dos dois baselines no teste
   tab_signif.tex       -> Tabela 2 (\\label{tab:signif})
                           comparacao pareada BioBERTpt vs. BERTimbau
 
-Cada fragmento e um ambiente `table` completo (com \\caption e \\label),
-pronto para `\\input{}` ou para colar por cima do bloco correspondente em
-`artigo.tex`. Os fragmentos usam `booktabs` (\\toprule/\\midrule/\\bottomrule),
-que ja e carregado pelo preambulo do artigo.
+Cada fragmento e um ambiente `table` completo (com \\caption e \\label). O
+`artigo.tex` os inclui por `\\input{tables/tab_resultados.tex}` e
+`\\input{tables/tab_signif.tex}`, entao regerar aqui ja atualiza o artigo. Os
+fragmentos usam `booktabs` (\\toprule/\\midrule/\\bottomrule), que ja e
+carregado pelo preambulo do artigo.
 
-Este script NUNCA escreve em `artigo.tex`. A substituicao e uma decisao
-manual, tomada depois de comparar o gerado com o publicado.
+Este script nao edita `artigo.tex` -- so reescreve os fragmentos que ele
+inclui. Os \\label continuam sendo `tab:resultados` e `tab:signif`, entao as
+remissoes `\\ref{}` no texto seguem valendo.
 
 USO
 ---
-    python scripts/make_tables.py                  # semente 42 (a do artigo)
+    python scripts/make_tables.py                  # semente 42 (a do artigo),
+                                                   # sobrescreve artigo-sbc/tables/
     python scripts/make_tables.py --seed 43
     python scripts/make_tables.py --check          # nao escreve; so imprime
+    python scripts/make_tables.py --out-dir /tmp/tables_conferencia
 
 Opcoes: --results-dir, --out-dir, --seed, --check.
 """
@@ -55,7 +60,7 @@ from _artifacts import (
     ptbr,
 )
 
-DEFAULT_OUT_DIR = REPO_ROOT / "artigo-sbc" / "tables_generated"
+DEFAULT_OUT_DIR = REPO_ROOT / "artigo-sbc" / "tables"
 
 HEADER = (
     "%% GERADO AUTOMATICAMENTE por scripts/make_tables.py -- nao edite a mao.\n"
@@ -194,7 +199,15 @@ def main(argv: list[str] | None = None) -> int:
         description="Gera as tabelas do artigo a partir de results/*.json.",
     )
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
-    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--out-dir",
+        type=Path,
+        default=DEFAULT_OUT_DIR,
+        help=(
+            "diretório de saída (padrão: artigo-sbc/tables, os fragmentos que "
+            "o artigo inclui). Aponte para outro lugar se quiser só conferir."
+        ),
+    )
     parser.add_argument(
         "--seed",
         type=int,

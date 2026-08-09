@@ -364,22 +364,10 @@ conjunto de teste, composto por 16.074 pares candidatos (14.959
 dois \emph{baselines} na semente 42. Os melhores valores por coluna estão em
 negrito.
 
-\begin{table}[ht]
-\centering
-\caption{Resultados dos \emph{baselines} no conjunto de teste (semente 42).
-Negrito indica o melhor valor por coluna.}
-\label{tab:resultados}
-\begin{tabular}{lcccccc}
-\toprule
-\textbf{Baseline} & \textbf{Macro-F1} & \textbf{F1 neg.} & \textbf{F1 assoc.} &
-\textbf{F1 no\_rel.} & \textbf{MCC} & \textbf{Acur.} \\
-\midrule
-BioBERTpt (clínico) & \textbf{0,707} & 0,724 & \textbf{0,460} &
-\textbf{0,935} & \textbf{0,487} & \textbf{0,885} \\
-BERTimbau (geral)   & 0,704 & \textbf{0,734} & 0,445 & 0,934 & 0,471 & 0,882 \\
-\bottomrule
-\end{tabular}
-\end{table}
+% Tabela gerada por scripts/make_tables.py a partir de results/*.json.
+% O fragmento traz \caption e \label{tab:resultados}. Nao edite a mao:
+% para atualizar, rode `python scripts/make_tables.py`.
+\input{tables/tab_resultados.tex}
 
 \subsection{Desempenho dos dois \emph{baselines}}
 Os dois \emph{baselines} apresentam desempenho praticamente indistinguível. O
@@ -444,26 +432,10 @@ estatisticamente significativa} entre o \emph{encoder} clínico e o geral
 \emph{nesta semente} --- ressalva relevante, pois a análise de robustez à semente,
 a seguir, mostra que esse veredito não se repete na semente 43.
 
-\begin{table}[ht]
-\centering
-\caption{Comparação pareada BioBERTpt (clínico) vs.\ BERTimbau (geral) no teste
-($n=16.074$, semente 42).}
-\label{tab:signif}
-\begin{tabular}{lc}
-\toprule
-\textbf{Medida} & \textbf{Valor} \\
-\midrule
-F1 \texttt{negation\_of} --- BioBERTpt (A) & 0,724 \\
-F1 \texttt{negation\_of} --- BERTimbau (B) & 0,734 \\
-Diferença observada (A $-$ B) & $-0,010$ \\
-McNemar: $b$ (só A acerta) / $c$ (só B acerta) & 494 / 452 \\
-McNemar: valor-$p$ (binomial exato) & 0,18 \\
-\emph{Bootstrap} pareado: IC95\% da diferença & $[-0,047;\,+0,026]$ \\
-\emph{Bootstrap} pareado: valor-$p$ & 0,57 \\
-\textbf{Diferença significativa ($\alpha=0,05$)?} & \textbf{Não} \\
-\bottomrule
-\end{tabular}
-\end{table}
+% Tabela gerada por scripts/make_tables.py a partir de results/*.json.
+% O fragmento traz \caption e \label{tab:signif}. Nao edite a mao:
+% para atualizar, rode `python scripts/make_tables.py`.
+\input{tables/tab_signif.tex}
 
 \subsection{Robustez à semente}
 Para situar a magnitude da diferença entre os \emph{baselines}, treinamos ambos

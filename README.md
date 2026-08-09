@@ -84,6 +84,11 @@ Você **não precisa do corpus** para reproduzir os baselines: os splits
 derivados (`data/splits/*.jsonl`) são versionados no repositório. O corpus só
 é necessário para reexecutar os passos 1 e 2 (parse e splits).
 
+> **Licenças são separadas.** O **código** deste repositório é MIT (veja
+> `LICENSE`). Os **dados** não são: o SemClinBr tem licença própria e restrita,
+> não é distribuído aqui e precisa ser obtido separadamente pelo usuário junto
+> aos autores do corpus. A licença MIT não se estende a eles.
+
 **Hardware e tempo.** Treino validado em **GPU NVIDIA T4** (Google Colab,
 ~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva
 **≈2h25**. Reproduzir os quatro experimentos do artigo (2 modelos × 2 seeds)
@@ -143,23 +148,27 @@ sem GPU/Drive) para o teste pareado entre os dois.
 ## Regerar as tabelas e figuras do artigo
 
 Dois scripts derivam os artefatos de `artigo-sbc/` diretamente de
-`results/*.json`, em vez de transcrever os números à mão:
+`results/*.json`, em vez de transcrever os números à mão. **São eles que
+produzem as tabelas e figuras que o artigo compila** — não há mais versão
+manual paralela:
 
 ```bash
-python scripts/make_tables.py      # -> artigo-sbc/tables_generated/
-python scripts/make_figures.py     # -> artigo-sbc/figs_generated/
+python scripts/make_tables.py      # -> artigo-sbc/tables/
+python scripts/make_figures.py     # -> artigo-sbc/figs/
 ```
 
 **`make_tables.py`** grava um fragmento `.tex` por tabela: `tab_resultados.tex`
 (métricas dos dois baselines no teste, com o melhor valor de cada coluna em
 negrito) e `tab_signif.tex` (comparação pareada — McNemar e bootstrap no F1 de
 `negation_of`). Cada fragmento é um ambiente `table` completo, com `\caption` e
-`\label`, pronto para `\input{}`.
+`\label`; `artigo.tex` os inclui por `\input{tables/tab_resultados.tex}` e
+`\input{tables/tab_signif.tex}`.
 
 **`make_figures.py`** grava os três PDFs do artigo: `f1_por_classe.pdf` (barras
 agrupadas, F1 por classe nos dois baselines) e `cm_biobertpt.pdf` /
 `cm_bertimbau.pdf` (matrizes de confusão normalizadas por linha — a diagonal é
-o recall por classe).
+o recall por classe). São exatamente os arquivos que `artigo.tex` referencia
+via `\includegraphics{figs/...}`.
 
 Os dois aceitam `--seed` (padrão 42, a semente do artigo), `--results-dir`
 (padrão `results/`) e `--out-dir`. Além disso, `make_tables.py` aceita
@@ -167,11 +176,40 @@ Os dois aceitam `--seed` (padrão 42, a semente do artigo), `--results-dir`
 `make_figures.py` aceita `--format {pdf,png,svg}` e `--dpi`. Nenhum dos dois
 treina nada: só leem `results/` e escrevem nas pastas de saída.
 
-> **As pastas `*_generated/` existem para conferência, não para compilação.**
-> `artigo.tex` continua com as tabelas escritas no próprio `.tex` e apontando
-> para as figuras de `artigo-sbc/figs/` — nada do que os scripts geram entra no
-> artigo automaticamente. Trocar os originais pelos gerados é uma decisão
-> manual, ainda não tomada.
+> **Rodar sem argumentos sobrescreve os artefatos reais do artigo.** É o
+> comportamento pretendido: os scripts são a fonte única, e `artigo-sbc/figs/`
+> e `artigo-sbc/tables/` são saída derivada — não edite os `.tex` de
+> `tables/` à mão, a próxima execução descarta a edição. Para só conferir sem
+> tocar no artigo, gere em outro lugar com `--out-dir` (ex.:
+> `--out-dir /tmp/conferencia`) e compare.
+
+Trocar a semente do artigo é, portanto, um comando: `make_tables.py --seed 43 &&
+make_figures.py --seed 43` regenera os cinco artefatos coerentes entre si. Os
+`\label` (`tab:resultados`, `tab:signif`) e os nomes de arquivo não mudam com a
+semente, então as remissões `\ref{}` do texto continuam válidas — mas o texto
+corrido em volta discute os números da semente 42 e teria de ser revisto à mão.
+
+## Compilar o artigo
+
+**Pré-requisito:** uma distribuição TeX Live com `latexmk` (a compilação
+publicada foi feita com TeX Live 2022/dev, pdfTeX 3.141592653-2.6-1.40.22 e
+latexmk 4.76). O `sbc-template.sty` e o `sbc.bst` já estão no repositório, e o
+`artigo.bbl` é versionado — não é preciso instalar nada da SBC à parte.
+
+```bash
+cd artigo-sbc
+latexmk -pdf artigo.tex     # -> artigo-sbc/artigo.pdf
+latexmk -c                  # apaga .aux/.log/.fls/... e mantém o .pdf
+```
+
+O `latexmk` resolve sozinho as passadas de `pdflatex` e `bibtex` até as
+referências cruzadas estabilizarem. Rode-o **de dentro de `artigo-sbc/`**: os
+caminhos em `artigo.tex` (`figs/...`, `tables/...`) são relativos a esse
+diretório.
+
+Se tiver acabado de mexer nos números, regenere os artefatos antes de compilar
+(seção anterior) — o `latexmk` não sabe que eles derivam de `results/*.json` e
+não os reconstrói sozinho.
 
 ## Metricas e como interpretar
 
@@ -226,14 +264,14 @@ print(f"negation_of F1: {st.mean(v):.4f} ± {st.pstdev(v):.4f} (n={len(v)})")
   os `y_true` divergirem).
 - **Agregacao multi-seed automatizada.** As seeds 42 e 43 ja foram rodadas para
   os dois modelos, mas media e desvio sao calculados a mao (snippet acima).
-- **Adocao das tabelas e figuras geradas.** O caminho de `results/*.json` ate o
-  `.tex`/`.pdf` deixou de ser uma lacuna: `scripts/make_tables.py` e
-  `scripts/make_figures.py` regeneram os cinco artefatos, e a saida foi
-  conferida contra o que esta publicado — as duas tabelas batem celula a celula
-  (inclusive quais valores estao em negrito) e as tres figuras batem por
-  extracao de conteudo do PDF, com **zero divergencias**. O que falta e so a
-  decisao de trocar: `artigo.tex` ainda embute as tabelas escritas a mao e
-  aponta para `artigo-sbc/figs/`.
+- ~~**Adocao das tabelas e figuras geradas.**~~ **Feito.** O caminho de
+  `results/*.json` ate o `.tex`/`.pdf` esta fechado: `scripts/make_tables.py` e
+  `scripts/make_figures.py` sao a fonte unica dos cinco artefatos. Antes da
+  troca a saida foi conferida contra o que estava publicado — as duas tabelas
+  batem celula a celula (inclusive quais valores estao em negrito) e as tres
+  figuras batem por extracao de conteudo do PDF, com **zero divergencias**.
+  `artigo.tex` agora puxa as tabelas por `\input{tables/...}` e as figuras
+  geradas ocupam `artigo-sbc/figs/`.
 
 **Limitacoes de metodo (discutidas no artigo):**
 
