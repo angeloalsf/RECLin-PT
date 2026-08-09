@@ -533,11 +533,15 @@ Ordenado por **risco evitado ÷ esforço**. **Nada abaixo foi executado.**
       `artigo-sbc/artigo.pdf`. Hoje o `git status` tem 14 entradas e o repositório
       não reflete o estado real do trabalho. *(~10 min)*
 
-- [ ] **L2. Decidir sobre `reclin-pt_extracao_relacoes_semclinbr.pdf` e
-      `artigo.docx`** (§1.1b, §1.1c) — excluir, ou mover para
-      `artigo-sbc/entregas/` com data no nome. 383 KB, e o PDF antigo **contradiz**
-      o artigo vigente. Antes de excluir o `.docx`, conferir a questão dos e-mails
-      institucionais vs. gmail. *(~15 min)*
+- [x] **L2. Decidir sobre `reclin-pt_extracao_relacoes_semclinbr.pdf` e
+      `artigo.docx`** (§1.1b, §1.1c) — ✅ **Resolvido em 09/08/2026.** Confirmado
+      que ambos foram efetivamente submetidos, portanto não foram excluídos:
+      arquivados em `artigo-sbc/entregas/` com a data no nome
+      (`2026-06-24_artigo.pdf` e `2026-06-23_artigo.docx`), com um `README.md` na
+      pasta avisando que não são a fonte vigente. A contradição com o artigo
+      atual deixa de ser risco: nada mais fica ao lado do `artigo.pdf` sem
+      distinção. A questão dos e-mails institucionais vs. gmail continua aberta,
+      mas o `.docx` preserva a informação.
 
 ### 🟠 Esta semana — duplicação numericamente ativa
 

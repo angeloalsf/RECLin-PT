@@ -101,7 +101,9 @@ RECLin-PT/                                    23 MB total
     ├── artigo.bib                            5,7 KB — bibliografia BibTeX.
     ├── artigo.bbl                            4,7 KB — bibliografia COMPILADA (derivado do .bib).
     ├── artigo.docx                           121 KB — conversão Word; derivado, não fonte.
+    │                                         [movido em 09/08/2026 → entregas/2026-06-23_artigo.docx]
     ├── reclin-pt_extracao_relacoes_semclinbr.pdf  262 KB — PDF compilado; derivado.
+    │                                         [movido em 09/08/2026 → entregas/2026-06-24_artigo.pdf]
     ├── sbc-template.sty                      6,1 KB — template oficial SBC (arquivo de terceiros).
     ├── sbc.bst                               22 KB — estilo BibTeX oficial SBC (arquivo de terceiros).
     └── figs/                                 3 PDFs, ~16 KB cada — cm_biobertpt.pdf, cm_bertimbau.pdf,
@@ -728,7 +730,7 @@ De qualquer forma, os comandos canônicos precisam estar **em um só lugar**. Ho
 | `artigo-sbc/sbc-template.sty`, `sbc.bst` | Terceiros, mas necessários para compilar e não instaláveis via gerenciador. Manter. |
 | `artigo-sbc/figs/*.pdf` | Enquanto não houver `make_figures.py`, **são insubstituíveis** — não há como regerá-las. Depois que o script existir, reavaliar. |
 
-**Zona cinzenta — `artigo.bbl`, `artigo.docx`, `reclin-pt_*.pdf` (390 KB, derivados).** O `.bbl` justifica-se (garante compilação idêntica sem rodar BibTeX). O `.docx` e o `.pdf` são conversões: manter só se forem os arquivos que você efetivamente submete/entrega. Se sim, mover para `artigo-sbc/entregas/` com a data no nome (`2026-06-23_artigo.pdf`) — assim o histórico de versões submetidas fica legível.
+**Zona cinzenta — `artigo.bbl`, `artigo.docx`, `reclin-pt_*.pdf` (390 KB, derivados).** O `.bbl` justifica-se (garante compilação idêntica sem rodar BibTeX). O `.docx` e o `.pdf` são conversões: manter só se forem os arquivos que você efetivamente submete/entrega. Se sim, mover para `artigo-sbc/entregas/` com a data no nome (`2026-06-23_artigo.pdf`) — assim o histórico de versões submetidas fica legível. **[Executado em 09/08/2026: ambos foram confirmados como submetidos e movidos para `artigo-sbc/entregas/`.]**
 
 ### 6.2 Guardar como histórico
 
