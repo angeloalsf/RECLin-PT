@@ -30,7 +30,7 @@ Uso:
         --a results/baseline_biobertpt.preds.json \
         --b results/baseline_bertimbau.preds.json \
         --target negation_of --n-boot 10000 --seed 42 \
-        --out results/significance_biobertpt_vs_bertimbau.json
+        --out results/significance_biobertpt_vs_bertimbau_seed42.json
 """
 from __future__ import annotations
 

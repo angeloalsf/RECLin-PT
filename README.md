@@ -53,9 +53,9 @@ data/
   processed/dataset.jsonl  # gerado
   splits/{train,dev,test}.jsonl
 notebooks/
-  baseline_biobertpt_colab.ipynb   # Colab T4: treina BioBERTpt com retomada
-  baseline_bertimbau_colab.ipynb   # Colab T4: treina BERTimbau com retomada
-  significance_colab.ipynb         # Colab CPU: McNemar + bootstrap (apos treinar os dois)
+  01_baseline_biobertpt_colab.ipynb  # Colab T4: treina BioBERTpt com retomada
+  02_baseline_bertimbau_colab.ipynb  # Colab T4: treina BERTimbau com retomada
+  03_significance_colab.ipynb        # Colab CPU: McNemar + bootstrap (apos treinar os dois)
 results/
   baseline_{biobertpt,bertimbau}.json          # metricas
   baseline_{biobertpt,bertimbau}.preds.json    # predicoes do test (para significancia)
@@ -129,7 +129,7 @@ python src/significance.py \
     --a results/baseline_biobertpt_seed42.preds.json \
     --b results/baseline_bertimbau_seed42.preds.json \
     --target negation_of --n-boot 10000 --seed 42 \
-    --out results/significance_biobertpt_vs_bertimbau.json
+    --out results/significance_biobertpt_vs_bertimbau_seed42.json
 ```
 
 > Os valores acima (`--batch-size 64 --max-gap 20 --max-length 128`) são os que
@@ -139,11 +139,12 @@ python src/significance.py \
 > dataset e, portanto, o desbalanceamento de classes.
 
 ou simplesmente `bash run.sh` (passos 1-3). No Colab (GPU T4), use os notebooks
-em `notebooks/`: rode primeiro os dois de treino (`baseline_*_colab.ipynb`) —
+em `notebooks/`, na ordem do prefixo: rode primeiro os dois de treino
+(`01_baseline_biobertpt_colab.ipynb` e `02_baseline_bertimbau_colab.ipynb`) —
 cada um clona o repo, monta o Drive, treina com **retomada automatica** por
 epoca, plota as curvas, publica `results/*.preds.json` e (opcional) envia o
-modelo final ao Hugging Face Hub. Depois rode `significance_colab.ipynb` (CPU,
-sem GPU/Drive) para o teste pareado entre os dois.
+modelo final ao Hugging Face Hub. Depois rode `03_significance_colab.ipynb`
+(CPU, sem GPU/Drive) para o teste pareado entre os dois.
 
 ## Regerar as tabelas e figuras do artigo
 

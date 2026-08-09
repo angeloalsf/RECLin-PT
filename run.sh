@@ -32,4 +32,9 @@ python src/significance.py \
     --a results/baseline_biobertpt_seed42.preds.json \
     --b results/baseline_bertimbau_seed42.preds.json \
     --target negation_of --n-boot 10000 --seed 42 \
-    --out results/significance_biobertpt_vs_bertimbau.json
+    --out results/significance_biobertpt_vs_bertimbau_seed42.json
+
+# 5) Artefatos do artigo: tabelas (.tex) e figuras (.pdf) em artigo-sbc/,
+#    derivados de results/. Fonte unica -- nao edite os arquivos gerados.
+python scripts/make_tables.py
+python scripts/make_figures.py

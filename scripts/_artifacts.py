@@ -4,7 +4,7 @@ Camada compartilhada entre `make_tables.py` e `make_figures.py`.
 Concentra o que as duas ferramentas precisam saber em comum:
 
 - onde ficam os arquivos de `results/` e qual e a convencao de nomes
-  (`baseline_<modelo>_seed<N>.json`, `significance_<A>_vs_<B>.json`);
+  (`baseline_<modelo>_seed<N>.json`, `significance_<A>_vs_<B>_seed<N>.json`);
 - como um checkpoint do Hugging Face vira o rotulo usado no artigo
   ("pucpr/biobertpt-all" -> "BioBERTpt (clinico)");
 - a ordem canonica das classes nos eixos e nas colunas;
@@ -108,20 +108,9 @@ def load_baselines(results_dir: Path, seed: int) -> dict[str, dict]:
 
 
 def load_significance(results_dir: Path, seed: int) -> dict:
-    """Carrega o relatorio de significancia da semente pedida.
-
-    A seed 42 usa o nome historico, sem sufixo; as demais levam `_seed<N>`.
-    """
-    stem = "significance_biobertpt_vs_bertimbau"
-    candidates = [results_dir / f"{stem}_seed{seed}.json", results_dir / f"{stem}.json"]
-    if seed == 42:
-        candidates.reverse()
-    for path in candidates:
-        if path.exists():
-            return load_json(path)
-    raise MissingResultError(
-        f"nenhum relatorio de significancia para a semente {seed} em {results_dir} "
-        f"(procurei por {candidates[0].name} e {candidates[1].name})."
+    """Carrega o relatorio de significancia da semente pedida."""
+    return load_json(
+        results_dir / f"significance_biobertpt_vs_bertimbau_seed{seed}.json"
     )
 
 
