@@ -38,7 +38,7 @@ OUT_TEMPLATE = "results/baseline_biobertpt_seed{seed}.json"
 
 
 def main() -> int:
-    ap = build_arg_parser(default_model=DEFAULT_MODEL, default_out=None)
+    ap = build_arg_parser(default_model=DEFAULT_MODEL)
     args = ap.parse_args()
     if args.out is None:
         args.out = OUT_TEMPLATE.format(seed=args.seed)

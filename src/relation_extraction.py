@@ -348,10 +348,10 @@ def load_best_state(ckpt_dir):
 # --------------------------------------------------------------------------- #
 # CLI compartilhada                                                           #
 # --------------------------------------------------------------------------- #
-def build_arg_parser(*, default_model, default_out):
+def build_arg_parser(*, default_model):
     ap = argparse.ArgumentParser()
     ap.add_argument("--splits-dir", default="data/splits")
-    ap.add_argument("--out", default=default_out)
+    ap.add_argument("--out", default=None)
     ap.add_argument("--ckpt-dir", default=None,
                     help="Pasta para best_model/ e last_checkpoint/ (ideal: "
                          "Google Drive). Habilita retomada automatica.")

@@ -1,3 +1,20 @@
+> ## ⚠️ Status — parte deste relatório já foi aplicada
+>
+> Este documento é uma **proposta de 7 de agosto de 2026** e é mantido como
+> **registro histórico** — o corpo abaixo não é atualizado. Desde a auditoria
+> original, já foram aplicadas ao repositório:
+>
+> - **§7.4 (`.gitignore` proposto)** — o `.gitignore` atual **é** o proposto ali;
+>   a seção é hoje uma duplicata do arquivo real.
+> - **§3.2, blocos (B), (C) e (F)** — o "depois" desses blocos já está no
+>   `README.md`.
+> - **§2 (inconsistências)** — majoritariamente corrigidas (hiperparâmetros,
+>   notebooks, artigo/seed 43).
+>
+> Para **o que ainda está pendente**, consulte o relatório vigente:
+> [`RELATORIO_LIMPEZA.md`](RELATORIO_LIMPEZA.md). Não reaplique propostas daqui
+> sem conferir antes se já foram implementadas.
+
 # Relatório de Organização — RECLin-PT
 
 **Data da análise:** 7 de agosto de 2026

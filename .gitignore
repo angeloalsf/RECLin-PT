@@ -29,9 +29,7 @@ last_checkpoint/
 
 # --- Logs ---
 logs/
-gcm-diagnose.log
 *.log
-!experiments/**/*.log
 
 # --- Notebooks ---
 .ipynb_checkpoints/
