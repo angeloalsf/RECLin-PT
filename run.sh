@@ -10,7 +10,9 @@ cd "$(dirname "$0")"
 python src/parse_semclinbr.py --xml-dir SemClinBr-xml-public-v1 \
     --out data/processed/dataset.jsonl
 
-# 2) Splits 80/10/10 (doc-level, seed 42)
+# 2) Splits 80/10/10 (doc-level, seed 42) + data/splits/MANIFEST.json (SHA-256)
+#    ATENCAO: sobrescreve os splits versionados; o MANIFEST torna isso visivel
+#    no git diff. Para so recalcular os hashes: --manifest-only.
 python src/make_splits.py --input data/processed/dataset.jsonl \
     --out-dir data/splits
 
@@ -38,3 +40,7 @@ python src/significance.py \
 #    derivados de results/. Fonte unica -- nao edite os arquivos gerados.
 python scripts/make_tables.py
 python scripts/make_figures.py
+
+# 6) Agregacao multi-seed -> results/summary_by_seed.json.
+#    So roda se as duas seeds existirem; com uma seed so, pule este passo.
+python scripts/aggregate_seeds.py || echo "aggregate_seeds: pulado (falta alguma seed)"

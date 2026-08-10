@@ -52,10 +52,12 @@ src/
 scripts/
   make_tables.py           # results/*.json -> artigo-sbc/tables/*.tex
   make_figures.py          # results/*.json -> artigo-sbc/figs/*.pdf
+  aggregate_seeds.py       # results/*.json -> results/summary_by_seed.json (multi-seed)
   _artifacts.py            # leitura/validacao compartilhada de results/
 data/
   processed/dataset.jsonl  # gerado
   splits/{train,dev,test}.jsonl
+  splits/MANIFEST.json     # SHA-256 + contagens + seed dos splits (versionado)
 notebooks/
   01_baseline_biobertpt_colab.ipynb  # Colab T4: treina BioBERTpt com retomada
   02_baseline_bertimbau_colab.ipynb  # Colab T4: treina BERTimbau com retomada
@@ -64,10 +66,12 @@ results/
   baseline_<modelo>_seed<N>.json        # metricas (modelo: biobertpt | bertimbau)
   baseline_<modelo>_seed<N>.preds.json  # predicoes do test (para significancia)
   significance_biobertpt_vs_bertimbau_seed<N>.json  # relatorio do teste pareado
+  summary_by_seed.json                  # media/desvio entre as seeds (gerado)
 artigo-sbc/                # artigo SBC: .tex/.bib/.bbl, figs/, tables/, entregas/
   README.md                # como regerar tabelas/figuras e compilar o artigo
 logs/pipeline.log          # log da execucao local (gerado)
 run.sh                     # pipeline fim a fim (parse -> splits -> baselines -> significancia)
+Makefile                   # ALTERNATIVA opcional ao run.sh: rebuild incremental
 requirements.txt           # dependencias (Python 3.10)
 LICENSE                    # MIT (codigo; os dados tem licenca propria)
 CITATION.cff               # metadados de citacao
@@ -94,8 +98,10 @@ precisa ser solicitado aos autores do corpus (Oliveira et al.). Coloque os
 A pasta está no `.gitignore` — os dados clínicos nunca devem ser versionados.
 
 Você **não precisa do corpus** para reproduzir os baselines: os splits
-derivados (`data/splits/*.jsonl`) são versionados no repositório. O corpus só
-é necessário para reexecutar os passos 1 e 2 (parse e splits).
+derivados (`data/splits/*.jsonl`) são versionados no repositório, junto de
+`data/splits/MANIFEST.json` — o SHA-256 de cada partição, para conferir que
+são os mesmos arquivos que produziram os resultados. O corpus só é necessário
+para reexecutar os passos 1 e 2 (parse e splits).
 
 > **Licenças são separadas.** O **código** deste repositório é MIT (veja
 > `LICENSE`). Os **dados** não são: o SemClinBr tem licença própria e restrita,
@@ -122,7 +128,8 @@ pip install -r requirements.txt
 python src/parse_semclinbr.py --xml-dir SemClinBr-xml-public-v1 \
     --out data/processed/dataset.jsonl
 
-# 2) splits 80/10/10 (doc-level, seed 42)
+# 2) splits 80/10/10 (doc-level, seed 42) + data/splits/MANIFEST.json
+#    ATENCAO: sobrescreve os splits versionados. Confira o MANIFEST no git diff.
 python src/make_splits.py
 
 # 3a) baseline CLINICO (BioBERTpt) -- hiperparametros do artigo
@@ -160,6 +167,40 @@ epoca, plota as curvas, publica `results/*.preds.json` e (opcional) envia o
 modelo final ao Hugging Face Hub. Depois rode `03_significance_colab.ipynb`
 (CPU, sem GPU/Drive) para o teste pareado entre os dois.
 
+### `make` — alternativa opcional para rebuild incremental
+
+`run.sh` continua sendo o caminho simples e nao vai a lugar nenhum: roda tudo,
+na ordem, sem instalar nada. O `Makefile` e uma **alternativa** para quem quer
+o contrario disso — nao refazer o que ja esta pronto e atualizado:
+
+```bash
+make -n all     # mostra o que SERIA executado, sem executar
+make all        # roda so o que esta desatualizado
+make status     # o que ja existe e o que falta, sem tocar em nada
+make aggregate  # ou: make splits | baselines | significance | tables | figures
+make baseline_biobertpt_seed42   # alvos individuais por modelo e semente
+```
+
+Cada alvo usa **exatamente** os comandos da secao acima e de
+[`artigo-sbc/README.md`](artigo-sbc/README.md) — nenhuma flag nova. A diferenca
+esta nas dependencias de arquivo: com os quatro `results/baseline_*.json` no
+lugar, `make all` responde "Nothing to be done" em vez de gastar ~10 h de GPU
+retreinando.
+
+Duas escolhas de projeto que valem saber antes de usar:
+
+- **`results/` e `data/splits/` nao dependem dos `.py`.** So dos dados de
+  entrada. Assim um comentario corrigido em `relation_extraction.py` nao pede
+  10 h de GPU, e tocar em `make_splits.py` nao reembaralha os splits
+  versionados. Quando quiser forcar mesmo assim: `make -B <alvo>`.
+- **`make clean-derived` nao apaga `results/`** — so tabelas, figuras e o
+  `summary_by_seed.json`, que se refazem em segundos. Por isso nao se chama
+  `clean`.
+
+**No Windows `make` nao vem instalado** (precisa de Git Bash com make, WSL ou
+Chocolatey). Se isso for um estorvo, ignore o `Makefile`: `bash run.sh` faz o
+mesmo pipeline sem dependencia nova.
+
 ## Artigo (`artigo-sbc/`)
 
 Como **regerar as tabelas e figuras** a partir de `results/*.json`
@@ -179,10 +220,10 @@ junto do próprio artigo.
   diferem; o bootstrap pareado da o intervalo de 95% e o p-valor da diferenca no
   F1 de `negation_of`. Se o IC95 nao cruza zero, a vantagem e significativa.
 
-### Multiplas seeds (manual, no Colab)
+### Multiplas seeds
 
 Rode uma seed por execucao mudando `--seed`, `--out` e `--ckpt-dir` (para nao
-colidir), e agregue offline:
+colidir):
 
 ```bash
 python src/baseline_bertimbau.py --seed 43 \
@@ -190,12 +231,20 @@ python src/baseline_bertimbau.py --seed 43 \
     --out results/baseline_bertimbau_seed43.json
 ```
 
-```python
-import json, glob, statistics as st
-v = [json.load(open(f))["test_f1_per_class"]["negation_of"]
-     for f in glob.glob("results/baseline_bertimbau_seed*.json")]
-print(f"negation_of F1: {st.mean(v):.4f} ± {st.pstdev(v):.4f} (n={len(v)})")
+Depois agregue com `scripts/aggregate_seeds.py` — media e desvio-padrao
+populacional do Macro-F1 e do F1 por classe, para os dois modelos:
+
+```bash
+python scripts/aggregate_seeds.py            # sementes 42 e 43
+python scripts/aggregate_seeds.py --check    # so imprime, nao grava
 ```
+
+Grava `results/summary_by_seed.json` com media, desvio e os valores por
+semente que entraram na conta. Aceita `--seeds`, `--results-dir` e `--out`.
+Nao treina nada: so le `results/baseline_*.json`.
+
+> Com duas sementes, o desvio e **dispersao observada**, nao intervalo de
+> confianca — ver "Limitacoes" abaixo.
 
 ## Decisoes principais
 
@@ -211,15 +260,16 @@ print(f"negation_of F1: {st.mean(v):.4f} ± {st.pstdev(v):.4f} (n={len(v)})")
 
 ## Limitacoes conhecidas e proximos passos
 
-**Ainda nao feito, por escopo:**
+**Ja resolvido (era escopo pendente):**
 
-- **Hashes SHA dos splits.** `make_splits.py` nao grava manifesto com o SHA de
-  cada particao. Sem isso, nao ha prova criptografica de que o test usado nas
-  quatro execucoes foi o mesmo arquivo (a evidencia hoje e indireta: os quatro
-  `.preds.json` tem exatamente 16.074 exemplos e `significance.py` aborta se
-  os `y_true` divergirem).
-- **Agregacao multi-seed automatizada.** As seeds 42 e 43 ja foram rodadas para
-  os dois modelos, mas media e desvio sao calculados a mao (snippet acima).
+- **Hashes SHA dos splits.** `make_splits.py` grava
+  `data/splits/MANIFEST.json` com SHA-256, contagem de documentos e contagem
+  de relacoes por particao. O manifesto e versionado, entao regerar os splits
+  por engano muda o hash e aparece no `git diff`. Antes a evidencia era so
+  indireta (os quatro `.preds.json` tem exatamente 16.074 exemplos e
+  `significance.py` aborta se os `y_true` divergirem).
+- **Agregacao multi-seed automatizada.** `scripts/aggregate_seeds.py`
+  substitui o calculo manual e grava `results/summary_by_seed.json`.
 
 **Limitacoes de metodo (discutidas no artigo):**
 

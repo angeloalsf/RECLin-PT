@@ -1,0 +1,37 @@
+{
+  "generator": "src/make_splits.py",
+  "seed": 42,
+  "source": {
+    "path": "data/processed/dataset.jsonl",
+    "sha256": "397ef4243c4260da9d9d49d5b4e4567f5344593a7162a66f0f9fe105af8bfd6c"
+  },
+  "splits": {
+    "dev": {
+      "n_bytes": 558601,
+      "n_records": 100,
+      "n_relations": {
+        "associated_with": 832,
+        "negation_of": 155
+      },
+      "sha256": "a9ea327684165c5053f8f3db5468a27f71c1d9e30d2859e343b6d275839c8aeb"
+    },
+    "test": {
+      "n_bytes": 573003,
+      "n_records": 100,
+      "n_relations": {
+        "associated_with": 1098,
+        "negation_of": 152
+      },
+      "sha256": "86304d8d507c6707695e2b86c3533b763a96247f06326e5980b4567385231e62"
+    },
+    "train": {
+      "n_bytes": 4581357,
+      "n_records": 800,
+      "n_relations": {
+        "associated_with": 7922,
+        "negation_of": 1299
+      },
+      "sha256": "36014b2adc8308bce94aeecf066c38f69e1f53dda4517fa424527554b31a437a"
+    }
+  }
+}

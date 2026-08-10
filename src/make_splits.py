@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Splits 80/10/10 em NIVEL DE DOCUMENTO (versao minima, sem SHA).
+Splits 80/10/10 em NIVEL DE DOCUMENTO, com manifesto SHA-256.
 
 Por que nivel de documento e nao de relacao: relacoes do mesmo prontuario
 compartilham vocabulario; se cairem em splits diferentes ha vazamento e a
@@ -11,11 +11,30 @@ tem ao menos uma relacao de negacao dos que nao tem, embaralhamos cada grupo
 com seed 42 e cortamos 80/10/10 dentro de cada grupo. Isso garante negacao em
 train/dev/test sem depender de pacote externo de estratificacao multi-rotulo.
 
-Seed FIXO = 42 (reprodutibilidade). Sem hashes SHA por opcao de escopo.
+Seed FIXO = 42 (reprodutibilidade).
+
+MANIFESTO
+---------
+Alem dos tres `.jsonl`, grava `data/splits/MANIFEST.json` com o SHA-256, a
+contagem de registros (documentos) e a contagem de relacoes por tipo de cada
+particao, mais a seed e o arquivo de entrada usados. Motivo: os splits sao
+versionados e rodar este script por engano (com outra seed, ou com um
+`dataset.jsonl` diferente) os sobrescreve em silencio -- e as quatro execucoes
+de baseline deixariam de ser comparaveis sem que nada acusasse. Com o
+manifesto, o `git diff` mostra o hash mudando.
+
+O manifesto NAO tem timestamp de propria proposito: rodar duas vezes com a
+mesma entrada e a mesma seed produz um arquivo byte-a-byte identico, entao
+qualquer diff no git significa que o conteudo mudou de verdade.
+
+    python src/make_splits.py                   # gera splits + MANIFEST.json
+    python src/make_splits.py --manifest-only   # so recalcula o manifesto dos
+                                                # splits que ja estao no disco
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import random
 import sys
@@ -58,6 +77,56 @@ def split_indices(n, seed):
     return train, dev, test
 
 
+SPLIT_NAMES = ("train", "dev", "test")
+MANIFEST_NAME = "MANIFEST.json"
+
+
+def sha256_of(path):
+    """SHA-256 do arquivo, lido em blocos (os splits chegam a 4,6 MB)."""
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def describe_split(path):
+    """Entrada do manifesto para um `.jsonl` de split ja gravado no disco."""
+    rels = Counter()
+    n_records = 0
+    for doc in read_jsonl(path):
+        n_records += 1
+        for r in doc["relations"]:
+            rels[r["type"]] += 1
+    return {
+        "sha256": sha256_of(path),
+        "n_records": n_records,
+        "n_bytes": Path(path).stat().st_size,
+        "n_relations": dict(sorted(rels.items())),
+    }
+
+
+def write_manifest(out_dir, seed, input_path):
+    """Grava `MANIFEST.json` descrevendo os splits presentes em `out_dir`."""
+    out_dir = Path(out_dir)
+    manifest = {
+        "generator": "src/make_splits.py",
+        "seed": seed,
+        "source": {
+            "path": Path(input_path).as_posix(),
+            "sha256": sha256_of(input_path) if Path(input_path).exists() else None,
+        },
+        "splits": {
+            name: describe_split(out_dir / f"{name}.jsonl") for name in SPLIT_NAMES
+        },
+    }
+    path = out_dir / MANIFEST_NAME
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2, sort_keys=True)
+        f.write("\n")
+    return manifest, path
+
+
 def summarize(name, docs):
     rels = Counter()
     with_neg = 0
@@ -75,7 +144,25 @@ def main() -> int:
     ap.add_argument("--input", default="data/processed/dataset.jsonl")
     ap.add_argument("--out-dir", default="data/splits")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--manifest-only", action="store_true",
+                    help="nao regera os splits: so recalcula MANIFEST.json a "
+                         "partir dos .jsonl que ja existem em --out-dir")
     args = ap.parse_args()
+
+    if args.manifest_only:
+        out = Path(args.out_dir)
+        faltando = [n for n in SPLIT_NAMES if not (out / f"{n}.jsonl").exists()]
+        if faltando:
+            log.error("splits ausentes em %s: %s", out,
+                      ", ".join(f"{n}.jsonl" for n in faltando))
+            return 2
+        manifest, path = write_manifest(out, args.seed, args.input)
+        log.info("Manifesto recalculado (sem regerar splits): %s", path)
+        for name in SPLIT_NAMES:
+            entry = manifest["splits"][name]
+            log.info("  %-6s sha256=%s n_records=%d",
+                     name, entry["sha256"], entry["n_records"])
+        return 0
 
     log.info("Iniciando splits | input=%s | out-dir=%s | seed=%d",
              args.input, args.out_dir, args.seed)
@@ -123,6 +210,11 @@ def main() -> int:
         _, nd, wn, rels = summarize(name, docs_)
         log.info("  %-6s docs=%-5d docs_com_negacao=%-4d | negation_of=%-5d associated_with=%d",
                  name, nd, wn, rels.get("negation_of", 0), rels.get("associated_with", 0))
+
+    manifest, manifest_path = write_manifest(out, args.seed, args.input)
+    log.info("Manifesto SHA-256 gravado em %s", manifest_path)
+    for name in SPLIT_NAMES:
+        log.info("  %-6s sha256=%s", name, manifest["splits"][name]["sha256"])
     return 0
 
 

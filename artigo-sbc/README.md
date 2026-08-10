@@ -46,6 +46,20 @@ treina nada: só leem `results/` e escrevem nas pastas de saída.
 > tocar no artigo, gere em outro lugar com `--out-dir` (ex.:
 > `--out-dir /tmp/conferencia`) e compare.
 
+Um terceiro script, `scripts/aggregate_seeds.py`, agrega as métricas **entre**
+as sementes (média e desvio do Macro-F1 e do F1 por classe, para os dois
+baselines) em `results/summary_by_seed.json`. Não gera artefato LaTeX — os
+números de dispersão citados no texto saem dele:
+
+```bash
+python scripts/aggregate_seeds.py --check   # imprime sem gravar
+```
+
+Os três também podem ser chamados pelos alvos `make tables`, `make figures` e
+`make aggregate`, que só reexecutam o que estiver desatualizado em relação a
+`results/` (ver "make" no README da raiz). `latexmk` continua sem saber disso —
+regenere antes de compilar.
+
 Trocar a semente do artigo é, portanto, um comando: `make_tables.py --seed 43 &&
 make_figures.py --seed 43` regenera os cinco artefatos coerentes entre si. Os
 `\label` (`tab:resultados`, `tab:signif`) e os nomes de arquivo não mudam com a
