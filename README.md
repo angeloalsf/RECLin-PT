@@ -1,51 +1,81 @@
-# RECLin-PT (minimo)
+# RECLin-PT — Extração de Relações em Notas Clínicas em Português
 
-Versao enxuta para responder uma pergunta de pesquisa:
+Trabalho de Conclusão de Curso (TCC) de **Angelo Antonio Lima Silveira Filho**,
+Bacharelado em Sistemas de Informação — **IFES, Campus Cachoeiro de
+Itapemirim**. Orientação: **Prof. Cristiano Colombo**.
 
-> **"O pre-treinamento clinico importa para extracao de relacoes em textos
-> medicos em portugues?"**
+## O que este trabalho investiga
 
-Comparamos dois encoders em portugues na MESMA tarefa de extracao de relacao em
-notas clinicas do **SemClinBr**, mudando **somente o checkpoint de pre-treino**:
+A pergunta é simples de enunciar e difícil de responder sem um experimento
+controlado:
 
-- **BioBERTpt** (`pucpr/biobertpt-all`) — encoder **clinico**.
-- **BERTimbau** (`neuralmind/bert-base-portuguese-cased`) — encoder **geral**
-  (pre-treinado no brWaC).
+> **Pré-treinamento em domínio clínico dá vantagem real sobre um encoder de
+> domínio geral na extração de relações em notas clínicas em português?**
 
-Espaco de rotulos (3 classes): `negation_of`, `associated_with`, `no_relation`.
-A metrica que responde "detecta bem negacao?" e o **F1 de `negation_of`** no
-teste; reportamos tambem Micro-F1, Macro-F1, Weighted-F1, MCC, F1 por classe,
-classification report e matriz de confusao -- e um **teste de significancia**
-entre os dois modelos.
+A intuição diz que sim: um modelo que já leu texto médico deveria entender
+melhor um prontuário. Mas encoders clínicos em português são treinados com
+muito menos dados que os de domínio geral, e essa troca — vocabulário
+especializado *versus* volume de pré-treinamento — não é obviamente favorável a
+nenhum dos lados.
 
-## Paridade entre os baselines
+Para responder, este repositório monta um **estudo controlado**: dois encoders
+em português são treinados na **mesma tarefa**, com os **mesmos dados**, os
+**mesmos hiperparâmetros** e a **mesma implementação**, mudando **somente o
+checkpoint de pré-treino**:
 
-Os dois baselines compartilham **um unico nucleo** (`src/relation_extraction.py`),
-entao sao identicos por construcao em tudo, exceto o modelo:
+- **BioBERTpt** (`pucpr/biobertpt-all`) — encoder **clínico**.
+- **BERTimbau** (`neuralmind/bert-base-portuguese-cased`) — encoder de **domínio
+  geral** (pré-treinado no brWaC).
 
-- Entity markers / representacao de entrada: `[E1] ... [/E1] [E2] ... [/E2]`
-  (tokens especiais) + janela de contexto.
-- Loss: CrossEntropy com `class_weight=balanced`.
-- Scheduler: linear com warmup; early stopping pela melhor epoca no **dev**.
-- Salvamento de checkpoints: `best_model/` (pesos do melhor epoch, formato HF) e
-  `last_checkpoint/` (estado completo de retomada), gravados de forma atomica.
-- Metricas: Micro-F1, Macro-F1, Weighted-F1, MCC, F1 por classe, classification
-  report, matriz de confusao; curvas de treino/validacao (`train_loss` e
-  `dev_loss` por epoca).
-- Seed de reprodutibilidade (42) e logging estruturado centralizado.
+A tarefa é classificação de relações entre pares de entidades em notas clínicas
+do corpus **SemClinBr**, num espaço de **3 rótulos**: `negation_of`,
+`associated_with` e `no_relation`.
 
-Trocar BioBERTpt por BERTimbau e so mudar `--model`, `--ckpt-dir` e `--out`.
+A métrica que responde à pergunta central — *o modelo detecta bem negação?* — é
+o **F1 da classe `negation_of`** no conjunto de teste. Também são reportados
+Micro-F1, Macro-F1, Weighted-F1, MCC, F1 por classe, *classification report* e
+matriz de confusão, mais um **teste de significância pareado** entre os dois
+modelos. O artigo em `artigo-sbc/` discute os resultados; este README documenta
+como reproduzi-los.
 
-## Estrutura
+## Por que dois entry-points
+
+Existem dois scripts de baseline — `src/baseline_biobertpt.py` e
+`src/baseline_bertimbau.py` — mas eles **não são duas implementações**. Ambos são
+entry-points finos sobre um **único núcleo compartilhado**,
+`src/relation_extraction.py`. Isso é a garantia de **paridade**: os dois
+baselines são idênticos por construção em tudo, exceto o modelo. Uma diferença
+de desempenho não pode vir de uma diferença de implementação, porque não existe
+uma.
+
+O que o núcleo compartilhado fixa para os dois:
+
+- **Representação de entrada:** marcadores de entidade tipados
+  `[E1] ... [/E1] [E2] ... [/E2]` (tokens especiais) + janela de contexto.
+- **Loss:** CrossEntropy com `class_weight=balanced`.
+- **Otimização:** scheduler linear com warmup; seleção da melhor época pelo
+  macro-F1 no **dev** (early stopping).
+- **Checkpoints:** `best_model/` (pesos da melhor época, formato HF) e
+  `last_checkpoint/` (estado completo de retomada), gravados de forma atômica.
+- **Métricas:** Micro-F1, Macro-F1, Weighted-F1, MCC, F1 por classe,
+  *classification report*, matriz de confusão e curvas de treino/validação
+  (`train_loss` e `dev_loss` por época).
+- **Reprodutibilidade:** seed fixo (42 por padrão) e logging estruturado
+  centralizado.
+
+Trocar BioBERTpt por BERTimbau é mudar `--model`, `--ckpt-dir` e `--out`. Nada
+mais.
+
+## Estrutura do repositório
 
 ```
-SemClinBr-xml-public-v1/   # XMLs do corpus (voce coloca aqui; licenca restrita)
+SemClinBr-xml-public-v1/   # XMLs do corpus (você coloca aqui; licença restrita)
 src/
   parse_semclinbr.py       # XML -> data/processed/dataset.jsonl
   candidates.py            # gera pares-candidatos (inclui os negativos no_relation)
-  make_splits.py           # splits 80/10/10 doc-level, seed 42
-  relation_extraction.py   # NUCLEO compartilhado: treino, metricas, checkpoints, logging
-  baseline_biobertpt.py    # entry-point fino: BioBERTpt (clinico)
+  make_splits.py           # splits 80/10/10 doc-level, seed 42 + MANIFEST.json
+  relation_extraction.py   # NÚCLEO compartilhado: treino, métricas, checkpoints, logging
+  baseline_biobertpt.py    # entry-point fino: BioBERTpt (clínico)
   baseline_bertimbau.py    # entry-point fino: BERTimbau (geral)
   significance.py          # McNemar + bootstrap pareado no F1 de negation_of
   utils/logger.py          # logging central -> terminal + logs/pipeline.log
@@ -53,7 +83,7 @@ scripts/
   make_tables.py           # results/*.json -> artigo-sbc/tables/*.tex
   make_figures.py          # results/*.json -> artigo-sbc/figs/*.pdf
   aggregate_seeds.py       # results/*.json -> results/summary_by_seed.json (multi-seed)
-  _artifacts.py            # leitura/validacao compartilhada de results/
+  _artifacts.py            # leitura/validação compartilhada de results/
 data/
   processed/dataset.jsonl  # gerado
   splits/{train,dev,test}.jsonl
@@ -61,30 +91,34 @@ data/
 notebooks/
   01_baseline_biobertpt_colab.ipynb  # Colab T4: treina BioBERTpt com retomada
   02_baseline_bertimbau_colab.ipynb  # Colab T4: treina BERTimbau com retomada
-  03_significance_colab.ipynb        # Colab CPU: McNemar + bootstrap (apos treinar os dois)
+  03_significance_colab.ipynb        # Colab CPU: McNemar + bootstrap (após treinar os dois)
 results/
-  baseline_<modelo>_seed<N>.json        # metricas (modelo: biobertpt | bertimbau)
-  baseline_<modelo>_seed<N>.preds.json  # predicoes do test (para significancia)
-  significance_biobertpt_vs_bertimbau_seed<N>.json  # relatorio do teste pareado
-  summary_by_seed.json                  # media/desvio entre as seeds (gerado)
+  baseline_<modelo>_seed<N>.json        # métricas (modelo: biobertpt | bertimbau)
+  baseline_<modelo>_seed<N>.preds.json  # predições do test (para significância)
+  significance_biobertpt_vs_bertimbau_seed<N>.json  # relatório do teste pareado
+  summary_by_seed.json                  # média/desvio entre as seeds (gerado)
 artigo-sbc/                # artigo SBC: .tex/.bib/.bbl, figs/, tables/, entregas/
   README.md                # como regerar tabelas/figuras e compilar o artigo
-logs/pipeline.log          # log da execucao local (gerado)
-run.sh                     # pipeline fim a fim (parse -> splits -> baselines -> significancia)
+logs/pipeline.log          # log da execução local (gerado)
+run.sh                     # pipeline fim a fim (parse -> splits -> baselines -> significância)
 Makefile                   # ALTERNATIVA opcional ao run.sh: rebuild incremental
-requirements.txt           # dependencias (Python 3.10)
-LICENSE                    # MIT (codigo; os dados tem licenca propria)
-CITATION.cff               # metadados de citacao
-RELATORIO_ORGANIZACAO.md   # auditoria inicial do repositorio (registro historico)
-RELATORIO_LIMPEZA.md       # relatorio vigente de limpeza/consolidacao
-.gitattributes             # normalizacao de fim de linha dos .json
+requirements.txt           # dependências (Python 3.10)
+LICENSE                    # MIT (código; os dados têm licença própria)
+CITATION.cff               # metadados de citação
+.gitattributes             # normalização de fim de linha dos .json
 ```
+
+**Convenção de nomes em `results/`.** Todo artefato experimental carrega o
+modelo e a semente no nome: `baseline_<modelo>_seed<N>.json`, e as predições do
+teste no arquivo irmão `.preds.json`. O relatório de significância nomeia o par
+e a semente: `significance_biobertpt_vs_bertimbau_seed<N>.json`. O teste é
+**pareado dentro da mesma semente** — nunca 42 contra 43.
 
 ## Pré-requisitos
 
 **Python 3.10.** Foi a versão usada em todas as execuções deste repositório.
-Versões mais novas não foram testadas — atenção se o `python` do seu PATH
-for 3.12+.
+Versões mais novas não foram testadas — atenção se o `python` do seu PATH for
+3.12+.
 
 ```bash
 python -m venv .venv
@@ -92,34 +126,32 @@ source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e
-precisa ser solicitado aos autores do corpus (Oliveira et al.). Coloque os
-1.000 arquivos `.xml` em `SemClinBr-xml-public-v1/` na raiz do projeto.
-A pasta está no `.gitignore` — os dados clínicos nunca devem ser versionados.
+**Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e precisa
+ser solicitado aos autores do corpus (Oliveira et al.). Coloque os 1.000
+arquivos `.xml` em `SemClinBr-xml-public-v1/` na raiz do projeto. A pasta está no
+`.gitignore` — dados clínicos nunca devem ser versionados.
 
-Você **não precisa do corpus** para reproduzir os baselines: os splits
-derivados (`data/splits/*.jsonl`) são versionados no repositório, junto de
-`data/splits/MANIFEST.json` — o SHA-256 de cada partição, para conferir que
-são os mesmos arquivos que produziram os resultados. O corpus só é necessário
-para reexecutar os passos 1 e 2 (parse e splits).
-
-> **Licenças são separadas.** O **código** deste repositório é MIT (veja
-> `LICENSE`). Os **dados** não são: o SemClinBr tem licença própria e restrita,
-> não é distribuído aqui e precisa ser obtido separadamente pelo usuário junto
-> aos autores do corpus. A licença MIT não se estende a eles.
+Você **não precisa do corpus** para reproduzir os baselines: os splits derivados
+(`data/splits/*.jsonl`) são versionados, junto de `data/splits/MANIFEST.json` —
+o SHA-256 de cada partição, para conferir que são os mesmos arquivos que
+produziram os resultados. O corpus só é necessário para reexecutar os passos 1 e
+2 (parse e splits).
 
 **Hardware e tempo.** Treino validado em **GPU NVIDIA T4** (Google Colab,
-~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva
-**≈2h25**. Reproduzir os quatro experimentos do artigo (2 modelos × 2 seeds)
-custa **≈10 h de GPU**. Em CPU o treino roda, mas é impraticável para o
-tamanho do dataset (128.380 candidatos de treino).
+~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva **≈2h25**.
+Reproduzir os quatro experimentos do artigo (2 modelos × 2 sementes) custa
+**≈10 h de GPU**. Em CPU o treino roda, mas é impraticável para o tamanho do
+dataset (128.380 candidatos de treino).
 
 Use `--ckpt-dir` apontando para o Google Drive: o treino grava
-`last_checkpoint/` ao fim de cada época e **retoma automaticamente** se o
-runtime do Colab cair. Siga a convenção `checkpoints/<modelo>_seed<N>` para as
-execuções não colidirem entre si.
+`last_checkpoint/` ao fim de cada época e **retoma automaticamente** se o runtime
+do Colab cair. Siga a convenção `checkpoints/<modelo>_seed<N>` para as execuções
+não colidirem entre si.
 
-## Como rodar (local)
+## Como rodar — local
+
+O pipeline completo, passo a passo. Estes são os comandos canônicos: `run.sh` e
+o `Makefile` executam **exatamente** estes, sem nenhuma flag adicional.
 
 ```bash
 pip install -r requirements.txt
@@ -129,154 +161,200 @@ python src/parse_semclinbr.py --xml-dir SemClinBr-xml-public-v1 \
     --out data/processed/dataset.jsonl
 
 # 2) splits 80/10/10 (doc-level, seed 42) + data/splits/MANIFEST.json
-#    ATENCAO: sobrescreve os splits versionados. Confira o MANIFEST no git diff.
-python src/make_splits.py
+#    ATENÇÃO: sobrescreve os splits versionados. Confira o MANIFEST no git diff.
+#    Para só recalcular os hashes, sem reembaralhar: --manifest-only
+python src/make_splits.py --input data/processed/dataset.jsonl \
+    --out-dir data/splits
 
-# 3a) baseline CLINICO (BioBERTpt) -- hiperparametros do artigo
+# 3a) baseline CLÍNICO (BioBERTpt) -- hiperparâmetros do artigo
 python src/baseline_biobertpt.py --splits-dir data/splits \
     --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
     --ckpt-dir checkpoints/biobertpt_seed42 \
     --out results/baseline_biobertpt_seed42.json
 
-# 3b) baseline GERAL (BERTimbau) -- MESMOS hiperparametros, so muda o modelo
+# 3b) baseline GERAL (BERTimbau) -- MESMOS hiperparâmetros, só muda o modelo
 python src/baseline_bertimbau.py --splits-dir data/splits \
     --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
     --ckpt-dir checkpoints/bertimbau_seed42 \
     --out results/baseline_bertimbau_seed42.json
 
-# 4) significancia (usa os *.preds.json gerados em 3a/3b)
+# 4) significância (usa os *.preds.json gerados em 3a/3b)
 python src/significance.py \
     --a results/baseline_biobertpt_seed42.preds.json \
     --b results/baseline_bertimbau_seed42.preds.json \
     --target negation_of --n-boot 10000 --seed 42 \
     --out results/significance_biobertpt_vs_bertimbau_seed42.json
+
+# 5) artefatos do artigo: tabelas (.tex) e figuras (.pdf) derivadas de results/
+python scripts/make_tables.py
+python scripts/make_figures.py
+
+# 6) agregação multi-seed -> results/summary_by_seed.json (precisa das duas seeds)
+python scripts/aggregate_seeds.py
 ```
 
-> Os valores acima (`--batch-size 64 --max-gap 20 --max-length 128`) são os que
-> produziram os números do artigo, e **não** coincidem com os defaults do
-> `argparse` (32 / 75 / 192). Passe-os explicitamente. `max_gap=20` é a
-> decisão de maior impacto: controla quantos pares negativos entram no
-> dataset e, portanto, o desbalanceamento de classes.
+> **Os hiperparâmetros do artigo não são os defaults do `argparse`.**
+> `--batch-size 64 --max-gap 20 --max-length 128` são os valores que produziram
+> os números do artigo; os defaults do `argparse` são **32 / 75 / 192**. Passe-os
+> explicitamente. `max_gap=20` é a decisão de maior impacto: controla quantos
+> pares negativos entram no dataset e, portanto, o desbalanceamento de classes.
 
-ou simplesmente `bash run.sh` (passos 1, 2, 3a, 3b e 4 — e ainda o passo 5, que
-regenera as tabelas e figuras do artigo). No Colab (GPU T4), use os notebooks
-em `notebooks/`, na ordem do prefixo: rode primeiro os dois de treino
-(`01_baseline_biobertpt_colab.ipynb` e `02_baseline_bertimbau_colab.ipynb`) —
-cada um clona o repo, monta o Drive, treina com **retomada automatica** por
-epoca, plota as curvas, publica `results/*.preds.json` e (opcional) envia o
-modelo final ao Hugging Face Hub. Depois rode `03_significance_colab.ipynb`
-(CPU, sem GPU/Drive) para o teste pareado entre os dois.
+### Duas formas de executar o pipeline
 
-### `make` — alternativa opcional para rebuild incremental
-
-`run.sh` continua sendo o caminho simples e nao vai a lugar nenhum: roda tudo,
-na ordem, sem instalar nada. O `Makefile` e uma **alternativa** para quem quer
-o contrario disso — nao refazer o que ja esta pronto e atualizado:
+**`run.sh` — o caminho simples.** Roda os passos 1 a 6 na ordem, do início ao
+fim, sem exigir nada além do Python e das dependências:
 
 ```bash
-make -n all     # mostra o que SERIA executado, sem executar
-make all        # roda so o que esta desatualizado
-make status     # o que ja existe e o que falta, sem tocar em nada
-make aggregate  # ou: make splits | baselines | significance | tables | figures
-make baseline_biobertpt_seed42   # alvos individuais por modelo e semente
+bash run.sh
 ```
 
-Cada alvo usa **exatamente** os comandos da secao acima e de
-[`artigo-sbc/README.md`](artigo-sbc/README.md) — nenhuma flag nova. A diferenca
-esta nas dependencias de arquivo: com os quatro `results/baseline_*.json` no
-lugar, `make all` responde "Nothing to be done" em vez de gastar ~10 h de GPU
-retreinando.
+**`make` — alternativa para rebuild incremental.** O `Makefile` existe para o
+caso oposto: **não refazer o que já está pronto e atualizado**. Compara datas de
+arquivo e só reexecuta o alvo cuja entrada está mais nova que a saída.
 
-Duas escolhas de projeto que valem saber antes de usar:
+```bash
+make -n all     # mostra o que SERIA executado, sem executar (rode ANTES de gastar GPU)
+make all        # roda só o que está desatualizado
+make status     # o que já existe e o que falta, sem tocar em nada
+make help       # lista os alvos
+make splits | baselines | significance | aggregate | tables | figures | artigo
+make baseline_biobertpt_seed42   # alvos individuais por modelo e semente
+make significance_seed42
+```
 
-- **`results/` e `data/splits/` nao dependem dos `.py`.** So dos dados de
-  entrada. Assim um comentario corrigido em `relation_extraction.py` nao pede
-  10 h de GPU, e tocar em `make_splits.py` nao reembaralha os splits
-  versionados. Quando quiser forcar mesmo assim: `make -B <alvo>`.
-- **`make clean-derived` nao apaga `results/`** — so tabelas, figuras e o
-  `summary_by_seed.json`, que se refazem em segundos. Por isso nao se chama
-  `clean`.
+Com os quatro `results/baseline_*.json` no lugar, `make all` responde "Nothing to
+be done" em vez de gastar ~10 h de GPU retreinando.
 
-**No Windows `make` nao vem instalado** (precisa de Git Bash com make, WSL ou
+Duas decisões de projeto do `Makefile` que vale conhecer antes de usar:
+
+- **`results/` e `data/splits/` não dependem dos `.py`** — só dos dados de
+  entrada. Assim um comentário corrigido em `relation_extraction.py` não pede
+  10 h de GPU, e tocar em `make_splits.py` não reembaralha os splits
+  versionados. Para forçar mesmo assim: `make -B <alvo>`.
+- **`make clean-derived` não apaga `results/`** — só tabelas, figuras e o
+  `summary_by_seed.json`, que se refazem em segundos. É por isso que o alvo não
+  se chama `clean`.
+
+**No Windows o `make` não vem instalado** (precisa de Git Bash com make, WSL ou
 Chocolatey). Se isso for um estorvo, ignore o `Makefile`: `bash run.sh` faz o
-mesmo pipeline sem dependencia nova.
+mesmo pipeline sem dependência nova.
+
+Se você mudar um hiperparâmetro, mude nos três lugares — README, `run.sh` e
+`Makefile`. Eles precisam continuar concordando.
+
+## Como rodar — Colab
+
+Para quem não tem GPU local, `notebooks/` traz o pipeline pronto para o Colab.
+Rode na ordem do prefixo:
+
+1. **`01_baseline_biobertpt_colab.ipynb`** (GPU T4)
+2. **`02_baseline_bertimbau_colab.ipynb`** (GPU T4)
+
+Cada um clona o repositório, monta o Google Drive, treina com **retomada
+automática** por época, plota as curvas de treino/validação, publica
+`results/*.json` e `results/*.preds.json` e, opcionalmente, envia o modelo final
+ao Hugging Face Hub.
+
+3. **`03_significance_colab.ipynb`** (CPU — não precisa de GPU nem do Drive),
+   depois que os dois baselines terminaram: roda o teste pareado entre eles.
 
 ## Artigo (`artigo-sbc/`)
 
 Como **regerar as tabelas e figuras** a partir de `results/*.json`
 (`scripts/make_tables.py` e `scripts/make_figures.py`) e como **compilar o
-artigo** com `latexmk` está documentado em [`artigo-sbc/README.md`](artigo-sbc/README.md),
-junto do próprio artigo.
+artigo** com `latexmk` está documentado em
+[`artigo-sbc/README.md`](artigo-sbc/README.md), junto do próprio artigo.
 
-## Metricas e como interpretar
+Dois pontos que valem o aviso aqui na entrada:
+
+- `artigo-sbc/tables/` e `artigo-sbc/figs/` são **saída derivada** de
+  `results/*.json`. Não edite os `.tex` e `.pdf` gerados à mão — a próxima
+  execução dos scripts descarta a edição.
+- O `latexmk` **não sabe** que esses artefatos derivam de `results/`. Se você
+  acabou de mexer nos números, regenere antes de compilar.
+
+## Métricas e como interpretar
 
 - Compare o **F1 de `negation_of`** e o **Macro-F1** dos dois `results/*.json`.
-  Micro-F1, Weighted-F1 e accuracy sao dominados por `no_relation` (~99% dos
-  pares) e servem so de contexto -- nao sao a manchete.
-- **MCC** (`test_mcc`) e um numero unico robusto a desbalanceamento.
-- **Curvas**: `dev_history` traz `train_loss` e `dev_loss` por epoca (overfitting)
-  e `dev_macro_f1`/`dev_negation_of_f1` (selecao de epoca).
-- **Significancia** (`src/significance.py`): McNemar diz se os padroes de erro
-  diferem; o bootstrap pareado da o intervalo de 95% e o p-valor da diferenca no
-  F1 de `negation_of`. Se o IC95 nao cruza zero, a vantagem e significativa.
+  Micro-F1, Weighted-F1 e accuracy são dominados por `no_relation` (~99% dos
+  pares) e servem só de contexto — não são a manchete.
+- **MCC** (`test_mcc`) é um número único robusto a desbalanceamento.
+- **Curvas**: `dev_history` traz `train_loss` e `dev_loss` por época (para ver
+  overfitting) e `dev_macro_f1` / `dev_negation_of_f1` (seleção de época).
+- **Significância** (`src/significance.py`): o **McNemar** diz se os padrões de
+  erro dos dois modelos diferem; o **bootstrap pareado** dá o intervalo de 95% e
+  o p-valor da diferença no F1 de `negation_of`. Se o IC95 não cruza zero, a
+  vantagem é significativa. O teste aborta se os `y_true` dos dois arquivos
+  divergirem — é a checagem de que o pareamento é legítimo (16.074 exemplos de
+  teste nos quatro `.preds.json`).
 
-### Multiplas seeds
+### Múltiplas sementes
 
-Rode uma seed por execucao mudando `--seed`, `--out` e `--ckpt-dir` (para nao
-colidir):
+Rode uma semente por execução, mudando `--seed`, `--out` e `--ckpt-dir` (para
+não colidir):
 
 ```bash
-python src/baseline_bertimbau.py --seed 43 \
-    --ckpt-dir .../checkpoints_bertimbau_seed43 \
+python src/baseline_bertimbau.py --splits-dir data/splits \
+    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 43 \
+    --ckpt-dir checkpoints/bertimbau_seed43 \
     --out results/baseline_bertimbau_seed43.json
 ```
 
-Depois agregue com `scripts/aggregate_seeds.py` — media e desvio-padrao
+Depois agregue com `scripts/aggregate_seeds.py` — média e desvio-padrão
 populacional do Macro-F1 e do F1 por classe, para os dois modelos:
 
 ```bash
 python scripts/aggregate_seeds.py            # sementes 42 e 43
-python scripts/aggregate_seeds.py --check    # so imprime, nao grava
+python scripts/aggregate_seeds.py --check    # só imprime, não grava
 ```
 
-Grava `results/summary_by_seed.json` com media, desvio e os valores por
-semente que entraram na conta. Aceita `--seeds`, `--results-dir` e `--out`.
-Nao treina nada: so le `results/baseline_*.json`.
+Grava `results/summary_by_seed.json` com média, desvio e os valores por semente
+que entraram na conta. Aceita `--seeds`, `--results-dir` e `--out`. Não treina
+nada: só lê `results/baseline_*.json`.
 
-> Com duas sementes, o desvio e **dispersao observada**, nao intervalo de
-> confianca — ver "Limitacoes" abaixo.
+> Com duas sementes, o desvio é **dispersão observada**, não intervalo de
+> confiança — ver "Limitações" abaixo.
 
-## Decisoes principais
+## Decisões principais
 
-- **Split em nivel de documento** (nao de relacao): evita vazamento de
-  vocabulario do mesmo prontuario entre train/test. Estratificado pela presenca
-  de `negation_of`. Seed fixo 42.
-- **Candidatos negativos**: o SemClinBr so anota relacoes positivas; geramos os
-  pares `no_relation` (pares ordenados, janela `max_gap`). Direcao importa para
-  `negation_of`.
-- **Baseline**: marcadores de entidade tipados + janela de contexto, cabeca de
-  classificacao em 3 classes, CrossEntropy com `class_weight=balanced`. Melhor
-  epoca pelo macro-F1 no dev; teste reportado uma unica vez.
+- **Split em nível de documento** (não de relação): evita vazamento de
+  vocabulário do mesmo prontuário entre train/test. Estratificado pela presença
+  de `negation_of`. Seed fixo 42, e o resultado registrado em
+  `data/splits/MANIFEST.json`.
+- **Candidatos negativos gerados, não anotados**: o SemClinBr só anota relações
+  positivas; os pares `no_relation` são gerados como pares **ordenados** dentro
+  de uma janela `max_gap`. A direção importa para `negation_of`.
+- **Baseline único e compartilhado**: marcadores de entidade tipados + janela de
+  contexto, cabeça de classificação em 3 classes, CrossEntropy com
+  `class_weight=balanced`. Melhor época escolhida pelo macro-F1 no **dev**;
+  teste reportado uma única vez.
+- **Artefatos do artigo derivados por script**, nunca transcritos à mão: uma
+  fonte única (`results/*.json`) para tabelas, figuras e números do texto.
 
-## Limitacoes conhecidas e proximos passos
+## Limitações conhecidas e próximos passos
 
-**Ja resolvido (era escopo pendente):**
+- **Duas sementes por modelo.** O teste pareado foi refeito dentro de cada
+  semente (42×42 e 43×43), mas duas execuções não bastam para estimar a
+  variância de inicialização com intervalo de confiança. Mais sementes é o
+  próximo passo mais barato em valor por hora de GPU.
+- **Uma única arquitetura de cabeça de classificação, sem busca de
+  hiperparâmetros.** Isso é por design: uma busca por modelo quebraria a
+  paridade que sustenta a comparação. O custo é que nenhum dos dois baselines
+  está necessariamente no seu melhor ponto de operação.
+- **`max_gap=20` limita os pares candidatos a entidades próximas.** Relações de
+  longa distância estão fora do espaço de avaliação — o resultado vale para o
+  regime de vizinhança curta.
+- **Três classes.** O espaço de rótulos é um recorte do SemClinBr; ampliá-lo
+  muda a dificuldade da tarefa e pediria reexecutar tudo.
 
-- **Hashes SHA dos splits.** `make_splits.py` grava
-  `data/splits/MANIFEST.json` com SHA-256, contagem de documentos e contagem
-  de relacoes por particao. O manifesto e versionado, entao regerar os splits
-  por engano muda o hash e aparece no `git diff`. Antes a evidencia era so
-  indireta (os quatro `.preds.json` tem exatamente 16.074 exemplos e
-  `significance.py` aborta se os `y_true` divergirem).
-- **Agregacao multi-seed automatizada.** `scripts/aggregate_seeds.py`
-  substitui o calculo manual e grava `results/summary_by_seed.json`.
+## Licença
 
-**Limitacoes de metodo (discutidas no artigo):**
+O **código** e a **documentação** deste repositório são MIT — veja
+[`LICENSE`](LICENSE).
 
-- Duas sementes por modelo. O teste pareado foi refeito dentro de cada semente
-  (42x42 e 43x43), mas duas execucoes nao bastam para estimar a variancia de
-  inicializacao com intervalo de confianca.
-- Uma unica arquitetura de cabeca de classificacao; sem busca de
-  hiperparametros (por design — a busca quebraria a paridade).
-- `max_gap=20` limita os pares candidatos a entidades proximas; relacoes de
-  longa distancia estao fora do espaco de avaliacao.
+> **Os dados têm licença separada.** O corpus **SemClinBr não é distribuído
+> aqui**, possui licença própria e restrita, e deve ser obtido separadamente
+> junto aos autores do corpus. A licença MIT deste repositório **não se estende a
+> ele**.
+
+Para citar este trabalho, use os metadados de [`CITATION.cff`](CITATION.cff).
