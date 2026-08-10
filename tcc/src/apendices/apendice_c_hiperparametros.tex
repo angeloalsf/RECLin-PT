@@ -1,0 +1,101 @@
+\chapter[Hiperparâmetros]{Hiperparâmetros}
+\label{ap:hiperparametros}
+
+Este apêndice consolida os hiperparâmetros das etapas já executadas do pipeline.
+O Quadro~\ref{tab:hp_gerais} reúne os parâmetros comuns à geração de pares
+candidatos e à avaliação; o Quadro~\ref{quad:hp_b1} detalha o \emph{baseline} de
+regras (B1) e o Quadro~\ref{quad:hp_b2} o \emph{baseline} de regressão logística
+(B2).
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Parâmetros gerais do pipeline.}
+  \label{tab:hp_gerais}
+  \begin{tabular}{ll}
+  \toprule
+  Parâmetro & Valor \\
+  \midrule
+  Semente aleatória (padrão) & 42 \\
+  Sementes p/ análise de variância & 42, 123, 7, 2024, 31337 \\
+  Janela máxima de pares (\texttt{max\_gap}) & 200 caracteres \\
+  Partição treino/dev/teste & 80/10/10 (nível de documento) \\
+  \emph{Bootstrap} (reamostragens) & 1000 (método percentil, IC95\%) \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{quadro}
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Hiperparâmetros do \emph{baseline} de regras (B1).}
+  \label{quad:hp_b1}
+  \begin{tabular}{ll}
+  \toprule
+  Parâmetro & Valor \\
+  \midrule
+  Contexto à esquerda (R1) & 30 caracteres \\
+  Limiar de distância (R2) & 50 caracteres \\
+  Rótulo padrão (R3) & \texttt{no\_relation} \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/baselines/baseline\_rules.py}).}
+\end{quadro}
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Hiperparâmetros do \emph{baseline} de regressão logística (B2).}
+  \label{quad:hp_b2}
+  \begin{tabular}{ll}
+  \toprule
+  Parâmetro & Valor \\
+  \midrule
+  \emph{TF-IDF} (entre/esquerda) & n-gramas 1--2, \emph{lowercase}, \texttt{min\_df}=2 \\
+  Vocabulário máximo (entre) & 50000 \\
+  Faixas de distância (\emph{buckets}) & 0, 10, 25, 50, 100, 200 \\
+  Reescala de classes & \texttt{class\_weight="balanced"} \\
+  Regularização (C) & 1.0 \\
+  \emph{Solver} & \texttt{lbfgs} (padrão do \emph{scikit-learn}) \\
+  Máximo de iterações & 1000 \\
+  Características totais & 94257 \\
+  Candidatos (treino) & 831902 \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/baselines/baseline\_lr.py} e \texttt{experiments/results/baseline\_lr.json}).}
+\end{quadro}
+
+O Quadro~\ref{quad:hp_biobertpt} reúne os hiperparâmetros \emph{planejados} para o
+modelo principal (BioBERTpt), conforme \texttt{docs/plano\_notebook\_biobertpt.md}.
+Os valores definitivos serão confirmados após a execução do treino.
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Hiperparâmetros planejados do modelo proposto (BioBERTpt).}
+  \label{quad:hp_biobertpt}
+  \begin{tabular}{ll}
+  \toprule
+  Parâmetro & Valor planejado \\
+  \midrule
+  \emph{Encoder} & \texttt{pucpr/biobertpt-all} \\
+  Representação de entrada & marcadores de entidade tipados (\texttt{[E1]}/\texttt{[E2]}) \\
+  \emph{Pooling} & concatenação dos estados de início ($h_{E1}, h_{E2}$) \\
+  Cabeçote & 1 camada linear (1536 $\rightarrow$ 3), \emph{dropout} 0,1 \\
+  Perda & \emph{cross-entropy} ponderada (\texttt{class\_weight="balanced"}) \\
+  \emph{max\_length} & 256 \emph{tokens} \\
+  Taxa de aprendizado & 2e-5 (AdamW) \\
+  \emph{Batch} (treino) & 16 + acúmulo 2 (efetivo 32) \\
+  \emph{Batch} (avaliação) & 64 \\
+  Épocas (máx.) & 5 (com \emph{early stopping}, paciência 2) \\
+  \emph{warmup\_ratio} & 0,1 \\
+  \emph{weight\_decay} & 0,01 \\
+  \emph{fp16} & sim \\
+  Seleção de modelo & macro-F1 no \emph{dev} \\
+  Sementes de treino & 42, 123, 1337 \\
+  \emph{Bootstrap} & 1000, semente 42 (fixa) \\
+  Hardware & Google Colab, \emph{Tesla} T4 \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{docs/plano\_notebook\_biobertpt.md}).}
+\end{quadro}
+
+Os valores efetivamente utilizados substituirão os planejados após a execução do
+treino do modelo.

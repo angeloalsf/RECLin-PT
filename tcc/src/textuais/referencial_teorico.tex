@@ -1,0 +1,71 @@
+\chapter[Referencial Teórico]{Referencial Teórico}
+\label{cap:referencial}
+
+Este capítulo reúne os fundamentos necessários à compreensão do trabalho:
+o processamento de linguagem natural aplicado a textos clínicos, a tarefa de
+extração de relações, as abordagens baseadas em regras e em aprendizado, e os
+modelos de linguagem baseados em \foreignlanguage{english}{transformers}.
+
+\section{Processamento de linguagem natural clínico}
+
+O PLN clínico ocupa-se da análise automática de textos produzidos no cuidado em
+saúde, como notas de evolução, sumários de alta e laudos. Esses textos
+apresentam características que os distinguem da linguagem geral: vocabulário
+técnico, abreviações não padronizadas, telegrafismo (omissão de elementos
+gramaticais) e prevalência de construções negativas e de incerteza. Tais
+propriedades tornam a transferência direta de ferramentas treinadas em domínio
+aberto pouco eficaz, motivando recursos e modelos específicos do domínio.
+
+\section{Extração de entidades e de relações}
+
+A extração de informação em texto clínico costuma ser decomposta em duas
+tarefas encadeadas. A primeira, \textbf{reconhecimento de entidades nomeadas}
+(\foreignlanguage{english}{Named Entity Recognition}, NER), delimita trechos do
+texto que mencionam conceitos de interesse e lhes atribui um tipo semântico. A
+segunda, \textbf{extração de relações} (RE), determina se um par de entidades
+mantém uma relação e de que tipo. Formalmente, dado um par ordenado de entidades
+$(e_1, e_2)$ em um documento, a RE pode ser modelada como um problema de
+classificação que associa ao par um rótulo dentro de um conjunto pré-definido.
+
+Neste trabalho o espaço de rótulos é \texttt{negation\_of},
+\texttt{associated\_with} e \texttt{no\_relation}. O rótulo
+\texttt{no\_relation} é fundamental: como a anotação de corpora registra apenas
+relações positivas, todo par de entidades não anotado deve ser tratado como
+ausência de relação, o que introduz um forte desbalanceamento de classes.
+
+\section{Abordagens baseadas em regras e a negação clínica}
+
+Abordagens baseadas em regras codificam conhecimento linguístico explícito. Em
+detecção de negação clínica, o algoritmo \textbf{NegEx} \cite{chapman_2001_negex}
+tornou-se referência: a partir de um léxico de gatilhos de negação e de janelas
+de contexto, classifica achados como negados ou afirmados. Sua simplicidade e
+eficácia derivam do fato de a negação clínica ser altamente lexicalizada. Em
+português, gatilhos como ``não'', ``sem'', ``nega'' e ``ausência de'', além de
+adjetivos que embutem negação morfologicamente (``afebril'', ``anictérico''),
+sustentam estratégias análogas, adotadas neste trabalho como \emph{baseline}.
+
+\section{Abordagens baseadas em aprendizado de máquina}
+
+Métodos aprendidos estimam, a partir de exemplos rotulados, a associação entre
+características do par de entidades e o rótulo da relação. Modelos lineares como a
+regressão logística, alimentados por características léxicas (por exemplo,
+representações \foreignlanguage{english}{TF-IDF} do texto entre as entidades) e
+estruturais (tipos das entidades, distância, direção), oferecem um compromisso
+entre interpretabilidade e desempenho, servindo de \emph{sanity check} antes de
+modelos mais custosos. Sua principal limitação é a representação de palavras como
+unidades independentes, incapaz de capturar dependências de longo alcance e
+contexto.
+
+\section{Modelos baseados em \emph{transformers}}
+
+A arquitetura \foreignlanguage{english}{Transformer} \cite{vaswani_2017_attention},
+baseada em mecanismos de atenção, viabilizou modelos de linguagem pré-treinados
+que produzem representações contextuais das palavras. O \textbf{BERT}
+\cite{devlin_2019_bert} popularizou o paradigma de pré-treinamento seguido de
+ajuste fino (\foreignlanguage{english}{fine-tuning}) para tarefas específicas.
+Para o português, modelos multilíngues como o \textbf{XLM-R}
+\cite{conneau_2020_xlmr} e, sobretudo, modelos especializados no domínio clínico
+como o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt} — adaptado a narrativas
+clínicas e textos biomédicos em português brasileiro — constituem candidatos
+naturais para a extração de relações clínicas, e é sobre eles que se apoia a
+proposta deste trabalho.

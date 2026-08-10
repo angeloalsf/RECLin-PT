@@ -1,0 +1,60 @@
+% RESUMO - PT
+\begin{resumo}
+  \vspace{-15pt}
+
+  O registro eletrônico em saúde concentra grande parte da informação clínica em
+  texto livre, no qual a relação entre conceitos --- em especial a negação de
+  achados --- é determinante para a correta interpretação. Este trabalho investiga
+  a extração de relações entre entidades clínicas em português sobre o corpus
+  SemClinBr, considerando o espaço de rótulos \texttt{negation\_of},
+  \texttt{associated\_with} e \texttt{no\_relation}. Propõe-se uma cadeia
+  experimental reprodutível que vai do texto bruto às métricas finais, composta
+  por: um parser determinístico do formato XML do corpus; análise exploratória das
+  relações; particionamento 80/10/10 em nível de documento, estratificado e
+  congelado para evitar vazamento de dados; e geração controlada de pares
+  candidatos. Foram estabelecidos \emph{baselines} de referência --- classe
+  majoritária e regras léxicas inspiradas no algoritmo NegEx ---, avaliados por
+  macro-F1 e F1 por classe com intervalos de confiança de 95\% obtidos por
+  \emph{bootstrap}. O \emph{baseline} de regras alcançou macro-F1 de 0,236,
+  superando a classe majoritária (0,006), mas com baixa precisão nas classes
+  positivas. Um \emph{baseline} de regressão logística com características léxicas e
+  estruturais elevou o macro-F1 para 0,637, superando os anteriores em todas as
+  métricas e confirmando o ganho de modelos aprendidos. Esses resultados estabelecem
+  patamares de comparação para a etapa seguinte, o ajuste fino do modelo contextual
+  de domínio clínico BioBERTpt.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Palavras-chave}: \palavraschaveemlinha
+\end{resumo}
+
+% RESUMO - EN
+\begin{resumo}[Abstract]
+  \vspace{-15pt}
+
+  \begin{otherlanguage*}{english}
+
+  Electronic health records store much clinical information as free text, in which
+  the relationship between concepts --- particularly the negation of findings ---
+  is decisive for correct interpretation. This work investigates relation
+  extraction between clinical entities in Portuguese over the SemClinBr corpus,
+  considering the label space \texttt{negation\_of}, \texttt{associated\_with} and
+  \texttt{no\_relation}. We propose a reproducible experimental pipeline that goes
+  from raw text to final metrics, comprising: a deterministic parser for the
+  corpus XML format; exploratory analysis of relations; a document-level, stratified
+  and frozen 80/10/10 split to prevent data leakage; and controlled candidate-pair
+  generation. Reference baselines --- majority class and NegEx-inspired lexical
+  rules --- were established and evaluated with macro-F1 and per-class F1 with 95\%
+  bootstrap confidence intervals. The rule-based baseline reached a macro-F1 of
+  0.236, surpassing the majority class (0.006) but with low precision on the
+  positive classes. A logistic-regression baseline with lexical and structural
+  features raised the macro-F1 to 0.637, outperforming the previous baselines on
+  every metric and confirming the gain of learned models. These results establish
+  comparison baselines for the next step, the fine-tuning of the clinical-domain
+  contextual model BioBERTpt.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Keywords}: \inlinekeywords
+\end{otherlanguage*}
+\end{resumo}

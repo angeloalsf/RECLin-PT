@@ -1,0 +1,40 @@
+\chapter[Conclusão]{Conclusão}
+\label{cap:conclusao}
+
+Este trabalho abordou a extração de relações entre entidades clínicas em português
+sobre o corpus SemClinBr, no espaço de rótulos \texttt{negation\_of},
+\texttt{associated\_with} e \texttt{no\_relation}. A ênfase recaiu sobre a
+construção de uma cadeia experimental reprodutível, do texto bruto às métricas com
+intervalos de confiança.
+
+\section{Contribuições}
+
+As principais contribuições até o momento são: (i) um parser fiel e determinístico
+do formato XML do SemClinBr, com verificação de sanidade e correção controlada de
+\emph{offsets}; (ii) uma caracterização do corpus que evidencia o desbalanceamento
+das relações e a proximidade entre entidades relacionadas; (iii) um protocolo de
+particionamento em nível de documento, estratificado e congelado, que previne
+vazamento de dados; (iv) um gerador determinístico de pares candidatos
+compartilhado por todos os modelos; e (v) \emph{baselines} de referência avaliados
+sob um protocolo estatístico uniforme (macro-F1 com IC95\% por
+\foreignlanguage{english}{bootstrap}), estabelecendo patamares comparáveis para o
+mesmo corpus.
+
+Os resultados dos \emph{baselines} mostraram que soluções triviais são inviáveis
+sob o desbalanceamento da tarefa (B0 com macro-F1 $0{,}006$) e que abordagens
+léxicas, embora alcancem alta cobertura da negação, têm precisão limitada (B1 com
+macro-F1 $0{,}236$). A regressão logística (B2) superou ambos com folga
+(macro-F1 $0{,}637$), confirmando o ganho de modelos aprendidos e motivando o uso
+de modelos contextuais para reduzir a lacuna remanescente, sobretudo na classe
+\texttt{associated\_with}.
+
+\section{Trabalhos futuros}
+
+Como continuidade, prevê-se: executar o ajuste fino do BioBERTpt
+\cite{schneider_2020_biobertpt} como modelo proposto, nas seeds de treino 42, 123 e
+1337; realizar a análise de variância entre seeds e a comparação estatística com o
+\emph{baseline} B2 pelo teste de McNemar \cite{dietterich_1998_mcnemar}; investigar o
+tratamento do escopo da negação e da direção das relações; e avaliar o impacto da
+janela máxima na geração de pares candidatos. A médio prazo, a integração com uma
+etapa de NER automática permitiria medir o desempenho da extração de relações em
+um cenário fim a fim.

@@ -1,0 +1,195 @@
+\chapter[Experimentos e Resultados]{Experimentos e Resultados}
+\label{cap:experimentos}
+
+Este capítulo reporta os experimentos conduzidos até o momento e seus resultados.
+Todos os modelos foram avaliados sobre o mesmo conjunto de teste, composto por
+$107\,568$ pares candidatos gerados conforme o Capítulo~\ref{cap:metodologia}, e as
+métricas seguem o protocolo ali descrito (macro-F1 e F1 por classe, com intervalos
+de confiança de 95\% por \foreignlanguage{english}{bootstrap}).
+
+\section{Configuração experimental}
+
+A semente aleatória foi fixada em $42$ em todas as etapas, e os intervalos de
+confiança foram estimados com $1\,000$ reamostragens pelo método percentil
+(Quadro~\ref{quad:ambiente}). O conjunto de teste apresenta forte
+desbalanceamento: a classe \texttt{no\_relation} concentra a quase totalidade dos
+pares ($106\,451$ instâncias), enquanto \texttt{associated\_with} e
+\texttt{negation\_of} somam, respectivamente, $957$ e $160$ instâncias. Esse
+cenário torna o macro-F1 a métrica mais informativa, por penalizar modelos que
+negligenciam as classes minoritárias.
+
+\section{Resultados}
+
+A Tabela~\ref{tab:resultados} consolida os resultados dos três \emph{baselines}
+executados (B0, B1 e B2), com a linha do modelo principal (BioBERTpt) reservada
+para a etapa seguinte. Os melhores valores por coluna (entre os modelos já
+executados) estão em negrito.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Resultados dos modelos no conjunto de teste (macro-F1 e F1 por classe, com IC95\%).}
+  \label{tab:resultados}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrllll}
+  \toprule
+  Modelo & $n_{\text{test}}$ & Macro-F1 [IC95\%] & F1$_{\text{negation\_of}}$ & F1$_{\text{associated\_with}}$ & F1$_{\text{no\_relation}}$ \\
+  \midrule
+  Classe majoritária (B0) & 107568 & 0,006 [0,006; 0,006] & 0,000 [0,000; 0,000] & 0,018 [0,017; 0,019] & 0,000 [0,000; 0,000] \\
+  Regras léxicas (B1) & 107568 & 0,236 [0,234; 0,238] & 0,010 [0,008; 0,011] & 0,058 [0,054; 0,061] & 0,641 [0,638; 0,644] \\
+  Regressão logística (B2) & 107568 & \textbf{0,637 [0,620; 0,653]} & \textbf{0,658 [0,608; 0,704]} & \textbf{0,272 [0,255; 0,288]} & \textbf{0,982 [0,981; 0,982]} \\
+  \midrule
+  BioBERTpt (principal) & --- & \multicolumn{4}{c}{--- (a executar no Colab, Semana 5--6)} \\
+  \bottomrule
+  \end{tabular}}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor a partir de \texttt{experiments/results/*.json}.}
+\end{table}
+
+\section{Análise dos \emph{baselines}}
+
+O modelo de classe majoritária (B0) obtém macro-F1 de apenas $0{,}006$: por
+predizer sempre \texttt{associated\_with}, zera o F1 das demais classes e confirma
+que a métrica expõe corretamente a inutilidade de soluções triviais sob
+desbalanceamento extremo.
+
+O \emph{baseline} de regras léxicas (B1) eleva o macro-F1 para
+$0{,}236$ \mbox{[IC95\%: $0{,}234$; $0{,}238$]}. A decomposição por classe revela
+que esse desempenho é sustentado sobretudo pela classe \texttt{no\_relation}
+($\text{F1}=0{,}641$), enquanto as classes positivas permanecem baixas
+(\texttt{associated\_with} $=0{,}058$ e \texttt{negation\_of} $=0{,}010$). As
+regras alcançam alta cobertura das classes positivas, mas com precisão muito baixa:
+o léxico de negação dispara em excesso e o limiar de distância classifica muitos
+pares como \texttt{associated\_with}, gerando grande número de falsos positivos.
+
+A regressão logística (B2) supera os dois \emph{baselines} anteriores em todas as
+métricas, atingindo macro-F1 de $0{,}637$ \mbox{[IC95\%: $0{,}620$; $0{,}653$]} ---
+quase o triplo do B1, com intervalos de confiança que não se sobrepõem, o que
+indica que o ganho é estatisticamente robusto. O salto mais expressivo ocorre na
+classe \texttt{negation\_of}, que vai de $0{,}010$ (B1) para $0{,}658$ (B2): o
+modelo aprende a combinar o sinal lexical de negação com o contexto e os tipos das
+entidades, em vez de aplicar a regra rígida do B1. A classe \texttt{associated\_with}
+permanece a mais difícil ($\text{F1}=0{,}272$), com alta cobertura
+(\emph{recall} $0{,}73$) mas baixa precisão ($0{,}17$), refletindo a dificuldade de
+distinguir associação genuína de mera proximidade textual. Esse desempenho do B2
+--- obtido com características rasas --- valida o \emph{pipeline} de pares e
+estabelece um patamar exigente para o modelo contextual.
+
+\section{Matrizes de confusão}
+\label{sec:confusao}
+
+As Figuras~\ref{fig:cm_majority}, \ref{fig:cm_rules} e~\ref{fig:cm_lr} apresentam as
+matrizes de confusão dos três \emph{baselines}, \textbf{normalizadas por linha}, de
+modo que cada célula indica a fração das instâncias de uma classe verdadeira
+atribuída a cada classe predita --- os valores da diagonal correspondem, assim, ao
+\emph{recall} por classe. Essa visão complementa o F1 por classe ao revelar
+\emph{para onde} vão os erros de cada modelo.
+
+A matriz do B0 (\autoref{fig:cm_majority}) é degenerada: por predizer sempre
+\texttt{associated\_with}, concentra toda a massa na coluna correspondente, e as
+linhas de \texttt{negation\_of} e \texttt{no\_relation} têm \emph{recall} nulo. O B1
+(\autoref{fig:cm_rules}) alcança alto \emph{recall} nas classes positivas
+($0{,}856$ em \texttt{negation\_of} e $0{,}903$ em \texttt{associated\_with}), mas
+dispersa a classe majoritária \texttt{no\_relation}, da qual $26{,}4\%$ é
+erroneamente enviada para \texttt{negation\_of} e outros $26{,}4\%$ para
+\texttt{associated\_with} --- a super-predição de negação que explica sua baixa
+precisão. O B2 (\autoref{fig:cm_lr}) tem diagonal forte ($0{,}956$, $0{,}725$ e
+$0{,}966$); o erro dominante remanescente é a confusão entre
+\texttt{associated\_with} e \texttt{no\_relation} ($27{,}3\%$ das instâncias de
+\texttt{associated\_with} vão para \texttt{no\_relation}), coerente com a baixa
+precisão dessa classe e com a dificuldade de distinguir associação genuína de mera
+proximidade textual.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Matriz de confusão do \emph{baseline} de classe majoritária (B0), normalizada por linha.}
+  \label{fig:cm_majority}
+  \includegraphics[width=0.6\textwidth]{confusion/cm_majority.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/evaluation/confusion\_matrices.py}).}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Matriz de confusão do \emph{baseline} de regras léxicas (B1), normalizada por linha.}
+  \label{fig:cm_rules}
+  \includegraphics[width=0.6\textwidth]{confusion/cm_rules.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/evaluation/confusion\_matrices.py}).}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Matriz de confusão do \emph{baseline} de regressão logística (B2), normalizada por linha.}
+  \label{fig:cm_lr}
+  \includegraphics[width=0.6\textwidth]{confusion/cm_lr.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/evaluation/confusion\_matrices.py}).}
+\end{figure}
+
+\section{Significância estatística (teste de McNemar)}
+\label{sec:mcnemar}
+
+A não-sobreposição dos intervalos de confiança sugere que as diferenças entre os
+\emph{baselines} são reais, mas é uma evidência indireta. A
+Tabela~\ref{tab:mcnemar} traz o teste pareado de McNemar para os três pares,
+calculado sobre os acertos por instância no mesmo conjunto de teste, com os
+valores-$p$ ajustados por Holm-Bonferroni (Capítulo~\ref{cap:metodologia}).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Teste de McNemar pareado entre os \emph{baselines} ($\alpha=0{,}05$, correção de Holm-Bonferroni).}
+  \label{tab:mcnemar}
+  \resizebox{\textwidth}{!}{\input{tabelas/mcnemar}}\\[4pt]
+  {\footnotesize $b$/$c$: instâncias em que apenas o primeiro/segundo modelo do par
+  acerta. Fonte: elaborado pelo autor (\texttt{scripts/evaluation/mcnemar\_baselines.py}).}
+\end{table}
+
+Os três pares \textbf{rejeitam} a hipótese nula de igualdade
+($p_{\text{Holm}} < 0{,}001$), confirmando que a progressão
+$\text{B0} < \text{B1} < \text{B2}$ é estatisticamente significativa também sob
+teste pareado, e não apenas pela leitura dos intervalos de confiança. As contagens
+discordantes são fortemente assimétricas em favor do modelo mais complexo: no par
+B1$\times$B2, por exemplo, há $c=52\,771$ instâncias em que apenas o B2 acerta
+contra $b=262$ em que apenas o B1 acerta. Em todos os casos $b+c \geq 25$, de modo
+que se aplicou a estatística $\chi^2$ com correção de continuidade, em vez do teste
+binomial exato.
+
+\section{Robustez do intervalo de confiança (\emph{bootstrap} por documento)}
+\label{sec:bootstrap_doc}
+
+Por fim, a Tabela~\ref{tab:bootstrap_doc} compara o IC95\% do macro-F1 estimado por
+\emph{bootstrap} por instância (procedimento principal) com o estimado por
+\emph{bootstrap} por documento (análise de robustez, que respeita a não-independência
+dos pares de um mesmo documento). Como esperado, o intervalo por documento é
+ligeiramente mais largo --- para o B2, $[0{,}617;\,0{,}659]$ contra
+$[0{,}620;\,0{,}653]$ por instância ---, mas a conclusão central se mantém: o
+intervalo do B2 continua \textbf{muito acima} do intervalo do B1
+($[0{,}225;\,0{,}246]$ por documento), de modo que a separação $\text{B1} < \text{B2}$
+sobrevive ao critério mais conservador. A estimativa pontual é idêntica nas duas
+variantes (o \emph{bootstrap} afeta apenas a largura do intervalo, não o ponto).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Macro-F1 e IC95\% por \emph{bootstrap} por instância \emph{vs.} por documento ($n_{\text{doc}}=99$).}
+  \label{tab:bootstrap_doc}
+  \begin{tabular}{lccc}
+  \toprule
+  Modelo & Macro-F1 & IC95\% (instância) & IC95\% (documento) \\
+  \midrule
+  Classe majoritária (B0) & 0,006 & [0,006; 0,006] & [0,005; 0,007] \\
+  Regras léxicas (B1)     & 0,236 & [0,234; 0,238] & [0,225; 0,246] \\
+  Regressão logística (B2) & 0,637 & [0,620; 0,653] & [0,617; 0,659] \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{experiments/results/bootstrap\_by\_document.json}).}
+\end{table}
+
+\section{Modelo proposto baseado em \emph{transformer}}
+
+O ajuste fino do BioBERTpt (\texttt{pucpr/biobertpt-all}), com marcadores de
+entidade tipados, \emph{cross-entropy} ponderada e seleção de modelo por macro-F1
+no conjunto de desenvolvimento, constitui a etapa imediatamente seguinte do
+trabalho, a ser executada em ambiente com GPU (Google Colab, \emph{Tesla} T4) nas
+seeds de treino 42, 123 e 1337, conforme o planejamento em
+\texttt{docs/plano\_notebook\_biobertpt.md}. Sua avaliação seguirá exatamente o
+mesmo protocolo dos \emph{baselines} --- macro-F1 e F1 por classe com IC95\%,
+média $\pm$ desvio entre as seeds e comparação com o B2 pelo teste de McNemar
+\cite{dietterich_1998_mcnemar} ---, de modo que os resultados se incorporem
+diretamente à Tabela~\ref{tab:resultados}. A análise comparativa correspondente
+será apresentada após a conclusão dessa etapa.

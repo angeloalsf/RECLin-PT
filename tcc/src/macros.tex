@@ -1,0 +1,90 @@
+%% Macros de dados do documento
+\autor{Angelo Antonio Lima Silveira Filho}
+\titulo{RECLin-PT: extração de relações em notas clínicas em português sobre o corpus SemClinBr}
+\instituicao{Instituto Federal do Espírito Santo}
+\curso{Bacharelado em Sistemas de Informação}
+\local{Cachoeiro de itapemirim}
+\data{2026}
+
+
+\tipotrabalho{Trabalho de Graduação}
+\preambulo{Trabalho de Conclusão de Curso apresentado à Coordenadoria do Curso de Sistemas de Informação do
+Instituto Federal de Educação, Ciência e Tecnologia do Espírito Santo, como requisito parcial para a obtenção do título de Bacharel em Sistemas de Informação.}
+
+\orientador[Orientador][Prof. Dr.]{Cristiano}[da Silveira Colombo]{Instituto Federal do Espírito Santo}
+\coorientador[Coorientadora][Profa. Dra.]{Beltrana}[de Tal]{Instituto Federal do Espírito Santo}
+
+\examinadori{Profa. Dra. Fulana de Tal}{Instituto Federal do Espírito Santo}{Examinadora}
+\examinadorii{Prof. Dr. Cicrano de Tal}{Instituto Federal do Espírito Santo}{Examinador}
+
+\approvaldate{01}{Agosto}{2026}
+
+% Palavras-chaves
+\palavraschave{Extração de relações}[Processamento de linguagem natural clínico][Língua portuguesa][SemClinBr][Aprendizado de máquina]
+\keywords{Relation extraction}[Clinical natural language processing][Portuguese language][SemClinBr][Machine learning]
+
+% Ficha catalográfica
+\fichabiblioteca{
+    (Biblioteca do Campus Cachoeiro de Itapemirim)
+}
+\fichaautor{Elaborada por XXXXXXXXXXXXXXXXXXXXX – CRB-X/ES - XXX}
+% TODO: ficha catalográfica é elaborada pela Biblioteca do campus; os assuntos
+% abaixo são uma sugestão a confirmar com o(a) bibliotecário(a).
+\fichatags{
+    1. Processamento de linguagem natural.
+    2. Extração de relações.
+    3. Informática em saúde.
+    4. Aprendizado de máquina.
+    5. Língua portuguesa.
+    I. Colombo, Cristiano da Silveira.
+    II. Título.
+    III. Instituto Federal do Espírito Santo.
+}
+
+\cutter{X999y}
+\cdd{000.00}
+\selectlanguage{brazil}
+
+% Arial (para usar times-new-roman, comente as três linhas abaixo)
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\ABNTEXchapterfont}{\bfseries}
+% Comandos para revisar o texto
+\usepackage{easyReview}
+
+% ---------------------------------------------------------------------
+% AJUSTES DE LAYOUT E AMBIENTE QUADRO (RECLin-PT)
+% ---------------------------------------------------------------------
+% (1) Reduz estouros de margem (overfull hbox) em parágrafos que contêm
+%     termos longos em \texttt (ex.: associated_with, no_relation).
+\setlength{\emergencystretch}{3em}
+
+% (2) Permite quebra de linha logo após o sublinhado em nomes monoespaçados,
+%     como associated\_with / no\_relation, evitando que estourem a margem.
+\makeatletter
+\let\reclin@origunderscore\_
+\renewcommand{\_}{\reclin@origunderscore\allowbreak}
+\makeatother
+
+% (3) Habilita o ambiente flutuante "quadro". O iftex.cls já preparou a
+%     "Lista de Quadros" e o contador (\newlistof/\newlistentry), mas deixou
+%     o \newfloat comentado para não recriar o contador. Aqui definimos o
+%     ambiente reutilizando o contador e a extensão .loq existentes.
+\makeatletter
+\def\fps@quadro{tbp}
+\def\ftype@quadro{16}
+\def\ext@quadro{loq}
+\def\fnum@quadro{\quadroname\nobreakspace\thequadro}
+\newenvironment{quadro}[1][tbp]{\@float{quadro}[#1]}{\end@float}
+\makeatother
+
+
+%% Elementos opcionais
+\editardedicatoria{\input{pre_textuais/dedicatoria}}
+\editaragradecimentos{\input{pre_textuais/agradecimentos}}
+\editarepigrafe{\input{pre_textuais/epigrafe}}
+
+
+%% Listas [Siglas e Simbolos]
+\editarlistasiglas{\input{pre_textuais/siglas}}
+\editarlistasimbolos{\input{pre_textuais/simbolos}}

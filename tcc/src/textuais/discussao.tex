@@ -1,0 +1,69 @@
+\chapter[Discussão]{Discussão}
+\label{cap:discussao}
+
+Este capítulo interpreta os resultados obtidos até o momento, discute limitações
+do trabalho e aponta ameaças à validade dos achados.
+
+\section{Análise dos resultados}
+
+Os resultados dos \emph{baselines} confirmam as hipóteses iniciais. Primeiro, o
+problema é de fato dominado pelo desbalanceamento: a classe majoritária obtém
+macro-F1 próximo de zero, e o ganho do \emph{baseline} de regras concentra-se na
+classe \texttt{no\_relation}. Segundo, a negação clínica em português é
+lexicalizada o bastante para que regras simples tenham alta cobertura, mas a baixa
+precisão observada mostra que a mera presença de um marcador de negação na janela
+não basta: o escopo da negação e a direção da relação precisam ser modelados.
+
+A regressão logística (B2) corrobora essa interpretação. Ao aprender a ponderar o
+sinal lexical de negação com o contexto e os tipos das entidades, eleva o macro-F1
+de $0{,}236$ (B1) para $0{,}637$, com ganho expressivo justamente na classe
+\texttt{negation\_of} (de $0{,}010$ para $0{,}658$) e intervalos de confiança que
+não se sobrepõem aos do B1. Isso mostra que um modelo aprendido, ainda que linear e
+com características rasas, supera substancialmente as regras --- evidência empírica
+que justifica a transição para modelos contextuais, dos quais se espera ganho
+adicional sobretudo na classe \texttt{associated\_with}, que permanece a mais
+difícil (F1 $=0{,}272$ no B2, limitada pela baixa precisão).
+
+\section{Limitações}
+
+As regras léxicas do \emph{baseline} B1 não tratam negação de escopo amplo
+(``o paciente não apresenta nenhum dos seguintes: A, B, C''), negação estendida
+por conjunção, nem a direção da relação, atribuindo o mesmo rótulo aos pares
+$(a,b)$ e $(b,a)$. Além disso, a tarefa pressupõe entidades já anotadas
+(\emph{gold}): a avaliação não considera o erro propagado de uma etapa de NER
+automática, de modo que os resultados refletem a extração de relações isoladamente.
+Por fim, o modelo principal baseado em \foreignlanguage{english}{transformer}
+(BioBERTpt) ainda não foi executado, de modo que a comparação final entre o
+\emph{baseline} aprendido (B2) e o modelo contextual depende dessa etapa.
+
+\section{Ameaças à validade}
+
+Quanto à validade interna, o congelamento das partições com semente fixa e
+verificação por \emph{hashes} SHA-256, somado ao particionamento em nível de
+documento, mitiga o vazamento de dados — a principal causa de resultados não
+reproduzíveis em PLN biomédico. Restam, contudo, decisões de projeto que podem
+influenciar os números, como a janela máxima de $200$ caracteres na geração de
+pares candidatos, que descarta relações verdadeiras mais distantes e impõe um
+\textbf{teto de recall} ao sistema. Esse limite, porém, foi quantificado
+(Seção~\ref{sec:teto_recall}, Tabela~\ref{tab:teto_recall}) e é pequeno: no conjunto
+de teste, apenas $4$ de $1\,125$ relações \emph{gold} ($0{,}36\%$, todas
+\texttt{associated\_with}) caem fora da janela, fixando o teto de recall em
+$99{,}64\%$. Trata-se, assim, de uma limitação documentada e de magnitude conhecida,
+e não de uma fonte de incerteza não medida --- o que reforça a defensabilidade do
+protocolo.
+
+Uma segunda decisão de avaliação diz respeito à largura dos intervalos de confiança.
+O \emph{bootstrap} por instância, adotado como procedimento principal, trata os
+$107\,568$ candidatos como independentes, o que não é estritamente verdadeiro, pois
+pares de um mesmo documento compartilham texto e vocabulário. Para endereçar essa
+ameaça, reportou-se também o \emph{bootstrap} por documento
+(Seção~\ref{sec:bootstrap_doc}), mais conservador; a separação entre B1 e B2
+sobrevive ao intervalo mais largo, de modo que a conclusão não depende da hipótese
+de independência.
+
+Quanto à validade externa, o SemClinBr, apesar de multi-institucional e
+multiespecialidade, representa um conjunto específico de instituições e estilos de
+redação; a generalização para outros contextos clínicos deve ser feita com
+cautela. As inconsistências de anotação conhecidas do corpus, ainda que tratadas
+e registradas pelo parser, também impõem um limite superior ao desempenho
+alcançável.

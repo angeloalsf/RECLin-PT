@@ -1,0 +1,136 @@
+% =====================================================================
+% Bibliografia do TCC -- RECLin-PT
+%
+% Estilo: abntex2-alf (autor-data, ABNT NBR 6023).
+% No texto, cite com: \cite{chave}, \citeonline{chave}.
+%
+% IMPORTANTE: BibTeX nao trata o sinal de porcentagem como comentario
+% completo -- ele ignora texto fora de entradas, MAS qualquer arroba
+% (mesmo apos porcentagem) dispara o parser de entrada e gera erro.
+% Por isso este arquivo nao contem o caractere arroba dentro de comentarios.
+% Use o arquivo bibliografia.bib.examples (no mesmo diretorio) como
+% referencia de tipos de entrada.
+%
+% Convencao de chave do projeto:
+%   sobrenome_primeiroautor_ANO_palavra      (snake_case)
+%
+% Tipos comuns (sem o arroba para nao confundir o BibTeX):
+%   article         artigo em periodico
+%   inproceedings   paper em conferencia (anais)
+%   book            livro
+%   inbook          capitulo de livro com autor proprio
+%   misc            relatorios, preprints, recursos web
+%   phdthesis       tese
+%   mastersthesis   dissertacao
+%   techreport      relatorio tecnico
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% CORPUS E MODELOS DE BASE
+% ---------------------------------------------------------------------
+
+@article{oliveira_2022_semclinbr,
+  author  = {Oliveira, Lucas Emanuel Silva e and Peters, Ana Carolina and Silva, Adalniza Moura Pucca da and Gebeluca, Caroline Pilatti and Gumiel, Yohan Bonescki and Cintho, Lilian Mie Mukai and Carvalho, Deborah Ribeiro and Hasan, Sheikh Sadid and Moro, Claudia Maria Cabral},
+  title   = {{SemClinBr} -- a multi-institutional and multi-specialty semantically annotated corpus for {Portuguese} clinical {NLP} tasks},
+  journal = {Journal of Biomedical Semantics},
+  volume  = {13},
+  number  = {1},
+  pages   = {13},
+  year    = {2022},
+  doi     = {10.1186/s13326-022-00269-1}
+}
+
+@inproceedings{schneider_2020_biobertpt,
+  author    = {Schneider, Elisa Terumi Rubel and Souza, João Vitor Andrioli de and Knafou, Julien and Oliveira, Lucas Emanuel Silva e and Copara, Jenny and Gumiel, Yohan Bonescki and Oliveira, Lucas Ferro Antunes de and Paraiso, Emerson Cabrera and Teodoro, Douglas and Barra, Cláudia Maria Cabral Moro},
+  title     = {{BioBERTpt} -- A {Portuguese} Neural Language Model for Clinical Named Entity Recognition},
+  booktitle = {Proceedings of the 3rd Clinical Natural Language Processing Workshop},
+  publisher = {Association for Computational Linguistics},
+  pages     = {65--72},
+  year      = {2020}
+}
+
+% ---------------------------------------------------------------------
+% MÉTODOS E FUNDAMENTOS
+% ---------------------------------------------------------------------
+
+@article{chapman_2001_negex,
+  author  = {Chapman, Wendy W. and Bridewell, Will and Hanbury, Paul and Cooper, Gregory F. and Buchanan, Bruce G.},
+  title   = {A Simple Algorithm for Identifying Negated Findings and Diseases in Discharge Summaries},
+  journal = {Journal of Biomedical Informatics},
+  volume  = {34},
+  number  = {5},
+  pages   = {301--310},
+  year    = {2001},
+  doi     = {10.1006/jbin.2001.1029}
+}
+
+@inproceedings{sechidis_2011_stratification,
+  author    = {Sechidis, Konstantinos and Tsoumakas, Grigorios and Vlahavas, Ioannis},
+  title     = {On the Stratification of Multi-label Data},
+  booktitle = {Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2011)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {6913},
+  publisher = {Springer},
+  pages     = {145--158},
+  year      = {2011},
+  doi       = {10.1007/978-3-642-23808-6_10}
+}
+
+@inproceedings{devlin_2019_bert,
+  author    = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  booktitle = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL-HLT)},
+  publisher = {Association for Computational Linguistics},
+  pages     = {4171--4186},
+  year      = {2019}
+}
+
+@inproceedings{vaswani_2017_attention,
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
+  title     = {Attention Is All You Need},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {30},
+  year      = {2017}
+}
+
+@inproceedings{conneau_2020_xlmr,
+  author    = {Conneau, Alexis and Khandelwal, Kartikay and Goyal, Naman and Chaudhary, Vishrav and Wenzek, Guillaume and Guzmán, Francisco and Grave, Edouard and Ott, Myle and Zettlemoyer, Luke and Stoyanov, Veselin},
+  title     = {Unsupervised Cross-lingual Representation Learning at Scale},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  publisher = {Association for Computational Linguistics},
+  pages     = {8440--8451},
+  year      = {2020}
+}
+
+@article{forman_2010_apples,
+  author  = {Forman, George and Scholz, Martin},
+  title   = {Apples-to-Apples in Cross-Validation Studies: Pitfalls in Classifier Performance Measurement},
+  journal = {ACM SIGKDD Explorations Newsletter},
+  volume  = {12},
+  number  = {1},
+  pages   = {49--57},
+  year    = {2010},
+  doi     = {10.1145/1882471.1882479}
+}
+
+@article{dietterich_1998_mcnemar,
+  author  = {Dietterich, Thomas G.},
+  title   = {Approximate Statistical Tests for Comparing Supervised Classification Learning Algorithms},
+  journal = {Neural Computation},
+  volume  = {10},
+  number  = {7},
+  pages   = {1895--1923},
+  year    = {1998},
+  doi     = {10.1162/089976698300017197}
+}
+
+@article{mccray2001aggregating,
+  author  = {McCray, Alexa T and Burgun, Anita and Bodenreider, Olivier},
+  title   = {Aggregating {UMLS} Semantic Types for Reducing Conceptual Complexity},
+  journal = {Studies in Health Technology and Informatics},
+  year    = {2001},
+  volume  = {84},
+  pages   = {216--220},
+  pmid    = {11604736},
+  url     = {https://pmc.ncbi.nlm.nih.gov/articles/PMC4300099/}
+}

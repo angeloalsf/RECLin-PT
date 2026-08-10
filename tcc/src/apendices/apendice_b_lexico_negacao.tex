@@ -1,0 +1,38 @@
+\chapter[Léxico de negação do \emph{baseline} de regras]{Léxico de negação do \emph{baseline} de regras}
+\label{ap:lexico}
+
+O \emph{baseline} de regras léxicas (B1), descrito na
+Seção~\ref{cap:prototipo}, identifica a relação \texttt{negation\_of} a partir de
+um conjunto de marcadores de negação adaptados ao português clínico, na linha do
+algoritmo NegEx \cite{chapman_2001_negex}. A detecção é \emph{case-insensitive} e
+emprega fronteira de palavra, de modo a evitar correspondências espúrias (por
+exemplo, ``sem'' dentro de ``semelhante''). Os marcadores são buscados na janela
+entre as duas entidades e em uma janela de contexto de $30$ caracteres à esquerda
+da segunda entidade.
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Marcadores de negação utilizados no \emph{baseline} B1.}
+  \label{quad:lexico}
+  \begin{tabular}{ll}
+  \toprule
+  Marcador & Observação \\
+  \midrule
+  não       & negação verbal/adverbial geral \\
+  sem       & preposição de ausência \\
+  nega      & forma verbal (``paciente nega\ldots'') \\
+  ausência  & substantivo de ausência \\
+  ausente   & adjetivo de ausência \\
+  afebril   & adjetivo com negação léxico-morfológica (sem febre) \\
+  anictérico & adjetivo com negação léxico-morfológica (sem icterícia) \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/baselines/baseline\_rules.py}).}
+\end{quadro}
+
+O Quadro~\ref{quad:lexico} lista os marcadores. Os termos ``afebril'' e
+``anictérico'' são adjetivos que embutem negação morfologicamente e que, no
+SemClinBr, aparecem anotados como entidades de negação, o que justifica seu uso
+como gatilho. As limitações dessa lista --- ausência de tratamento de negação de
+escopo amplo e de negação estendida por conjunção --- são discutidas no
+Capítulo~\ref{cap:discussao}.

@@ -1,0 +1,40 @@
+\chapter[Trabalhos Relacionados]{Trabalhos Relacionados}
+\label{cap:relacionados}
+
+Este capítulo situa o trabalho em relação a recursos e estudos de extração de
+informação clínica, com ênfase na língua portuguesa.
+
+\section{Recursos e desafios em inglês}
+
+A extração de relações clínicas consolidou-se em língua inglesa em torno de
+campanhas de avaliação como as séries i2b2 e n2c2, que disponibilizaram corpora
+anotados e tarefas compartilhadas para problemas como relações entre medicamentos,
+dosagens e efeitos adversos. Esses esforços estabeleceram protocolos de avaliação
+e evidenciaram a importância de tratar adequadamente o desbalanceamento de classes
+e o vazamento de dados entre partições — preocupações transpostas para este
+trabalho.
+
+\section{Recursos para o português}
+
+O desenvolvimento de PLN clínico em português foi por muito tempo limitado pela
+ausência de corpora anotados de acesso controlado. O \textbf{SemClinBr}
+\cite{oliveira_2022_semclinbr} preencheu parte dessa lacuna ao disponibilizar mil
+documentos clínicos anotados semanticamente, acompanhados de dicionários de
+abreviações e de pistas de negação. É o corpus central deste trabalho.
+
+No plano dos modelos, o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt} adaptou
+o paradigma de modelos de linguagem contextuais ao domínio clínico e biomédico em
+português brasileiro, demonstrando ganhos em reconhecimento de entidades nomeadas
+clínicas em relação a modelos de domínio geral. Modelos multilíngues como o
+XLM-R \cite{conneau_2020_xlmr} oferecem uma alternativa de base ampla, útil como
+ponto de comparação.
+
+\section{Posicionamento deste trabalho}
+
+Enquanto boa parte da literatura em português concentra-se em NER, este trabalho
+aborda a etapa subsequente de extração de relações sobre o SemClinBr, com atenção
+particular à negação clínica. A contribuição não está em propor uma arquitetura
+inédita, mas em estabelecer, de maneira reprodutível e estatisticamente
+fundamentada, uma cadeia completa — do texto bruto às métricas com intervalos de
+confiança — que sirva de referência comparável para trabalhos futuros sobre o
+mesmo corpus.

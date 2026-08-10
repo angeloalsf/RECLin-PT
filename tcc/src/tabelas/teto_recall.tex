@@ -1,0 +1,15 @@
+% gerado por scripts/eda/recall_ceiling.py - NAO EDITAR A MAO
+% max_gap = 200 caracteres
+% Teto de recall = (Total ouro - Perdidas por gap) / Total ouro.
+% Duplicatas colapsadas sao redundancia de anotacao, NAO limitacao da janela.
+\begin{tabular}{lrrrr}
+\toprule
+Partição & Total ouro & Perdidas (gap > 200) & Duplicatas colapsadas & Teto recall (\%) \\
+\midrule
+Treino & 9105 & 48 (0.53\%) & 34 & 99.47 \\
+Validação & 1123 & 13 (1.16\%) & 4 & 98.84 \\
+Teste & 1125 & 4 (0.36\%) & 4 & 99.64 \\
+\midrule
+\textbf{Total} & \textbf{11353} & \textbf{65} (\textbf{0.57\%}) & \textbf{42} & \textbf{99.43} \\
+\bottomrule
+\end{tabular}

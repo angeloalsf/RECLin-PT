@@ -1,0 +1,97 @@
+\chapter[Introdução]{Introdução}
+\label{cap:introducao}
+
+O registro eletrônico em saúde concentra grande parte da informação clínica
+sob a forma de texto livre. Notas de evolução, sumários de alta e laudos são
+redigidos em linguagem natural, com abreviações idiossincráticas, ausência
+frequente de pontuação padronizada e construções negativas características do
+discurso médico. Essa riqueza textual, embora valiosa para pesquisa e apoio à
+decisão, permanece majoritariamente inacessível a consultas estruturadas, o que
+motiva o desenvolvimento de técnicas de Processamento de Linguagem Natural (PLN)
+capazes de transformar texto clínico em conhecimento estruturado.
+
+No contexto da língua portuguesa, o avanço dessas técnicas foi historicamente
+limitado pela escassez de recursos anotados. A disponibilização do corpus
+\textbf{SemClinBr} \cite{oliveira_2022_semclinbr}, primeiro corpus clínico
+anotado semanticamente para o português, com mil documentos provenientes de
+múltiplas instituições e especialidades, criou condições para investigar tarefas
+antes restritas ao inglês, entre elas a extração de relações entre entidades
+clínicas.
+
+\section{Problema de pesquisa}
+
+A extração de entidades nomeadas identifica menções a conceitos clínicos
+(sintomas, doenças, achados, procedimentos), mas isoladamente não captura como
+esses conceitos se articulam no enunciado. Saber que um documento menciona
+``febre'' não é suficiente: é preciso distinguir se a febre está \emph{associada}
+ao quadro do paciente ou se está sendo \emph{negada} (``paciente afebril'').
+Esse vínculo é o objeto da \textbf{extração de relações} (\foreignlanguage{english}{Relation Extraction}, RE).
+
+Este trabalho investiga a seguinte questão: \emph{em que medida é possível
+classificar automaticamente as relações entre entidades clínicas anotadas no
+SemClinBr, dentro do espaço de rótulos \texttt{negation\_of},
+\texttt{associated\_with} e \texttt{no\_relation}, e qual o ganho de modelos
+aprendidos sobre abordagens léxicas?} O desafio é agravado por dois fatores
+inerentes ao corpus: o forte desbalanceamento entre as classes de relação e o
+fato de o SemClinBr anotar apenas relações positivas, exigindo a geração
+controlada de exemplos negativos.
+
+\section{Motivação}
+
+A negação clínica é um fenômeno linguístico de alto impacto: tratar um achado
+negado como presente pode inverter completamente a interpretação de um
+prontuário. Em português, a negação é fortemente lexicalizada (``não'', ``sem'',
+``nega'', ``ausência de''), o que sugere que mesmo abordagens simples podem
+estabelecer um patamar de desempenho relevante e, ao mesmo tempo, evidenciar as
+lacunas que justificam modelos contextuais. Construir esse percurso de forma
+reprodutível — desde o texto bruto até as métricas finais — é, em si, uma
+contribuição metodológica, dado que a falta de reprodutibilidade é uma das
+principais críticas dirigidas à literatura de PLN biomédico.
+
+\section{Objetivos}
+
+\subsection{Objetivo geral}
+
+Desenvolver, de forma reprodutível, um \emph{pipeline} determinístico de extração de
+relações entre entidades clínicas em português sobre o corpus SemClinBr ---
+considerando o espaço de rótulos \texttt{negation\_of}, \texttt{associated\_with} e
+\texttt{no\_relation} --- e avaliar, sob protocolo estatístico rigoroso (macro-F1 e
+F1 por classe com intervalos de confiança por \foreignlanguage{english}{bootstrap} e
+teste de significância pareado), uma cadeia de três \emph{baselines} de complexidade
+crescente: classe majoritária (B0), regras léxicas (B1) e regressão logística com
+características (B2). O ajuste fino de um modelo contextual de domínio clínico
+(BioBERTpt) é posicionado como trabalho futuro imediato, para o qual a cadeia
+estabelecida fornece patamares de comparação.
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+  \item Construir um parser fiel ao formato XML do SemClinBr que produza uma
+        representação canônica determinística do corpus.
+  \item Caracterizar o corpus por meio de análise exploratória, quantificando a
+        distribuição das relações e a distância entre entidades relacionadas.
+  \item Definir uma partição treino/desenvolvimento/teste em nível de documento,
+        estratificada e congelada, de modo a evitar vazamento de dados.
+  \item Implementar um gerador determinístico de pares candidatos compartilhado por
+        todos os modelos, garantindo a comparabilidade dos resultados.
+  \item Estabelecer e avaliar três \emph{baselines} --- classe majoritária (B0),
+        regras léxicas inspiradas no algoritmo NegEx \cite{chapman_2001_negex} (B1)
+        e regressão logística com características léxicas e estruturais (B2) ---,
+        reportando macro-F1 e F1 por classe com intervalos de confiança por
+        \foreignlanguage{english}{bootstrap} e comparação por teste de McNemar.
+  \item Preparar a infraestrutura para o ajuste fino do BioBERTpt como modelo
+        proposto, a ser executado como continuidade imediata do trabalho.
+\end{itemize}
+
+\section{Organização do trabalho}
+
+O Capítulo~\ref{cap:referencial} apresenta os fundamentos de PLN clínico,
+extração de relações e modelos baseados em \foreignlanguage{english}{transformers}.
+O Capítulo~\ref{cap:relacionados} discute trabalhos relacionados, com ênfase em
+recursos para o português. O Capítulo~\ref{cap:metodologia} descreve o corpus, o
+pipeline de processamento, a geração de pares candidatos e o protocolo de
+avaliação. O Capítulo~\ref{cap:prototipo} detalha a proposta de modelo. O
+Capítulo~\ref{cap:experimentos} reporta os experimentos e resultados. O
+Capítulo~\ref{cap:discussao} analisa limitações e ameaças à validade, e o
+Capítulo~\ref{cap:conclusao} sintetiza as contribuições e aponta trabalhos
+futuros.
