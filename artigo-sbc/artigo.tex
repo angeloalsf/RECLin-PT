@@ -247,11 +247,17 @@ diferentes inflaria artificialmente as métricas de teste. A partição é
 estratificada pela presença das classes \texttt{negation\_of} e
 \texttt{associated\_with} em cada documento, por meio do algoritmo de
 estratificação multirrótulo de~\cite{sechidis:11}, de modo a garantir
-representação estável da classe minoritária. A partição é gerada com semente fixa
-(42) e congelada. O resultado são 800 documentos de treino, 100 de
-desenvolvimento e 100 de teste; a proporção de \texttt{negation\_of} permanece
-estável (entre 13,7\% e 15,0\%) em todas as partições, condição necessária para
-que a estimativa de F1 dessa classe no teste seja confiável.
+representação da classe minoritária em todas elas. A partição é gerada com
+semente fixa (42) e congelada. O resultado são 800 documentos de treino, 100 de
+desenvolvimento e 100 de teste, com 14,09\%, 15,70\% e 12,16\% de
+\texttt{negation\_of}, respectivamente. A estratificação atua sobre a
+\emph{presença} das classes em cada documento, e não sobre a contagem de
+relações: ela garante que nenhuma partição fique sem exemplos da classe rara, mas
+não iguala percentuais --- daí a variação de cerca de três pontos percentuais. O
+que importa para o protocolo é a garantia: as 152 relações \texttt{negation\_of}
+do teste tornam a estimativa de F1 dessa classe interpretável, ainda que com
+incerteza amostral relevante --- razão pela qual toda comparação é acompanhada de
+teste pareado e intervalo de confiança, e não apenas do valor pontual.
 
 \subsection{Geração de pares candidatos}
 O SemClinBr anota apenas relações positivas. Avaliar um classificador no espaço
@@ -279,28 +285,31 @@ mais sensível para \texttt{associated\_with}, fixando um teto de \emph{recall}
 documentado para essa classe. Como ambos os \emph{baselines} recebem exatamente
 os mesmos candidatos, o teto é idêntico para os dois e não afeta a comparação.
 
-\subsection{Representação de entrada: marcadores tipados e grupos UMLS}
+\subsection{Representação de entrada: marcadores de posição}
 Cada par candidato é transformado na \emph{string} de entrada do \emph{encoder}
-com marcadores de entidade tipados, no esquema
-\texttt{[E1] <grupo> : superfície [/E1] $\ldots$ [E2] <grupo> : superfície
-[/E2]}. Os quatro marcadores são registrados como \emph{tokens} especiais no
-\emph{tokenizer}, a ordem $(e_1, e_2)$ preserva a direção da relação, e a
-representação do par alimentada ao cabeçote de classificação é a concatenação dos
-estados ocultos dos marcadores de início, na linha de~\cite{soares:19}.
+por uma janela de $\pm128$ caracteres em torno do par, com as duas entidades
+delimitadas por marcadores, no esquema
+\texttt{[E1] superfície [/E1] $\ldots$ [E2] superfície [/E2]} --- técnica que se
+tornou padrão para RE com modelos baseados em BERT~\cite{soares:19}. Os quatro
+marcadores são registrados como \emph{tokens} especiais no \emph{tokenizer}, com
+\emph{embedding} dedicado aprendido no ajuste fino.
 
-O campo \texttt{<grupo>} não é o tipo bruto da entidade. O SemClinBr anota cada
-entidade com tipos semânticos da UMLS, frequentemente em rótulos múltiplos
-separados por ``\texttt{|}'' (por exemplo, \texttt{Medical Device|Finding|%
-Abbreviation}). Usar a \emph{string} de tipo diretamente faria o número de
-símbolos distintos explodir (centenas de combinações mal povoadas no treino),
-prejudicando a generalização. A solução agrega os tipos atômicos nos 15 grupos
-semânticos da UMLS~\cite{mccray:01} --- por exemplo, \texttt{DISO} (transtornos),
-\texttt{CHEM} (químicos e fármacos), \texttt{PROC} (procedimentos) ---,
-acrescidos de duas camadas próprias do corpus que carregam sinal relevante para a
-tarefa: \texttt{Abbreviation} e \texttt{Negation} (esta diretamente associada à
-classe \texttt{negation\_of}). Como a mesma representação de entrada é aplicada
-aos dois \emph{baselines}, qualquer efeito dessa escolha é compartilhado e não
-confunde a comparação.
+Os marcadores são \emph{posicionais}, não semânticos: indicam quais trechos da
+janela formam o par e qual deles é o primeiro argumento, e nada mais. O tipo
+semântico anotado pelo SemClinBr (\texttt{Disease or Syndrome},
+\texttt{Negation}, \texttt{Finding}\ldots) \emph{não} é passado ao modelo, que
+deve inferir a natureza de cada entidade da superfície textual e do contexto.
+Como a inserção é feita por deslocamento de caractere, a direção da relação ---
+que importa para \texttt{negation\_of} --- é preservada por \emph{qual} marcador
+envolve \emph{qual} entidade, e não pela ordem em que aparecem na \emph{string}.
+A classificação usa a representação agregada da sequência, e não uma extração
+explícita dos estados ocultos dos marcadores: estes influenciam a predição por
+meio da atenção, ao condicionar a codificação da janela inteira ao par
+delimitado. Como a mesma representação de entrada é aplicada aos dois
+\emph{baselines}, qualquer efeito dessas escolhas é compartilhado e não confunde
+a comparação --- e a ausência do tipo é, para a pergunta em foco, conveniente:
+como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
+comparação mede a capacidade de cada um de inferi-la do texto.
 
 \subsection{Baselines comparados e paridade}
 Comparam-se dois \emph{encoders} para o português, tratados como \emph{baselines}
@@ -314,7 +323,7 @@ sob a mesma tarefa, variando apenas o \emph{checkpoint} de pré-treino:
 \end{itemize}
 Os dois compartilham um único núcleo de implementação e, portanto, são idênticos
 por construção em tudo, exceto o modelo: a representação de entrada por
-marcadores tipados; a perda de entropia cruzada com
+marcadores de posição; a perda de entropia cruzada com
 \texttt{class\_weight="balanced"}, que reescala o erro de forma inversamente
 proporcional à frequência de cada classe (sem o que o otimizador minimizaria o
 erro prevendo \texttt{no\_relation} para quase tudo); o escalonador linear com
@@ -482,10 +491,10 @@ Duas explicações são plausíveis e compatíveis com os dados. Primeiro, a neg
 clínica em português é fortemente lexicalizada (``não'', ``sem'', ``nega'',
 ``afebril''); esse sinal é frequente e regular o bastante para que um
 \emph{encoder} de domínio geral, com vocabulário amplo do português, o capture
-tão bem quanto um clínico, sobretudo quando reforçado pelos marcadores tipados de
-entrada e pela camada \texttt{Negation} dos grupos UMLS. Segundo, a tarefa, tal
+tão bem quanto um clínico --- ainda mais porque o gatilho de negação está
+tipicamente adjacente ao achado negado. Segundo, a tarefa, tal
 como formulada, depende mais da estrutura local do par (direção, proximidade,
-tipos semânticos das entidades) do que de conhecimento lexical especializado de
+delimitação das entidades) do que de conhecimento lexical especializado de
 domínio, e essa estrutura é fornecida igualmente aos dois \emph{baselines} pela
 representação de entrada compartilhada.
 
@@ -559,7 +568,10 @@ estabelecem o ponto de partida, e não um encerramento.
 
 Como próximos passos, além do desenvolvimento do RECLin-PT propriamente dito,
 prevê-se: estimar o desempenho dos \emph{baselines} sob múltiplas sementes de
-treino, para um intervalo de confiança da diferença mais estreito; estender o
+treino, para um intervalo de confiança da diferença mais estreito; enriquecer a
+representação de entrada com o tipo semântico das entidades, hoje ausente dos
+marcadores, medindo se o ganho difere entre o \emph{encoder} clínico e o geral;
+estender o
 espaço de relações para além das três classes atuais; avaliar modelos maiores e
 \emph{encoders} multilíngues~\cite{conneau:20}; e integrar uma etapa de NER
 automática, medindo a extração de relações em um cenário fim a fim.

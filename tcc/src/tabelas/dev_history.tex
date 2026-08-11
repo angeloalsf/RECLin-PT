@@ -1,0 +1,32 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_curves.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_curves.py
+%% Fonte dos dados: campo dev_history de results/baseline_*.json
+\begin{table}[htbp]
+  \centering
+  \caption{Evolução por época no conjunto de validação. $\ast$ marca a época selecionada (maior macro-F1 na validação), cujo \emph{checkpoint} produziu as métricas de teste.}
+  \label{tab:dev_history}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llcccccc}
+  \toprule
+  Modelo & Semente & Época & Perda (treino) & Perda (val.) & Macro-F1 (val.) & F1 \texttt{negation\_of} (val.) & Duração (min) \\
+  \midrule
+  BioBERTpt (clínico) & 42 & 1 & 0,6703 & 0,4115 & 0,638 & 0,679 & 48,4 \\
+   &  & 2 & 0,4020 & 0,4005 & 0,663 & 0,690 & 48,5 \\
+   &  & 3$\ast$ & 0,2900 & 0,4422 & 0,680 & 0,725 & 48,5 \\
+  \midrule
+   & 43 & 1 & 0,7329 & 0,4251 & 0,513 & 0,374 & 53,4 \\
+   &  & 2 & 0,4426 & 0,4373 & 0,594 & 0,611 & 53,5 \\
+   &  & 3$\ast$ & 0,3542 & 0,4316 & 0,661 & 0,698 & 53,6 \\
+  \midrule
+  BERTimbau (geral) & 42 & 1 & 0,7152 & 0,4729 & 0,587 & 0,533 & 47,4 \\
+   &  & 2$\ast$ & 0,4208 & 0,5239 & 0,657 & 0,665 & 47,8 \\
+   &  & 3 & 0,3183 & 0,4967 & 0,656 & 0,660 & 47,9 \\
+  \midrule
+   & 43 & 1 & 0,7212 & 0,4612 & 0,583 & 0,548 & 54,2 \\
+   &  & 2 & 0,4188 & 0,4371 & 0,624 & 0,643 & 54,4 \\
+   &  & 3$\ast$ & 0,3158 & 0,4895 & 0,674 & 0,699 & 54,4 \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (campo \texttt{dev\_history} de \texttt{results/baseline\_*.json}).}
+\end{table}

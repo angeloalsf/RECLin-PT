@@ -1,10 +1,19 @@
-% gerado por scripts/eda/eda_relations.py — NÃO EDITAR À MÃO
-% (cópia de paper/tables/eda_distance_by_type.tex)
-\begin{tabular}{lrrrrrrr}
-\toprule
-Tipo & N & média & p25 & p50 & p75 & p90 & p95 \\
-\midrule
-\texttt{associated\_with} & 9772 & 11.9 & 1 & 4 & 10 & 25 & 43 \\
-\texttt{negation\_of} & 1581 & 3.5 & 1 & 1 & 1 & 11 & 15 \\
-\bottomrule
-\end{tabular}
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_eda.py
+%% Fonte dos dados: data/processed/dataset.jsonl
+\begin{table}[htbp]
+  \centering
+  \caption{Distância em caracteres entre as entidades de cada relação, por tipo.}
+  \label{tab:distancia}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrrr}
+  \toprule
+  Tipo & N & média & p25 & p50 & p75 & p90 & p95 \\
+  \midrule
+  \texttt{negation\_of} & 1.606 & 3,5 & 1 & 1 & 1 & 11 & 15 \\
+  \texttt{associated\_with} & 9.852 & 11,8 & 1 & 4 & 10 & 25 & 43 \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor a partir do SemClinBr (\texttt{data/processed/dataset.jsonl}).}
+\end{table}

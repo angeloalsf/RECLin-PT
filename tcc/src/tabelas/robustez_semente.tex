@@ -1,0 +1,26 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_artifacts.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_artifacts.py
+%% Fonte dos dados: results/summary_by_seed.json
+\begin{table}[htbp]
+  \centering
+  \caption{Robustez à semente de treino: métricas de teste por semente, média e amplitude observada.}
+  \label{tab:robustez}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llcccc}
+  \toprule
+  Modelo & Métrica & Semente 42 & Semente 43 & Média & Amplitude \\
+  \midrule
+  BioBERTpt (clínico) & Macro-F1 & 0,707 & 0,665 & 0,686 & 0,042 \\
+   & F1 \texttt{negation\_of} & 0,724 & 0,653 & 0,689 & 0,070 \\
+   & F1 \texttt{associated\_with} & 0,460 & 0,417 & 0,439 & 0,043 \\
+   & F1 \texttt{no\_relation} & 0,935 & 0,923 & 0,929 & 0,012 \\
+  \midrule
+  BERTimbau (geral) & Macro-F1 & 0,704 & 0,706 & 0,705 & 0,002 \\
+   & F1 \texttt{negation\_of} & 0,734 & 0,726 & 0,730 & 0,008 \\
+   & F1 \texttt{associated\_with} & 0,445 & 0,453 & 0,449 & 0,009 \\
+   & F1 \texttt{no\_relation} & 0,934 & 0,939 & 0,936 & 0,005 \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/aggregate\_seeds.py} $\rightarrow$ \texttt{results/summary\_by\_seed.json}).}
+\end{table}

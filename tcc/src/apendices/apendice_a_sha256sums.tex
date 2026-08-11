@@ -3,30 +3,21 @@
 
 Para garantir a reprodutibilidade dos experimentos, as partições de treino,
 desenvolvimento e teste foram congeladas após sua geração (semente $42$,
-estratificação multirrótulo em nível de documento). O Quadro~\ref{tab:sha256}
-apresenta os \emph{hashes} SHA-256 dos arquivos, gerados por
-\texttt{scripts/splitting/make\_splits.py} e versionados em
-\texttt{data/splits/SHA256SUMS.txt}. Qualquer alteração nos arquivos altera o
-\emph{hash}, permitindo a verificação independente da integridade das partições.
+estratificação multirrótulo em nível de documento). O Quadro~\ref{quad:sha256}
+apresenta os \emph{hashes} SHA-256 dos arquivos, registrados por
+\texttt{src/make\_splits.py} em \texttt{data/splits/MANIFEST.json} e versionados
+junto com os dados. Qualquer alteração nos arquivos altera o \emph{hash},
+permitindo a verificação independente da integridade das partições.
 
-\begin{quadro}[htbp]
-  \centering
-  \caption{SHA-256 das partições congeladas do SemClinBr.}
-  \label{tab:sha256}
-  {\footnotesize
-  \begin{tabular}{ll}
-  \toprule
-  Arquivo & SHA-256 \\
-  \midrule
-  \texttt{train.jsonl} & \texttt{3d7a2a0730f8931a405449a4062f529700a632815767e25336c422e101933775} \\
-  \texttt{dev.jsonl}   & \texttt{20ce38a9807d7488002fc7de865096ca6357c64021e44f6dd78f92c3346d7837} \\
-  \texttt{test.jsonl}  & \texttt{597af7fb88c2bedeec304ea7c92afbe3f6851e913a10d643f2ce34511e77daed} \\
-  \bottomrule
-  \end{tabular}}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{data/splits/SHA256SUMS.txt}).}
-\end{quadro}
+A verificação não é apenas documental: os \emph{scripts} que geram as tabelas e
+figuras deste trabalho recalculam esses \emph{hashes} antes de ler os dados e
+interrompem a execução se algum deles divergir do manifesto. Assim, nenhum número
+publicado aqui pode ter sido produzido a partir de uma partição diferente da
+registrada abaixo.
+
+\input{tabelas/sha256_splits}
 
 As partições contêm, respectivamente, $800$, $100$ e $100$ documentos. A
-distribuição das relações por partição --- $9\,105$ no treino, $1\,123$ no
-desenvolvimento e $1\,125$ no teste --- preserva a proporção entre as classes
-\texttt{associated\_with} e \texttt{negation\_of} observada no corpus completo.
+distribuição das relações entre elas --- $9\,221$ no treino, $987$ na validação e
+$1\,250$ no teste --- consta da Tabela~\ref{tab:particao}, no
+Capítulo~\ref{cap:metodologia}.

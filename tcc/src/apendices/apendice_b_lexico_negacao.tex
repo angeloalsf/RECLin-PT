@@ -1,18 +1,22 @@
-\chapter[Léxico de negação do \emph{baseline} de regras]{Léxico de negação do \emph{baseline} de regras}
+\chapter[Marcadores de negação do português clínico]{Marcadores de negação do português clínico}
 \label{ap:lexico}
 
-O \emph{baseline} de regras léxicas (B1), descrito na
-Seção~\ref{cap:prototipo}, identifica a relação \texttt{negation\_of} a partir de
-um conjunto de marcadores de negação adaptados ao português clínico, na linha do
-algoritmo NegEx \cite{chapman_2001_negex}. A detecção é \emph{case-insensitive} e
-emprega fronteira de palavra, de modo a evitar correspondências espúrias (por
-exemplo, ``sem'' dentro de ``semelhante''). Os marcadores são buscados na janela
-entre as duas entidades e em uma janela de contexto de $30$ caracteres à esquerda
-da segunda entidade.
+A negação clínica em português é fortemente \textbf{lexicalizada}: um conjunto
+pequeno e recorrente de gatilhos responde pela maior parte das ocorrências, o que
+está na origem da eficácia de abordagens como o algoritmo NegEx
+\cite{chapman_2001_negex} e é uma das explicações discutidas no
+Capítulo~\ref{cap:discussao} para o fato de um \emph{encoder} de domínio geral
+capturar a negação tão bem quanto um clínico.
+
+Este apêndice registra os marcadores mais frequentes observados no SemClinBr, a
+título de caracterização linguística do fenômeno. Eles \textbf{não} constituem
+parâmetro de nenhum dos modelos avaliados: os dois \emph{encoders} comparados no
+Capítulo~\ref{cap:experimentos} não recebem lista alguma de gatilhos, e aprendem o
+sinal de negação diretamente do texto marcado.
 
 \begin{quadro}[htbp]
   \centering
-  \caption{Marcadores de negação utilizados no \emph{baseline} B1.}
+  \caption{Marcadores de negação recorrentes no português clínico.}
   \label{quad:lexico}
   \begin{tabular}{ll}
   \toprule
@@ -27,12 +31,14 @@ da segunda entidade.
   anictérico & adjetivo com negação léxico-morfológica (sem icterícia) \\
   \bottomrule
   \end{tabular}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/baselines/baseline\_rules.py}).}
+  {\footnotesize Fonte: elaborado pelo autor a partir do SemClinBr.}
 \end{quadro}
 
-O Quadro~\ref{quad:lexico} lista os marcadores. Os termos ``afebril'' e
-``anictérico'' são adjetivos que embutem negação morfologicamente e que, no
-SemClinBr, aparecem anotados como entidades de negação, o que justifica seu uso
-como gatilho. As limitações dessa lista --- ausência de tratamento de negação de
-escopo amplo e de negação estendida por conjunção --- são discutidas no
-Capítulo~\ref{cap:discussao}.
+Os termos ``afebril'' e ``anictérico'' são adjetivos que embutem negação
+morfologicamente e que, no SemClinBr, aparecem anotados como entidades da categoria
+\texttt{Negation} --- categoria que responde por $2\,646$ menções no corpus
+(Seção~\ref{sec:corpus}). Uma abordagem puramente léxica sobre esta lista não
+trataria negação de escopo amplo (``o paciente não apresenta nenhum dos seguintes:
+A, B, C''), negação estendida por conjunção, nem a direção da relação --- limitações
+que motivam o uso de modelos contextuais, capazes de aprender o escopo a partir do
+contexto em vez de aplicar uma regra rígida de janela.

@@ -70,6 +70,7 @@ FIGURES := artigo-sbc/figs/f1_por_classe.pdf artigo-sbc/figs/cm_biobertpt.pdf \
 
 .PHONY: all help parse splits baselines significance aggregate tables figures \
         artigo status clean-derived \
+        tcc tcc-eda tcc-artifacts tcc-curves tcc-check \
         baseline_biobertpt_seed42 baseline_biobertpt_seed43 \
         baseline_bertimbau_seed42 baseline_bertimbau_seed43 \
         significance_seed42 significance_seed43
@@ -78,6 +79,7 @@ all: splits baselines significance aggregate tables figures
 
 help:
 	@echo "Alvos principais: all parse splits baselines significance aggregate tables figures artigo"
+	@echo "TCC:              tcc-eda tcc-artifacts tcc-curves tcc-check tcc"
 	@echo "Alvos individuais: baseline_<modelo>_seed<N>  (modelo: $(MODELS) | seed: $(SEEDS))"
 	@echo "                   significance_seed<N>"
 	@echo "Inspecao: make status | make -n <alvo> (dry-run, nao executa)"
@@ -186,6 +188,40 @@ figures: $(FIGURES)
 # Roda de dentro de artigo-sbc/: os caminhos de artigo.tex sao relativos a la.
 artigo: $(TABLES) $(FIGURES)
 	cd artigo-sbc && latexmk -pdf artigo.tex
+
+# ------------------------------------------------------------------- tcc
+# Artefatos do TCC: mesma evidencia dos do artigo, sob convencoes ABNT
+# (legenda acima, "Fonte:" abaixo, `quadro` para conteudo qualitativo), mais
+# a EDA (que sai de data/, nao de results/) e as curvas por epoca.
+#
+# Nao ha alvo por arquivo como em `tables`/`figures`: cada script grava de 4 a
+# 11 arquivos numa execucao que leva segundos, entao a granularidade fina so
+# complicaria o Makefile sem economizar tempo.
+TCC_EDA_CANON := tcc/src/tabelas/distribuicao_relacoes.tex
+
+# --check-against-results recomputa os candidatos dos splits em disco e
+# compara com o n_candidates gravado no treino. E o unico jeito de detectar
+# que os splits mudaram depois dos experimentos sem retreinar -- por isso a
+# flag esta no alvo, e nao apenas disponivel.
+$(TCC_EDA_CANON): $(SPLITS) $(MANIFEST) $(BASELINES) \
+                  scripts/make_tcc_eda.py scripts/_artifacts.py
+	$(PYTHON) scripts/make_tcc_eda.py --check-against-results
+
+tcc-eda: $(TCC_EDA_CANON)
+
+tcc-artifacts: $(BASELINES) $(SIGNIF) $(SUMMARY)
+	$(PYTHON) scripts/make_tcc_artifacts.py
+
+tcc-curves: $(BASELINES)
+	$(PYTHON) scripts/make_tcc_curves.py
+
+# Confere as afirmacoes numericas do CORPO DO TEXTO (as tabelas ja vem dos
+# scripts). Roda depois de gerar, porque le results/tcc_eda.json.
+tcc-check: tcc-eda tcc-artifacts tcc-curves
+	$(PYTHON) scripts/check_tcc_numbers.py
+
+tcc: tcc-check
+	cd tcc && docker compose run --rm build
 
 status:
 	@echo "== entradas =="

@@ -1,10 +1,8 @@
 \vspace {15pt}
-\contentsline {quadro}{\numberline {1}{\ignorespaces Exemplo de geração de candidatos para um trecho do SemClinBr.}}{28}{quadro.1}%
-\contentsline {quadro}{\numberline {2}{\ignorespaces Ambiente experimental e versões pinadas (\emph {baselines}).}}{31}{quadro.2}%
-\contentsline {quadro}{\numberline {3}{\ignorespaces Exemplos de normalização de tipos pela função \texttt {normalize\_\allowbreak type}.}}{37}{quadro.3}%
-\contentsline {quadro}{\numberline {4}{\ignorespaces SHA-256 das partições congeladas do SemClinBr.}}{50}{quadro.4}%
-\contentsline {quadro}{\numberline {5}{\ignorespaces Marcadores de negação utilizados no \emph {baseline} B1.}}{51}{quadro.5}%
-\contentsline {quadro}{\numberline {6}{\ignorespaces Parâmetros gerais do pipeline.}}{52}{quadro.6}%
-\contentsline {quadro}{\numberline {7}{\ignorespaces Hiperparâmetros do \emph {baseline} de regras (B1).}}{52}{quadro.7}%
-\contentsline {quadro}{\numberline {8}{\ignorespaces Hiperparâmetros do \emph {baseline} de regressão logística (B2).}}{53}{quadro.8}%
-\contentsline {quadro}{\numberline {9}{\ignorespaces Hiperparâmetros planejados do modelo proposto (BioBERTpt).}}{54}{quadro.9}%
+\contentsline {quadro}{\numberline {1}{\ignorespaces Exemplo de geração de candidatos para um trecho do SemClinBr.}}{29}{quadro.1}%
+\contentsline {quadro}{\numberline {2}{\ignorespaces Ambiente experimental e hiperparâmetros compartilhados pelos dois \emph {baselines}.}}{32}{quadro.2}%
+\contentsline {quadro}{\numberline {3}{\ignorespaces Entrada efetivamente construída para o par \emph {gold} do Quadro~\ref {quad:exemplo_candidatos}.}}{36}{quadro.3}%
+\contentsline {quadro}{\numberline {4}{\ignorespaces SHA-256 das partições congeladas do SemClinBr.}}{54}{quadro.4}%
+\contentsline {quadro}{\numberline {5}{\ignorespaces Marcadores de negação recorrentes no português clínico.}}{55}{quadro.5}%
+\contentsline {quadro}{\numberline {6}{\ignorespaces Parâmetros gerais da preparação dos dados e da avaliação.}}{56}{quadro.6}%
+\contentsline {quadro}{\numberline {7}{\ignorespaces Hiperparâmetros do ajuste fino, idênticos para os dois \emph {encoders}.}}{57}{quadro.7}%

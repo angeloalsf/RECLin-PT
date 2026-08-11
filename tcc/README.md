@@ -69,6 +69,28 @@ tcc/
 - **Imagens:** PNG/JPG em `src/imagens/`. Figuras compostas (TikZ, subfigs) em `src/imagens/figuras/`. O `\graphicspath{}` em `main.tex` cobre `imagens/`.
 - **Apêndices:** material autoral em `src/apendices/`. Incluir via `\apendice` + `\input{apendices/...}` ao final de `main.tex`.
 
+## Regenerar tabelas e figuras
+
+Nenhuma tabela ou figura com dados é editada à mão. Todas saem de `data/` e
+`results/` por script, a partir da raiz do repositório:
+
+```bash
+make tcc-check     # regenera tudo e confere os números do texto
+```
+
+Ou, individualmente:
+
+```bash
+python scripts/make_tcc_eda.py --check-against-results  # corpus, splits, teto de recall
+python scripts/make_tcc_artifacts.py                    # resultados e significância
+python scripts/make_tcc_curves.py                       # curvas por época
+python scripts/check_tcc_numbers.py                     # números citados em prosa
+```
+
+`check_tcc_numbers.py` confere as afirmações numéricas do **corpo do texto** (as
+tabelas já vêm dos geradores) contra `results/`, e sinaliza citações a caminhos
+que não existem no repositório. Rode antes de qualquer entrega.
+
 ## Fluxo recomendado
 
 1. Abrir VSCode na raiz do RECLin-PT.

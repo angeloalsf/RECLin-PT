@@ -1,15 +1,22 @@
-% gerado por scripts/eda/recall_ceiling.py - NAO EDITAR A MAO
-% max_gap = 200 caracteres
-% Teto de recall = (Total ouro - Perdidas por gap) / Total ouro.
-% Duplicatas colapsadas sao redundancia de anotacao, NAO limitacao da janela.
-\begin{tabular}{lrrrr}
-\toprule
-Partição & Total ouro & Perdidas (gap > 200) & Duplicatas colapsadas & Teto recall (\%) \\
-\midrule
-Treino & 9105 & 48 (0.53\%) & 34 & 99.47 \\
-Validação & 1123 & 13 (1.16\%) & 4 & 98.84 \\
-Teste & 1125 & 4 (0.36\%) & 4 & 99.64 \\
-\midrule
-\textbf{Total} & \textbf{11353} & \textbf{65} (\textbf{0.57\%}) & \textbf{42} & \textbf{99.43} \\
-\bottomrule
-\end{tabular}
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_eda.py
+%% Fonte dos dados: data/splits/*.jsonl, max_gap=20 (de results/*.json)
+\begin{table}[htbp]
+  \centering
+  \caption{Teto de \emph{recall} imposto pela janela \texttt{max\_gap}$=20$ por partição.}
+  \label{tab:teto_recall}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrr}
+  \toprule
+  Partição & Total ouro & Perdidas \texttt{negation\_of} & Perdidas \texttt{associated\_with} & Duplicatas colapsadas & Teto recall (\%) \\
+  \midrule
+  Treino & 9.221 & 43 (3,31\%) & 1.047 (13,22\%) & 37 & 88,18 \\
+  Validação & 987 & 7 (4,52\%) & 93 (11,18\%) & 3 & 89,87 \\
+  Teste & 1.250 & 1 (0,66\%) & 132 (12,02\%) & 2 & 89,36 \\
+  \midrule
+  \textbf{Total} & \textbf{11.458} & \textbf{51} (\textbf{3,18\%}) & \textbf{1.272} (\textbf{12,91\%}) & \textbf{42} & \textbf{88,45} \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
+\end{table}

@@ -27,26 +27,31 @@ esses conceitos se articulam no enunciado. Saber que um documento menciona
 ao quadro do paciente ou se está sendo \emph{negada} (``paciente afebril'').
 Esse vínculo é o objeto da \textbf{extração de relações} (\foreignlanguage{english}{Relation Extraction}, RE).
 
-Este trabalho investiga a seguinte questão: \emph{em que medida é possível
-classificar automaticamente as relações entre entidades clínicas anotadas no
-SemClinBr, dentro do espaço de rótulos \texttt{negation\_of},
-\texttt{associated\_with} e \texttt{no\_relation}, e qual o ganho de modelos
-aprendidos sobre abordagens léxicas?} O desafio é agravado por dois fatores
-inerentes ao corpus: o forte desbalanceamento entre as classes de relação e o
-fato de o SemClinBr anotar apenas relações positivas, exigindo a geração
-controlada de exemplos negativos.
+Este trabalho integra o desenvolvimento do \textbf{RECLin-PT}, um modelo aprimorado
+de extração de relações em texto clínico em português sobre o corpus SemClinBr.
+Como etapa inicial dessa construção, investiga-se a seguinte questão de projeto:
+\emph{o pré-treinamento clínico importa para a extração de relações em textos
+médicos em português?} Responder a ela determina sobre qual \emph{encoder} o
+RECLin-PT deve ser construído, e exige comparar dois modelos na \emph{mesma} tarefa
+variando \emph{somente} o \emph{checkpoint} de pré-treino. O desafio é agravado por
+dois fatores inerentes ao corpus: o forte desbalanceamento entre as classes de
+relação e o fato de o SemClinBr anotar apenas relações positivas, exigindo a
+geração controlada de exemplos negativos.
 
 \section{Motivação}
 
 A negação clínica é um fenômeno linguístico de alto impacto: tratar um achado
 negado como presente pode inverter completamente a interpretação de um
 prontuário. Em português, a negação é fortemente lexicalizada (``não'', ``sem'',
-``nega'', ``ausência de''), o que sugere que mesmo abordagens simples podem
-estabelecer um patamar de desempenho relevante e, ao mesmo tempo, evidenciar as
-lacunas que justificam modelos contextuais. Construir esse percurso de forma
-reprodutível — desde o texto bruto até as métricas finais — é, em si, uma
-contribuição metodológica, dado que a falta de reprodutibilidade é uma das
-principais críticas dirigidas à literatura de PLN biomédico.
+``nega'', ``ausência de''), e há a expectativa difundida de que modelos
+pré-treinados sobre texto do próprio domínio clínico capturem melhor essas
+construções do que modelos de domínio geral. Essa expectativa, contudo, é raramente
+testada de forma controlada para o português: trabalhos costumam adotar um modelo
+clínico por hipótese, sem isolar o efeito do pré-treinamento de domínio sob
+protocolo estatístico rigoroso. Construir esse teste de forma reprodutível --- desde
+o texto bruto até as métricas finais --- é, em si, uma contribuição metodológica,
+dado que a falta de reprodutibilidade é uma das principais críticas dirigidas à
+literatura de PLN biomédico.
 
 \section{Objetivos}
 
@@ -55,13 +60,12 @@ principais críticas dirigidas à literatura de PLN biomédico.
 Desenvolver, de forma reprodutível, um \emph{pipeline} determinístico de extração de
 relações entre entidades clínicas em português sobre o corpus SemClinBr ---
 considerando o espaço de rótulos \texttt{negation\_of}, \texttt{associated\_with} e
-\texttt{no\_relation} --- e avaliar, sob protocolo estatístico rigoroso (macro-F1 e
-F1 por classe com intervalos de confiança por \foreignlanguage{english}{bootstrap} e
-teste de significância pareado), uma cadeia de três \emph{baselines} de complexidade
-crescente: classe majoritária (B0), regras léxicas (B1) e regressão logística com
-características (B2). O ajuste fino de um modelo contextual de domínio clínico
-(BioBERTpt) é posicionado como trabalho futuro imediato, para o qual a cadeia
-estabelecida fornece patamares de comparação.
+\texttt{no\_relation} --- e, sobre essa infraestrutura, avaliar sob protocolo
+estatístico rigoroso (macro-F1 e F1 por classe, com teste de significância pareado)
+se o pré-treinamento de domínio clínico traz ganho para a tarefa, comparando um
+\emph{encoder} clínico (BioBERTpt) e um de domínio geral (BERTimbau) sob paridade
+total de implementação, de modo a identificar a melhor base sobre a qual construir o
+RECLin-PT.
 
 \subsection{Objetivos específicos}
 
@@ -74,13 +78,18 @@ estabelecida fornece patamares de comparação.
         estratificada e congelada, de modo a evitar vazamento de dados.
   \item Implementar um gerador determinístico de pares candidatos compartilhado por
         todos os modelos, garantindo a comparabilidade dos resultados.
-  \item Estabelecer e avaliar três \emph{baselines} --- classe majoritária (B0),
-        regras léxicas inspiradas no algoritmo NegEx \cite{chapman_2001_negex} (B1)
-        e regressão logística com características léxicas e estruturais (B2) ---,
-        reportando macro-F1 e F1 por classe com intervalos de confiança por
-        \foreignlanguage{english}{bootstrap} e comparação por teste de McNemar.
-  \item Preparar a infraestrutura para o ajuste fino do BioBERTpt como modelo
-        proposto, a ser executado como continuidade imediata do trabalho.
+  \item Ajustar dois \emph{encoders} para o português --- um de domínio clínico
+        (BioBERTpt) e um de domínio geral (BERTimbau) --- sob um único núcleo de
+        implementação, de modo que difiram apenas no \emph{checkpoint} de
+        pré-treino.
+  \item Comparar os dois \emph{baselines} sob teste de significância pareado
+        (McNemar e \emph{bootstrap} pareado no F1 de \texttt{negation\_of}),
+        reportando macro-F1, F1 por classe, MCC e acurácia.
+  \item Avaliar a robustez do resultado à semente de treino, treinando ambos os
+        modelos com uma segunda inicialização e repetindo todo o protocolo
+        estatístico.
+  \item Identificar, a partir dessa comparação, a melhor base sobre a qual
+        desenvolver o RECLin-PT.
 \end{itemize}
 
 \section{Organização do trabalho}

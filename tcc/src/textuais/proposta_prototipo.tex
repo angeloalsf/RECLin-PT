@@ -1,215 +1,187 @@
 \chapter[Proposta do Protótipo]{Proposta do Protótipo}
 \label{cap:prototipo}
 
-Este capítulo descreve a proposta de solução para a extração de relações clínicas,
-organizada em uma cadeia de modelos de complexidade crescente. A estratégia
-permite isolar o ganho atribuível a cada incremento e fornecer pontos de
-comparação estatisticamente justos, todos avaliados sobre os mesmos pares
-candidatos e a mesma partição congelada.
+Este capítulo descreve a proposta de solução para a extração de relações clínicas.
+O trabalho integra o desenvolvimento do \textbf{RECLin-PT}, um modelo aprimorado de
+extração de relações em texto clínico em português. Como etapa inicial dessa
+construção, conduz-se um \textbf{experimento controlado de \emph{baselines}} que
+responde a uma pergunta de projeto anterior a qualquer aprimoramento: \emph{o
+pré-treinamento clínico importa para a extração de relações em textos médicos em
+português?} A resposta determina sobre qual \emph{encoder} o RECLin-PT deve ser
+construído.
 
 \section{Visão geral e papel dos \emph{baselines}}
 
-Antes de investir no ajuste fino de um modelo contextual --- que demanda GPU e
-tempo de treino consideráveis --- estabelecem-se \emph{baselines}: modelos simples
-que definem \textbf{patamares mínimos de desempenho}. Sua função é tripla.
-Primeiro, calibram a expectativa: um modelo proposto só é interessante se superar,
-com folga, soluções triviais. Segundo, validam o \emph{pipeline}: se um modelo
-linear com características rasas já produz resultados coerentes, o gerador de pares
-candidatos, o espaço de rótulos e o protocolo de avaliação estão corretos
-(\emph{sanity check}). Terceiro, evidenciam o \textbf{teto das abordagens
-léxicas}: ao mostrar onde regras e modelos lineares falham, justificam
-empiricamente a adoção de modelos contextuais. A cadeia proposta contempla três
-\emph{baselines} (B0, B1 e B2) e o modelo principal (BioBERTpt). A progressão de
-complexidade --- piso trivial, heurística léxica e modelo linear aprendido --- não é
-apenas conceitual: ela se traduz em ganhos de macro-F1 monotônicos
-($0{,}006 < 0{,}236 < 0{,}637$) e estatisticamente significativos sob o teste pareado
-de McNemar (Capítulo~\ref{cap:experimentos}), o que valida a escolha de cada degrau
-como referência para o modelo proposto.
+Comparam-se dois \emph{encoders} para o português, tratados como \emph{baselines}
+sob a mesma tarefa: o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt}, adaptado
+a narrativas clínicas e biomédicas em português, e o \textbf{BERTimbau}
+\cite{souza_2020_bertimbau}, pré-treinado em texto de domínio geral (brWaC). Os
+dois compartilham a mesma arquitetura base (BERT) e diferem essencialmente no
+corpus de pré-treinamento, o que os torna candidatos naturais a um experimento
+controlado sobre a importância do domínio de pré-treino.
 
-\section{B0 --- Classe majoritária}
-
-O \emph{baseline} B0 prediz sempre a classe mais frequente entre as relações
-positivas anotadas, \texttt{associated\_with}. É deliberadamente trivial e não
-aprende nada do texto, mas é \textbf{necessário}: estabelece o piso absoluto contra
-o qual qualquer outro modelo deve ser comparado. Seu resultado é, em si,
-informativo --- sob o forte desbalanceamento da tarefa, um modelo que ignora as
-classes minoritárias obtém macro-F1 próximo de zero, o que revela imediatamente a
-dificuldade do problema e demonstra por que a acurácia simples seria uma métrica
-enganosa (um classificador que respondesse sempre \texttt{no\_relation} acertaria
-$\approx 99\%$ dos candidatos sem ter qualquer utilidade prática).
-
-\section{B1 --- Regras léxicas (NegEx-PT)}
-
-O \emph{baseline} B1 codifica conhecimento linguístico explícito, inspirado no
-algoritmo \textbf{NegEx} \cite{chapman_2001_negex}, referência em detecção de
-negação clínica. A adaptação ao português clínico baseia-se no fato de a negação
-ser fortemente lexicalizada no domínio. As regras são aplicadas em cascata:
-
-\begin{enumerate}
-  \item \textbf{R1 (negação):} se houver um marcador de negação na janela entre as
-        duas entidades ou no contexto de $30$ caracteres à esquerda da segunda
-        entidade, classifica o par como \texttt{negation\_of}. A busca é
-        \emph{case-insensitive} e usa fronteira de palavra, evitando falsos
-        positivos como ``sem'' dentro de ``semelhante''.
-  \item \textbf{R2 (associação):} caso contrário, se a distância entre as entidades
-        for inferior a $50$ caracteres, classifica como \texttt{associated\_with}.
-  \item \textbf{R3 (padrão):} do contrário, \texttt{no\_relation}.
-\end{enumerate}
-
-A lista real de marcadores utilizada (extraída de
-\texttt{scripts/baselines/baseline\_rules.py}) é: ``não'', ``sem'', ``nega'',
-``ausência'', ``ausente'', ``afebril'' e ``anictérico''. Os dois últimos são
-adjetivos que embutem negação léxico-morfologicamente (``afebril'' = sem febre;
-``anictérico'' = sem icterícia) e que aparecem anotados no SemClinBr como entidades
-de negação. O léxico completo e os limiares constam do Apêndice~\ref{ap:lexico} e
-do Apêndice~\ref{ap:hiperparametros}.
-
-\section{B2 --- Regressão logística com características}
-
-O \emph{baseline} B2 é o primeiro modelo \textbf{aprendido} da cadeia: uma
-regressão logística \cite{forman_2010_apples} que estima pesos a partir do conjunto
-de treino e prediz no de teste. Combina três famílias de características:
+A premissa metodológica central é a \textbf{paridade}: a infraestrutura descrita
+aqui não constitui um modelo com nome próprio, é apenas a cadeia que viabiliza a
+comparação de forma justa. Os dois \emph{baselines} compartilham um único núcleo de
+implementação (\texttt{src/relation\_extraction.py}) e são, por construção,
+idênticos em tudo exceto no \emph{checkpoint} carregado:
 
 \begin{itemize}
-  \item \textbf{\foreignlanguage{english}{TF-IDF} do texto entre as entidades}
-        (n-gramas de $1$ a $2$ palavras, \emph{lowercase}, \texttt{min\_df}$=2$,
-        vocabulário de até $50\,000$ termos): captura conectivos e marcadores de
-        negação sem fixá-los como regra.
-  \item \textbf{\foreignlanguage{english}{TF-IDF} de uma janela de contexto à
-        esquerda} da segunda entidade ($30$ caracteres): cobre a negação que
-        precede o alvo, como na regra R1, porém de forma aprendida.
-  \item \textbf{características estruturais} (via \emph{one-hot}): tipos das duas
-        entidades e sua combinação ordenada, direção textual, distância em
-        caracteres (bruta em escala logarítmica e discretizada em faixas) e
-        presença de marcador de negação como atributo --- não como regra rígida.
+  \item a mesma partição congelada e os mesmos pares candidatos
+        (Capítulo~\ref{cap:metodologia}), o que coloca os dois sob o mesmo teto de
+        \emph{recall} e na mesma régua estatística;
+  \item a mesma representação de entrada por marcadores de entidade
+        (Seção~\ref{sec:markers});
+  \item a mesma função de perda, \emph{cross-entropy} com
+        \texttt{class\_weight="balanced"};
+  \item o mesmo escalonador linear com \emph{warmup} e os mesmos
+        hiperparâmetros de otimização (Quadro~\ref{quad:ambiente});
+  \item o mesmo critério de seleção de modelo --- maior macro-F1 no conjunto de
+        validação --- e a mesma semente de treino.
 \end{itemize}
 
-Uma decisão central é o uso de \texttt{class\_weight="balanced"}: a perda é
-reescalada de forma inversamente proporcional à frequência de cada classe. Sem
-esse ajuste, o otimizador minimizaria o erro simplesmente prevendo
-\texttt{no\_relation} para quase tudo, dado que essa classe domina $\approx 99\%$
-dos candidatos. A reescala força o modelo a ``pagar'' caro por erros nas classes
-raras, sem descartar dados nem introduzir não-determinismo de subamostragem. A
-mesma estratégia é prescrita ao modelo principal, para que a comparação seja justa.
+Trocar um \emph{baseline} pelo outro consiste, literalmente, em mudar a
+\emph{string} do \emph{checkpoint}. Qualquer diferença observada pode, portanto,
+ser atribuída ao pré-treinamento, e não a artefatos de implementação --- que é
+exatamente a condição para que a pergunta de pesquisa tenha resposta.
 
-\section{Modelo proposto --- BioBERTpt}
+\section{Os dois \emph{encoders} comparados}
 
-O modelo principal é o ajuste fino do \textbf{BioBERTpt}
-\cite{schneider_2020_biobertpt}, modelo de linguagem contextual de domínio clínico
-para o português. A formulação prevista insere \emph{marcadores de entidade
-tipados} que delimitam $e_1$ e $e_2$ no texto, e usa a concatenação dos estados
-ocultos dos marcadores de início como representação do par, preservando a direção
-da relação. O desbalanceamento é tratado pela mesma \emph{cross-entropy} ponderada
-do B2, e a seleção de modelo usa o conjunto de desenvolvimento (macro-F1), com o
-teste reservado apenas à avaliação final. Espera-se que a modelagem contextual
-capture dependências de longo alcance e construções de negação que escapam às
-abordagens léxicas e lineares. Os hiperparâmetros planejados constam do
-Apêndice~\ref{ap:hiperparametros}. Os detalhes finais de arquitetura e
-hiperparâmetros serão confirmados após a execução do treino.
+\subsection{BioBERTpt --- \emph{encoder} de domínio clínico}
 
-\section{Representação de entrada: marcadores tipados e grupos semânticos UMLS}
+O \textbf{BioBERTpt} (\texttt{pucpr/biobertpt-all}) \cite{schneider_2020_biobertpt}
+é um modelo contextual adaptado ao domínio clínico e biomédico em português
+brasileiro, com $177{,}9$ milhões de parâmetros. Sua adoção corresponde à
+expectativa difundida na literatura --- e sustentada pelos ganhos relatados em
+reconhecimento de entidades nomeadas clínicas --- de que o pré-treinamento sobre
+texto do próprio domínio produza representações mais adequadas a tarefas clínicas.
+É essa expectativa que o experimento coloca à prova.
+
+\subsection{BERTimbau --- \emph{encoder} de domínio geral}
+
+O \textbf{BERTimbau} (\texttt{neuralmind/bert-base-portuguese-cased})
+\cite{souza_2020_bertimbau} é a referência de domínio geral para o português,
+pré-treinado no corpus brWaC, com $108{,}9$ milhões de parâmetros --- cerca de
+$60\%$ do tamanho do BioBERTpt. Ele entra no experimento como o controle que isola
+o efeito do domínio de pré-treino, e não como modelo secundário: se o desempenho
+for equivalente, o modelo menor é preferível por custo de inferência e de memória,
+consideração concreta para implantação em ambientes clínicos com recursos
+limitados.
+
+\section{Tratamento do desbalanceamento}
+
+Uma decisão central, comum aos dois \emph{baselines}, é o uso de
+\texttt{class\_weight="balanced"} na função de perda: o erro é reescalado de forma
+inversamente proporcional à frequência de cada classe. Sem esse ajuste, o
+otimizador minimizaria o erro simplesmente prevendo \texttt{no\_relation} para
+quase tudo, dado que essa classe concentra $93{,}06\%$ dos candidatos de teste. A
+reescala força o modelo a ``pagar'' caro por erros nas classes raras, sem descartar
+dados nem introduzir o não-determinismo de uma subamostragem. Como a mesma
+estratégia é aplicada aos dois \emph{encoders}, seu efeito é compartilhado e não
+confunde a comparação.
+
+A seleção de modelo usa o conjunto de validação (macro-F1), com o conjunto de teste
+reservado a uma única avaliação final. Os hiperparâmetros efetivamente utilizados
+constam do Apêndice~\ref{ap:hiperparametros}.
+
+\section{Representação de entrada: marcadores de posição}
 \label{sec:markers}
 
-O modelo contextual não recebe o par de entidades de forma abstrata: recebe o
-\emph{texto} do documento com o par delimitado por \textbf{marcadores de entidade
-tipados}. A literatura de extração de relações com modelos baseados em
-\foreignlanguage{english}{BERT} mostra que inserir marcadores que delimitam $e_1$ e
-$e_2$ no texto --- e anotar o \emph{tipo} de cada entidade junto ao marcador --- é
-mais eficaz do que concatenar representações de \emph{span} isoladas. Adota-se o
-esquema
+O modelo contextual não recebe o par de entidades de forma abstrata: recebe um
+recorte do \emph{texto} do documento com o par delimitado por \textbf{marcadores
+de entidade}. A técnica é padrão em extração de relações com modelos baseados em
+\foreignlanguage{english}{BERT}: inserir no próprio texto marcadores que delimitam
+$e_1$ e $e_2$ é mais eficaz do que concatenar representações de \emph{span}
+isoladas, pois permite que o mecanismo de atenção condicione a codificação de toda
+a janela ao par sob análise.
+
+\subsection{O esquema adotado}
+
+A função \texttt{build\_marked\_window} (\texttt{src/relation\_extraction.py})
+recorta uma janela de $\pm 128$ caracteres em torno do par
+(\texttt{ctx\_chars}) e insere quatro delimitadores, no esquema
 %
 \begin{center}
-\texttt{[E1] <grupo> : superfície$_{e_1}$ [/E1]} \quad\dots\quad
-\texttt{[E2] <grupo> : superfície$_{e_2}$ [/E2]}
+\texttt{[E1] superfície$_{e_1}$ [/E1]} \quad\dots\quad
+\texttt{[E2] superfície$_{e_2}$ [/E2]}
 \end{center}
 %
-em que os quatro marcadores \texttt{[E1] [/E1] [E2] [/E2]} são registrados como
-\emph{tokens} especiais no \emph{tokenizer} (cada um vira um único \emph{token}, com
-\emph{embedding} dedicado), a ordem $(e_1, e_2)$ vem do gerador de candidatos e
-preserva a direção da relação, e \texttt{<grupo>} é o \textbf{grupo semântico} da
-entidade --- não o seu tipo bruto. A decisão de usar o grupo, e não o tipo bruto, é
-descrita a seguir.
+Os quatro marcadores são registrados como \emph{tokens} especiais no
+\emph{tokenizer} (\texttt{add\_special\_tokens}), e a matriz de \emph{embeddings}
+do modelo é redimensionada (\texttt{resize\_token\_embeddings}) para lhes dar um
+vetor dedicado, aprendido durante o ajuste fino.
 
-\subsection{O problema dos tipos crus}
+Três propriedades desse esquema merecem registro explícito, por delimitarem
+exatamente \emph{que informação} o modelo recebe:
 
-O SemClinBr anota cada entidade com tipos semânticos da UMLS, frequentemente em
-\textbf{rótulos múltiplos} separados por ``\texttt{|}'' (por exemplo,
-\texttt{Medical Device|Finding|Abbreviation}). As estatísticas a seguir são
-medidas \textbf{apenas no conjunto de treino}, pois é a partição sobre a qual o
-modelo é ajustado e decisões de projeto não devem ser informadas por dev/test
-(mesma higiene aplicada ao \emph{fit} do TF-IDF do B2). No treino ocorrem apenas
-$86$ tipos \emph{atômicos} distintos; a combinação multirrótulo desses tipos,
-porém, faz o número de \emph{strings} de tipo distintas explodir para
-\textbf{$838$} (das quais $764$ contêm ``\texttt{|}''). O corpus completo mantém o
-mesmo padrão ($89$ atômicos para $922$ combinações), de modo que o fenômeno não é
-particular do treino. Usar a \emph{string} de tipo diretamente como atributo seria
-contraproducente: cada uma das $838$ combinações viraria um símbolo praticamente
-único e mal povoado, e o modelo teria pouquíssimos exemplos de cada um,
-prejudicando a generalização.
+\begin{enumerate}
+  \item \textbf{Os marcadores são posicionais, não semânticos.} Eles indicam
+        quais trechos da janela formam o par e qual deles é o primeiro argumento
+        --- e nada mais. O \textbf{tipo semântico} anotado pelo SemClinBr
+        (\texttt{Disease or Syndrome}, \texttt{Negation}, \texttt{Finding}\ldots)
+        \textbf{não é passado ao modelo}: cabe a ele inferir a natureza de cada
+        entidade a partir da superfície textual e do contexto.
+  \item \textbf{A direção vem da etiqueta, não da ordem.} A inserção é feita por
+        deslocamento de caractere; quando $e_2$ precede $e_1$ no texto, a
+        \emph{string} resultante começa por \texttt{[E2]}. A direção da relação
+        --- que importa para \texttt{negation\_of} --- é preservada por
+        \emph{qual} marcador envolve \emph{qual} entidade, e não pela ordem em
+        que os marcadores aparecem.
+  \item \textbf{A classificação usa a representação agregada da sequência.} O
+        cabeçote é o de \texttt{AutoModelForSequenceClassification}, que projeta
+        a representação agregada da sequência (o \emph{token} \texttt{[CLS]}) nas
+        três classes. Não há extração explícita dos estados ocultos dos
+        marcadores: eles influenciam a predição por meio da atenção, ao
+        condicionar a codificação da janela inteira ao par delimitado.
+\end{enumerate}
 
-\subsection{Agregação nos 15 grupos semânticos UMLS}
+Como a mesma representação é aplicada aos dois \emph{encoders}, qualquer efeito
+dessas escolhas é compartilhado e não confunde a comparação
+(Capítulo~\ref{cap:experimentos}).
 
-A solução é \textbf{agregar} os tipos atômicos nos $15$ \emph{Grupos Semânticos} da
-UMLS propostos por \citeonline{mccray2001aggregating} --- por exemplo, \texttt{ANAT}
-(anatomia), \texttt{CHEM} (químicos e fármacos), \texttt{DISO} (transtornos),
-\texttt{PROC} (procedimentos) ---, acrescidos de duas camadas próprias do SemClinBr
-que não são tipos UMLS mas carregam sinal relevante para a tarefa:
-\texttt{Abbreviation} e \texttt{Negation} (esta última diretamente associada à classe
-\texttt{negation\_of}). A agregação é implementada pela função
-\texttt{normalize\_type} (\texttt{scripts/training/markers.py}) por uma tabela
-estática que mapeia cada tipo atômico ao seu grupo. Um rótulo múltiplo é tratado
-separando-o por ``\texttt{|}'', mapeando cada segmento ao seu grupo e reunindo os
-grupos \emph{únicos} em ordem alfabética; tipos fora do mapa caem em \texttt{Other}
-(cobertura total no treino: nenhum tipo cai em \texttt{Other}). Como resultado, os
-$86$ tipos atômicos do treino reduzem-se a apenas $17$ códigos de grupo ($15$ grupos
-UMLS $+\,2$ camadas), e as $838$ \emph{strings} de tipo, a $100$ \emph{tags}
-normalizadas --- ainda combinações multirrótulo, mas agora construídas a partir de
-um vocabulário pequeno e estável de códigos. A função é
-\textbf{idempotente} --- \texttt{normalize\_type(normalize\_type($x$))} $=$
-\texttt{normalize\_type($x$)} ---, propriedade verificada nos testes automatizados.
+\subsection{Exemplo}
 
-\subsection{Por que isso ajuda o modelo}
-
-A diferença é direta na representação. Com tipos crus, uma entidade
-\texttt{[E1: Abbreviation|Therapeutic or Preventive Procedure|Medical Device]}
-produz um símbolo de tipo praticamente único; com a agregação, a mesma entidade
-vira \texttt{[E1: Abbreviation,DEVI,PROC]}, um rótulo composto por um vocabulário
-\textbf{pequeno e controlado} de grupos. Como o estado oculto do marcador de início
-($h_{E_1}$, e analogamente $h_{E_2}$) é a representação que alimenta o cabeçote de
-classificação, fazê-lo carregar o \emph{grupo semântico} --- estável e bem povoado
---- em vez do tipo bruto esparso torna a representação do par mais generalizável e
-menos suscetível a \emph{overfitting} em combinações raras.
-
-\subsection{Exemplos}
-
-O Quadro~\ref{quad:normalize} ilustra a normalização em casos reais e construídos.
-O caso \texttt{Disease or Syndrome} $\rightarrow$ \texttt{DISO} corresponde à
-entidade ``OSTEOMIELITE'' usada no exemplo de geração de candidatos
-(Quadro~\ref{quad:exemplo_candidatos}); o caso multirrótulo
-\texttt{Abbreviation|Laboratory or Test Result} $\rightarrow$
-\texttt{Abbreviation,PHEN} mostra o colapso de uma combinação em dois grupos únicos
-ordenados.
+Aplicado ao trecho do Quadro~\ref{quad:exemplo_candidatos}, o par \emph{gold}
+$16 \rightarrow 52$ produz a entrada reproduzida no Quadro~\ref{quad:entrada}.
+Note que nem \texttt{Disease or Syndrome} (tipo de ``OSTEOMIELITE'') nem
+\texttt{Negation} (tipo de ``NÃO ESPECIFICADA'') aparecem na entrada: o modelo vê
+apenas o texto e os delimitadores.
 
 \begin{quadro}[htbp]
   \centering
-  \caption{Exemplos de normalização de tipos pela função \texttt{normalize\_type}.}
-  \label{quad:normalize}
-  \begin{tabular}{ll}
+  \caption{Entrada efetivamente construída para o par \emph{gold} do Quadro~\ref{quad:exemplo_candidatos}.}
+  \label{quad:entrada}
+  \begin{tabular}{p{0.92\textwidth}}
   \toprule
-  Tipo bruto (SemClinBr) & Grupo(s) normalizado(s) \\
-  \midrule
-  \texttt{Disease or Syndrome} & \texttt{DISO} \\
-  \texttt{Organic Chemical|Pharmacologic Substance} & \texttt{CHEM} \\
-  \texttt{Abbreviation|Laboratory or Test Result} & \texttt{Abbreviation,PHEN} \\
-  \texttt{Negation|Sign or Symptom} & \texttt{DISO,Negation} \\
-  \texttt{Tipo inexistente} & \texttt{Other} \\
+  \texttt{\ldots{} CURATIVO COM ASPECTO LIMPO E SECO. SEGUE EM OBSERVAÇÃO.
+  [E1] OSTEOMIELITE [/E1] [E2] NÃO ESPECIFICADA [/E2]. INTUBADO, SOB VENTILAÇÃO
+  MECÂNICA, MONITORIZAÇÃO CARDÍACA \ldots} \\
   \bottomrule
   \end{tabular}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/training/markers.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (saída de \texttt{build\_marked\_window} para o documento 8906 do SemClinBr, \texttt{ctx\_chars}$=128$).}
 \end{quadro}
 
-Aplicado ao trecho do Quadro~\ref{quad:exemplo_candidatos}, o par \emph{gold}
-$16 \rightarrow 52$ resulta na entrada marcada
-\texttt{[E1] DISO : OSTEOMIELITE [/E1] [E2] Negation : NÃO ESPECIFICADA [/E2]},
-em que os grupos \texttt{DISO} e \texttt{Negation} substituem os tipos brutos
-correspondentes.
+\subsection{O que essa escolha deixa de fora}
+\label{sec:markers_limitacao}
+
+Registrar o que \emph{não} entra na representação é tão importante quanto
+descrever o que entra. O SemClinBr anota cada entidade com tipos semânticos da
+UMLS, frequentemente em \textbf{rótulos múltiplos} separados por ``\texttt{|}''
+(por exemplo, \texttt{Medical Device|Finding|Abbreviation}). Essa anotação
+\textbf{não chega ao modelo}: os resultados do Capítulo~\ref{cap:experimentos}
+foram obtidos com marcadores puramente posicionais, e a natureza de cada entidade
+tem de ser inferida da superfície textual e do contexto.
+
+A anotação de tipo, aliás, não é diretamente aproveitável na forma em que vem. No
+conjunto de treino ocorrem apenas $89$ tipos \emph{atômicos} distintos, mas a
+combinação multirrótulo faz o número de \emph{strings} de tipo distintas subir para
+$828$ --- das quais $752$ contêm ``\texttt{|}''. Injetar essa \emph{string}
+diretamente no marcador seria contraproducente: cada uma das $828$ combinações
+viraria um símbolo praticamente único e mal povoado no treino, prejudicando a
+generalização. Aproveitá-la exigiria, antes, um esquema de normalização que
+colapsasse as combinações em um vocabulário pequeno e estável.
+
+Para a pergunta desta etapa, porém, a ausência do tipo é inclusive conveniente:
+como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
+comparação mede a capacidade de cada um de \emph{inferi-la} do texto --- que é
+exatamente onde o pré-treinamento de domínio deveria fazer diferença.

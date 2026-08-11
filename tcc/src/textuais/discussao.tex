@@ -1,69 +1,126 @@
 \chapter[Discussão]{Discussão}
 \label{cap:discussao}
 
-Este capítulo interpreta os resultados obtidos até o momento, discute limitações
-do trabalho e aponta ameaças à validade dos achados.
+Este capítulo interpreta os resultados obtidos, discute limitações do trabalho e
+aponta ameaças à validade dos achados.
 
 \section{Análise dos resultados}
 
-Os resultados dos \emph{baselines} confirmam as hipóteses iniciais. Primeiro, o
-problema é de fato dominado pelo desbalanceamento: a classe majoritária obtém
-macro-F1 próximo de zero, e o ganho do \emph{baseline} de regras concentra-se na
-classe \texttt{no\_relation}. Segundo, a negação clínica em português é
-lexicalizada o bastante para que regras simples tenham alta cobertura, mas a baixa
-precisão observada mostra que a mera presença de um marcador de negação na janela
-não basta: o escopo da negação e a direção da relação precisam ser modelados.
+O resultado central é a \textbf{ausência de vantagem do pré-treinamento clínico}:
+para a extração de relações no SemClinBr, no espaço de três classes, o BioBERTpt
+não produz ganho mensurável sobre o BERTimbau, nem mesmo na classe
+\texttt{negation\_of}, em que a especialização de domínio seria mais plausível.
+Convém precisar o que os testes sustentam. O veredito de \emph{empate} vale para a
+semente $42$ e não se repete na semente $43$, em que a comparação pareada favorece
+o BERTimbau. O que se mantém entre as duas sementes não é o empate, e sim a
+\emph{direção}: em nenhuma delas o \emph{encoder} clínico fica à frente. Esse
+achado contrasta com a expectativa difundida --- e com os ganhos relatados para o
+reconhecimento de entidades nomeadas clínicas em português
+\cite{schneider_2020_biobertpt} --- de que modelos de domínio sempre se transfiram
+melhor.
 
-A regressão logística (B2) corrobora essa interpretação. Ao aprender a ponderar o
-sinal lexical de negação com o contexto e os tipos das entidades, eleva o macro-F1
-de $0{,}236$ (B1) para $0{,}637$, com ganho expressivo justamente na classe
-\texttt{negation\_of} (de $0{,}010$ para $0{,}658$) e intervalos de confiança que
-não se sobrepõem aos do B1. Isso mostra que um modelo aprendido, ainda que linear e
-com características rasas, supera substancialmente as regras --- evidência empírica
-que justifica a transição para modelos contextuais, dos quais se espera ganho
-adicional sobretudo na classe \texttt{associated\_with}, que permanece a mais
-difícil (F1 $=0{,}272$ no B2, limitada pela baixa precisão).
+Duas explicações são plausíveis e compatíveis com os dados.
+
+A primeira é \textbf{linguística}. A negação clínica em português é fortemente
+lexicalizada (``não'', ``sem'', ``nega'', ``ausência de'', além de adjetivos que
+embutem negação morfologicamente, como ``afebril'' e ``anictérico'' ---
+Apêndice~\ref{ap:lexico}). Esse sinal é frequente e regular o bastante para que um
+\emph{encoder} de domínio geral, com vocabulário amplo do português, o capture tão
+bem quanto um clínico. A caracterização do corpus reforça essa leitura: a mediana
+da distância entre as entidades de uma relação \texttt{negation\_of} é de um único
+caractere (Seção~\ref{sec:corpus}), ou seja, o gatilho de negação está praticamente
+colado ao achado negado. Detectá-lo depende pouco de conhecimento clínico
+especializado.
+
+A segunda é \textbf{estrutural}. A tarefa, tal como formulada, depende mais da
+estrutura local do par --- direção, proximidade, delimitação das entidades --- do
+que de conhecimento lexical especializado de domínio, e essa estrutura é fornecida
+igualmente aos dois \emph{baselines} pela representação de entrada compartilhada
+(Seção~\ref{sec:markers}). A semelhança entre as matrizes de confusão
+(Seção~\ref{sec:confusao}) é a evidência mais direta disso: os dois modelos não
+apenas chegam a números próximos, mas concentram o erro no mesmo lugar --- a
+fronteira entre \texttt{associated\_with} e \texttt{no\_relation}.
+
+Um corolário prático --- e diretamente relevante para o desenvolvimento do
+RECLin-PT --- é a \textbf{eficiência}: o BERTimbau iguala o BioBERTpt com
+aproximadamente $60\%$ dos parâmetros ($108{,}9$ contra $177{,}9$ milhões). Quando o
+desempenho é equivalente, o modelo menor é preferível por custo de inferência e de
+memória, consideração concreta para implantação em ambientes clínicos com recursos
+limitados. A esse argumento soma-se a estabilidade: a amplitude entre sementes do
+BERTimbau na métrica-alvo ($0{,}008$) é cerca de nove vezes menor que a do
+BioBERTpt ($0{,}070$), o que torna seu desempenho mais previsível em uma nova
+execução.
+
+\section{A classe \texttt{associated\_with}}
+
+A classe \texttt{associated\_with} permanece a mais difícil para os dois modelos
+(F1 $\approx 0{,}45$), com alta cobertura e baixa precisão. Duas causas se somam.
+
+A primeira é \textbf{conceitual}: distinguir associação genuína de mera proximidade
+textual é intrinsecamente ambíguo em texto clínico telegráfico, em que entidades
+vizinhas frequentemente não mantêm relação anotada --- como ilustra o próprio
+exemplo de geração de candidatos (Quadro~\ref{quad:exemplo_candidatos}), em que
+cinco dos seis pares ordenados possíveis são \texttt{no\_relation}.
+
+A segunda é \textbf{metodológica}: a janela \texttt{max\_gap}$=20$ descarta
+$12{,}02\%$ das relações \texttt{associated\_with} do conjunto de teste
+(Seção~\ref{sec:teto_recall}), enquanto descarta apenas uma relação
+\texttt{negation\_of}. O F1 dessa classe é, portanto, medido sob um teto de
+\emph{recall} substancialmente mais baixo que o das demais. Como o teto é idêntico
+para os dois modelos, ele não afeta a comparação --- objeto deste trabalho ---, mas
+qualquer leitura do valor absoluto de F1 de \texttt{associated\_with} precisa levá-lo
+em conta.
 
 \section{Limitações}
 
-As regras léxicas do \emph{baseline} B1 não tratam negação de escopo amplo
-(``o paciente não apresenta nenhum dos seguintes: A, B, C''), negação estendida
-por conjunção, nem a direção da relação, atribuindo o mesmo rótulo aos pares
-$(a,b)$ e $(b,a)$. Além disso, a tarefa pressupõe entidades já anotadas
-(\emph{gold}): a avaliação não considera o erro propagado de uma etapa de NER
+A limitação mais séria recai sobre a própria caracterização de empate. Ela vale
+para a semente $42$; a comparação pareada refeita na semente $43$ acusa diferença
+significativa em favor do BERTimbau. Nenhuma das duas sementes coloca o
+\emph{encoder} clínico à frente, de modo que a conclusão prática --- ausência de
+ganho atribuível ao pré-treinamento clínico --- não depende da semente. A leitura
+estatística, porém, depende. Além disso, \textbf{duas sementes por modelo não
+bastam} para estimar um intervalo de confiança sobre essa variação: o desvio
+reportado na Tabela~\ref{tab:robustez} deve ser lido como dispersão observada, não
+como estimativa de variância. Fechar a questão exige um número maior de repetições
+com agregação formal.
+
+A tarefa pressupõe \textbf{entidades já anotadas} (\emph{gold}): a avaliação não
+considera o erro propagado de uma etapa de reconhecimento de entidades nomeadas
 automática, de modo que os resultados refletem a extração de relações isoladamente.
-Por fim, o modelo principal baseado em \foreignlanguage{english}{transformer}
-(BioBERTpt) ainda não foi executado, de modo que a comparação final entre o
-\emph{baseline} aprendido (B2) e o modelo contextual depende dessa etapa.
+Em um cenário fim a fim, os valores absolutos seriam necessariamente menores.
+
+Por fim, o achado é específico desta \textbf{formulação de três classes} e desta
+\textbf{escala de modelo} (\emph{base}). Não se pode excluir que o pré-treinamento
+clínico volte a importar em espaços de relação mais ricos, em modelos maiores ou em
+cenários com menos dados de ajuste.
 
 \section{Ameaças à validade}
 
-Quanto à validade interna, o congelamento das partições com semente fixa e
-verificação por \emph{hashes} SHA-256, somado ao particionamento em nível de
-documento, mitiga o vazamento de dados — a principal causa de resultados não
-reproduzíveis em PLN biomédico. Restam, contudo, decisões de projeto que podem
-influenciar os números, como a janela máxima de $200$ caracteres na geração de
-pares candidatos, que descarta relações verdadeiras mais distantes e impõe um
-\textbf{teto de recall} ao sistema. Esse limite, porém, foi quantificado
-(Seção~\ref{sec:teto_recall}, Tabela~\ref{tab:teto_recall}) e é pequeno: no conjunto
-de teste, apenas $4$ de $1\,125$ relações \emph{gold} ($0{,}36\%$, todas
-\texttt{associated\_with}) caem fora da janela, fixando o teto de recall em
-$99{,}64\%$. Trata-se, assim, de uma limitação documentada e de magnitude conhecida,
-e não de uma fonte de incerteza não medida --- o que reforça a defensabilidade do
-protocolo.
+Quanto à \textbf{validade interna}, o congelamento das partições com semente fixa e
+verificação por \emph{hashes} SHA-256 (Apêndice~\ref{ap:sha256}), somado ao
+particionamento em nível de documento, mitiga o vazamento de dados --- a principal
+causa de resultados não reproduzíveis em PLN biomédico. A paridade total de
+implementação entre os dois \emph{baselines} (Capítulo~\ref{cap:prototipo}) garante
+que a diferença medida reflita o \emph{checkpoint}, e não artefatos de código.
+Restam, contudo, decisões de projeto que influenciam os números absolutos, das
+quais a mais consequente é a janela \texttt{max\_gap}$=20$ na geração de pares
+candidatos. Esse limite foi quantificado por partição e por classe
+(Seção~\ref{sec:teto_recall}) e, portanto, é uma limitação \emph{documentada e de
+magnitude conhecida}, e não uma fonte de incerteza não medida.
 
-Uma segunda decisão de avaliação diz respeito à largura dos intervalos de confiança.
-O \emph{bootstrap} por instância, adotado como procedimento principal, trata os
-$107\,568$ candidatos como independentes, o que não é estritamente verdadeiro, pois
-pares de um mesmo documento compartilham texto e vocabulário. Para endereçar essa
-ameaça, reportou-se também o \emph{bootstrap} por documento
-(Seção~\ref{sec:bootstrap_doc}), mais conservador; a separação entre B1 e B2
-sobrevive ao intervalo mais largo, de modo que a conclusão não depende da hipótese
-de independência.
+Uma segunda ameaça diz respeito à \textbf{independência das instâncias}. O
+\emph{bootstrap} pareado trata os $16\,074$ candidatos como independentes, o que
+não é estritamente verdadeiro: pares de um mesmo documento compartilham texto e
+vocabulário, de modo que o intervalo de confiança reportado é provavelmente mais
+estreito que o real. Essa ameaça atenua-se, mas não desaparece, pelo fato de a
+comparação ser \emph{pareada} --- ambos os modelos são avaliados exatamente sobre as
+mesmas instâncias, e a dependência afeta os dois igualmente. Ainda assim, a
+conclusão de empate na semente $42$ deve ser lida com essa ressalva.
 
-Quanto à validade externa, o SemClinBr, apesar de multi-institucional e
+Quanto à \textbf{validade externa}, o SemClinBr, apesar de multi-institucional e
 multiespecialidade, representa um conjunto específico de instituições e estilos de
-redação; a generalização para outros contextos clínicos deve ser feita com
-cautela. As inconsistências de anotação conhecidas do corpus, ainda que tratadas
-e registradas pelo parser, também impõem um limite superior ao desempenho
-alcançável.
+redação; a generalização para outros contextos clínicos e para outros espaços de
+relação deve ser feita com cautela. As inconsistências de anotação conhecidas do
+corpus, ainda que tratadas e registradas pelo \emph{parser}, também impõem um limite
+superior ao desempenho alcançável --- limite que se aplica igualmente aos dois
+modelos comparados.

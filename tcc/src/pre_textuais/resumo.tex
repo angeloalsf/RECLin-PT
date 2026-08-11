@@ -7,21 +7,25 @@
   achados --- é determinante para a correta interpretação. Este trabalho investiga
   a extração de relações entre entidades clínicas em português sobre o corpus
   SemClinBr, considerando o espaço de rótulos \texttt{negation\_of},
-  \texttt{associated\_with} e \texttt{no\_relation}. Propõe-se uma cadeia
-  experimental reprodutível que vai do texto bruto às métricas finais, composta
-  por: um parser determinístico do formato XML do corpus; análise exploratória das
-  relações; particionamento 80/10/10 em nível de documento, estratificado e
-  congelado para evitar vazamento de dados; e geração controlada de pares
-  candidatos. Foram estabelecidos \emph{baselines} de referência --- classe
-  majoritária e regras léxicas inspiradas no algoritmo NegEx ---, avaliados por
-  macro-F1 e F1 por classe com intervalos de confiança de 95\% obtidos por
-  \emph{bootstrap}. O \emph{baseline} de regras alcançou macro-F1 de 0,236,
-  superando a classe majoritária (0,006), mas com baixa precisão nas classes
-  positivas. Um \emph{baseline} de regressão logística com características léxicas e
-  estruturais elevou o macro-F1 para 0,637, superando os anteriores em todas as
-  métricas e confirmando o ganho de modelos aprendidos. Esses resultados estabelecem
-  patamares de comparação para a etapa seguinte, o ajuste fino do modelo contextual
-  de domínio clínico BioBERTpt.
+  \texttt{associated\_with} e \texttt{no\_relation}. Como etapa inicial do
+  desenvolvimento do RECLin-PT, um modelo aprimorado de extração de relações
+  clínicas em português, conduz-se um experimento controlado para responder a uma
+  questão de projeto: o pré-treinamento clínico importa para essa tarefa? Propõe-se
+  uma cadeia experimental reprodutível que vai do texto bruto às métricas finais,
+  composta por um parser determinístico do formato XML do corpus, análise
+  exploratória das relações, particionamento 80/10/10 em nível de documento
+  --- estratificado e congelado para evitar vazamento de dados --- e geração
+  controlada de pares candidatos. Sobre essa infraestrutura, dois \emph{encoders}
+  para o português são ajustados variando apenas o \emph{checkpoint} de
+  pré-treino: um de domínio clínico (BioBERTpt) e um de domínio geral (BERTimbau).
+  No conjunto de teste congelado, os dois empatam estatisticamente no F1 de
+  \texttt{negation\_of} na semente de referência (0,724 contra 0,734; McNemar
+  $p=0{,}18$; \emph{bootstrap} pareado IC95\% $[-0{,}047; +0{,}026]$), mas esse
+  veredito não se sustenta nas duas sementes testadas: a variação entre sementes
+  de um mesmo modelo supera a diferença entre os modelos, e o \emph{encoder}
+  clínico não lidera em nenhuma delas. Esses resultados indicam que o RECLin-PT
+  pode ser construído sobre o \emph{encoder} geral, mais eficiente e mais estável
+  entre reinicializações, sem penalidade de desempenho.
 
   \vspace{\onelineskip}
 
@@ -39,19 +43,23 @@
   is decisive for correct interpretation. This work investigates relation
   extraction between clinical entities in Portuguese over the SemClinBr corpus,
   considering the label space \texttt{negation\_of}, \texttt{associated\_with} and
-  \texttt{no\_relation}. We propose a reproducible experimental pipeline that goes
-  from raw text to final metrics, comprising: a deterministic parser for the
-  corpus XML format; exploratory analysis of relations; a document-level, stratified
-  and frozen 80/10/10 split to prevent data leakage; and controlled candidate-pair
-  generation. Reference baselines --- majority class and NegEx-inspired lexical
-  rules --- were established and evaluated with macro-F1 and per-class F1 with 95\%
-  bootstrap confidence intervals. The rule-based baseline reached a macro-F1 of
-  0.236, surpassing the majority class (0.006) but with low precision on the
-  positive classes. A logistic-regression baseline with lexical and structural
-  features raised the macro-F1 to 0.637, outperforming the previous baselines on
-  every metric and confirming the gain of learned models. These results establish
-  comparison baselines for the next step, the fine-tuning of the clinical-domain
-  contextual model BioBERTpt.
+  \texttt{no\_relation}. As the initial stage of developing RECLin-PT, an improved
+  clinical relation extraction model for Portuguese, we run a controlled
+  experiment to answer a design question: does clinical pre-training matter for
+  this task? We propose a reproducible experimental pipeline that goes from raw
+  text to final metrics, comprising a deterministic parser for the corpus XML
+  format, exploratory analysis of relations, a document-level, stratified and
+  frozen 80/10/10 split to prevent data leakage, and controlled candidate-pair
+  generation. On this infrastructure, two Portuguese encoders are fine-tuned
+  changing only the pre-trained checkpoint: a clinical-domain one (BioBERTpt) and
+  a general-domain one (BERTimbau). On the frozen test set, the two are
+  statistically tied on the \texttt{negation\_of} F1 under the reference seed
+  (0.724 vs.\ 0.734; McNemar $p=0.18$; paired bootstrap 95\% CI
+  $[-0.047, +0.026]$), but this verdict does not hold across the two seeds we
+  tested: seed-to-seed variation of a single model exceeds the gap between the
+  models, and the clinical encoder leads under neither seed. These results
+  indicate that RECLin-PT can be built on the general encoder, which is more
+  efficient and more stable across restarts, with no performance penalty.
 
   \vspace{\onelineskip}
 

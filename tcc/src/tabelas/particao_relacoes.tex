@@ -1,0 +1,22 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_eda.py
+%% Fonte dos dados: data/splits/*.jsonl (conferidos contra MANIFEST.json)
+\begin{table}[htbp]
+  \centering
+  \caption{Distribuição real das relações por partição (\emph{splits} congelados, semente 42).}
+  \label{tab:particao}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrr}
+  \toprule
+  Partição & Documentos & \texttt{associated\_with} & \texttt{negation\_of} & Total relações & \% \texttt{negation\_of} \\
+  \midrule
+  Treino & 800 & 7.922 & 1.299 & 9.221 & 14,09 \\
+  Validação & 100 & 832 & 155 & 987 & 15,70 \\
+  Teste & 100 & 1.098 & 152 & 1.250 & 12,16 \\
+  \midrule
+  \textbf{Total} & \textbf{1.000} & \textbf{9.852} & \textbf{1.606} & \textbf{11.458} & \textbf{14,02} \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{data/splits/MANIFEST.json}).}
+\end{table}

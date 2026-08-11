@@ -1,12 +1,20 @@
-% gerado por scripts/eda/eda_relations.py — NÃO EDITAR À MÃO
-% (cópia de paper/tables/eda_reltype_distribution.tex)
-\begin{tabular}{lrr}
-\toprule
-Tipo de relação & N & \% \\
-\midrule
-\texttt{associated\_with} & 9772 & 86.07 \\
-\texttt{negation\_of} & 1581 & 13.93 \\
-\midrule
-\textbf{Total} & \textbf{11353} & 100.00 \\
-\bottomrule
-\end{tabular}
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_eda.py
+%% Fonte dos dados: data/processed/dataset.jsonl
+\begin{table}[htbp]
+  \centering
+  \caption{Distribuição dos tipos de relação no corpus parseado.}
+  \label{tab:distribuicao}
+  \begin{tabular}{lrr}
+  \toprule
+  Tipo de relação & N & \% \\
+  \midrule
+  \texttt{negation\_of} & 1.606 & 14,02 \\
+  \texttt{associated\_with} & 9.852 & 85,98 \\
+  \midrule
+  \textbf{Total} & \textbf{11.458} & \textbf{100,00} \\
+  \bottomrule
+  \end{tabular}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor a partir do SemClinBr (\texttt{data/processed/dataset.jsonl}).}
+\end{table}

@@ -42,7 +42,10 @@ de contexto, classifica achados como negados ou afirmados. Sua simplicidade e
 eficácia derivam do fato de a negação clínica ser altamente lexicalizada. Em
 português, gatilhos como ``não'', ``sem'', ``nega'' e ``ausência de'', além de
 adjetivos que embutem negação morfologicamente (``afebril'', ``anictérico''),
-sustentam estratégias análogas, adotadas neste trabalho como \emph{baseline}.
+sustentam estratégias análogas (Apêndice~\ref{ap:lexico}). A alta lexicalização
+sugere que o sinal de negação possa estar acessível mesmo a modelos não
+especializados no domínio clínico --- hipótese que este trabalho testa
+diretamente.
 
 \section{Abordagens baseadas em aprendizado de máquina}
 
@@ -51,10 +54,11 @@ características do par de entidades e o rótulo da relação. Modelos lineares 
 regressão logística, alimentados por características léxicas (por exemplo,
 representações \foreignlanguage{english}{TF-IDF} do texto entre as entidades) e
 estruturais (tipos das entidades, distância, direção), oferecem um compromisso
-entre interpretabilidade e desempenho, servindo de \emph{sanity check} antes de
-modelos mais custosos. Sua principal limitação é a representação de palavras como
-unidades independentes, incapaz de capturar dependências de longo alcance e
-contexto.
+entre interpretabilidade e desempenho e são frequentemente empregados como
+\emph{sanity check} antes de modelos mais custosos. Sua principal limitação é a
+representação de palavras como unidades independentes, incapaz de capturar
+dependências de longo alcance e contexto --- limitação que motivou a transição da
+área para modelos contextuais.
 
 \section{Modelos baseados em \emph{transformers}}
 

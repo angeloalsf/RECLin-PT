@@ -34,18 +34,19 @@ são executadas, são:
         etapa constrói os exemplos negativos (\texttt{no\_relation}), produzindo o
         espaço de classificação completo (Seção~\ref{sec:candidatos}).
   \item \textbf{Marcação de entidades (candidatos $\rightarrow$ texto marcado).}
-        Para os modelos contextuais, cada par candidato é transformado na string
-        de entrada do \emph{encoder}, com marcadores de entidade tipados
+        Cada par candidato é transformado na \emph{string} de entrada do
+        \emph{encoder}: uma janela de texto em torno do par, com as duas
+        entidades delimitadas por marcadores
         (Seção~\ref{sec:markers} do Capítulo~\ref{cap:prototipo}). É necessária
-        para informar ao modelo \emph{quais} entidades formam o par e \emph{de que
-        tipo} elas são.
+        para informar ao modelo \emph{quais} trechos da janela formam o par sob
+        análise e qual deles é o primeiro argumento da relação.
   \item \textbf{Classificação (texto marcado $\rightarrow$ predições).} Cada
         \emph{baseline} ou modelo atribui um rótulo do conjunto
         \{\texttt{negation\_of}, \texttt{associated\_with}, \texttt{no\_relation}\}
         a cada candidato (Capítulo~\ref{cap:prototipo}).
   \item \textbf{Avaliação (predições $\rightarrow$ métricas).} As predições são
-        comparadas ao \emph{gold} para produzir macro-F1, F1 por classe e
-        intervalos de confiança, com testes pareados entre modelos
+        comparadas ao \emph{gold} para produzir macro-F1, F1 por classe, MCC e
+        acurácia, com testes pareados entre os modelos
         (Seção~\ref{sec:avaliacao}).
 \end{enumerate}
 
@@ -54,8 +55,8 @@ O \textbf{determinismo} é garantido em \emph{todas} as etapas, condição para 
 JSONL é fixada byte a byte (\texttt{ensure\_ascii=False}, \texttt{sort\_keys=True},
 quebras de linha LF); a ordenação das saídas é explícita (documentos por
 \texttt{doc\_id}, candidatos por $(\text{start},\text{end},\text{id})$); a semente
-aleatória é fixada em $42$ e registrada em cada artefato de resultado; e o ambiente
-de execução tem versões de bibliotecas pinadas. As seções seguintes detalham cada
+do particionamento é fixada em $42$, e a semente de treino é registrada em cada
+artefato de resultado. As seções seguintes detalham cada
 etapa. A Figura~\ref{fig:semclinbr} (Seção~\ref{sec:corpus}) situa a origem do
 dado de entrada, ilustrando o processo de criação e anotação do SemClinBr que
 antecede o \emph{pipeline} aqui descrito.
@@ -96,9 +97,9 @@ são acumuladas em um log de avisos em vez de interromperem o processamento.
 
 A análise exploratória (\foreignlanguage{english}{Exploratory Data Analysis}, EDA)
 foi conduzida sobre a representação canônica do corpus, totalizando $1\,000$
-documentos, $45\,132$ entidades (média de $45{,}1$ por documento) e $11\,353$
-relações (média de $11{,}4$ por documento). A mediana é de $10$ relações por
-documento, o percentil 90 é de $24$ e o máximo observado é de $63$; $46$
+documentos, $45\,508$ entidades (média de $45{,}5$ por documento) e $11\,458$
+relações (média de $11{,}5$ por documento). A mediana é de $10$ relações por
+documento, o percentil 90 é de $24$ e o máximo observado é de $65$; $46$
 documentos ($4{,}60\%$) não possuem nenhuma relação anotada. Essa caracterização
 quantifica a distribuição das relações, a distância entre entidades relacionadas e
 as categorias de entidade, fornecendo subsídio empírico para as decisões de
@@ -108,24 +109,18 @@ projeto das etapas seguintes.
 
 A Tabela~\ref{tab:distribuicao} e a \autoref{fig:eda_reltype} mostram o forte
 desbalanceamento entre os dois tipos de relação anotados, com predominância de
-\texttt{associated\_with} ($86{,}07\%$) sobre \texttt{negation\_of} ($13{,}93\%$).
+\texttt{associated\_with} ($85{,}98\%$) sobre \texttt{negation\_of} ($14{,}02\%$).
 Esse desequilíbrio motiva tanto a escolha do macro-F1 como métrica principal
 quanto o tratamento explícito de classes nos modelos aprendidos.
 
-\begin{table}[htbp]
-  \centering
-  \caption{Distribuição dos tipos de relação no corpus parseado.}
-  \label{tab:distribuicao}
-  \input{tabelas/distribuicao_relacoes}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor a partir do SemClinBr.}
-\end{table}
+\input{tabelas/distribuicao_relacoes}
 
 \begin{figure}[htbp]
   \centering
   \caption{Distribuição dos tipos de relação no SemClinBr.}
   \label{fig:eda_reltype}
   \includegraphics[width=0.6\textwidth]{eda/01_reltype_distribution.png}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/eda\_relations.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
 \end{figure}
 
 \subsection{Distância entre entidades relacionadas}
@@ -133,24 +128,24 @@ quanto o tratamento explícito de classes nos modelos aprendidos.
 A Tabela~\ref{tab:distancia} e a \autoref{fig:eda_dist}
 indicam que as relações ocorrem entre entidades próximas: a mediana da distância é
 de poucos caracteres e o percentil 95 não ultrapassa algumas dezenas
-(\texttt{associated\_with}: média $11{,}9$, p95 $43$; \texttt{negation\_of}: média
-$3{,}5$, p95 $15$). Essa observação fundamenta diretamente a escolha da janela
-máxima (\texttt{max\_gap}$=200$) na geração de pares candidatos.
+(\texttt{associated\_with}: média $11{,}8$, mediana $4$, p95 $43$;
+\texttt{negation\_of}: média $3{,}5$, mediana $1$, p95 $15$). O contraste entre os
+dois tipos é o achado relevante: a negação é praticamente adjacente --- em $75\%$
+dos casos a distância é de um único caractere ---, enquanto a associação se
+distribui por uma cauda bem mais longa. Essa assimetria fundamenta a escolha da
+janela máxima (\texttt{max\_gap}$=20$) na geração de pares candidatos, discutida na
+Seção~\ref{sec:teto_recall}: uma janela estreita preserva quase toda a classe-alvo
+e limita a explosão combinatória de negativos, ao custo de um teto de
+\emph{recall} concentrado em \texttt{associated\_with}.
 
-\begin{table}[htbp]
-  \centering
-  \caption{Estatísticas da distância (em caracteres) entre entidades relacionadas, por tipo.}
-  \label{tab:distancia}
-  \resizebox{\textwidth}{!}{\input{tabelas/distancia_por_tipo}}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor a partir do SemClinBr.}
-\end{table}
+\input{tabelas/distancia_por_tipo}
 
 \begin{figure}[htbp]
   \centering
-  \caption{Distribuição da distância em caracteres entre entidades relacionadas (recorte em 200).}
+  \caption{Distribuição da distância em caracteres entre entidades relacionadas (recorte em 200), com a janela \texttt{max\_gap} assinalada.}
   \label{fig:eda_dist}
   \includegraphics[width=0.7\textwidth]{eda/02_distance_all_clip200.png}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/eda\_relations.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
 \end{figure}
 
 \subsection{Relações por documento e categorias de entidade}
@@ -158,10 +153,10 @@ máxima (\texttt{max\_gap}$=200$) na geração de pares candidatos.
 A \autoref{fig:eda_relsdoc} apresenta a distribuição do número de relações por
 documento, e a \autoref{fig:eda_entcat}, as categorias de entidade mais frequentes
 (após decomposição das anotações multirrótulo separadas por ``|''). As categorias
-predominantes --- \texttt{Abbreviation} ($12\,502$), \texttt{Finding} ($6\,806$),
-\texttt{Therapeutic or Preventive Procedure} ($4\,737$) e \texttt{Sign or Symptom}
-($4\,579$) --- refletem a natureza telegráfica e abreviada do texto clínico. Vale
-notar a presença expressiva da categoria \texttt{Negation} ($2\,616$), coerente
+predominantes --- \texttt{Abbreviation} ($12\,592$), \texttt{Finding} ($6\,827$),
+\texttt{Therapeutic or Preventive Procedure} ($4\,759$) e \texttt{Sign or Symptom}
+($4\,616$) --- refletem a natureza telegráfica e abreviada do texto clínico. Vale
+notar a presença expressiva da categoria \texttt{Negation} ($2\,646$), coerente
 com a importância do fenômeno de negação tratado neste trabalho.
 
 \begin{figure}[htbp]
@@ -169,15 +164,15 @@ com a importância do fenômeno de negação tratado neste trabalho.
   \caption{Distribuição do número de relações por documento.}
   \label{fig:eda_relsdoc}
   \includegraphics[width=0.7\textwidth]{eda/03_relations_per_doc.png}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/eda\_relations.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering
-  \caption{Categorias atômicas de entidade mais frequentes (top 25).}
+  \caption{Categorias atômicas de entidade mais frequentes (15 primeiras).}
   \label{fig:eda_entcat}
   \includegraphics[width=0.9\textwidth]{eda/04_entity_categories_atomic.png}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/eda\_relations.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
 \end{figure}
 
 \section{Particionamento dos dados}
@@ -200,49 +195,34 @@ treino, $100$ de desenvolvimento e $100$ de teste.
 
 A Tabela~\ref{tab:particao} apresenta a distribuição real das relações entre as
 partições. O ponto crítico é que a classe minoritária \texttt{negation\_of}, que
-representa apenas $13{,}93\%$ das relações do corpus, mantém proporção estável em
-todas as partições (entre $13{,}74\%$ e $14{,}96\%$). Essa preservação confirma o
-funcionamento do algoritmo de estratificação multirrótulo de
-\citeonline{sechidis_2011_stratification}: um particionamento puramente aleatório
-poderia, por azar de amostragem, sub-representar \texttt{negation\_of} no conjunto
-de teste, comprometendo a estabilidade da estimativa de F1 dessa classe. A
-estratificação por presença simultânea das duas classes evita esse risco e torna
-as métricas por classe comparáveis entre as partições.
+representa $14{,}02\%$ das relações do corpus, permanece bem representada em todas
+as partições, com proporções de $14{,}09\%$ no treino, $15{,}70\%$ na validação e
+$12{,}16\%$ no teste. A estratificação atua sobre a \emph{presença} das classes em
+cada documento, e não sobre a contagem de relações: ela garante que nenhuma
+partição fique sem exemplos da classe rara, mas não iguala percentuais --- daí a
+variação de cerca de três pontos percentuais observada. Essa garantia é o que
+importa para o protocolo: um particionamento puramente aleatório poderia, por azar
+de amostragem, sub-representar \texttt{negation\_of} no conjunto de teste,
+comprometendo a estabilidade da estimativa de F1 dessa classe. Com $152$ relações
+\texttt{negation\_of} no teste, a estimativa permanece interpretável, ainda que com
+incerteza amostral relevante --- razão pela qual todas as comparações do
+Capítulo~\ref{cap:experimentos} são acompanhadas de teste pareado e intervalo de
+confiança, e não apenas do valor pontual.
 
-\begin{table}[htbp]
-  \centering
-  \caption{Distribuição real das relações por partição (\emph{splits} congelados, semente 42).}
-  \label{tab:particao}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lrrrrr}
-  \toprule
-  Partição & Documentos & \texttt{associated\_with} & \texttt{negation\_of} & Total relações & \% \texttt{negation\_of} \\
-  \midrule
-  Treino & 800  & 7854 & 1251 & 9105  & 13,74 \\
-  Dev    & 100  & 955  & 168  & 1123  & 14,96 \\
-  Teste  & 100  & 963  & 162  & 1125  & 14,40 \\
-  \midrule
-  \textbf{Total} & \textbf{1000} & \textbf{9772} & \textbf{1581} & \textbf{11353} & \textbf{13,93} \\
-  \bottomrule
-  \end{tabular}}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{data/splits/split\_stats.json}).}
-\end{table}
+\input{tabelas/particao_relacoes}
 
 A \autoref{fig:split_dist} apresenta a mesma informação em barras agrupadas (escala
-logarítmica), evidenciando visualmente que a proporção da classe minoritária
-\texttt{negation\_of} permanece estável ($13{,}7\%$, $15{,}0\%$ e $14{,}4\%$ em
-treino, desenvolvimento e teste). A constância dessa proporção, apesar de a
-partição ser feita por documento e não por relação, é exatamente o efeito da
-estratificação multirrótulo: a classe rara não é sub-representada em nenhuma
-partição, condição necessária para que a estimativa de F1 de \texttt{negation\_of}
-no teste seja confiável.
+logarítmica), com o percentual de \texttt{negation\_of} de cada partição anotado na
+legenda. A leitura visual reforça o ponto anterior: a classe rara está presente em
+volume comparável nas três partições, mas sua fração não é constante, e a partição
+de teste é justamente a de menor proporção.
 
 \begin{figure}[htbp]
   \centering
   \caption{Distribuição das relações por partição (escala logarítmica), com o percentual de \texttt{negation\_of} anotado.}
   \label{fig:split_dist}
   \includegraphics[width=0.75\textwidth]{eda/05_relations_by_split.png}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/plot\_split\_distribution.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/make\_tcc\_eda.py}).}
 \end{figure}
 
 \section{Geração de pares candidatos}
@@ -260,28 +240,28 @@ e de que tipo. A classe \texttt{no\_relation} é o que torna a tarefa aplicável
 do conjunto anotado.
 
 A geração é feita pela função \texttt{iter\_candidate\_pairs}
-(\texttt{scripts/utils/candidates.py}), compartilhada por todos os modelos e
+(\texttt{src/candidates.py}), compartilhada por todos os modelos e
 \emph{baselines} --- condição necessária para que os resultados fiquem na mesma
 régua estatística. Para cada documento, ela percorre todos os \textbf{pares
 ordenados} de entidades $(e_1, e_2)$, $e_1 \neq e_2$ --- a ordem importa porque a
 direção é relevante para a negação ---, descarta os pares cuja distância em
-caracteres exceda a janela máxima (\texttt{max\_gap}$=200$) e os pares entre
+caracteres exceda a janela máxima (\texttt{max\_gap}$=20$) e os pares entre
 documentos distintos, e atribui o rótulo: se o par ordenado $(e_1, e_2)$ coincide
 com uma relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe
 \texttt{no\_relation}. A emissão segue ordenação determinística por
 $(\text{start}, \text{end}, \text{id})$, de modo que o conjunto de candidatos --- e
 o \emph{hash} das predições --- seja estável entre execuções.
 
-Em resumo, o gerador respeita cinco propriedades, todas verificadas por testes
-automatizados (\texttt{tests/test\_determinism.py}): \textbf{(i) ordenação
+Em resumo, o gerador respeita cinco propriedades: \textbf{(i) ordenação
 determinística} --- os pares são emitidos sempre na mesma ordem por
 $(\text{start}, \text{end}, \text{id})$ de $e_1$ e depois de $e_2$, requisito do
-qual depende o \emph{hash} SHA-256 das predições; \textbf{(ii) sem cruzamento entre
-documentos} --- nunca se forma um par com entidades de documentos distintos, pois o
-documento é a unidade de processamento; \textbf{(iii) janela respeitada} --- apenas
-pares cuja distância em caracteres (entre o fim de $e_1$ e o início de $e_2$) seja
-$\leq \texttt{max\_gap}=200$ são gerados; \textbf{(iv) sem autopares} --- nunca se
-forma o par $(e, e)$ de uma entidade consigo mesma ($e_1 \neq e_2$); e \textbf{(v)
+qual depende a estabilidade das predições entre execuções; \textbf{(ii) sem
+cruzamento entre documentos} --- nunca se forma um par com entidades de documentos
+distintos, pois o documento é a unidade de processamento; \textbf{(iii) janela
+respeitada} --- apenas pares cuja distância em caracteres (entre o fim de $e_1$ e o
+início de $e_2$) seja $\leq \texttt{max\_gap}=20$ são gerados; \textbf{(iv) sem
+autopares} --- nunca se forma o par $(e, e)$ de uma entidade consigo mesma
+($e_1 \neq e_2$), nem entre entidades com \emph{span} idêntico; e \textbf{(v)
 conferência com o \emph{gold}} --- um par presente nas relações anotadas do
 documento recebe o tipo real (\texttt{associated\_with} ou \texttt{negation\_of}),
 e um par ausente recebe \texttt{no\_relation} (amostragem negativa).
@@ -291,9 +271,9 @@ A relação anotada é $16 \rightarrow 52 = \texttt{negation\_of}$ (a entidade
 ``NÃO ESPECIFICADA'' nega ``OSTEOMIELITE''). Das seis combinações ordenadas
 possíveis entre as três entidades próximas, apenas o par $(16, 52)$ casa com o
 \emph{gold}; os outros cinco tornam-se \texttt{no\_relation}. A representação de
-entrada para os modelos contextuais marca o par com delimitadores tipados, por
-exemplo \texttt{[E1] DISO : OSTEOMIELITE [/E1] [E2] Negation : NÃO ESPECIFICADA
-[/E2]}.
+entrada para os modelos contextuais delimita o par com marcadores de posição, por
+exemplo \texttt{[E1] OSTEOMIELITE [/E1] [E2] NÃO ESPECIFICADA [/E2]}
+(Seção~\ref{sec:markers}).
 
 \begin{quadro}[htbp]
   \centering
@@ -317,45 +297,53 @@ exemplo \texttt{[E1] DISO : OSTEOMIELITE [/E1] [E2] Negation : NÃO ESPECIFICADA
   $17 \rightarrow 52$ & \texttt{no\_relation}  & \\
   \bottomrule
   \end{tabular}}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/utils/candidates.py}).}
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{src/candidates.py}).}
 \end{quadro}
 
-A consequência direta é um conjunto de teste fortemente desbalanceado: dos
-$107\,568$ pares candidatos, $106\,451$ ($98{,}92\%$) pertencem à classe
+A Tabela~\ref{tab:candidatos} reporta o resultado do procedimento nas três
+partições: $128\,380$ candidatos de treino, $15\,994$ de validação e $16\,074$ de
+teste. A consequência direta é um conjunto de teste fortemente desbalanceado: dos
+$16\,074$ pares candidatos, $14\,959$ ($93{,}06\%$) pertencem à classe
 \texttt{no\_relation}, enquanto \texttt{associated\_with} e \texttt{negation\_of}
-somam, respectivamente, $957$ e $160$ instâncias. Esse desbalanceamento de
-$\approx 99{:}1$ é intrínseco à tarefa --- decorre da combinatória de pares de
+somam, respectivamente, $964$ e $151$ instâncias. Esse desbalanceamento de
+$\approx 14{:}1$ é intrínseco à tarefa --- decorre da combinatória de pares de
 entidades --- e não um artefato evitável. Ele é tratado, nos modelos aprendidos,
-pela reescala de perda \texttt{class\_weight="balanced"} (Seção~\ref{cap:prototipo}),
+pela reescala de perda \texttt{class\_weight="balanced"} (Capítulo~\ref{cap:prototipo}),
 e, na avaliação, pela escolha do macro-F1 como métrica principal, que dá peso igual
 às três classes.
+
+\input{tabelas/candidatos_por_particao}
 
 \subsection{Teto de recall imposto pela janela}
 \label{sec:teto_recall}
 
-A janela \texttt{max\_gap}$=200$ é justificada pela EDA (o p95 da distância das
-relações verdadeiras fica abaixo de $200$ caracteres em ambos os tipos), mas impõe
-um \textbf{teto de recall}: toda relação \emph{gold} cujo par fique a mais de $200$
-caracteres jamais é gerada como candidato e, portanto, é irrecuperável por qualquer
-classificador, independentemente da arquitetura. A Tabela~\ref{tab:teto_recall}
-quantifica esse limite por partição: as perdas por janela são pequenas --- $48$ de
-$9\,105$ relações no treino ($0{,}53\%$), $13$ de $1\,123$ na validação ($1{,}16\%$)
-e $4$ de $1\,125$ no teste ($0{,}36\%$), todas da classe \texttt{associated\_with}
----, o que fixa o teto de recall em $99{,}47\%$, $98{,}84\%$ e $99{,}64\%$,
-respectivamente. Trata-se de uma \textbf{decisão de projeto documentada} (um
-compromisso entre recall e explosão de candidatos negativos), e não de um defeito.
+A janela \texttt{max\_gap}$=20$ impõe um \textbf{teto de recall}: toda relação
+\emph{gold} cujo par fique a mais de $20$ caracteres jamais é gerada como candidato
+e, portanto, é irrecuperável por qualquer classificador, independentemente da
+arquitetura. A Tabela~\ref{tab:teto_recall} quantifica esse limite por partição, e
+o ponto essencial é que ele \textbf{não se distribui igualmente entre as classes}.
+Na classe-alvo \texttt{negation\_of}, a perda é marginal: $1$ de $152$ relações no
+teste ($0{,}66\%$), $7$ de $155$ na validação e $43$ de $1\,299$ no treino
+($3{,}31\%$) --- coerente com a mediana de distância de $1$ caractere observada na
+EDA. Em \texttt{associated\_with}, ao contrário, a perda é substantiva: $132$ de
+$1\,098$ no teste ($12{,}02\%$), o que puxa o teto agregado do conjunto de teste
+para $89{,}36\%$.
+
+Trata-se de uma \textbf{decisão de projeto documentada}: um compromisso entre o
+\emph{recall} de \texttt{associated\_with} e a explosão combinatória de candidatos
+negativos, tomado em favor da classe que este trabalho investiga. A consequência
+deve ser lida junto com os resultados: o F1 de \texttt{associated\_with} reportado
+no Capítulo~\ref{cap:experimentos} é medido \emph{sob} esse teto, e não sobre o
+conjunto completo de relações anotadas. Como o teto é idêntico para todos os
+modelos --- todos recebem exatamente os mesmos candidatos ---, ele limita o
+desempenho absoluto, mas não afeta a comparação entre eles.
+
 A tabela também reporta, em coluna separada, as \emph{duplicatas de anotação}
 colapsadas --- relações \emph{gold} repetidas com o mesmo par ordenado e tipo, que
 o gerador representa uma única vez ---; estas \textbf{não} reduzem o teto, pois a
 relação permanece recuperável, sendo apenas redundância de anotação do corpus.
 
-\begin{table}[htbp]
-  \centering
-  \caption{Teto de recall imposto pela janela \texttt{max\_gap}$=200$ por partição.}
-  \label{tab:teto_recall}
-  \input{tabelas/teto_recall}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/eda/recall\_ceiling.py}).}
-\end{table}
+\input{tabelas/teto_recall}
 
 \section{Protocolo de avaliação}
 \label{sec:avaliacao}
@@ -364,78 +352,80 @@ A métrica principal é o \textbf{macro-F1}, que atribui peso igual às três cl
 e, portanto, penaliza modelos que ignoram as classes minoritárias — comportamento
 desejável dado o desbalanceamento. Classes ausentes nas predições recebem F1 nulo
 em vez de serem descartadas, conforme recomendado por
-\citeonline{forman_2010_apples}. Reporta-se também o F1 por classe.
+\citeonline{forman_2010_apples}. Reporta-se também o F1 por classe, o micro-F1
+(equivalente à acurácia neste cenário de rótulo único) e o \emph{coeficiente de
+correlação de Matthews} (MCC), robusto a desbalanceamento. A métrica que responde
+diretamente à pergunta ``o modelo detecta bem a negação?'' é o F1 de
+\texttt{negation\_of} no conjunto de teste, tratada aqui como \textbf{métrica-alvo}.
 
-A incerteza das estimativas é quantificada por \textbf{intervalos de confiança de
-95\%} obtidos por \foreignlanguage{english}{bootstrap} ($1\,000$ reamostragens,
-método percentil $2{,}5$/$97{,}5$, semente $42$ registrada para reprodutibilidade
-exata). Adota-se o \emph{bootstrap} \textbf{por instância} como procedimento
-principal, por ser a convenção em PLN biomédico, o que mantém os resultados
-comparáveis aos da literatura. Como, porém, os pares candidatos de
-um mesmo documento não são independentes (compartilham texto e vocabulário),
-reporta-se também, como \textbf{análise de robustez}, um \emph{bootstrap por
-documento} (\emph{cluster bootstrap}): a cada reamostragem sorteiam-se documentos
-com reposição e tomam-se todos os candidatos dos documentos sorteados, produzindo um
-intervalo de confiança mais conservador (mais largo). A comparação entre as duas
-variantes é apresentada no Capítulo~\ref{cap:experimentos}.
+A comparação entre modelos emprega dois testes pareados complementares, ambos
+calculados sobre o \emph{mesmo} conjunto de teste a partir das predições salvas ---
+o que elimina a variância entre amostras da comparação e mede exatamente a
+diferença entre os modelos.
 
-Comparações pareadas entre modelos empregam o \textbf{teste de McNemar}
-\cite{dietterich_1998_mcnemar}, calculado sobre os acertos por instância no mesmo
-conjunto de teste. Para cada par de modelos, monta-se a tabela de discordâncias
-($b$ = o primeiro acerta e o segundo erra; $c$ = o inverso) e aplica-se o
-\textbf{teste binomial exato} quando $b+c < 25$ ou o \textbf{$\chi^2$ com correção
-de continuidade} caso contrário. Como três pares são testados simultaneamente
-(B0$\times$B1, B0$\times$B2 e B1$\times$B2), os valores-$p$ são ajustados pela
-correção de \textbf{Holm-Bonferroni}, controlando a taxa de erro familiar.
+O \textbf{teste de McNemar} \cite{dietterich_1998_mcnemar} olha apenas as
+instâncias em que os dois modelos discordam quanto ao acerto: monta-se a tabela de
+discordâncias ($b$ = o primeiro acerta e o segundo erra; $c$ = o inverso) e, sob a
+hipótese nula de mesma taxa de acerto, avalia-se
+$b \sim \mathrm{Binomial}(b+c,\,0{,}5)$ pelo \textbf{teste binomial exato}. Ele
+mede se os padrões de erro \emph{globais} diferem, mas não é específico de uma
+classe.
+
+O \textbf{\emph{bootstrap} pareado} responde à pergunta específica da classe-alvo:
+reamostram-se, com reposição, as instâncias do conjunto de teste $10\,000$ vezes;
+a cada reamostragem recalcula-se a diferença $F1_A - F1_B$ no F1 de
+\texttt{negation\_of}, e reportam-se a diferença média, o intervalo de confiança de
+95\% (percentis $2{,}5$/$97{,}5$) e um valor-$p$ bilateral. Adota-se como critério
+de decisão a \textbf{exclusão do zero pelo IC95\%}: se o intervalo contém zero, a
+diferença não é considerada estatisticamente significativa ao nível
+$\alpha = 0{,}05$.
+
+Por fim, como \textbf{análise de robustez à inicialização}, ambos os modelos são
+treinados também com uma segunda semente ($43$), e todo o protocolo acima é
+repetido sobre esses resultados. Essa análise é parte do protocolo, e não um
+complemento opcional: como o Capítulo~\ref{cap:experimentos} mostra, o veredito do
+teste pareado depende da semente, e reportar uma única execução por modelo daria
+uma impressão de definitividade que os dados não sustentam.
 
 \section{Ambiente experimental e rastreabilidade}
 
-Todo o pipeline é executado em contêineres Docker, com \textbf{versões de
-bibliotecas fixadas}, de modo que o ambiente faça parte do registro experimental.
-A pinagem é uma exigência de reprodutibilidade: a mudança de uma versão menor de
-\texttt{scikit-learn} ou \texttt{scipy} pode deslocar os intervalos de confiança
-reportados. As etapas de \emph{parsing}, análise exploratória, particionamento e
-\emph{baselines} executam em CPU (sem GPU), dentro do contêiner; o ajuste fino do
-modelo baseado em \foreignlanguage{english}{transformer} é executado em ambiente
-com GPU (Google Colab, \foreignlanguage{english}{Tesla} T4). O
-Quadro~\ref{quad:ambiente} consolida o ambiente.
+As etapas de \emph{parsing}, particionamento, geração de candidatos, análise
+exploratória e testes de significância executam em CPU; o ajuste fino dos
+\emph{encoders} é executado em ambiente com GPU (Google Colab,
+\foreignlanguage{english}{Tesla} T4), com o mesmo núcleo de código para os dois
+modelos. O Quadro~\ref{quad:ambiente} consolida o ambiente e os hiperparâmetros
+comuns às duas execuções.
 
 \begin{quadro}[htbp]
   \centering
-  \caption{Ambiente experimental e versões pinadas (\emph{baselines}).}
+  \caption{Ambiente experimental e hiperparâmetros compartilhados pelos dois \emph{baselines}.}
   \label{quad:ambiente}
   \begin{tabular}{l p{8cm}}
   \toprule
   Item & Valor \\
   \midrule
-  Sistema host & Windows 11 + Docker \\
-  Imagem base & \texttt{nvidia/cuda:\allowbreak 12.1.1-\allowbreak cudnn8-\allowbreak devel-\allowbreak ubuntu22.04} \\
-  Python & 3.10 \\
-  scikit-learn & 1.5.0 \\
-  scipy & 1.13.1 \\
-  numpy & 1.26.4 \\
-  pandas & 2.2.2 \\
-  matplotlib & 3.9.0 \\
-  lxml & 5.2.2 \\
-  iterative-stratification & 0.1.7 \\
-  statsmodels & 0.14.2 \\
-  PyTorch & 2.3.1 (CUDA 12.1) \\
-  transformers & 4.41.2 \\
-  Hardware (\emph{baselines}) & CPU (sem GPU) \\
-  Semente aleatória & 42 (fixada em todos os experimentos) \\
-  \emph{Bootstrap} & 1000 reamostragens, percentil 2,5/97,5, semente 42 \\
-   & (por instância e por documento) \\
-  Comparação pareada & McNemar (exato/$\chi^2$) + Holm-Bonferroni \\
-  Datas de execução & B0/B1: 27/05/2026; B2: 02/06/2026; \\
-   & McNemar/matrizes/\emph{bootstrap} doc.: 07/06/2026 \\
+  Ajuste fino (GPU) & Google Colab, \foreignlanguage{english}{Tesla} T4 \\
+  Demais etapas & CPU \\
+  Núcleo de implementação & \texttt{src/relation\_extraction.py} (idêntico para os dois \emph{encoders}) \\
+  \texttt{max\_gap} & 20 caracteres \\
+  \texttt{ctx\_chars} & 128 caracteres em torno do par \\
+  \texttt{max\_length} & 128 \emph{tokens} \\
+  \emph{Batch} & 64 \\
+  Taxa de aprendizado & $2\times10^{-5}$ (AdamW), escalonador linear com \emph{warmup} \\
+  Épocas & 3 \\
+  Perda & \emph{cross-entropy} com \texttt{class\_weight="balanced"} \\
+  Seleção de modelo & maior macro-F1 no conjunto de validação \\
+  Sementes de treino & 42 (referência) e 43 (robustez) \\
+  \emph{Bootstrap} pareado & 10.000 reamostragens, percentis 2,5/97,5 \\
+  Comparação pareada & McNemar (binomial exato) + \emph{bootstrap} pareado \\
   \bottomrule
   \end{tabular}\\[4pt]
-  {\footnotesize Fonte: elaborado pelo autor (\texttt{docker/Dockerfile} e \emph{timestamps} de \texttt{experiments/results/}).}
+  {\footnotesize Fonte: elaborado pelo autor (campo \texttt{config} de \texttt{results/baseline\_*.json}).}
 \end{quadro}
 
-A rastreabilidade é reforçada por três mecanismos: a semente padrão $42$ é
-registrada em cada arquivo de resultado; os \emph{splits} congelados são
-verificados por \emph{hashes} SHA-256 (Apêndice~\ref{ap:sha256}); e cada métrica
-reportada tem um arquivo JSON correspondente em \texttt{experiments/results/}. A
-análise de variância prevista para o modelo principal emprega múltiplas sementes
-de treino.
+A rastreabilidade é reforçada por três mecanismos: a semente de treino é registrada
+em cada arquivo de resultado, junto com a configuração completa; os \emph{splits}
+congelados são verificados por \emph{hashes} SHA-256 (Apêndice~\ref{ap:sha256});
+e cada métrica reportada tem um arquivo JSON correspondente em \texttt{results/},
+do qual as tabelas e figuras deste trabalho são geradas por \emph{script} --- nunca
+transcritas à mão.

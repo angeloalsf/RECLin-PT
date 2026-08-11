@@ -3,38 +3,64 @@
 
 Este trabalho abordou a extração de relações entre entidades clínicas em português
 sobre o corpus SemClinBr, no espaço de rótulos \texttt{negation\_of},
-\texttt{associated\_with} e \texttt{no\_relation}. A ênfase recaiu sobre a
-construção de uma cadeia experimental reprodutível, do texto bruto às métricas com
-intervalos de confiança.
+\texttt{associated\_with} e \texttt{no\_relation}. Como etapa inicial do
+desenvolvimento do \textbf{RECLin-PT}, conduziu-se um experimento controlado de
+\emph{baselines} para responder a uma pergunta que fundamenta as decisões de
+projeto seguintes: o pré-treinamento clínico importa para a extração de relações em
+textos médicos em português? A ênfase recaiu, simultaneamente, sobre a resposta a
+essa pergunta e sobre a construção de uma cadeia experimental reprodutível, do
+texto bruto às métricas finais.
 
 \section{Contribuições}
 
-As principais contribuições até o momento são: (i) um parser fiel e determinístico
-do formato XML do SemClinBr, com verificação de sanidade e correção controlada de
+As principais contribuições são: (i) um \emph{parser} fiel e determinístico do
+formato XML do SemClinBr, com verificação de sanidade e correção controlada de
 \emph{offsets}; (ii) uma caracterização do corpus que evidencia o desbalanceamento
-das relações e a proximidade entre entidades relacionadas; (iii) um protocolo de
-particionamento em nível de documento, estratificado e congelado, que previne
-vazamento de dados; (iv) um gerador determinístico de pares candidatos
-compartilhado por todos os modelos; e (v) \emph{baselines} de referência avaliados
-sob um protocolo estatístico uniforme (macro-F1 com IC95\% por
-\foreignlanguage{english}{bootstrap}), estabelecendo patamares comparáveis para o
-mesmo corpus.
+das relações e a proximidade entre entidades relacionadas --- em particular, a
+quase adjacência dos pares de negação; (iii) um protocolo de particionamento em
+nível de documento, estratificado e congelado, que previne vazamento de dados;
+(iv) um gerador determinístico de pares candidatos compartilhado por todos os
+modelos, com o teto de \emph{recall} imposto pela janela quantificado por partição
+e por classe; (v) uma infraestrutura experimental de paridade total, em que os dois
+\emph{encoders} comparados diferem apenas no \emph{checkpoint} de pré-treino; e
+(vi) uma comparação empírica com teste de significância pareado entre um
+\emph{encoder} clínico e um geral sobre a mesma tarefa.
 
-Os resultados dos \emph{baselines} mostraram que soluções triviais são inviáveis
-sob o desbalanceamento da tarefa (B0 com macro-F1 $0{,}006$) e que abordagens
-léxicas, embora alcancem alta cobertura da negação, têm precisão limitada (B1 com
-macro-F1 $0{,}236$). A regressão logística (B2) superou ambos com folga
-(macro-F1 $0{,}637$), confirmando o ganho de modelos aprendidos e motivando o uso
-de modelos contextuais para reduzir a lacuna remanescente, sobretudo na classe
-\texttt{associated\_with}.
+Quanto aos resultados, não se observou vantagem do pré-treinamento clínico. Na
+semente de referência ($42$), a diferença no F1 de \texttt{negation\_of} entre
+BioBERTpt e BERTimbau é de $0{,}010$ e não é estatisticamente significativa
+(McNemar $p=0{,}18$; \emph{bootstrap} pareado IC95\% $[-0{,}047;\,+0{,}026]$); na
+semente $43$, a mesma comparação pareada passa a favorecer o BERTimbau
+(IC95\% $[-0{,}115;\,-0{,}031]$, $p=0{,}0002$). O veredito estatístico, portanto,
+\textbf{não é estável entre sementes} --- a variação de inicialização de um mesmo
+modelo ($0{,}070$ de amplitude no BioBERTpt) supera com folga a diferença entre os
+dois modelos ---, mas a direção é: em nenhuma das sementes testadas o \emph{encoder}
+clínico fica à frente. O \emph{encoder} geral alcança o clínico com cerca de $60\%$
+dos parâmetros e com desempenho sensivelmente mais estável entre reinicializações.
 
 \section{Trabalhos futuros}
 
-Como continuidade, prevê-se: executar o ajuste fino do BioBERTpt
-\cite{schneider_2020_biobertpt} como modelo proposto, nas seeds de treino 42, 123 e
-1337; realizar a análise de variância entre seeds e a comparação estatística com o
-\emph{baseline} B2 pelo teste de McNemar \cite{dietterich_1998_mcnemar}; investigar o
-tratamento do escopo da negação e da direção das relações; e avaliar o impacto da
-janela máxima na geração de pares candidatos. A médio prazo, a integração com uma
-etapa de NER automática permitiria medir o desempenho da extração de relações em
+Esses resultados orientam diretamente a próxima etapa: o RECLin-PT será desenvolvido
+a partir do \emph{encoder} identificado como melhor base nos \emph{baselines}. Como
+o BERTimbau geral não fica atrás em nenhuma das sementes testadas na métrica-alvo
+e exige cerca de $60\%$ dos parâmetros, ele se apresenta como a base mais atraente
+por eficiência e previsibilidade. O desenvolvimento terá como foco o aprimoramento
+da classe \texttt{negation\_of}, a mais crítica para a correta interpretação
+clínica.
+
+Como continuidade, prevê-se ainda: estimar o desempenho dos \emph{baselines} sob um
+número maior de sementes de treino, com agregação formal, para obter um intervalo
+de confiança da diferença mais estreito; enriquecer a representação de entrada com
+o \textbf{tipo semântico} das entidades, hoje ausente dos marcadores
+(Seção~\ref{sec:markers_limitacao}), medindo se o ganho difere entre o
+\emph{encoder} clínico e o geral; reavaliar a janela \texttt{max\_gap} da
+geração de pares candidatos, elevando o teto de \emph{recall} de
+\texttt{associated\_with} sem inviabilizar o custo de treino; investigar o
+tratamento explícito do escopo da negação e da direção das relações; estender o
+espaço de relações para além das três classes atuais; avaliar modelos maiores e
+\emph{encoders} multilíngues \cite{conneau_2020_xlmr}; e integrar uma etapa de
+reconhecimento de entidades nomeadas automática, medindo a extração de relações em
 um cenário fim a fim.
+
+O trabalho encontra-se, portanto, em andamento: os \emph{baselines} aqui reportados
+estabelecem o ponto de partida do RECLin-PT, e não um encerramento.

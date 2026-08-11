@@ -1,0 +1,25 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_artifacts.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_artifacts.py
+%% Fonte dos dados: results/significance_biobertpt_vs_bertimbau_seed43.json
+\begin{table}[htbp]
+  \centering
+  \caption{Comparação pareada BioBERTpt (clínico) \emph{vs.} BERTimbau (geral) no conjunto de teste ($n=16.074$, semente 43).}
+  \label{tab:significancia43}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lc}
+  \toprule
+  Medida & Valor \\
+  \midrule
+  F1 \texttt{negation\_of} --- BioBERTpt (A) & 0,653 \\
+  F1 \texttt{negation\_of} --- BERTimbau (B) & 0,726 \\
+  Diferença observada (A $-$ B) & $-0,073$ \\
+  McNemar: $b$ (só A acerta) / $c$ (só B acerta) & 394 / 818 \\
+  McNemar: valor-$p$ (binomial exato) & $<0{,}001$ \\
+  \emph{Bootstrap} pareado: IC95\% da diferença & $[-0,115;\,-0,031]$ \\
+  \emph{Bootstrap} pareado: valor-$p$ & $<0{,}001$ \\
+  \textbf{Diferença significativa ($\alpha=0{,}05$)?} & \textbf{Sim} \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{results/significance\_biobertpt\_vs\_bertimbau\_seed43.json}).}
+\end{table}
