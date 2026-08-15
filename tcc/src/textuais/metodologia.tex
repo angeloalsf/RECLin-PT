@@ -1,7 +1,7 @@
 \chapter[Metodologia]{Metodologia}
 \label{cap:metodologia}
 
-Este capítulo descreve o corpus, o pipeline de processamento, a estratégia de
+Este capítulo descreve o corpus, o \emph{pipeline} de processamento, a estratégia de
 particionamento, a geração de pares candidatos e o protocolo de avaliação. Todas
 as etapas foram projetadas sob a premissa de \textbf{reprodutibilidade}: ordenação
 determinística das saídas, serialização fixa, semente aleatória registrada e
@@ -67,7 +67,7 @@ antecede o \emph{pipeline} aqui descrito.
 O trabalho utiliza o corpus SemClinBr \cite{oliveira_2022_semclinbr}, composto por
 mil documentos clínicos em português anotados com entidades e relações. O corpus
 é distribuído sob licença restrita, mediante solicitação formal, e seus arquivos
-XML originais são tratados como \textbf{imutáveis} ao longo do pipeline. As
+XML originais são tratados como \textbf{imutáveis} ao longo do \emph{pipeline}. As
 relações anotadas no corpus público utilizado pertencem a dois tipos,
 \texttt{associated\_with} e \texttt{negation\_of}, sobre os quais se constrói o
 espaço de rótulos da tarefa. A Figura~\ref{fig:semclinbr} ilustra o processo de
@@ -77,16 +77,16 @@ criação e anotação do corpus.
 
 \section{Parsing e representação canônica}
 
-Um parser converte cada arquivo XML em um registro canônico no formato JSONL, com
+Um \emph{parser} converte cada arquivo XML em um registro canônico no formato JSONL, com
 identificador do documento, texto, lista de entidades (tipo e \emph{offsets}) e
-lista de relações. O parser é \emph{fiel ao XML}: não normaliza tipos de entidade
+lista de relações. O \emph{parser} é \emph{fiel ao XML}: não normaliza tipos de entidade
 ou de relação, deixando tais decisões para etapas posteriores. A única
 transformação aplicada ao texto é o colapso de quebras de linha
 (\texttt{\textbackslash r\textbackslash n}, \texttt{\textbackslash r},
 \texttt{\textbackslash n}) em espaço único, necessário para manter o alinhamento
 dos \emph{offsets} de anotação.
 
-Por se tratar de um corpus com inconsistências de anotação conhecidas, o parser
+Por se tratar de um corpus com inconsistências de anotação conhecidas, o \emph{parser}
 executa verificações de sanidade (correspondência entre o texto extraído por
 \emph{offset} e o atributo anotado, validade dos intervalos e integridade
 referencial das relações) e, quando possível, corrige automaticamente pequenos
@@ -130,8 +130,8 @@ indicam que as relações ocorrem entre entidades próximas: a mediana da distâ
 de poucos caracteres e o percentil 95 não ultrapassa algumas dezenas
 (\texttt{associated\_with}: média $11{,}8$, mediana $4$, p95 $43$;
 \texttt{negation\_of}: média $3{,}5$, mediana $1$, p95 $15$). O contraste entre os
-dois tipos é o achado relevante: a negação é praticamente adjacente --- em $75\%$
-dos casos a distância é de um único caractere ---, enquanto a associação se
+dois tipos é o achado relevante: a negação é praticamente adjacente, pois em $75\%$
+dos casos a distância é de um único caractere, enquanto a associação se
 distribui por uma cauda bem mais longa. Essa assimetria fundamenta a escolha da
 janela máxima (\texttt{max\_gap}$=20$) na geração de pares candidatos, discutida na
 Seção~\ref{sec:teto_recall}: uma janela estreita preserva quase toda a classe-alvo
@@ -153,9 +153,10 @@ e limita a explosão combinatória de negativos, ao custo de um teto de
 A \autoref{fig:eda_relsdoc} apresenta a distribuição do número de relações por
 documento, e a \autoref{fig:eda_entcat}, as categorias de entidade mais frequentes
 (após decomposição das anotações multirrótulo separadas por ``|''). As categorias
-predominantes --- \texttt{Abbreviation} ($12\,592$), \texttt{Finding} ($6\,827$),
+predominantes refletem a natureza telegráfica e abreviada do texto clínico:
+\texttt{Abbreviation} ($12\,592$), \texttt{Finding} ($6\,827$),
 \texttt{Therapeutic or Preventive Procedure} ($4\,759$) e \texttt{Sign or Symptom}
-($4\,616$) --- refletem a natureza telegráfica e abreviada do texto clínico. Vale
+($4\,616$). Vale
 notar a presença expressiva da categoria \texttt{Negation} ($2\,646$), coerente
 com a importância do fenômeno de negação tratado neste trabalho.
 
@@ -199,13 +200,13 @@ representa $14{,}02\%$ das relações do corpus, permanece bem representada em t
 as partições, com proporções de $14{,}09\%$ no treino, $15{,}70\%$ na validação e
 $12{,}16\%$ no teste. A estratificação atua sobre a \emph{presença} das classes em
 cada documento, e não sobre a contagem de relações: ela garante que nenhuma
-partição fique sem exemplos da classe rara, mas não iguala percentuais --- daí a
+partição fique sem exemplos da classe rara, mas não iguala percentuais: daí a
 variação de cerca de três pontos percentuais observada. Essa garantia é o que
 importa para o protocolo: um particionamento puramente aleatório poderia, por azar
 de amostragem, sub-representar \texttt{negation\_of} no conjunto de teste,
 comprometendo a estabilidade da estimativa de F1 dessa classe. Com $152$ relações
 \texttt{negation\_of} no teste, a estimativa permanece interpretável, ainda que com
-incerteza amostral relevante --- razão pela qual todas as comparações do
+incerteza amostral relevante, razão pela qual todas as comparações do
 Capítulo~\ref{cap:experimentos} são acompanhadas de teste pareado e intervalo de
 confiança, e não apenas do valor pontual.
 
@@ -241,28 +242,28 @@ do conjunto anotado.
 
 A geração é feita pela função \texttt{iter\_candidate\_pairs}
 (\texttt{src/candidates.py}), compartilhada por todos os modelos e
-\emph{baselines} --- condição necessária para que os resultados fiquem na mesma
+\emph{baselines}, condição necessária para que os resultados fiquem na mesma
 régua estatística. Para cada documento, ela percorre todos os \textbf{pares
-ordenados} de entidades $(e_1, e_2)$, $e_1 \neq e_2$ --- a ordem importa porque a
-direção é relevante para a negação ---, descarta os pares cuja distância em
-caracteres exceda a janela máxima (\texttt{max\_gap}$=20$) e os pares entre
-documentos distintos, e atribui o rótulo: se o par ordenado $(e_1, e_2)$ coincide
-com uma relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe
+ordenados} de entidades $(e_1, e_2)$, com $e_1 \neq e_2$, uma vez que a ordem
+importa: a direção é relevante para a negação. Em seguida, descarta os pares cuja
+distância em caracteres exceda a janela máxima (\texttt{max\_gap}$=20$) e os pares
+entre documentos distintos, e atribui o rótulo: se o par ordenado $(e_1, e_2)$
+coincide com uma relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe
 \texttt{no\_relation}. A emissão segue ordenação determinística por
-$(\text{start}, \text{end}, \text{id})$, de modo que o conjunto de candidatos --- e
-o \emph{hash} das predições --- seja estável entre execuções.
+$(\text{start}, \text{end}, \text{id})$, de modo que o conjunto de candidatos e
+o \emph{hash} das predições sejam estáveis entre execuções.
 
-Em resumo, o gerador respeita cinco propriedades: \textbf{(i) ordenação
-determinística} --- os pares são emitidos sempre na mesma ordem por
+Em resumo, o gerador respeita cinco propriedades. \textbf{(i) Ordenação
+determinística}: os pares são emitidos sempre na mesma ordem por
 $(\text{start}, \text{end}, \text{id})$ de $e_1$ e depois de $e_2$, requisito do
-qual depende a estabilidade das predições entre execuções; \textbf{(ii) sem
-cruzamento entre documentos} --- nunca se forma um par com entidades de documentos
-distintos, pois o documento é a unidade de processamento; \textbf{(iii) janela
-respeitada} --- apenas pares cuja distância em caracteres (entre o fim de $e_1$ e o
-início de $e_2$) seja $\leq \texttt{max\_gap}=20$ são gerados; \textbf{(iv) sem
-autopares} --- nunca se forma o par $(e, e)$ de uma entidade consigo mesma
-($e_1 \neq e_2$), nem entre entidades com \emph{span} idêntico; e \textbf{(v)
-conferência com o \emph{gold}} --- um par presente nas relações anotadas do
+qual depende a estabilidade das predições entre execuções. \textbf{(ii) Sem
+cruzamento entre documentos}: nunca se forma um par com entidades de documentos
+distintos, pois o documento é a unidade de processamento. \textbf{(iii) Janela
+respeitada}: apenas pares cuja distância em caracteres (entre o fim de $e_1$ e o
+início de $e_2$) seja $\leq \texttt{max\_gap}=20$ são gerados. \textbf{(iv) Sem
+autopares}: nunca se forma o par $(e, e)$ de uma entidade consigo mesma
+($e_1 \neq e_2$), nem entre entidades com \emph{span} idêntico. \textbf{(v)
+Conferência com o \emph{gold}}: um par presente nas relações anotadas do
 documento recebe o tipo real (\texttt{associated\_with} ou \texttt{negation\_of}),
 e um par ausente recebe \texttt{no\_relation} (amostragem negativa).
 
@@ -306,8 +307,8 @@ teste. A consequência direta é um conjunto de teste fortemente desbalanceado: 
 $16\,074$ pares candidatos, $14\,959$ ($93{,}06\%$) pertencem à classe
 \texttt{no\_relation}, enquanto \texttt{associated\_with} e \texttt{negation\_of}
 somam, respectivamente, $964$ e $151$ instâncias. Esse desbalanceamento de
-$\approx 14{:}1$ é intrínseco à tarefa --- decorre da combinatória de pares de
-entidades --- e não um artefato evitável. Ele é tratado, nos modelos aprendidos,
+$\approx 14{:}1$ é intrínseco à tarefa, e não um artefato evitável: decorre da
+combinatória de pares de entidades. Ele é tratado, nos modelos aprendidos,
 pela reescala de perda \texttt{class\_weight="balanced"} (Capítulo~\ref{cap:prototipo}),
 e, na avaliação, pela escolha do macro-F1 como métrica principal, que dá peso igual
 às três classes.
@@ -324,8 +325,8 @@ arquitetura. A Tabela~\ref{tab:teto_recall} quantifica esse limite por partiçã
 o ponto essencial é que ele \textbf{não se distribui igualmente entre as classes}.
 Na classe-alvo \texttt{negation\_of}, a perda é marginal: $1$ de $152$ relações no
 teste ($0{,}66\%$), $7$ de $155$ na validação e $43$ de $1\,299$ no treino
-($3{,}31\%$) --- coerente com a mediana de distância de $1$ caractere observada na
-EDA. Em \texttt{associated\_with}, ao contrário, a perda é substantiva: $132$ de
+($3{,}31\%$), valor coerente com a mediana de distância de $1$ caractere observada
+na EDA. Em \texttt{associated\_with}, ao contrário, a perda é substantiva: $132$ de
 $1\,098$ no teste ($12{,}02\%$), o que puxa o teto agregado do conjunto de teste
 para $89{,}36\%$.
 
@@ -335,12 +336,12 @@ negativos, tomado em favor da classe que este trabalho investiga. A consequênci
 deve ser lida junto com os resultados: o F1 de \texttt{associated\_with} reportado
 no Capítulo~\ref{cap:experimentos} é medido \emph{sob} esse teto, e não sobre o
 conjunto completo de relações anotadas. Como o teto é idêntico para todos os
-modelos --- todos recebem exatamente os mesmos candidatos ---, ele limita o
+modelos, que recebem exatamente os mesmos candidatos, ele limita o
 desempenho absoluto, mas não afeta a comparação entre eles.
 
 A tabela também reporta, em coluna separada, as \emph{duplicatas de anotação}
-colapsadas --- relações \emph{gold} repetidas com o mesmo par ordenado e tipo, que
-o gerador representa uma única vez ---; estas \textbf{não} reduzem o teto, pois a
+colapsadas, isto é, relações \emph{gold} repetidas com o mesmo par ordenado e tipo,
+que o gerador representa uma única vez. Estas \textbf{não} reduzem o teto, pois a
 relação permanece recuperável, sendo apenas redundância de anotação do corpus.
 
 \input{tabelas/teto_recall}
@@ -349,7 +350,7 @@ relação permanece recuperável, sendo apenas redundância de anotação do cor
 \label{sec:avaliacao}
 
 A métrica principal é o \textbf{macro-F1}, que atribui peso igual às três classes
-e, portanto, penaliza modelos que ignoram as classes minoritárias — comportamento
+e, portanto, penaliza modelos que ignoram as classes minoritárias, comportamento
 desejável dado o desbalanceamento. Classes ausentes nas predições recebem F1 nulo
 em vez de serem descartadas, conforme recomendado por
 \citeonline{forman_2010_apples}. Reporta-se também o F1 por classe, o micro-F1
@@ -359,7 +360,7 @@ diretamente à pergunta ``o modelo detecta bem a negação?'' é o F1 de
 \texttt{negation\_of} no conjunto de teste, tratada aqui como \textbf{métrica-alvo}.
 
 A comparação entre modelos emprega dois testes pareados complementares, ambos
-calculados sobre o \emph{mesmo} conjunto de teste a partir das predições salvas ---
+calculados sobre o \emph{mesmo} conjunto de teste a partir das predições salvas,
 o que elimina a variância entre amostras da comparação e mede exatamente a
 diferença entre os modelos.
 
@@ -427,5 +428,5 @@ A rastreabilidade é reforçada por três mecanismos: a semente de treino é reg
 em cada arquivo de resultado, junto com a configuração completa; os \emph{splits}
 congelados são verificados por \emph{hashes} SHA-256 (Apêndice~\ref{ap:sha256});
 e cada métrica reportada tem um arquivo JSON correspondente em \texttt{results/},
-do qual as tabelas e figuras deste trabalho são geradas por \emph{script} --- nunca
+do qual as tabelas e figuras deste trabalho são geradas por \emph{script}, nunca
 transcritas à mão.

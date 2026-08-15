@@ -48,8 +48,8 @@ pré-treinados sobre texto do próprio domínio clínico capturem melhor essas
 construções do que modelos de domínio geral. Essa expectativa, contudo, é raramente
 testada de forma controlada para o português: trabalhos costumam adotar um modelo
 clínico por hipótese, sem isolar o efeito do pré-treinamento de domínio sob
-protocolo estatístico rigoroso. Construir esse teste de forma reprodutível --- desde
-o texto bruto até as métricas finais --- é, em si, uma contribuição metodológica,
+protocolo estatístico rigoroso. Construir esse teste de forma reprodutível, desde
+o texto bruto até as métricas finais, é em si uma contribuição metodológica,
 dado que a falta de reprodutibilidade é uma das principais críticas dirigidas à
 literatura de PLN biomédico.
 
@@ -58,9 +58,9 @@ literatura de PLN biomédico.
 \subsection{Objetivo geral}
 
 Desenvolver, de forma reprodutível, um \emph{pipeline} determinístico de extração de
-relações entre entidades clínicas em português sobre o corpus SemClinBr ---
+relações entre entidades clínicas em português sobre o corpus SemClinBr,
 considerando o espaço de rótulos \texttt{negation\_of}, \texttt{associated\_with} e
-\texttt{no\_relation} --- e, sobre essa infraestrutura, avaliar sob protocolo
+\texttt{no\_relation}, e, sobre essa infraestrutura, avaliar sob protocolo
 estatístico rigoroso (macro-F1 e F1 por classe, com teste de significância pareado)
 se o pré-treinamento de domínio clínico traz ganho para a tarefa, comparando um
 \emph{encoder} clínico (BioBERTpt) e um de domínio geral (BERTimbau) sob paridade
@@ -70,7 +70,7 @@ RECLin-PT.
 \subsection{Objetivos específicos}
 
 \begin{itemize}
-  \item Construir um parser fiel ao formato XML do SemClinBr que produza uma
+  \item Construir um \emph{parser} fiel ao formato XML do SemClinBr que produza uma
         representação canônica determinística do corpus.
   \item Caracterizar o corpus por meio de análise exploratória, quantificando a
         distribuição das relações e a distância entre entidades relacionadas.
@@ -78,8 +78,8 @@ RECLin-PT.
         estratificada e congelada, de modo a evitar vazamento de dados.
   \item Implementar um gerador determinístico de pares candidatos compartilhado por
         todos os modelos, garantindo a comparabilidade dos resultados.
-  \item Ajustar dois \emph{encoders} para o português --- um de domínio clínico
-        (BioBERTpt) e um de domínio geral (BERTimbau) --- sob um único núcleo de
+  \item Ajustar dois \emph{encoders} para o português, um de domínio clínico
+        (BioBERTpt) e um de domínio geral (BERTimbau), sob um único núcleo de
         implementação, de modo que difiram apenas no \emph{checkpoint} de
         pré-treino.
   \item Comparar os dois \emph{baselines} sob teste de significância pareado
@@ -98,7 +98,7 @@ O Capítulo~\ref{cap:referencial} apresenta os fundamentos de PLN clínico,
 extração de relações e modelos baseados em \foreignlanguage{english}{transformers}.
 O Capítulo~\ref{cap:relacionados} discute trabalhos relacionados, com ênfase em
 recursos para o português. O Capítulo~\ref{cap:metodologia} descreve o corpus, o
-pipeline de processamento, a geração de pares candidatos e o protocolo de
+\emph{pipeline} de processamento, a geração de pares candidatos e o protocolo de
 avaliação. O Capítulo~\ref{cap:prototipo} detalha a proposta de modelo. O
 Capítulo~\ref{cap:experimentos} reporta os experimentos e resultados. O
 Capítulo~\ref{cap:discussao} analisa limitações e ameaças à validade, e o

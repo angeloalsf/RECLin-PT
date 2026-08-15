@@ -8,7 +8,7 @@ detalha o ajuste fino dos dois \emph{encoders} comparados.
 
 Todos os valores abaixo foram lidos do campo \texttt{config} dos arquivos
 \texttt{results/baseline\_*.json}, gravado pelo próprio código de treino no momento
-da execução --- e não transcritos de um plano de experimento. Os dois
+da execução, e não transcritos de um plano de experimento. Os dois
 \emph{encoders} compartilham a configuração integralmente: essa identidade é
 verificada automaticamente por \texttt{scripts/\_artifacts.py}, que recusa gerar
 qualquer tabela deste trabalho caso as configurações das quatro execuções (dois
@@ -62,7 +62,6 @@ modelos $\times$ duas sementes) divirjam em algum campo.
   {\footnotesize Fonte: elaborado pelo autor (campo \texttt{config} de \texttt{results/baseline\_*.json}).}
 \end{quadro}
 
-A evolução época a época de cada uma das quatro execuções --- perda de treino,
-perda de validação, macro-F1 e F1 de \texttt{negation\_of} na validação, além da
-duração --- consta da Tabela~\ref{tab:dev_history}, no
-Capítulo~\ref{cap:experimentos}.
+A Tabela~\ref{tab:dev_history}, no Capítulo~\ref{cap:experimentos}, registra a
+evolução época a época de cada uma das quatro execuções: perda de treino, perda de
+validação, macro-F1 e F1 de \texttt{negation\_of} na validação, além da duração.

@@ -36,13 +36,13 @@ idênticos em tudo exceto no \emph{checkpoint} carregado:
         \texttt{class\_weight="balanced"};
   \item o mesmo escalonador linear com \emph{warmup} e os mesmos
         hiperparâmetros de otimização (Quadro~\ref{quad:ambiente});
-  \item o mesmo critério de seleção de modelo --- maior macro-F1 no conjunto de
-        validação --- e a mesma semente de treino.
+  \item a mesma semente de treino e o mesmo critério de seleção de modelo: maior
+        macro-F1 no conjunto de validação.
 \end{itemize}
 
 Trocar um \emph{baseline} pelo outro consiste, literalmente, em mudar a
 \emph{string} do \emph{checkpoint}. Qualquer diferença observada pode, portanto,
-ser atribuída ao pré-treinamento, e não a artefatos de implementação --- que é
+ser atribuída ao pré-treinamento, e não a artefatos de implementação. Essa é
 exatamente a condição para que a pergunta de pesquisa tenha resposta.
 
 \section{Os dois \emph{encoders} comparados}
@@ -52,8 +52,8 @@ exatamente a condição para que a pergunta de pesquisa tenha resposta.
 O \textbf{BioBERTpt} (\texttt{pucpr/biobertpt-all}) \cite{schneider_2020_biobertpt}
 é um modelo contextual adaptado ao domínio clínico e biomédico em português
 brasileiro, com $177{,}9$ milhões de parâmetros. Sua adoção corresponde à
-expectativa difundida na literatura --- e sustentada pelos ganhos relatados em
-reconhecimento de entidades nomeadas clínicas --- de que o pré-treinamento sobre
+expectativa, difundida na literatura e sustentada pelos ganhos relatados em
+reconhecimento de entidades nomeadas clínicas, de que o pré-treinamento sobre
 texto do próprio domínio produza representações mais adequadas a tarefas clínicas.
 É essa expectativa que o experimento coloca à prova.
 
@@ -61,7 +61,7 @@ texto do próprio domínio produza representações mais adequadas a tarefas cl�
 
 O \textbf{BERTimbau} (\texttt{neuralmind/bert-base-portuguese-cased})
 \cite{souza_2020_bertimbau} é a referência de domínio geral para o português,
-pré-treinado no corpus brWaC, com $108{,}9$ milhões de parâmetros --- cerca de
+pré-treinado no corpus brWaC, com $108{,}9$ milhões de parâmetros, cerca de
 $60\%$ do tamanho do BioBERTpt. Ele entra no experimento como o controle que isola
 o efeito do domínio de pré-treino, e não como modelo secundário: se o desempenho
 for equivalente, o modelo menor é preferível por custo de inferência e de memória,
@@ -116,15 +116,15 @@ exatamente \emph{que informação} o modelo recebe:
 
 \begin{enumerate}
   \item \textbf{Os marcadores são posicionais, não semânticos.} Eles indicam
-        quais trechos da janela formam o par e qual deles é o primeiro argumento
-        --- e nada mais. O \textbf{tipo semântico} anotado pelo SemClinBr
+        quais trechos da janela formam o par e qual deles é o primeiro
+        argumento, e nada mais. O \textbf{tipo semântico} anotado pelo SemClinBr
         (\texttt{Disease or Syndrome}, \texttt{Negation}, \texttt{Finding}\ldots)
         \textbf{não é passado ao modelo}: cabe a ele inferir a natureza de cada
         entidade a partir da superfície textual e do contexto.
   \item \textbf{A direção vem da etiqueta, não da ordem.} A inserção é feita por
         deslocamento de caractere; quando $e_2$ precede $e_1$ no texto, a
-        \emph{string} resultante começa por \texttt{[E2]}. A direção da relação
-        --- que importa para \texttt{negation\_of} --- é preservada por
+        \emph{string} resultante começa por \texttt{[E2]}. A direção da
+        relação, que importa para \texttt{negation\_of}, é preservada por
         \emph{qual} marcador envolve \emph{qual} entidade, e não pela ordem em
         que os marcadores aparecem.
   \item \textbf{A classificação usa a representação agregada da sequência.} O
@@ -175,7 +175,7 @@ tem de ser inferida da superfície textual e do contexto.
 A anotação de tipo, aliás, não é diretamente aproveitável na forma em que vem. No
 conjunto de treino ocorrem apenas $89$ tipos \emph{atômicos} distintos, mas a
 combinação multirrótulo faz o número de \emph{strings} de tipo distintas subir para
-$828$ --- das quais $752$ contêm ``\texttt{|}''. Injetar essa \emph{string}
+$828$, das quais $752$ contêm ``\texttt{|}''. Injetar essa \emph{string}
 diretamente no marcador seria contraproducente: cada uma das $828$ combinações
 viraria um símbolo praticamente único e mal povoado no treino, prejudicando a
 generalização. Aproveitá-la exigiria, antes, um esquema de normalização que
@@ -183,5 +183,5 @@ colapsasse as combinações em um vocabulário pequeno e estável.
 
 Para a pergunta desta etapa, porém, a ausência do tipo é inclusive conveniente:
 como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
-comparação mede a capacidade de cada um de \emph{inferi-la} do texto --- que é
-exatamente onde o pré-treinamento de domínio deveria fazer diferença.
+comparação mede a capacidade de cada um de \emph{inferi-la} do texto, e é
+exatamente aí que o pré-treinamento de domínio deveria fazer diferença.

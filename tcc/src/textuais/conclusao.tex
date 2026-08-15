@@ -16,7 +16,7 @@ texto bruto às métricas finais.
 As principais contribuições são: (i) um \emph{parser} fiel e determinístico do
 formato XML do SemClinBr, com verificação de sanidade e correção controlada de
 \emph{offsets}; (ii) uma caracterização do corpus que evidencia o desbalanceamento
-das relações e a proximidade entre entidades relacionadas --- em particular, a
+das relações e a proximidade entre entidades relacionadas, em particular a
 quase adjacência dos pares de negação; (iii) um protocolo de particionamento em
 nível de documento, estratificado e congelado, que previne vazamento de dados;
 (iv) um gerador determinístico de pares candidatos compartilhado por todos os
@@ -32,10 +32,10 @@ BioBERTpt e BERTimbau é de $0{,}010$ e não é estatisticamente significativa
 (McNemar $p=0{,}18$; \emph{bootstrap} pareado IC95\% $[-0{,}047;\,+0{,}026]$); na
 semente $43$, a mesma comparação pareada passa a favorecer o BERTimbau
 (IC95\% $[-0{,}115;\,-0{,}031]$, $p=0{,}0002$). O veredito estatístico, portanto,
-\textbf{não é estável entre sementes} --- a variação de inicialização de um mesmo
+\textbf{não é estável entre sementes}, pois a variação de inicialização de um mesmo
 modelo ($0{,}070$ de amplitude no BioBERTpt) supera com folga a diferença entre os
-dois modelos ---, mas a direção é: em nenhuma das sementes testadas o \emph{encoder}
-clínico fica à frente. O \emph{encoder} geral alcança o clínico com cerca de $60\%$
+dois modelos. A direção, contudo, é estável: em nenhuma das sementes testadas o
+\emph{encoder} clínico fica à frente. O \emph{encoder} geral alcança o clínico com cerca de $60\%$
 dos parâmetros e com desempenho sensivelmente mais estável entre reinicializações.
 
 \section{Trabalhos futuros}

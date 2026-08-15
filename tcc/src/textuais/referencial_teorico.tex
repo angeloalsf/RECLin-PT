@@ -44,7 +44,7 @@ português, gatilhos como ``não'', ``sem'', ``nega'' e ``ausência de'', além 
 adjetivos que embutem negação morfologicamente (``afebril'', ``anictérico''),
 sustentam estratégias análogas (Apêndice~\ref{ap:lexico}). A alta lexicalização
 sugere que o sinal de negação possa estar acessível mesmo a modelos não
-especializados no domínio clínico --- hipótese que este trabalho testa
+especializados no domínio clínico, hipótese que este trabalho testa
 diretamente.
 
 \section{Abordagens baseadas em aprendizado de máquina}
@@ -57,7 +57,7 @@ estruturais (tipos das entidades, distância, direção), oferecem um compromiss
 entre interpretabilidade e desempenho e são frequentemente empregados como
 \emph{sanity check} antes de modelos mais custosos. Sua principal limitação é a
 representação de palavras como unidades independentes, incapaz de capturar
-dependências de longo alcance e contexto --- limitação que motivou a transição da
+dependências de longo alcance e contexto, limitação que motivou a transição da
 área para modelos contextuais.
 
 \section{Modelos baseados em \emph{transformers}}
@@ -69,7 +69,7 @@ que produzem representações contextuais das palavras. O \textbf{BERT}
 ajuste fino (\foreignlanguage{english}{fine-tuning}) para tarefas específicas.
 Para o português, modelos multilíngues como o \textbf{XLM-R}
 \cite{conneau_2020_xlmr} e, sobretudo, modelos especializados no domínio clínico
-como o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt} — adaptado a narrativas
-clínicas e textos biomédicos em português brasileiro — constituem candidatos
+como o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt}, adaptado a narrativas
+clínicas e textos biomédicos em português brasileiro, constituem candidatos
 naturais para a extração de relações clínicas, e é sobre eles que se apoia a
 proposta deste trabalho.

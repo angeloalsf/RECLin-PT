@@ -3,8 +3,8 @@
   \vspace{-15pt}
 
   O registro eletrônico em saúde concentra grande parte da informação clínica em
-  texto livre, no qual a relação entre conceitos --- em especial a negação de
-  achados --- é determinante para a correta interpretação. Este trabalho investiga
+  texto livre, no qual a relação entre conceitos, em especial a negação de
+  achados, é determinante para a correta interpretação. Este trabalho investiga
   a extração de relações entre entidades clínicas em português sobre o corpus
   SemClinBr, considerando o espaço de rótulos \texttt{negation\_of},
   \texttt{associated\_with} e \texttt{no\_relation}. Como etapa inicial do
@@ -12,9 +12,9 @@
   clínicas em português, conduz-se um experimento controlado para responder a uma
   questão de projeto: o pré-treinamento clínico importa para essa tarefa? Propõe-se
   uma cadeia experimental reprodutível que vai do texto bruto às métricas finais,
-  composta por um parser determinístico do formato XML do corpus, análise
-  exploratória das relações, particionamento 80/10/10 em nível de documento
-  --- estratificado e congelado para evitar vazamento de dados --- e geração
+  composta por um \emph{parser} determinístico do formato XML do corpus, análise
+  exploratória das relações, particionamento 80/10/10 em nível de documento,
+  estratificado e congelado para evitar vazamento de dados, e geração
   controlada de pares candidatos. Sobre essa infraestrutura, dois \emph{encoders}
   para o português são ajustados variando apenas o \emph{checkpoint} de
   pré-treino: um de domínio clínico (BioBERTpt) e um de domínio geral (BERTimbau).
@@ -39,7 +39,7 @@
   \begin{otherlanguage*}{english}
 
   Electronic health records store much clinical information as free text, in which
-  the relationship between concepts --- particularly the negation of findings ---
+  the relationship between concepts, particularly the negation of findings,
   is decisive for correct interpretation. This work investigates relation
   extraction between clinical entities in Portuguese over the SemClinBr corpus,
   considering the label space \texttt{negation\_of}, \texttt{associated\_with} and

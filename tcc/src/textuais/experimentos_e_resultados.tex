@@ -15,14 +15,14 @@ aprendizado $2\times10^{-5}$ (AdamW) e \texttt{max\_length} de $128$ \emph{token
 sob \emph{cross-entropy} ponderada por \texttt{class\_weight="balanced"}. A época
 reportada é a de maior macro-F1 no conjunto de validação; o conjunto de teste foi
 avaliado uma única vez, ao final. Os dois modelos foram treinados com a semente de
-referência $42$ e, como análise de robustez, novamente com a semente $43$ ---
+referência $42$ e, como análise de robustez, novamente com a semente $43$,
 mantendo, em ambos os casos, todos os demais elementos idênticos
 (Quadro~\ref{quad:ambiente}).
 
 O conjunto de teste é fortemente desbalanceado: a classe \texttt{no\_relation}
 concentra $93{,}06\%$ dos pares. Esse cenário torna o macro-F1 a métrica mais
 informativa, por penalizar modelos que negligenciam as classes minoritárias, e faz
-da acurácia uma métrica enganosa isoladamente --- um classificador que respondesse
+da acurácia uma métrica enganosa isoladamente: um classificador que respondesse
 sempre \texttt{no\_relation} acertaria mais de $93\%$ dos candidatos sem qualquer
 utilidade clínica.
 
@@ -35,14 +35,14 @@ Três observações são relevantes.
 
 Primeiro, a \textbf{perda de treino cai monotonicamente} nas quatro execuções,
 enquanto a perda de validação estabiliza ou volta a subir a partir da segunda
-época --- comportamento típico de ajuste fino de \emph{encoders} sobre conjuntos
+época, comportamento típico de ajuste fino de \emph{encoders} sobre conjuntos
 pequenos. Segundo, e mais importante para o protocolo, o \textbf{macro-F1 de
 validação continua subindo} mesmo quando a perda de validação piora: é o caso do
 BERTimbau na semente $43$, cuja perda de validação sobe de $0{,}437$ (época 2) para
 $0{,}489$ (época 3) enquanto o macro-F1 avança de $0{,}624$ para $0{,}674$. Sob
 forte desbalanceamento, perda e macro-F1 não são intercambiáveis como critério de
 parada, e selecionar pela perda teria descartado a melhor época em termos da
-métrica de interesse --- razão pela qual a seleção de modelo usa explicitamente o
+métrica de interesse, razão pela qual a seleção de modelo usa explicitamente o
 macro-F1 de validação.
 
 Terceiro, as curvas tornam visível a \textbf{diferença de estabilidade} entre os
@@ -72,7 +72,7 @@ semente de referência. Os melhores valores por coluna estão em negrito.
 \input{tabelas/resultados}
 
 Os dois \emph{baselines} apresentam desempenho praticamente indistinguível. O
-BioBERTpt clínico atinge macro-F1 de $0{,}707$ e o BERTimbau geral, $0{,}704$ ---
+BioBERTpt clínico atinge macro-F1 de $0{,}707$ e o BERTimbau geral, $0{,}704$,
 uma diferença de $0{,}003$. Na métrica-alvo, o F1 de \texttt{negation\_of}, a ordem
 inclusive se inverte: o BERTimbau geral ($0{,}734$) supera marginalmente o
 BioBERTpt clínico ($0{,}724$). As demais métricas seguem o mesmo padrão de quase
@@ -97,13 +97,13 @@ são praticamente coincidentes em todas as classes.
 As Figuras~\ref{fig:cm_biobertpt} e~\ref{fig:cm_bertimbau} apresentam as matrizes
 de confusão dos dois \emph{baselines}, \textbf{normalizadas por linha}, de modo que
 cada célula indica a fração das instâncias de uma classe verdadeira atribuída a
-cada classe predita --- os valores da diagonal correspondem, assim, ao \emph{recall}
+cada classe predita. Os valores da diagonal correspondem, assim, ao \emph{recall}
 por classe. Essa visão complementa o F1 por classe ao revelar \emph{para onde} vão
 os erros de cada modelo.
 
 Os dois padrões de erro são notavelmente semelhantes: diagonal forte na negação e
 na classe majoritária, e o erro dominante remanescente na confusão entre
-\texttt{associated\_with} e \texttt{no\_relation} --- coerente com a baixa precisão
+\texttt{associated\_with} e \texttt{no\_relation}, coerente com a baixa precisão
 daquela classe nos dois modelos. A semelhança qualitativa entre as matrizes reforça
 a leitura de que os dois \emph{encoders} aprendem essencialmente a mesma função
 para esta tarefa: não apenas chegam a números próximos, mas erram nos mesmos
@@ -142,7 +142,7 @@ favorecem o BioBERTpt e $452$ o BERTimbau, uma assimetria compatível com o acas
 para a diferença é $[-0{,}047;\,+0{,}026]$, que \textbf{inclui o zero}, com
 valor-$p$ de $0{,}57$. Em ambos os testes, portanto, \textbf{não há diferença
 estatisticamente significativa} entre o \emph{encoder} clínico e o geral
-\emph{nesta semente} --- ressalva relevante, pois a análise a seguir mostra que
+\emph{nesta semente}, ressalva relevante, pois a análise a seguir mostra que
 esse veredito não se repete na semente $43$.
 
 \section{Robustez à semente de treino}
@@ -157,7 +157,7 @@ observada.
 
 O contraste entre os dois \emph{encoders} é acentuado. No BioBERTpt, o macro-F1 cai
 de $0{,}707$ (semente 42) para $0{,}665$ (semente 43), e o F1 de
-\texttt{negation\_of}, de $0{,}724$ para $0{,}653$ --- uma amplitude de $0{,}070$
+\texttt{negation\_of}, de $0{,}724$ para $0{,}653$, uma amplitude de $0{,}070$
 atribuível \emph{apenas} à inicialização aleatória do treino. Essa variação entre
 sementes de um \emph{mesmo} modelo é cerca de \textbf{sete vezes maior} que a
 diferença de $0{,}010$ observada entre o BioBERTpt e o BERTimbau na semente $42$.
@@ -166,7 +166,7 @@ supera a vantagem que se poderia atribuir ao domínio de pré-treino.
 
 O BERTimbau, sob a mesma troca de semente, mostra-se sensivelmente mais estável: o
 macro-F1 passa de $0{,}704$ para $0{,}706$ e o F1 de \texttt{negation\_of}, de
-$0{,}734$ para $0{,}726$ --- uma amplitude de $0{,}008$, cerca de nove vezes menor
+$0{,}734$ para $0{,}726$, uma amplitude de $0{,}008$, cerca de nove vezes menor
 que a do BioBERTpt na mesma métrica.
 
 O ponto metodologicamente mais delicado é que o \emph{veredito estatístico} também
@@ -178,15 +178,16 @@ protocolo da Seção~\ref{sec:significancia}.
 Na semente $43$, a ordenação entre os dois \emph{baselines} no F1 de negação se
 mantém, agora com margem de $0{,}073$, e o mesmo protocolo acusa uma diferença
 \textbf{significativa} em favor do BERTimbau (McNemar $p<10^{-30}$; \emph{bootstrap}
-pareado IC95\% $[-0{,}115;\,-0{,}031]$, $p=0{,}0002$) --- ao contrário do que se
+pareado IC95\% $[-0{,}115;\,-0{,}031]$, $p=0{,}0002$), ao contrário do que se
 observa na semente $42$, em que o mesmo teste não rejeita a hipótese nula.
 
 Esse contraste \textbf{não estabelece a superioridade do \emph{encoder} geral}. O
 que ele mostra é que o próprio veredito do teste pareado, sob protocolo e conjunto
 de teste idênticos, alterna entre ``sem diferença'' e ``diferença significativa''
 em função apenas da inicialização do treino. O que atravessa as duas sementes são
-dois fatos: o \textbf{sinal} --- em nenhuma delas o pré-treinamento clínico aparece
-à frente --- e a \textbf{menor previsibilidade} do \emph{encoder} clínico entre
-reinicializações, que, em um cenário de implantação, pesa a favor do geral. A
+dois fatos. O primeiro é o \textbf{sinal}: em nenhuma das sementes o
+pré-treinamento clínico aparece à frente. O segundo é a \textbf{menor
+previsibilidade} do \emph{encoder} clínico entre reinicializações, que, em um
+cenário de implantação, pesa a favor do geral. A
 leitura estatística, essa sim, depende da semente e não deve ser tomada como
 definitiva a partir de uma única execução por modelo.
