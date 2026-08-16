@@ -47,7 +47,10 @@
 PYTHON ?= python
 
 # Hiperparametros do artigo. NAO sao os defaults do argparse (32/75/192).
-HP := --epochs 3 --batch-size 64 --max-gap 20 --max-length 128
+# max_gap: 20 -> 25 (analise de sensibilidade em analysis/max_gap/; 20 descartava
+# 1.272 relacoes `associated_with` antes de virarem candidato). Os resultados em
+# results/ AINDA sao os de max_gap=20 -- valem ate o retreino dos 4 experimentos.
+HP := --epochs 3 --batch-size 64 --max-gap 25 --max-length 128
 
 XML_DIR    := SemClinBr-xml-public-v1
 DATASET    := data/processed/dataset.jsonl

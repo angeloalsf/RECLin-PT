@@ -133,6 +133,7 @@ de poucos caracteres e o percentil 95 não ultrapassa algumas dezenas
 dois tipos é o achado relevante: a negação é praticamente adjacente, pois em $75\%$
 dos casos a distância é de um único caractere, enquanto a associação se
 distribui por uma cauda bem mais longa. Essa assimetria fundamenta a escolha da
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 janela máxima (\texttt{max\_gap}$=20$) na geração de pares candidatos, discutida na
 Seção~\ref{sec:teto_recall}: uma janela estreita preserva quase toda a classe-alvo
 e limita a explosão combinatória de negativos, ao custo de um teto de
@@ -246,6 +247,7 @@ A geração é feita pela função \texttt{iter\_candidate\_pairs}
 régua estatística. Para cada documento, ela percorre todos os \textbf{pares
 ordenados} de entidades $(e_1, e_2)$, com $e_1 \neq e_2$, uma vez que a ordem
 importa: a direção é relevante para a negação. Em seguida, descarta os pares cuja
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 distância em caracteres exceda a janela máxima (\texttt{max\_gap}$=20$) e os pares
 entre documentos distintos, e atribui o rótulo: se o par ordenado $(e_1, e_2)$
 coincide com uma relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe
@@ -260,6 +262,7 @@ qual depende a estabilidade das predições entre execuções. \textbf{(ii) Sem
 cruzamento entre documentos}: nunca se forma um par com entidades de documentos
 distintos, pois o documento é a unidade de processamento. \textbf{(iii) Janela
 respeitada}: apenas pares cuja distância em caracteres (entre o fim de $e_1$ e o
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 início de $e_2$) seja $\leq \texttt{max\_gap}=20$ são gerados. \textbf{(iv) Sem
 autopares}: nunca se forma o par $(e, e)$ de uma entidade consigo mesma
 ($e_1 \neq e_2$), nem entre entidades com \emph{span} idêntico. \textbf{(v)
@@ -318,6 +321,7 @@ e, na avaliação, pela escolha do macro-F1 como métrica principal, que dá pes
 \subsection{Teto de recall imposto pela janela}
 \label{sec:teto_recall}
 
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 A janela \texttt{max\_gap}$=20$ impõe um \textbf{teto de recall}: toda relação
 \emph{gold} cujo par fique a mais de $20$ caracteres jamais é gerada como candidato
 e, portanto, é irrecuperável por qualquer classificador, independentemente da
@@ -408,6 +412,7 @@ comuns às duas execuções.
   Ajuste fino (GPU) & Google Colab, \foreignlanguage{english}{Tesla} T4 \\
   Demais etapas & CPU \\
   Núcleo de implementação & \texttt{src/relation\_extraction.py} (idêntico para os dois \emph{encoders}) \\
+  % TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
   \texttt{max\_gap} & 20 caracteres \\
   \texttt{ctx\_chars} & 128 caracteres em torno do par \\
   \texttt{max\_length} & 128 \emph{tokens} \\

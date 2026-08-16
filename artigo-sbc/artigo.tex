@@ -267,6 +267,7 @@ compartilhada por ambos os \emph{baselines} --- condição necessária para que 
 resultados fiquem na mesma régua estatística. Para cada documento, percorrem-se
 todos os pares ordenados de entidades $(e_1, e_2)$, $e_1 \neq e_2$ (a ordem
 importa, porque a direção é relevante para a negação); descartam-se os pares cuja
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 distância exceda a janela máxima ($\texttt{max\_gap}=20$) e os pares entre
 documentos distintos; e atribui-se o rótulo: se o par ordenado coincide com uma
 relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe

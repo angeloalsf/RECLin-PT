@@ -63,6 +63,7 @@ vizinhas frequentemente não mantêm relação anotada, como ilustra o próprio
 exemplo de geração de candidatos (Quadro~\ref{quad:exemplo_candidatos}), em que
 cinco dos seis pares ordenados possíveis são \texttt{no\_relation}.
 
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 A segunda é \textbf{metodológica}: a janela \texttt{max\_gap}$=20$ descarta
 $12{,}02\%$ das relações \texttt{associated\_with} do conjunto de teste
 (Seção~\ref{sec:teto_recall}), enquanto descarta apenas uma relação
@@ -104,6 +105,7 @@ causa de resultados não reproduzíveis em PLN biomédico. A paridade total de
 implementação entre os dois \emph{baselines} (Capítulo~\ref{cap:prototipo}) garante
 que a diferença medida reflita o \emph{checkpoint}, e não artefatos de código.
 Restam, contudo, decisões de projeto que influenciam os números absolutos, das
+% TODO(max_gap 20->25): valor/numero derivado dos experimentos de results/, que ainda sao de max_gap=20. Atualizar SO depois do retreino dos 4 experimentos.
 quais a mais consequente é a janela \texttt{max\_gap}$=20$ na geração de pares
 candidatos. Esse limite foi quantificado por partição e por classe
 (Seção~\ref{sec:teto_recall}) e, portanto, é uma limitação \emph{documentada e de

@@ -15,7 +15,7 @@ BioBERTpt (`pucpr/biobertpt-all`) e o lado CLINICO da comparacao; BERTimbau
 
 Uso (CPU funciona, mas e lento; ideal GPU/Colab):
     python src/baseline_biobertpt.py --splits-dir data/splits \
-        --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+        --epochs 3 --batch-size 64 --max-gap 25 --max-length 128 --seed 42 \
         --ckpt-dir checkpoints/biobertpt_seed42 \
         --out results/baseline_biobertpt_seed42.json
 """

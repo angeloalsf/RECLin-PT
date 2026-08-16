@@ -16,8 +16,8 @@ DEFINICAO DE `gap` (nao e "quantidade de entidades")
 DISTANCIA EM CARACTERES entre os dois spans: o numero de caracteres do texto que
 ficam ENTRE o fim do span que comeca antes e o inicio do outro. E simetrica
 (nao depende da ordem do par) e vale 0 para spans adjacentes, sobrepostos ou
-aninhados. `max_gap=20` portanto significa "no maximo 20 caracteres de texto
-separando as duas entidades" -- da ordem de 3 palavras, nao 20 entidades.
+aninhados. `max_gap=25` portanto significa "no maximo 25 caracteres de texto
+separando as duas entidades" -- da ordem de 4 palavras, nao 25 entidades.
 
 SO LEITURA
 ----------
@@ -48,7 +48,11 @@ RELATION_TYPES = ("associated_with", "negation_of")
 PERCENTILES = (50, 75, 90, 95, 99)
 
 DEFAULT_GAPS = (1, 2, 3, 5, 8, 10, 12, 15, 18, 20, 25, 30, 40, 50, 75, 100, 150, 200)
-CURRENT_MAX_GAP = 20  # o que o Makefile passa hoje (--max-gap 20)
+CURRENT_MAX_GAP = 25  # o que o Makefile passa hoje (--max-gap 25)
+# Era 20 ate esta analise; elevado para 25 para recuperar as 1.272 relacoes
+# `associated_with` que 20 descartava. A figura/JSON ja gravados em
+# analysis/max_gap/ sao os da rodada com current=20 (registro da decisao):
+# para reproduzi-los, passe `--current 20`.
 
 # Paleta: slots categoricos 1-3 (azul/laranja/verde-agua), validados para
 # daltonismo em todos os pares. Series tambem sao rotuladas direto na figura,

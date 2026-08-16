@@ -9,7 +9,10 @@ pares de entidades para os quais nao ha relacao anotada.
 Decisoes:
   1) Pares ORDENADOS (e1, e2): a direcao importa para `negation_of`.
   2) Janela maxima de caracteres entre os spans (`max_gap`, default 75) para
-     nao explodir o numero de negativos.
+     nao explodir o numero de negativos. O default do modulo (75) NAO e o valor
+     do pipeline: Makefile/run.sh/notebooks passam `--max-gap 25` (era 20 ate a
+     analise de sensibilidade em analysis/max_gap/, que mostrou que 20 cortava
+     11,6% das relacoes anotadas, quase todas `associated_with`).
   3) Nunca cruza documentos; descarta auto-pares e pares com span identico.
   4) Ordem deterministica por (start, end, id).
 """

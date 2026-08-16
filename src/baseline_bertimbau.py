@@ -18,7 +18,7 @@ mesmo nucleo.
 
 Uso (CPU funciona, mas e lento; ideal GPU/Colab):
     python src/baseline_bertimbau.py --splits-dir data/splits \
-        --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+        --epochs 3 --batch-size 64 --max-gap 25 --max-length 128 --seed 42 \
         --ckpt-dir checkpoints/bertimbau_seed42 \
         --out results/baseline_bertimbau_seed42.json
 """

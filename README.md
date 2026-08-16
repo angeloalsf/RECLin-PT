@@ -141,7 +141,8 @@ produziram os resultados. O corpus só é necessário para reexecutar os passos 
 ~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva **≈2h25**.
 Reproduzir os quatro experimentos do artigo (2 modelos × 2 sementes) custa
 **≈10 h de GPU**. Em CPU o treino roda, mas é impraticável para o tamanho do
-dataset (128.380 candidatos de treino).
+dataset (128.380 candidatos de treino — contagem de `max_gap=20`, a ser
+recontada após o retreino com `max_gap=25`).
 
 Use `--ckpt-dir` apontando para o Google Drive: o treino grava
 `last_checkpoint/` ao fim de cada época e **retoma automaticamente** se o runtime
@@ -168,13 +169,13 @@ python src/make_splits.py --input data/processed/dataset.jsonl \
 
 # 3a) baseline CLÍNICO (BioBERTpt) -- hiperparâmetros do artigo
 python src/baseline_biobertpt.py --splits-dir data/splits \
-    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --epochs 3 --batch-size 64 --max-gap 25 --max-length 128 --seed 42 \
     --ckpt-dir checkpoints/biobertpt_seed42 \
     --out results/baseline_biobertpt_seed42.json
 
 # 3b) baseline GERAL (BERTimbau) -- MESMOS hiperparâmetros, só muda o modelo
 python src/baseline_bertimbau.py --splits-dir data/splits \
-    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 42 \
+    --epochs 3 --batch-size 64 --max-gap 25 --max-length 128 --seed 42 \
     --ckpt-dir checkpoints/bertimbau_seed42 \
     --out results/baseline_bertimbau_seed42.json
 
@@ -193,11 +194,19 @@ python scripts/make_figures.py
 python scripts/aggregate_seeds.py
 ```
 
-> **Os hiperparâmetros do artigo não são os defaults do `argparse`.**
-> `--batch-size 64 --max-gap 20 --max-length 128` são os valores que produziram
-> os números do artigo; os defaults do `argparse` são **32 / 75 / 192**. Passe-os
-> explicitamente. `max_gap=20` é a decisão de maior impacto: controla quantos
-> pares negativos entram no dataset e, portanto, o desbalanceamento de classes.
+> **Os hiperparâmetros do pipeline não são os defaults do `argparse`.**
+> `--batch-size 64 --max-gap 25 --max-length 128` são os valores ativos; os
+> defaults do `argparse` são **32 / 75 / 192**. Passe-os explicitamente.
+> `max_gap=25` é a decisão de maior impacto: controla quantos pares negativos
+> entram no dataset e, portanto, o desbalanceamento de classes.
+>
+> ⚠️ **`max_gap` mudou de 20 para 25 e os experimentos ainda não foram
+> refeitos.** A janela de 20 caracteres descartava 1.324 relações anotadas
+> (1.272 delas `associated_with`) antes de virarem candidato — ver
+> `analysis/max_gap/`. Tudo o que está em `results/`, e todo número derivado
+> dele neste README, no `artigo-sbc/` e no `tcc/`, ainda vem de `max_gap=20`.
+> Os quatro experimentos (2 modelos × 2 sementes) precisam ser reexecutados
+> antes de qualquer número ser atualizado.
 
 ### Duas formas de executar o pipeline
 
@@ -286,7 +295,8 @@ Dois pontos que valem o aviso aqui na entrada:
   o p-valor da diferença no F1 de `negation_of`. Se o IC95 não cruza zero, a
   vantagem é significativa. O teste aborta se os `y_true` dos dois arquivos
   divergirem — é a checagem de que o pareamento é legítimo (16.074 exemplos de
-  teste nos quatro `.preds.json`).
+  teste nos quatro `.preds.json` — contagem de `max_gap=20`, a ser recontada
+  após o retreino com `max_gap=25`).
 
 ### Múltiplas sementes
 
@@ -295,7 +305,7 @@ não colidir):
 
 ```bash
 python src/baseline_bertimbau.py --splits-dir data/splits \
-    --epochs 3 --batch-size 64 --max-gap 20 --max-length 128 --seed 43 \
+    --epochs 3 --batch-size 64 --max-gap 25 --max-length 128 --seed 43 \
     --ckpt-dir checkpoints/bertimbau_seed43 \
     --out results/baseline_bertimbau_seed43.json
 ```
@@ -341,9 +351,12 @@ nada: só lê `results/baseline_*.json`.
   hiperparâmetros.** Isso é por design: uma busca por modelo quebraria a
   paridade que sustenta a comparação. O custo é que nenhum dos dois baselines
   está necessariamente no seu melhor ponto de operação.
-- **`max_gap=20` limita os pares candidatos a entidades próximas.** Relações de
+- **`max_gap=25` limita os pares candidatos a entidades próximas.** Relações de
   longa distância estão fora do espaço de avaliação — o resultado vale para o
-  regime de vizinhança curta.
+  regime de vizinhança curta. O valor era 20 e foi elevado para 25 após a
+  análise de sensibilidade (`analysis/max_gap/`), que mostrou que 20 já cortava
+  11,6% das relações anotadas; o teto de recall com 25 é maior, mas continua
+  abaixo de 100%.
 - **Três classes.** O espaço de rótulos é um recorte do SemClinBr; ampliá-lo
   muda a dificuldade da tarefa e pediria reexecutar tudo.
 

@@ -136,6 +136,11 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("split teste: negation_of gold", "tcc_eda.json", "splits.test.negation_of", 152, 0),
     ("split teste: associated_with gold", "tcc_eda.json", "splits.test.associated_with", 1098, 0),
     # --- Cap. Metodologia: candidatos e teto de recall --------------------
+    # TODO(max_gap 20->25): todo este bloco (max_gap efetivo, contagens de
+    # candidato e teto de recall) e derivado de `config.max_gap` dos JSONs de
+    # `results/`, que ainda sao os da rodada com max_gap=20. O Makefile ja passa
+    # 25; assim que os 4 experimentos forem refeitos, `make tcc-eda` vai gerar
+    # max_gap=25 e TODOS os valores abaixo mudam -- reancorar entao, nao antes.
     ("max_gap efetivo", "tcc_eda.json", "max_gap", 20, 0),
     ("candidatos treino", "tcc_eda.json", "candidates.train.total", 128380, 0),
     ("candidatos validacao", "tcc_eda.json", "candidates.dev.total", 15994, 0),
