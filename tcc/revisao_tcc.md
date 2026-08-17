@@ -28,3 +28,15 @@ entre entidades clínicas em português sobre o corpus SemClinBr" me parece corr
 
 ## 4 Metodologia
 - Novamente falando sobre o corpus, o pipeline de processamento, a estratégia de particionamento, a geração de pares candidatos e o protocolo de avalição mas não fala sobre o fine-tuning do modelo em si, sobre o que o trabalho realmente é.
+
+## 8.2 Trabalhos futuros
+- Eu não entendo o por que o desenvolvimento do RECLin-PT está nessa etapa sendo que o tcc é para entregar o fine tuning.
+
+- "O desenvolvimento terá como foco o aprimoramento da
+classe negation_of, a mais crítica para a correta interpretação clínica."
+  - Por que está dando o foco no negation_of e não na extração em si?
+
+---
+
+### Tabela 8 e Tabela 10
+- Estão muito grandes (A fonte)
