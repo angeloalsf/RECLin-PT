@@ -1,8 +1,8 @@
 \vspace {15pt}
-\contentsline {quadro}{\numberline {1}{\ignorespaces Exemplo de geração de candidatos para um trecho do SemClinBr.}}{29}{quadro.1}%
-\contentsline {quadro}{\numberline {2}{\ignorespaces Ambiente experimental e hiperparâmetros compartilhados pelos dois \emph {baselines}.}}{32}{quadro.2}%
-\contentsline {quadro}{\numberline {3}{\ignorespaces Entrada efetivamente construída para o par \emph {gold} do Quadro~\ref {quad:exemplo_candidatos}.}}{36}{quadro.3}%
-\contentsline {quadro}{\numberline {4}{\ignorespaces SHA-256 das partições congeladas do SemClinBr.}}{54}{quadro.4}%
-\contentsline {quadro}{\numberline {5}{\ignorespaces Marcadores de negação recorrentes no português clínico.}}{55}{quadro.5}%
-\contentsline {quadro}{\numberline {6}{\ignorespaces Parâmetros gerais da preparação dos dados e da avaliação.}}{56}{quadro.6}%
-\contentsline {quadro}{\numberline {7}{\ignorespaces Hiperparâmetros do ajuste fino, idênticos para os dois \emph {encoders}.}}{57}{quadro.7}%
+\contentsline {quadro}{\numberline {1}{\ignorespaces Exemplo de geração de candidatos para um trecho do SemClinBr.}}{31}{quadro.1}%
+\contentsline {quadro}{\numberline {2}{\ignorespaces Ambiente experimental e hiperparâmetros compartilhados pelos dois \emph {baselines}.}}{34}{quadro.2}%
+\contentsline {quadro}{\numberline {3}{\ignorespaces Entrada efetivamente construída para o par \emph {gold} do Quadro~\ref {quad:exemplo_candidatos}.}}{38}{quadro.3}%
+\contentsline {quadro}{\numberline {4}{\ignorespaces SHA-256 das partições congeladas do SemClinBr.}}{59}{quadro.4}%
+\contentsline {quadro}{\numberline {5}{\ignorespaces Marcadores de negação recorrentes no português clínico.}}{60}{quadro.5}%
+\contentsline {quadro}{\numberline {6}{\ignorespaces Parâmetros gerais da preparação dos dados e da avaliação.}}{61}{quadro.6}%
+\contentsline {quadro}{\numberline {7}{\ignorespaces Hiperparâmetros do ajuste fino, idênticos para os dois \emph {encoders}.}}{62}{quadro.7}%
