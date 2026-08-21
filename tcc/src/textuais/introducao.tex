@@ -45,13 +45,19 @@ negado como presente pode inverter completamente a interpretação de um
 prontuário. Em português, a negação é fortemente lexicalizada (``não'', ``sem'',
 ``nega'', ``ausência de''), e há a expectativa difundida de que modelos
 pré-treinados sobre texto do próprio domínio clínico capturem melhor essas
-construções do que modelos de domínio geral. Essa expectativa, contudo, é raramente
-testada de forma controlada para o português: trabalhos costumam adotar um modelo
-clínico por hipótese, sem isolar o efeito do pré-treinamento de domínio sob
-protocolo estatístico rigoroso. Construir esse teste de forma reprodutível, desde
-o texto bruto até as métricas finais, é em si uma contribuição metodológica,
-dado que a falta de reprodutibilidade é uma das principais críticas dirigidas à
-literatura de PLN biomédico.
+construções do que modelos de domínio geral. Esse ganho, contudo, não é
+automático: em inglês, \citeonline{lin_2020_negacao} reportam, na detecção de
+negação clínica, desempenho superior do BERT de domínio geral em relação a
+variantes submetidas a adaptação de domínio. Para o português, não localizamos
+avaliação controlada que isole o efeito do pré-treinamento de domínio na extração
+de relações clínicas: a comparação direta entre \emph{encoders} clínicos e de
+domínio geral sobre o SemClinBr foi conduzida para o reconhecimento de entidades
+\cite{almeida_2026_benchmarkner}, e não para a etapa de relações
+(Capítulo~\ref{cap:relacionados}). Construir esse teste de forma reprodutível,
+desde o texto bruto até as métricas finais, é em si uma contribuição metodológica,
+dado que o compartilhamento restrito de modelos e o detalhamento insuficiente do
+ajuste fino são críticas recorrentes à literatura de PLN biomédico
+\cite{navarro_2023_revisao,shimaoka_2026_revisao}.
 
 \section{Objetivos}
 

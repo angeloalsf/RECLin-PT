@@ -1,0 +1,195 @@
+{
+  "candidates": {
+    "dev": {
+      "associated_with": 738,
+      "negation_of": 146,
+      "no_relation": 15110,
+      "no_relation_pct": 94.4729273477554,
+      "total": 15994
+    },
+    "test": {
+      "associated_with": 964,
+      "negation_of": 151,
+      "no_relation": 14959,
+      "no_relation_pct": 93.06333208908796,
+      "total": 16074
+    },
+    "train": {
+      "associated_with": 6855,
+      "negation_of": 1239,
+      "no_relation": 120286,
+      "no_relation_pct": 93.69527963857298,
+      "total": 128380
+    }
+  },
+  "corpus": {
+    "by_type": {
+      "associated_with": 9852,
+      "negation_of": 1606
+    },
+    "by_type_pct": {
+      "associated_with": 85.98359224995636,
+      "negation_of": 14.016407750043637
+    },
+    "docs_without_relation": 46,
+    "docs_without_relation_pct": 4.6,
+    "entities_per_doc_mean": 45.508,
+    "n_docs": 1000,
+    "n_entities": 45508,
+    "n_relations": 11458,
+    "relations_per_doc_max": 65,
+    "relations_per_doc_mean": 11.458,
+    "relations_per_doc_median": 10.0,
+    "relations_per_doc_p90": 24.0
+  },
+  "distance_by_type": {
+    "associated_with": {
+      "mean": 11.843686561104345,
+      "n": 9852,
+      "p25": 1.0,
+      "p50": 4.0,
+      "p75": 10.0,
+      "p90": 25.0,
+      "p95": 43.0
+    },
+    "negation_of": {
+      "mean": 3.5255292652552925,
+      "n": 1606,
+      "p25": 1.0,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 11.0,
+      "p95": 15.0
+    }
+  },
+  "max_gap": 20,
+  "pipeline_config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 20,
+    "max_length": 128
+  },
+  "recall_ceiling": {
+    "dev": {
+      "ceiling_pct": 89.86828774062816,
+      "duplicates": 3,
+      "lost": 100,
+      "lost_by_type": {
+        "associated_with": 93,
+        "negation_of": 7
+      },
+      "lost_pct": 10.131712259371835,
+      "total": 987
+    },
+    "test": {
+      "ceiling_pct": 89.36,
+      "duplicates": 2,
+      "lost": 133,
+      "lost_by_type": {
+        "associated_with": 132,
+        "negation_of": 1
+      },
+      "lost_pct": 10.64,
+      "total": 1250
+    },
+    "train": {
+      "ceiling_pct": 88.17915627372302,
+      "duplicates": 37,
+      "lost": 1090,
+      "lost_by_type": {
+        "associated_with": 1047,
+        "negation_of": 43
+      },
+      "lost_pct": 11.820843726276976,
+      "total": 9221
+    }
+  },
+  "splits": {
+    "dev": {
+      "associated_with": 832,
+      "n_docs": 100,
+      "negation_of": 155,
+      "negation_pct": 15.704154002026343,
+      "total": 987
+    },
+    "test": {
+      "associated_with": 1098,
+      "n_docs": 100,
+      "negation_of": 152,
+      "negation_pct": 12.16,
+      "total": 1250
+    },
+    "train": {
+      "associated_with": 7922,
+      "n_docs": 800,
+      "negation_of": 1299,
+      "negation_pct": 14.0874091747099,
+      "total": 9221
+    }
+  },
+  "top_entity_categories": [
+    [
+      "Abbreviation",
+      12592
+    ],
+    [
+      "Finding",
+      6827
+    ],
+    [
+      "Therapeutic or Preventive Procedure",
+      4759
+    ],
+    [
+      "Sign or Symptom",
+      4616
+    ],
+    [
+      "Quantitative Concept",
+      3951
+    ],
+    [
+      "Laboratory or Test Result",
+      3080
+    ],
+    [
+      "Pharmacologic Substance",
+      3013
+    ],
+    [
+      "Health Care Activity",
+      2758
+    ],
+    [
+      "Negation",
+      2646
+    ],
+    [
+      "Disease or Syndrome",
+      2645
+    ],
+    [
+      "Organic Chemical",
+      2000
+    ],
+    [
+      "Diagnostic Procedure",
+      1978
+    ],
+    [
+      "Temporal Concept",
+      1662
+    ],
+    [
+      "Medical Device",
+      1601
+    ],
+    [
+      "Body Location or Region",
+      1437
+    ]
+  ]
+}
