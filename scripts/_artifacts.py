@@ -272,11 +272,15 @@ def abnt_float(
 ) -> str:
     """Envolve um `tabular` no flutuante ABNT usado pelo TCC.
 
-    `resize=True` aplica \\resizebox{\\textwidth} -- necessario nas tabelas
-    largas para nao estourar a margem (convencao registrada no OUTLINE.md).
+    `resize=True` aplica um \\resizebox que SO REDUZ: a largura alvo e
+    \\textwidth apenas quando a tabela natural e mais larga que o texto; caso
+    contrario a largura natural e preservada. Sem o \\ifdim, \\resizebox{\\textwidth}
+    tambem AMPLIA tabelas estreitas, deixando a fonte maior que a do corpo
+    (convencao registrada no OUTLINE.md).
     """
     content = (
-        rf"\resizebox{{\textwidth}}{{!}}{{%" + "\n" + body + "}"
+        rf"\resizebox{{\ifdim\width>\textwidth\textwidth\else\width\fi}}{{!}}{{%"
+        + "\n" + body + "}"
         if resize
         else body
     )

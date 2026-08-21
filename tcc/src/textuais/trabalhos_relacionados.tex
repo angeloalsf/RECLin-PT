@@ -7,12 +7,25 @@ informação clínica, com ênfase na língua portuguesa.
 \section{Recursos e desafios em inglês}
 
 A extração de relações clínicas consolidou-se em língua inglesa em torno de
-campanhas de avaliação como as séries i2b2 e n2c2, que disponibilizaram corpora
-anotados e tarefas compartilhadas para problemas como relações entre medicamentos,
-dosagens e efeitos adversos. Esses esforços estabeleceram protocolos de avaliação
-e evidenciaram a importância de tratar adequadamente o desbalanceamento de classes
-e o vazamento de dados entre partições, preocupações transpostas para este
-trabalho.
+campanhas de avaliação como as séries \foreignlanguage{english}{Informatics for
+Integrating Biology and the Bedside} (i2b2) e \foreignlanguage{english}{National
+NLP Clinical Challenges} (n2c2) \cite{uzuner_2011_i2b2}, que disponibilizaram
+corpora anotados e tarefas compartilhadas para problemas como relações entre
+medicamentos, dosagens e efeitos adversos. Esses esforços estabeleceram protocolos
+de avaliação e evidenciaram a importância de tratar adequadamente o desbalanceamento
+de classes e o vazamento de dados entre partições, preocupações transpostas para
+este trabalho: o vazamento é endereçado pelo particionamento em nível de documento
+(Seção~\ref{sec:particao}), e o desbalanceamento, pela geração controlada de pares
+candidatos e pelo tratamento explícito da assimetria de classes que dela resulta
+(Seção~\ref{sec:candidatos}).
+
+Quanto aos modelos, o \textbf{BioBERT} \cite{lee_2020_biobert} demonstrou os
+ganhos da adaptação de domínio biomédico em inglês, estabelecendo o precedente que
+motiva a questão investigada nesta monografia. Quanto à representação de entrada,
+a delimitação do par por marcadores de entidade inseridos no próprio texto
+\cite{soares_2019_markers} tornou-se a técnica padrão para extração de relações com
+modelos baseados em \foreignlanguage{english}{BERT}, e é a adotada aqui
+(Seção~\ref{sec:markers}).
 
 \section{Recursos para o português}
 

@@ -50,8 +50,11 @@ uma.
 
 O que o núcleo compartilhado fixa para os dois:
 
-- **Representação de entrada:** marcadores de entidade tipados
-  `[E1] ... [/E1] [E2] ... [/E2]` (tokens especiais) + janela de contexto.
+- **Representação de entrada:** marcadores de posição
+  `[E1] ... [/E1] [E2] ... [/E2]` (tokens especiais) + janela de contexto. Os
+  marcadores são **posicionais, não semânticos**: indicam quais trechos da janela
+  formam o par e qual deles é o primeiro argumento, e nada mais — o tipo semântico
+  anotado pelo SemClinBr não entra na entrada do modelo.
 - **Loss:** CrossEntropy com `class_weight=balanced`.
 - **Otimização:** scheduler linear com warmup; seleção da melhor época pelo
   macro-F1 no **dev** (early stopping).
@@ -334,10 +337,10 @@ nada: só lê `results/baseline_*.json`.
 - **Candidatos negativos gerados, não anotados**: o SemClinBr só anota relações
   positivas; os pares `no_relation` são gerados como pares **ordenados** dentro
   de uma janela `max_gap`. A direção importa para `negation_of`.
-- **Baseline único e compartilhado**: marcadores de entidade tipados + janela de
-  contexto, cabeça de classificação em 3 classes, CrossEntropy com
-  `class_weight=balanced`. Melhor época escolhida pelo macro-F1 no **dev**;
-  teste reportado uma única vez.
+- **Baseline único e compartilhado**: marcadores de posição (`[E1]`/`[E2]`, sem
+  tipo semântico) + janela de contexto, cabeça de classificação em 3 classes,
+  CrossEntropy com `class_weight=balanced`. Melhor época escolhida pelo macro-F1
+  no **dev**; teste reportado uma única vez.
 - **Artefatos do artigo derivados por script**, nunca transcritos à mão: uma
   fonte única (`results/*.json`) para tabelas, figuras e números do texto.
 

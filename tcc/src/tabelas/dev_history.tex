@@ -5,7 +5,7 @@
   \centering
   \caption{Evolução por época no conjunto de validação. $\ast$ marca a época selecionada (maior macro-F1 na validação), cujo \emph{checkpoint} produziu as métricas de teste.}
   \label{tab:dev_history}
-\resizebox{\textwidth}{!}{%
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
   \begin{tabular}{llcccccc}
   \toprule
   Modelo & Semente & Época & Perda (treino) & Perda (val.) & Macro-F1 (val.) & F1 \texttt{negation\_of} (val.) & Duração (min) \\

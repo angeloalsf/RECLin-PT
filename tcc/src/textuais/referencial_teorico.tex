@@ -67,9 +67,15 @@ baseada em mecanismos de atenção, viabilizou modelos de linguagem pré-treinad
 que produzem representações contextuais das palavras. O \textbf{BERT}
 \cite{devlin_2019_bert} popularizou o paradigma de pré-treinamento seguido de
 ajuste fino (\foreignlanguage{english}{fine-tuning}) para tarefas específicas.
-Para o português, modelos multilíngues como o \textbf{XLM-R}
-\cite{conneau_2020_xlmr} e, sobretudo, modelos especializados no domínio clínico
-como o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt}, adaptado a narrativas
-clínicas e textos biomédicos em português brasileiro, constituem candidatos
-naturais para a extração de relações clínicas, e é sobre eles que se apoia a
-proposta deste trabalho.
+Para o português, os candidatos naturais à extração de relações clínicas dividem-se
+entre modelos de \textbf{domínio geral} e modelos \textbf{adaptados ao domínio
+clínico}. No primeiro grupo está o \textbf{BERTimbau} \cite{souza_2020_bertimbau},
+pré-treinado no corpus brWaC e hoje a referência de domínio geral para a língua;
+nele também se enquadram modelos multilíngues como o \textbf{XLM-R}
+\cite{conneau_2020_xlmr}, que trocam especialização por cobertura ampla de idiomas.
+No segundo grupo está o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt},
+adaptado a narrativas clínicas e textos biomédicos em português brasileiro. É o
+contraste entre esses dois grupos que estrutura a proposta deste trabalho, que
+compara o BioBERTpt ao BERTimbau sob paridade total de implementação; o XLM-R
+permanece como alternativa de base ampla, relevante ao panorama, mas fora do
+escopo experimental aqui delimitado.

@@ -5,7 +5,7 @@
   \centering
   \caption{Teto de \emph{recall} imposto pela janela \texttt{max\_gap}$=20$ por partição.}
   \label{tab:teto_recall}
-\resizebox{\textwidth}{!}{%
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
   \begin{tabular}{lrrrrr}
   \toprule
   Partição & Total ouro & Perdidas \texttt{negation\_of} & Perdidas \texttt{associated\_with} & Duplicatas colapsadas & Teto recall (\%) \\

@@ -5,7 +5,7 @@
   \centering
   \caption{Distribuição real das relações por partição (\emph{splits} congelados, semente 42).}
   \label{tab:particao}
-\resizebox{\textwidth}{!}{%
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
   \begin{tabular}{lrrrrr}
   \toprule
   Partição & Documentos & \texttt{associated\_with} & \texttt{negation\_of} & Total relações & \% \texttt{negation\_of} \\

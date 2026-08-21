@@ -84,4 +84,7 @@ Registro do que já foi corrigido, para não ser reintroduzido:
 - Idioma principal `brazil`; trechos em inglês com `\foreignlanguage{english}{...}` se necessário.
 - Marcadores `easyReview` (`\alert`, `\add`, `\info`) podem ser usados durante revisão.
 - **Quadros vs. Tabelas:** dados numéricos → `table` (Tabela); conteúdo qualitativo/estruturado (hiperparâmetros, léxicos, hashes) → `quadro` (Quadro). O ambiente `quadro` foi habilitado em `src/macros.tex`.
-- **Tabelas largas:** os geradores já aplicam `\resizebox{\textwidth}{!}{...}` quando necessário.
+- **Tabelas largas:** os geradores já aplicam um `\resizebox` **que só reduz** —
+  `\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{...}`. O alvo
+  `\textwidth` puro também *amplia* tabelas estreitas, deixando a fonte maior que a
+  do corpo do texto; o `\ifdim` preserva a largura natural nesses casos.
