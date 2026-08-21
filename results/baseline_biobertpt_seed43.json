@@ -58,7 +58,7 @@
       "train_loss": 0.28559670461168435
     }
   ],
-  "device": "cpu",
+  "device": "cuda",
   "model": "pucpr/biobertpt-all",
   "n_candidates": {
     "dev": 19064,
