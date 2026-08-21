@@ -501,12 +501,13 @@ perguntado:
    `OUTLINE.md` registra que essa divergência já foi corrigida no TCC e no artigo.
    **O README ficou para trás.** Se a banca abrir o repositório, vê a versão errada.
 
-2. **`max_gap` 20 vs. 25** — já rastreado nos `TODO(max_gap 20->25)` do texto, no
-   `OUTLINE.md` e na memória do projeto: o pipeline hoje passa `--max-gap 25`
-   (`Makefile:53`), o texto e as tabelas dizem 20, e `results/` só tem
-   `archive_max_gap20/`. Não é achado novo, mas é a maior inconsistência
-   texto-versus-código pendente no documento. Nada a fazer antes do retreino das 4
-   execuções, como já está planejado.
+2. **`max_gap` 20 vs. 25** — ~~pendente~~ **RESOLVIDO em 21/08/2026.** Os quatro
+   experimentos foram reexecutados com `--max-gap 25`, a significância foi refeita
+   sobre os novos `.preds.json`, e texto, tabelas e figuras foram reancorados
+   (`check_tcc_numbers.py` passa limpo com 93 afirmações). Os resultados de
+   `max_gap=20` estão preservados em `results/archive_max_gap20/`. Atenção: a
+   mudança **inverteu o sinal** da diferença entre os encoders na semente 43 — ver
+   §6.6 e o Capítulo 7, que foram reescritos por causa disso.
 
 3. **Densidade bibliográfica geral.** 9 referências no `.bib`, ~20 citações no texto
    inteiro, e dois capítulos com **1 citação cada** (`introducao.tex`, `discussao.tex`)

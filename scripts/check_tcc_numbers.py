@@ -20,7 +20,10 @@ O QUE VERIFICA
 1. Afirmacoes numericas do corpo do texto (lista `CLAIMS`).
 2. Que nenhum capitulo cita artefato de um pipeline que nao existe
    (`scripts/eda/`, `scripts/baselines/`, `paper/tables/`, `experiments/`).
-3. Que todo `\\input{tabelas/...}` do texto aponta para arquivo existente.
+3. Que nenhuma cifra da rodada anterior de `max_gap` sobreviveu na prosa
+   (lista `STALE_NUMBERS`) -- CLAIMS confere um numero contra sua fonte, mas
+   nao sabe em quantos arquivos o mesmo numero foi repetido.
+4. Que todo `\\input{tabelas/...}` do texto aponta para arquivo existente.
 
 USO
 ---
@@ -63,6 +66,31 @@ GHOST_PATHS = [
     "docs/plano",
     "split_stats.json",
     "SHA256SUMS",
+]
+
+
+# Numeros que pertenciam a rodada de `max_gap=20` e foram substituidos pelo
+# retreino de 21/08/2026. Diferente de CLAIMS, que confere um numero contra sua
+# fonte, esta lista procura o LITERAL no texto: serve para pegar a mesma cifra
+# repetida num arquivo que ninguem lembrou de atualizar.
+#
+# Foi exatamente essa a falha que motivou a checagem: `93,06%` sobrevivia em
+# `proposta_prototipo.tex` e o par `0,724 / 0,734` no `resumo.tex`, ambos fora
+# de qualquer entrada de CLAIMS, porque CLAIMS confere o valor uma vez e nao
+# sabe em quantos arquivos ele aparece.
+#
+# So vale para prosa (`textuais/`, `pre_textuais/`, `apendices/`). `tabelas/` e
+# saida gerada e pode legitimamente conter qualquer numero.
+STALE_NUMBERS: list[tuple[str, str]] = [
+    (r"128\,380", "candidatos de treino de max_gap=20 (agora 152.686)"),
+    (r"15\,994", "candidatos de validacao de max_gap=20 (agora 19.064)"),
+    (r"16\,074", "candidatos de teste de max_gap=20 (agora 19.210)"),
+    (r"14\,959", "no_relation no teste de max_gap=20 (agora 18.062)"),
+    (r"93{,}06", "%% no_relation de max_gap=20 (agora 94,02)"),
+    (r"89{,}36", "teto de recall do teste de max_gap=20 (agora 92,00)"),
+    (r"12{,}02", "perda de associated_with de max_gap=20 (agora 9,11)"),
+    (r"max\_gap}$=20$", "janela antiga; o valor ativo e 25"),
+    (r"max\_gap}=20", "janela antiga; o valor ativo e 25"),
 ]
 
 
@@ -136,24 +164,23 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("split teste: negation_of gold", "tcc_eda.json", "splits.test.negation_of", 152, 0),
     ("split teste: associated_with gold", "tcc_eda.json", "splits.test.associated_with", 1098, 0),
     # --- Cap. Metodologia: candidatos e teto de recall --------------------
-    # TODO(max_gap 20->25): todo este bloco (max_gap efetivo, contagens de
-    # candidato e teto de recall) e derivado de `config.max_gap` dos JSONs de
-    # `results/`, que ainda sao os da rodada com max_gap=20. O Makefile ja passa
-    # 25; assim que os 4 experimentos forem refeitos, `make tcc-eda` vai gerar
-    # max_gap=25 e TODOS os valores abaixo mudam -- reancorar entao, nao antes.
-    ("max_gap efetivo", "tcc_eda.json", "max_gap", 20, 0),
-    ("candidatos treino", "tcc_eda.json", "candidates.train.total", 128380, 0),
-    ("candidatos validacao", "tcc_eda.json", "candidates.dev.total", 15994, 0),
-    ("candidatos teste", "tcc_eda.json", "candidates.test.total", 16074, 0),
-    ("teste: no_relation", "tcc_eda.json", "candidates.test.no_relation", 14959, 0),
-    ("teste: associated_with", "tcc_eda.json", "candidates.test.associated_with", 964, 0),
-    ("teste: negation_of", "tcc_eda.json", "candidates.test.negation_of", 151, 0),
-    ("teste: %% no_relation", "tcc_eda.json", "candidates.test.no_relation_pct", 93.06, 0.005),
-    ("teto teste: perdidas negation_of", "tcc_eda.json", "recall_ceiling.test.lost_by_type.negation_of", 1, 0),
-    ("teto teste: perdidas associated_with", "tcc_eda.json", "recall_ceiling.test.lost_by_type.associated_with", 132, 0),
-    ("teto teste: %%", "tcc_eda.json", "recall_ceiling.test.ceiling_pct", 89.36, 0.005),
-    ("teto treino: perdidas negation_of", "tcc_eda.json", "recall_ceiling.train.lost_by_type.negation_of", 43, 0),
-    ("teto validacao: perdidas negation_of", "tcc_eda.json", "recall_ceiling.dev.lost_by_type.negation_of", 7, 0),
+    # Reancorado em 21/08/2026 para `max_gap=25` (retreino dos 4 experimentos).
+    # Os valores de `max_gap=20` seguem em `results/archive_max_gap20/`: rodar
+    # `check_tcc_numbers.py --results-dir results/archive_max_gap20` reprova de
+    # proposito, e assim deve ser -- o texto descreve a rodada de 25.
+    ("max_gap efetivo", "tcc_eda.json", "max_gap", 25, 0),
+    ("candidatos treino", "tcc_eda.json", "candidates.train.total", 152686, 0),
+    ("candidatos validacao", "tcc_eda.json", "candidates.dev.total", 19064, 0),
+    ("candidatos teste", "tcc_eda.json", "candidates.test.total", 19210, 0),
+    ("teste: no_relation", "tcc_eda.json", "candidates.test.no_relation", 18062, 0),
+    ("teste: associated_with", "tcc_eda.json", "candidates.test.associated_with", 996, 0),
+    ("teste: negation_of", "tcc_eda.json", "candidates.test.negation_of", 152, 0),
+    ("teste: %% no_relation", "tcc_eda.json", "candidates.test.no_relation_pct", 94.02, 0.005),
+    ("teto teste: perdidas negation_of", "tcc_eda.json", "recall_ceiling.test.lost_by_type.negation_of", 0, 0),
+    ("teto teste: perdidas associated_with", "tcc_eda.json", "recall_ceiling.test.lost_by_type.associated_with", 100, 0),
+    ("teto teste: %%", "tcc_eda.json", "recall_ceiling.test.ceiling_pct", 92.00, 0.005),
+    ("teto treino: perdidas negation_of", "tcc_eda.json", "recall_ceiling.train.lost_by_type.negation_of", 27, 0),
+    ("teto validacao: perdidas negation_of", "tcc_eda.json", "recall_ceiling.dev.lost_by_type.negation_of", 3, 0),
     # --- Cap. Metodologia / Apend. C: hiperparametros ---------------------
     ("hp: ctx_chars", "tcc_eda.json", "pipeline_config.ctx_chars", 128, 0),
     ("hp: max_length", "tcc_eda.json", "pipeline_config.max_length", 128, 0),
@@ -161,48 +188,58 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("hp: epocas", "tcc_eda.json", "pipeline_config.epochs", 3, 0),
     ("hp: learning rate", "tcc_eda.json", "pipeline_config.lr", 2e-5, 0),
     # --- Cap. Experimentos: curvas ----------------------------------------
-    ("curva bertimbau s43: dev_loss ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_loss", 0.437, 0.0005),
-    ("curva bertimbau s43: dev_loss ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_loss", 0.489, 0.0005),
-    ("curva bertimbau s43: macroF1 ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_macro_f1", 0.624, 0.0005),
-    ("curva bertimbau s43: macroF1 ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_macro_f1", 0.674, 0.0005),
-    ("curva biobertpt s43: F1neg ep1", "baseline_biobertpt_seed43.json", "dev_history.0.dev_negation_of_f1", 0.374, 0.0005),
-    ("curva biobertpt s42: F1neg ep1", "baseline_biobertpt_seed42.json", "dev_history.0.dev_negation_of_f1", 0.679, 0.0005),
+    ("curva bertimbau s43: dev_loss ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_loss", 0.426, 0.0005),
+    ("curva bertimbau s43: dev_loss ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_loss", 0.474, 0.0005),
+    ("curva bertimbau s43: macroF1 ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_macro_f1", 0.654, 0.0005),
+    ("curva bertimbau s43: macroF1 ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_macro_f1", 0.680, 0.0005),
+    ("curva biobertpt s43: F1neg ep1", "baseline_biobertpt_seed43.json", "dev_history.0.dev_negation_of_f1", 0.588, 0.0005),
+    ("curva biobertpt s42: F1neg ep1", "baseline_biobertpt_seed42.json", "dev_history.0.dev_negation_of_f1", 0.436, 0.0005),
+    ("curva bertimbau s42: F1neg ep1", "baseline_bertimbau_seed42.json", "dev_history.0.dev_negation_of_f1", 0.630, 0.0005),
+    ("curva bertimbau s43: F1neg ep1", "baseline_bertimbau_seed43.json", "dev_history.0.dev_negation_of_f1", 0.573, 0.0005),
     # --- Cap. Experimentos: teste, semente 42 -----------------------------
-    ("s42 biobertpt: macro-F1", "baseline_biobertpt_seed42.json", "test_macro_f1", 0.707, 0.0005),
-    ("s42 bertimbau: macro-F1", "baseline_bertimbau_seed42.json", "test_macro_f1", 0.704, 0.0005),
-    ("s42 biobertpt: F1 negation_of", "baseline_biobertpt_seed42.json", "test_f1_per_class.negation_of", 0.724, 0.0005),
-    ("s42 bertimbau: F1 negation_of", "baseline_bertimbau_seed42.json", "test_f1_per_class.negation_of", 0.734, 0.0005),
-    ("s42 biobertpt: recall negation_of", "baseline_biobertpt_seed42.json", "sklearn_report.negation_of.recall", 0.894, 0.0005),
-    ("s42 bertimbau: recall negation_of", "baseline_bertimbau_seed42.json", "sklearn_report.negation_of.recall", 0.887, 0.0005),
+    ("s42 biobertpt: macro-F1", "baseline_biobertpt_seed42.json", "test_macro_f1", 0.675, 0.0005),
+    ("s42 bertimbau: macro-F1", "baseline_bertimbau_seed42.json", "test_macro_f1", 0.686, 0.0005),
+    ("s42 biobertpt: F1 negation_of", "baseline_biobertpt_seed42.json", "test_f1_per_class.negation_of", 0.677, 0.0005),
+    ("s42 bertimbau: F1 negation_of", "baseline_bertimbau_seed42.json", "test_f1_per_class.negation_of", 0.694, 0.0005),
+    ("s42 biobertpt: recall negation_of", "baseline_biobertpt_seed42.json", "sklearn_report.negation_of.recall", 0.901, 0.0005),
+    ("s42 bertimbau: recall negation_of", "baseline_bertimbau_seed42.json", "sklearn_report.negation_of.recall", 0.901, 0.0005),
+    ("s42 biobertpt: F1 associated_with", "baseline_biobertpt_seed42.json", "test_f1_per_class.associated_with", 0.415, 0.0005),
+    ("s42 bertimbau: F1 associated_with", "baseline_bertimbau_seed42.json", "test_f1_per_class.associated_with", 0.426, 0.0005),
     ("s42 biobertpt: n_params", "baseline_biobertpt_seed42.json", "n_params", 177_853_443, 500_000),
     ("s42 bertimbau: n_params", "baseline_bertimbau_seed42.json", "n_params", 108_928_515, 0),
     # --- Cap. Experimentos: significancia ---------------------------------
-    ("s42 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed42.json", "target_f1.a_minus_b", -0.010, 0.0005),
-    ("s42 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.p_value", 0.18, 0.005),
-    ("s42 signif: b", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.b_only_a_correct", 494, 0),
-    ("s42 signif: c", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.c_only_b_correct", 452, 0),
-    ("s42 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.n_discordant", 946, 0),
-    ("s42 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_low", -0.047, 0.0005),
-    ("s42 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_high", 0.026, 0.0005),
-    ("s42 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.p_value", 0.57, 0.005),
-    ("s43 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_low", -0.115, 0.0005),
-    ("s43 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_high", -0.031, 0.0005),
-    ("s43 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.p_value", 0.0002, 0.00005),
-    ("s43 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed43.json", "target_f1.a_minus_b", -0.073, 0.0005),
+    ("s42 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed42.json", "target_f1.a_minus_b", -0.017, 0.0005),
+    ("s42 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.p_value", 1.1e-5, 0.5e-5),
+    ("s42 signif: b", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.b_only_a_correct", 540, 0),
+    ("s42 signif: c", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.c_only_b_correct", 695, 0),
+    ("s42 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.n_discordant", 1235, 0),
+    ("s42 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_low", -0.053, 0.0005),
+    ("s42 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_high", 0.018, 0.0005),
+    ("s42 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.p_value", 0.345, 0.005),
+    ("s43 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.p_value", 2.7e-8, 0.5e-8),
+    ("s43 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_low", 0.016, 0.0005),
+    ("s43 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_high", 0.090, 0.0005),
+    ("s43 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.p_value", 0.0054, 0.00005),
+    ("s43 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed43.json", "target_f1.a_minus_b", 0.053, 0.0005),
     # --- Cap. Experimentos / Conclusao: robustez --------------------------
-    ("s43 biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.by_seed.43", 0.665, 0.0005),
-    ("s43 biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.by_seed.43", 0.653, 0.0005),
-    ("s43 bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.by_seed.43", 0.706, 0.0005),
-    ("s43 bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.by_seed.43", 0.726, 0.0005),
+    ("s43 biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.by_seed.43", 0.712, 0.0005),
+    ("s43 biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.by_seed.43", 0.754, 0.0005),
+    ("s43 bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.by_seed.43", 0.704, 0.0005),
+    ("s43 bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.by_seed.43", 0.702, 0.0005),
+    # Medias entre as duas sementes, citadas em 6.6, na Discussao e na Conclusao.
+    ("media biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.mean", 0.694, 0.0005),
+    ("media bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.mean", 0.695, 0.0005),
+    ("media biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.mean", 0.715, 0.0005),
+    ("media bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.mean", 0.698, 0.0005),
 ]
 
 # Amplitudes citadas em prosa ("0,070" no BioBERTpt, "0,008" no BERTimbau).
 # Sao derivadas, nao um campo do JSON, entao vao num teste proprio.
 AMPLITUDE_CLAIMS = [
-    ("biobertpt", "f1_negation_of", 0.070),
+    ("biobertpt", "f1_negation_of", 0.078),
     ("bertimbau", "f1_negation_of", 0.008),
-    ("biobertpt", "macro_f1", 0.042),
-    ("bertimbau", "macro_f1", 0.002),
+    ("biobertpt", "macro_f1", 0.038),
+    ("bertimbau", "macro_f1", 0.018),
 ]
 
 
@@ -269,6 +306,24 @@ def check_ghost_paths(tcc_src: Path, verbose: bool) -> tuple[list[str], list[str
     return failures, pending
 
 
+def check_stale_numbers(tcc_src: Path, verbose: bool) -> list[str]:
+    """Procura, na PROSA, cifras que o retreino tornou obsoletas."""
+    failures = []
+    for directory in TEXT_DIRS:
+        for path in sorted((tcc_src / directory).glob("*.tex")):
+            lines = path.read_text(encoding="utf-8").splitlines()
+            for literal, reason in STALE_NUMBERS:
+                for number, line in enumerate(lines, start=1):
+                    if literal in line:
+                        failures.append(
+                            f"{path.relative_to(tcc_src)}:{number} ainda cita "
+                            f"'{literal}' -- {reason}"
+                        )
+    if verbose and not failures:
+        print(f"  ok  nenhum dos {len(STALE_NUMBERS)} numeros obsoletos na prosa")
+    return failures
+
+
 def check_inputs(tcc_src: Path, verbose: bool) -> list[str]:
     failures = []
     pattern = re.compile(r"\\input\{(tabelas/[^}]+)\}")
@@ -300,6 +355,7 @@ def main(argv: list[str] | None = None) -> int:
         failures = (
             check_claims(args.results_dir, args.verbose)
             + ghost_failures
+            + check_stale_numbers(args.tcc_src, args.verbose)
             + check_inputs(args.tcc_src, args.verbose)
         )
     except (MissingResultError, KeyError, IndexError) as error:
@@ -324,7 +380,8 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"OK: {len(CLAIMS) + len(AMPLITUDE_CLAIMS)} afirmações numéricas do texto "
-        f"conferem com results/; nenhum caminho fantasma novo; todos os "
+        f"conferem com results/; nenhum caminho fantasma novo; nenhum dos "
+        f"{len(STALE_NUMBERS)} números obsoletos na prosa; todos os "
         f"\\input{{tabelas/...}} existem."
     )
     return 0

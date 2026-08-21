@@ -9,8 +9,10 @@ scripts (`scripts/eda/*.py`, saida em `paper/tables/`) que nunca existiu
 neste repositorio. Como consequencia, o Cap. de Metodologia descrevia um
 corpus com 11.353 relacoes e uma janela `max_gap=200`, enquanto
 `data/processed/dataset.jsonl` tem 11.458 relacoes e os experimentos de
-`results/` rodaram com `max_gap=20`. Nao havia caminho de `data/` ate o PDF
-do TCC. Este script fecha esse caminho.
+`results/` rodavam com outra janela (20 a epoca, 25 desde 15/08/2026). Nao
+havia caminho de `data/` ate o PDF do TCC. Este script fecha esse caminho: a
+janela e sempre lida de `results/`, entao o texto nunca descreve uma
+configuracao que nenhum experimento usou.
 
 Nenhum valor daqui e transcrito: tudo e derivado de `data/processed/` e
 `data/splits/` (conferidos contra `MANIFEST.json`), e a janela vem do campo
@@ -261,7 +263,14 @@ def recall_ceiling(splits: dict[str, list[dict]], max_gap: int) -> dict[str, dic
             "lost_pct": 100 * lost / total if total else 0.0,
             "duplicates": duplicates,
             "ceiling_pct": 100 * (total - lost) / total if total else 0.0,
-            "lost_by_type": dict(lost_by_type),
+            # Emite TODOS os tipos, inclusive os com zero perdas. Um tipo
+            # ausente do Counter significa "nenhuma relacao perdida", fato
+            # que o texto do TCC cita ("nenhuma das 152 relacoes do teste e
+            # descartada"); grava-lo como 0 explicito permite conferi-lo em
+            # `check_tcc_numbers.py` em vez de o caminho simplesmente sumir.
+            "lost_by_type": {
+                kind: lost_by_type.get(kind, 0) for kind in RELATION_TYPES
+            },
         }
     return result
 
@@ -416,9 +425,10 @@ def table_recall_ceiling(
     """Teto de recall com a perda DECOMPOSTA POR TIPO.
 
     A coluna agregada sozinha nao sustenta a afirmacao do texto: com
-    `max_gap=20` a perda global e da ordem de 10%, mas ela e quase toda de
-    `associated_with` -- em `negation_of`, a classe-alvo, e marginal. Sem as
-    colunas por tipo o leitor nao tem como verificar isso.
+    `max_gap=25` a perda global e da ordem de 8 a 9%, mas ela e quase toda de
+    `associated_with` -- em `negation_of`, a classe-alvo, e nula no teste e
+    marginal nas demais particoes. Sem as colunas por tipo o leitor nao tem
+    como verificar isso.
     """
     rows = []
     for name in SPLIT_ORDER:

@@ -1,20 +1,20 @@
 %% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
 %% Para atualizar: python scripts/make_tcc_eda.py
-%% Fonte dos dados: data/splits/*.jsonl, max_gap=20 (de results/*.json)
+%% Fonte dos dados: data/splits/*.jsonl, max_gap=25 (de results/*.json)
 \begin{table}[htbp]
   \centering
-  \caption{Teto de \emph{recall} imposto pela janela \texttt{max\_gap}$=20$ por partição.}
+  \caption{Teto de \emph{recall} imposto pela janela \texttt{max\_gap}$=25$ por partição.}
   \label{tab:teto_recall}
 \resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
   \begin{tabular}{lrrrrr}
   \toprule
   Partição & Total ouro & Perdidas \texttt{negation\_of} & Perdidas \texttt{associated\_with} & Duplicatas colapsadas & Teto recall (\%) \\
   \midrule
-  Treino & 9.221 & 43 (3,31\%) & 1.047 (13,22\%) & 37 & 88,18 \\
-  Validação & 987 & 7 (4,52\%) & 93 (11,18\%) & 3 & 89,87 \\
-  Teste & 1.250 & 1 (0,66\%) & 132 (12,02\%) & 2 & 89,36 \\
+  Treino & 9.221 & 27 (2,08\%) & 806 (10,17\%) & 37 & 90,97 \\
+  Validação & 987 & 3 (1,94\%) & 68 (8,17\%) & 3 & 92,81 \\
+  Teste & 1.250 & 0 (0,00\%) & 100 (9,11\%) & 2 & 92,00 \\
   \midrule
-  \textbf{Total} & \textbf{11.458} & \textbf{51} (\textbf{3,18\%}) & \textbf{1.272} (\textbf{12,91\%}) & \textbf{42} & \textbf{88,45} \\
+  \textbf{Total} & \textbf{11.458} & \textbf{30} (\textbf{1,87\%}) & \textbf{974} (\textbf{9,89\%}) & \textbf{42} & \textbf{91,24} \\
   \bottomrule
   \end{tabular}}
   \\[4pt]

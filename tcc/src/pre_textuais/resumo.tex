@@ -19,13 +19,16 @@
   para o português são ajustados variando apenas o \emph{checkpoint} de
   pré-treino: um de domínio clínico (BioBERTpt) e um de domínio geral (BERTimbau).
   No conjunto de teste congelado, os dois empatam estatisticamente no F1 de
-  \texttt{negation\_of} na semente de referência (0,724 contra 0,734; McNemar
-  $p=0{,}18$; \emph{bootstrap} pareado IC95\% $[-0{,}047; +0{,}026]$), mas esse
-  veredito não se sustenta nas duas sementes testadas: a variação entre sementes
-  de um mesmo modelo supera a diferença entre os modelos, e o \emph{encoder}
-  clínico não lidera em nenhuma delas. Esses resultados indicam que o RECLin-PT
-  pode ser construído sobre o \emph{encoder} geral, mais eficiente e mais estável
-  entre reinicializações, sem penalidade de desempenho.
+  \texttt{negation\_of} na semente de referência (0,677 contra 0,694;
+  \emph{bootstrap} pareado IC95\% $[-0{,}053; +0{,}018]$, $p=0{,}345$), mas esse
+  veredito não se sustenta nas duas sementes testadas: na semente 43 a diferença
+  \emph{inverte de sinal} e passa a favorecer o \emph{encoder} clínico de forma
+  significativa (IC95\% $[+0{,}016; +0{,}090]$). A variação entre sementes de um
+  mesmo modelo supera a diferença entre os modelos, de modo que nem o veredito
+  nem sua direção são estáveis. Esses resultados indicam que o RECLin-PT pode ser
+  construído sobre o \emph{encoder} geral, que acompanha o clínico em macro-F1
+  médio com cerca de 60\% dos parâmetros e é cerca de dez vezes mais estável
+  entre reinicializações.
 
   \vspace{\onelineskip}
 
@@ -54,12 +57,14 @@
   changing only the pre-trained checkpoint: a clinical-domain one (BioBERTpt) and
   a general-domain one (BERTimbau). On the frozen test set, the two are
   statistically tied on the \texttt{negation\_of} F1 under the reference seed
-  (0.724 vs.\ 0.734; McNemar $p=0.18$; paired bootstrap 95\% CI
-  $[-0.047, +0.026]$), but this verdict does not hold across the two seeds we
-  tested: seed-to-seed variation of a single model exceeds the gap between the
-  models, and the clinical encoder leads under neither seed. These results
-  indicate that RECLin-PT can be built on the general encoder, which is more
-  efficient and more stable across restarts, with no performance penalty.
+  (0.677 vs.\ 0.694; paired bootstrap 95\% CI $[-0.053, +0.018]$, $p=0.345$), but
+  this verdict does not hold across the two seeds we tested: under seed 43 the
+  difference \emph{flips sign} and significantly favours the clinical encoder
+  (95\% CI $[+0.016, +0.090]$). Seed-to-seed variation of a single model exceeds
+  the gap between the models, so neither the verdict nor its direction is stable.
+  These results indicate that RECLin-PT can be built on the general encoder,
+  which matches the clinical one in mean macro-F1 with about 60\% of the
+  parameters and is roughly ten times more stable across restarts.
 
   \vspace{\onelineskip}
 

@@ -1,18 +1,18 @@
 %% GERADO AUTOMATICAMENTE por scripts/make_tcc_eda.py -- nao edite a mao.
 %% Para atualizar: python scripts/make_tcc_eda.py
-%% Fonte dos dados: data/splits/*.jsonl, max_gap=20 (de results/*.json)
+%% Fonte dos dados: data/splits/*.jsonl, max_gap=25 (de results/*.json)
 \begin{table}[htbp]
   \centering
-  \caption{Pares candidatos gerados por partição (\texttt{max\_gap}$=20$) e distribuição dos rótulos.}
+  \caption{Pares candidatos gerados por partição (\texttt{max\_gap}$=25$) e distribuição dos rótulos.}
   \label{tab:candidatos}
 \resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
   \begin{tabular}{lrrrrr}
   \toprule
   Partição & Candidatos & \texttt{negation\_of} & \texttt{associated\_with} & \texttt{no\_relation} & \% \texttt{no\_relation} \\
   \midrule
-  Treino & 128.380 & 1.239 & 6.855 & 120.286 & 93,70 \\
-  Validação & 15.994 & 146 & 738 & 15.110 & 94,47 \\
-  Teste & 16.074 & 151 & 964 & 14.959 & 93,06 \\
+  Treino & 152.686 & 1.255 & 7.096 & 144.335 & 94,53 \\
+  Validação & 19.064 & 150 & 763 & 18.151 & 95,21 \\
+  Teste & 19.210 & 152 & 996 & 18.062 & 94,02 \\
   \bottomrule
   \end{tabular}}
   \\[4pt]

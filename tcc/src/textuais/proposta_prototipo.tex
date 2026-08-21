@@ -11,6 +11,7 @@ português?} A resposta determina sobre qual \emph{encoder} o RECLin-PT deve ser
 construído.
 
 \section{Visão geral e papel dos \emph{baselines}}
+\label{sec:visao_baselines}
 
 Comparam-se dois \emph{encoders} para o português, tratados como \emph{baselines}
 sob a mesma tarefa: o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt}, adaptado
@@ -74,7 +75,7 @@ Uma decisão central, comum aos dois \emph{baselines}, é o uso de
 \texttt{class\_weight="balanced"} na função de perda: o erro é reescalado de forma
 inversamente proporcional à frequência de cada classe. Sem esse ajuste, o
 otimizador minimizaria o erro simplesmente prevendo \texttt{no\_relation} para
-quase tudo, dado que essa classe concentra $93{,}06\%$ dos candidatos de teste. A
+quase tudo, dado que essa classe concentra $94{,}02\%$ dos candidatos de teste. A
 reescala força o modelo a ``pagar'' caro por erros nas classes raras, sem descartar
 dados nem introduzir o não-determinismo de uma subamostragem. Como a mesma
 estratégia é aplicada aos dois \emph{encoders}, seu efeito é compartilhado e não

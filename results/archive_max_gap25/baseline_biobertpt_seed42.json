@@ -1,0 +1,112 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_length": 128
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        137,
+        3,
+        12
+      ],
+      [
+        5,
+        778,
+        213
+      ],
+      [
+        111,
+        1969,
+        15982
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.45818747996333864,
+      "dev_macro_f1": 0.5443963929801533,
+      "dev_negation_of_f1": 0.436241610738255,
+      "duration_s": 3528.6,
+      "epoch": 1,
+      "train_loss": 0.7587902351170903
+    },
+    {
+      "dev_loss": 0.4005256912877296,
+      "dev_macro_f1": 0.6224411853082895,
+      "dev_negation_of_f1": 0.6276346604215457,
+      "duration_s": 3532.3,
+      "epoch": 2,
+      "train_loss": 0.44010088433357764
+    },
+    {
+      "dev_loss": 0.4403938759937132,
+      "dev_macro_f1": 0.6528620209073456,
+      "dev_negation_of_f1": 0.673469387755102,
+      "duration_s": 3533.5,
+      "epoch": 3,
+      "train_loss": 0.3173175383154662
+    }
+  ],
+  "device": "cuda",
+  "model": "pucpr/biobertpt-all",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 177858819,
+  "seed": 42,
+  "sklearn_report": {
+    "accuracy": 0.8795939614783966,
+    "associated_with": {
+      "f1-score": 0.41537640149492794,
+      "precision": 0.2829090909090909,
+      "recall": 0.7811244979919679,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.67488588483361,
+      "precision": 0.6035093923614879,
+      "recall": 0.8557604634445172,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.6765432098765433,
+      "precision": 0.541501976284585,
+      "recall": 0.9013157894736842,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9327380431293589,
+      "precision": 0.9861171098907879,
+      "recall": 0.8848411028678994,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9038867256008675,
+      "precision": 0.9461391459546135,
+      "recall": 0.8795939614783966,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.41537640149492794,
+    "negation_of": 0.6765432098765433,
+    "no_relation": 0.9327380431293589
+  },
+  "test_macro_f1": 0.67488588483361,
+  "test_mcc": 0.45286176776190035,
+  "test_micro_f1": 0.8795939614783966,
+  "test_weighted_f1": 0.9038867256008675
+}

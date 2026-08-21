@@ -47,9 +47,10 @@
 PYTHON ?= python
 
 # Hiperparametros do artigo. NAO sao os defaults do argparse (32/75/192).
-# max_gap: 20 -> 25 (analise de sensibilidade em analysis/max_gap/; 20 descartava
-# 1.272 relacoes `associated_with` antes de virarem candidato). Os resultados em
-# results/ AINDA sao os de max_gap=20 -- valem ate o retreino dos 4 experimentos.
+# max_gap: 20 -> 25 em 15/08/2026 (analise de sensibilidade em analysis/max_gap/;
+# 20 descartava 1.272 relacoes `associated_with` antes de virarem candidato). Os
+# quatro experimentos foram refeitos com 25 e results/ ja reflete essa rodada; os
+# resultados de max_gap=20 ficaram em results/archive_max_gap20/, para comparacao.
 HP := --epochs 3 --batch-size 64 --max-gap 25 --max-length 128
 
 XML_DIR    := SemClinBr-xml-public-v1

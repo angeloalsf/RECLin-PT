@@ -1,1 +1,17 @@
+# Normalizacao de quebras de linha: arquivos de texto sempre com LF no repositorio.
+# Sem isto, uma edicao feita no Windows (CRLF) faz o git diff mostrar o arquivo
+# inteiro como alterado em vez de apenas as linhas que de fato mudaram.
+
+# Dados e configuracao
 *.json text eol=lf
+
+# Fontes LaTeX
+*.tex text eol=lf
+*.bib text eol=lf
+*.cls text eol=lf
+*.sty text eol=lf
+*.bst text eol=lf
+
+# Documentacao e scripts
+*.md text eol=lf
+*.py text eol=lf

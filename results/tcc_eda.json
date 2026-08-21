@@ -1,25 +1,25 @@
 {
   "candidates": {
     "dev": {
-      "associated_with": 738,
-      "negation_of": 146,
-      "no_relation": 15110,
-      "no_relation_pct": 94.4729273477554,
-      "total": 15994
+      "associated_with": 763,
+      "negation_of": 150,
+      "no_relation": 18151,
+      "no_relation_pct": 95.21086865295845,
+      "total": 19064
     },
     "test": {
-      "associated_with": 964,
-      "negation_of": 151,
-      "no_relation": 14959,
-      "no_relation_pct": 93.06333208908796,
-      "total": 16074
+      "associated_with": 996,
+      "negation_of": 152,
+      "no_relation": 18062,
+      "no_relation_pct": 94.02394586153045,
+      "total": 19210
     },
     "train": {
-      "associated_with": 6855,
-      "negation_of": 1239,
-      "no_relation": 120286,
-      "no_relation_pct": 93.69527963857298,
-      "total": 128380
+      "associated_with": 7096,
+      "negation_of": 1255,
+      "no_relation": 144335,
+      "no_relation_pct": 94.53060529452603,
+      "total": 152686
     }
   },
   "corpus": {
@@ -62,48 +62,48 @@
       "p95": 15.0
     }
   },
-  "max_gap": 20,
+  "max_gap": 25,
   "pipeline_config": {
     "batch_size": 64,
     "class_weight": "balanced",
     "ctx_chars": 128,
     "epochs": 3,
     "lr": 2e-05,
-    "max_gap": 20,
+    "max_gap": 25,
     "max_length": 128
   },
   "recall_ceiling": {
     "dev": {
-      "ceiling_pct": 89.86828774062816,
+      "ceiling_pct": 92.806484295846,
       "duplicates": 3,
-      "lost": 100,
+      "lost": 71,
       "lost_by_type": {
-        "associated_with": 93,
-        "negation_of": 7
+        "associated_with": 68,
+        "negation_of": 3
       },
-      "lost_pct": 10.131712259371835,
+      "lost_pct": 7.193515704154002,
       "total": 987
     },
     "test": {
-      "ceiling_pct": 89.36,
+      "ceiling_pct": 92.0,
       "duplicates": 2,
-      "lost": 133,
+      "lost": 100,
       "lost_by_type": {
-        "associated_with": 132,
-        "negation_of": 1
+        "associated_with": 100,
+        "negation_of": 0
       },
-      "lost_pct": 10.64,
+      "lost_pct": 8.0,
       "total": 1250
     },
     "train": {
-      "ceiling_pct": 88.17915627372302,
+      "ceiling_pct": 90.96627263854246,
       "duplicates": 37,
-      "lost": 1090,
+      "lost": 833,
       "lost_by_type": {
-        "associated_with": 1047,
-        "negation_of": 43
+        "associated_with": 806,
+        "negation_of": 27
       },
-      "lost_pct": 11.820843726276976,
+      "lost_pct": 9.033727361457542,
       "total": 9221
     }
   },

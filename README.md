@@ -144,8 +144,7 @@ produziram os resultados. O corpus só é necessário para reexecutar os passos 
 ~16 GB VRAM). Cada época leva ≈48 min; cada baseline (3 épocas) leva **≈2h25**.
 Reproduzir os quatro experimentos do artigo (2 modelos × 2 sementes) custa
 **≈10 h de GPU**. Em CPU o treino roda, mas é impraticável para o tamanho do
-dataset (128.380 candidatos de treino — contagem de `max_gap=20`, a ser
-recontada após o retreino com `max_gap=25`).
+dataset (152.686 candidatos de treino, com `max_gap=25`).
 
 Use `--ckpt-dir` apontando para o Google Drive: o treino grava
 `last_checkpoint/` ao fim de cada época e **retoma automaticamente** se o runtime
@@ -203,13 +202,12 @@ python scripts/aggregate_seeds.py
 > `max_gap=25` é a decisão de maior impacto: controla quantos pares negativos
 > entram no dataset e, portanto, o desbalanceamento de classes.
 >
-> ⚠️ **`max_gap` mudou de 20 para 25 e os experimentos ainda não foram
-> refeitos.** A janela de 20 caracteres descartava 1.324 relações anotadas
-> (1.272 delas `associated_with`) antes de virarem candidato — ver
-> `analysis/max_gap/`. Tudo o que está em `results/`, e todo número derivado
-> dele neste README, no `artigo-sbc/` e no `tcc/`, ainda vem de `max_gap=20`.
-> Os quatro experimentos (2 modelos × 2 sementes) precisam ser reexecutados
-> antes de qualquer número ser atualizado.
+> `max_gap` foi elevado de 20 para 25 em 15/08/2026: a janela de 20 caracteres
+> descartava 1.324 relações anotadas (1.272 delas `associated_with`) antes de
+> virarem candidato — ver `analysis/max_gap/`. Os quatro experimentos
+> (2 modelos × 2 sementes) foram reexecutados com 25, e tudo em `results/`, no
+> `tcc/` e neste README deriva dessa rodada. Os resultados anteriores estão
+> preservados em `results/archive_max_gap20/`, para comparação.
 
 ### Duas formas de executar o pipeline
 
@@ -297,9 +295,10 @@ Dois pontos que valem o aviso aqui na entrada:
   erro dos dois modelos diferem; o **bootstrap pareado** dá o intervalo de 95% e
   o p-valor da diferença no F1 de `negation_of`. Se o IC95 não cruza zero, a
   vantagem é significativa. O teste aborta se os `y_true` dos dois arquivos
-  divergirem — é a checagem de que o pareamento é legítimo (16.074 exemplos de
-  teste nos quatro `.preds.json` — contagem de `max_gap=20`, a ser recontada
-  após o retreino com `max_gap=25`).
+  divergirem — é a checagem de que o pareamento é legítimo (19.210 exemplos de
+  teste nos quatro `.preds.json`, com `max_gap=25`). É também a razão por que
+  predições de `max_gap=20` e de 25 não podem ser comparadas entre si: os
+  `y_true` têm tamanhos diferentes.
 
 ### Múltiplas sementes
 
@@ -358,8 +357,9 @@ nada: só lê `results/baseline_*.json`.
   longa distância estão fora do espaço de avaliação — o resultado vale para o
   regime de vizinhança curta. O valor era 20 e foi elevado para 25 após a
   análise de sensibilidade (`analysis/max_gap/`), que mostrou que 20 já cortava
-  11,6% das relações anotadas; o teto de recall com 25 é maior, mas continua
-  abaixo de 100%.
+  11,6% das relações anotadas. Com 25, o teto de recall do conjunto de teste é
+  de 92,0% — `negation_of` não perde nenhuma relação, e a perda restante é
+  toda de `associated_with` (100 de 1.098, 9,11%).
 - **Três classes.** O espaço de rótulos é um recorte do SemClinBr; ampliá-lo
   muda a dificuldade da tarefa e pediria reexecutar tudo.
 
