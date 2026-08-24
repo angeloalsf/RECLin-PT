@@ -7,21 +7,28 @@ aponta ameaças à validade dos achados.
 \section{Análise dos resultados}
 
 O resultado central é a \textbf{ausência de vantagem \emph{consistente} do
-pré-treinamento clínico}: para a extração de relações no SemClinBr, no espaço de
+pré-treinamento clínico}. Para a extração de relações no SemClinBr, no espaço de
 três classes, o BioBERTpt não produz ganho estável sobre o BERTimbau, nem mesmo na
 classe \texttt{negation\_of}, em que a especialização de domínio seria mais
 plausível. Convém precisar o que os testes sustentam, porque o quadro é menos
 confortável que um empate. Na métrica-alvo, o veredito de \emph{empate} vale para a
-semente $42$ e não se repete na semente $43$, em que a comparação pareada acusa
-diferença significativa --- e em favor do \emph{encoder} clínico. O que \emph{não}
-se mantém entre as duas sementes é a \emph{direção}: o sinal da diferença se
-inverte. O que se mantém é a \emph{magnitude relativa}: em ambas, a variação de um
+semente $42$ e não se repete na semente $43$, em que o \emph{bootstrap} pareado
+sobre o F1 de \texttt{negation\_of} acusa diferença significativa, e em favor do
+\emph{encoder} clínico. O que \emph{não} se mantém entre as duas sementes é a
+\emph{direção nessa classe}, uma vez que o sinal da diferença se inverte. A
+instabilidade é da métrica-alvo, e não do padrão global de erro. O teste de McNemar,
+que incide sobre o
+conjunto dos candidatos, rejeita a hipótese nula nas duas sementes e aponta nas duas
+para o \emph{encoder} geral ($540$ contra $695$ discordâncias na semente $42$; $442$
+contra $624$ na $43$), assim como a acurácia. O que se mantém, além dessa direção
+agregada, é a \emph{magnitude relativa}. Em ambas as sementes, a variação de um
 mesmo \emph{encoder} entre sementes supera a diferença medida entre \emph{encoders}
 distintos (Seção~\ref{sec:robustez}). É nesse sentido, e apenas nesse, que não há
-ganho atribuível ao domínio de pré-treino: não porque o clínico perca, mas porque a
-diferença entre os dois não sobrevive à troca de uma semente. Esse achado contrasta
-com a expectativa difundida, bem como com os ganhos relatados para o reconhecimento
-de entidades nomeadas clínicas em português \cite{schneider_2020_biobertpt}, de que
+ganho atribuível ao domínio de pré-treino. O motivo não é uma derrota do clínico,
+que chega a ficar à frente na negação sob a semente $43$, mas o fato de a diferença
+entre os dois na classe investigada não sobreviver à troca de uma semente. Esse
+achado contrasta com a expectativa difundida, bem como com os ganhos relatados
+para o reconhecimento de entidades nomeadas clínicas em português \cite{schneider_2020_biobertpt}, de que
 modelos de domínio sempre se transfiram melhor.
 
 Duas explicações são plausíveis e compatíveis com os dados.
@@ -30,10 +37,11 @@ A primeira é \textbf{linguística}. A negação clínica em português é forte
 lexicalizada (``não'', ``sem'', ``nega'', ``ausência de'', além de adjetivos que
 embutem negação morfologicamente, como ``afebril'' e ``anictérico'', conforme o
 Apêndice~\ref{ap:lexico}). Esse sinal é frequente e regular o bastante para que um
-\emph{encoder} de domínio geral, com vocabulário amplo do português, o capture tão
-bem quanto um clínico. A caracterização do corpus reforça essa leitura: a mediana
-da distância entre as entidades de uma relação \texttt{negation\_of} é de um único
-caractere (Seção~\ref{sec:corpus}), ou seja, o gatilho de negação está praticamente
+\emph{encoder} de domínio geral, com vocabulário amplo do português, o capture sem
+desvantagem consistente em relação a um clínico. A caracterização do corpus reforça
+essa leitura, pois a mediana da distância entre as entidades de uma relação
+\texttt{negation\_of} é de um único caractere (Seção~\ref{sec:corpus}), ou seja,
+o gatilho de negação está praticamente
 colado ao achado negado. Detectá-lo depende pouco de conhecimento clínico
 especializado.
 
@@ -43,19 +51,19 @@ entidades, do que de conhecimento lexical especializado de domínio, e essa
 estrutura é fornecida
 igualmente aos dois \emph{baselines} pela representação de entrada compartilhada
 (Seção~\ref{sec:markers}). A semelhança entre as matrizes de confusão
-(Seção~\ref{sec:confusao}) é a evidência mais direta disso: os dois modelos não
-apenas chegam a números próximos, mas concentram o erro no mesmo lugar: a
+(Seção~\ref{sec:confusao}) é a evidência mais direta disso. Os dois modelos não
+apenas chegam a números próximos, mas concentram o erro no mesmo lugar, a
 fronteira entre \texttt{associated\_with} e \texttt{no\_relation}.
 
 Um corolário prático, e diretamente relevante para o desenvolvimento do
-RECLin-PT, é a \textbf{eficiência}: o BERTimbau iguala o BioBERTpt em macro-F1
+RECLin-PT, é a \textbf{eficiência}. O BERTimbau iguala o BioBERTpt em macro-F1
 médio ($0{,}695$ contra $0{,}694$) com aproximadamente $60\%$ dos parâmetros
 ($108{,}9$ contra $177{,}9$ milhões). Quando o desempenho é equivalente, o modelo
 menor é preferível por custo de inferência e de memória, consideração concreta para
 implantação em ambientes clínicos com recursos limitados. A esse argumento soma-se a
-estabilidade: a amplitude entre sementes do BERTimbau na métrica-alvo ($0{,}008$) é
+estabilidade, dado que a amplitude entre sementes do BERTimbau na métrica-alvo ($0{,}008$) é
 cerca de dez vezes menor que a do BioBERTpt ($0{,}078$), o que torna seu desempenho
-mais previsível em uma nova execução. Vale registrar a contrapartida: é justamente
+mais previsível em uma nova execução. Vale registrar a contrapartida. É justamente
 essa dispersão que permite ao BioBERTpt superar o geral na semente $43$, de modo que
 a preferência pelo \emph{encoder} menor se justifica por previsibilidade e custo,
 não por superioridade média na métrica-alvo.
@@ -65,13 +73,13 @@ não por superioridade média na métrica-alvo.
 A classe \texttt{associated\_with} permanece a mais difícil para os dois modelos
 (F1 $\approx 0{,}43$), com alta cobertura e baixa precisão. Duas causas se somam.
 
-A primeira é \textbf{conceitual}: distinguir associação genuína de mera proximidade
+A primeira é \textbf{conceitual}. Distinguir associação genuína de mera proximidade
 textual é intrinsecamente ambíguo em texto clínico telegráfico, em que entidades
 vizinhas frequentemente não mantêm relação anotada, como ilustra o próprio
 exemplo de geração de candidatos (Quadro~\ref{quad:exemplo_candidatos}), em que
 cinco dos seis pares ordenados possíveis são \texttt{no\_relation}.
 
-A segunda é \textbf{metodológica}: a janela \texttt{max\_gap}$=25$ descarta
+A segunda é \textbf{metodológica}. A janela \texttt{max\_gap}$=25$ descarta
 $9{,}11\%$ das relações \texttt{associated\_with} do conjunto de teste
 (Seção~\ref{sec:teto_recall}), enquanto não descarta \emph{nenhuma} relação
 \texttt{negation\_of}. O F1 dessa classe é, portanto, medido sob um teto de
@@ -84,18 +92,18 @@ em conta.
 
 A limitação mais séria recai sobre a própria caracterização de empate. Ela vale
 para a semente $42$; a comparação pareada refeita na semente $43$ acusa diferença
-significativa --- e em favor do BioBERTpt clínico, invertendo o sinal observado na
+significativa, e em favor do BioBERTpt clínico, invertendo o sinal observado na
 semente de referência. A conclusão prática, a ausência de ganho \emph{confiável}
 atribuível ao pré-treinamento clínico, sobrevive a essa inversão, porque se apoia na
 instabilidade da diferença e não em sua direção; mas qualquer afirmação sobre
 \emph{qual} \emph{encoder} é superior depende inteiramente da semente e não está
 sustentada por estes experimentos. Além disso, \textbf{duas sementes por modelo não
-bastam} para estimar um intervalo de confiança sobre essa variação: o desvio
+bastam} para estimar um intervalo de confiança sobre essa variação, e o desvio
 reportado na Tabela~\ref{tab:robustez} deve ser lido como dispersão observada, não
 como estimativa de variância. Fechar a questão exige um número maior de repetições
 com agregação formal.
 
-A tarefa pressupõe \textbf{entidades já anotadas} (\emph{gold}): a avaliação não
+A tarefa pressupõe \textbf{entidades já anotadas} (\emph{gold}). A avaliação não
 considera o erro propagado de uma etapa de reconhecimento de entidades nomeadas
 automática, de modo que os resultados refletem a extração de relações isoladamente.
 Em um cenário fim a fim, os valores absolutos seriam necessariamente menores.
@@ -121,13 +129,13 @@ magnitude conhecida}, e não uma fonte de incerteza não medida.
 
 Uma segunda ameaça diz respeito à \textbf{independência das instâncias}. O
 \emph{bootstrap} pareado trata os $19\,210$ candidatos como independentes, o que
-não é estritamente verdadeiro: pares de um mesmo documento compartilham texto e
+não é estritamente verdadeiro, pois pares de um mesmo documento compartilham texto e
 vocabulário, de modo que o intervalo de confiança reportado é provavelmente mais
 estreito que o real. Essa ameaça atenua-se, mas não desaparece, pelo fato de a
-comparação ser \emph{pareada}: ambos os modelos são avaliados exatamente sobre as
+comparação ser \emph{pareada}, já que ambos os modelos são avaliados exatamente sobre as
 mesmas instâncias, e a dependência afeta os dois igualmente. Ainda assim, a
-conclusão de empate na semente $42$ --- e a de diferença significativa na
-semente $43$ --- deve ser lida com essa ressalva.
+conclusão de empate na semente $42$ (e a de diferença significativa na
+semente $43$) deve ser lida com essa ressalva.
 
 Quanto à \textbf{validade externa}, o SemClinBr, apesar de multi-institucional e
 multiespecialidade, representa um conjunto específico de instituições e estilos de

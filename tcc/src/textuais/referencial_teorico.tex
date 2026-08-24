@@ -30,7 +30,7 @@ classificação que associa ao par um rótulo dentro de um conjunto pré-definid
 
 Neste trabalho o espaço de rótulos é \texttt{negation\_of},
 \texttt{associated\_with} e \texttt{no\_relation}. O rótulo
-\texttt{no\_relation} é fundamental: como a anotação de corpora registra apenas
+\texttt{no\_relation} é fundamental. Como a anotação de corpora registra apenas
 relações positivas, todo par de entidades não anotado deve ser tratado como
 ausência de relação, o que introduz um forte desbalanceamento de classes.
 
@@ -38,8 +38,8 @@ ausência de relação, o que introduz um forte desbalanceamento de classes.
 
 Abordagens baseadas em regras codificam conhecimento linguístico explícito. Em
 detecção de negação clínica, o algoritmo \textbf{NegEx} \cite{chapman_2001_negex}
-tornou-se referência: a partir de um léxico de gatilhos de negação e de janelas
-de contexto, classifica achados como negados ou afirmados. Sua simplicidade e
+tornou-se referência. A partir de um léxico de gatilhos de negação e de janelas
+de contexto, ele classifica achados como negados ou afirmados. Sua simplicidade e
 eficácia derivam do fato de a negação clínica ser altamente lexicalizada. Em
 português, gatilhos como ``não'', ``sem'', ``nega'' e ``ausência de'', além de
 adjetivos que embutem negação morfologicamente (``afebril'', ``anictérico''),
@@ -71,7 +71,10 @@ ajuste fino (\foreignlanguage{english}{fine-tuning}) para tarefas específicas.
 Para o português, os candidatos naturais à extração de relações clínicas dividem-se
 entre modelos de \textbf{domínio geral} e modelos \textbf{adaptados ao domínio
 clínico}. No primeiro grupo está o \textbf{BERTimbau} \cite{souza_2020_bertimbau},
-pré-treinado no corpus brWaC e hoje a referência de domínio geral para a língua;
+pré-treinado no corpus brWaC\footnote{O brWaC
+(\foreignlanguage{english}{Brazilian Portuguese Web as Corpus}) é um corpus de
+larga escala construído a partir de páginas web em português brasileiro, sem
+restrição de domínio.} e hoje a referência de domínio geral para a língua;
 nele também se enquadram modelos multilíngues como o \textbf{XLM-R}
 \cite{conneau_2020_xlmr}, que trocam especialização por cobertura ampla de idiomas.
 No segundo grupo está o \textbf{BioBERTpt} \cite{schneider_2020_biobertpt},

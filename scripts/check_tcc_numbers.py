@@ -18,12 +18,17 @@ correspondente; ao acrescentar uma, acrescente a entrada.
 O QUE VERIFICA
 --------------
 1. Afirmacoes numericas do corpo do texto (lista `CLAIMS`).
-2. Que nenhum capitulo cita artefato de um pipeline que nao existe
+2. A DIRECAO dos testes de significancia, e nao so os seus valores-p
+   (`check_mcnemar_direction`): que o McNemar aponta para o BERTimbau nas
+   duas sementes e que so o sinal da metrica-alvo inverte na semente 43.
+   CLAIMS confere valores; um valor certo com a direcao descrita ao
+   contrario na prosa passaria sem esta checagem -- e ja passou.
+3. Que nenhum capitulo cita artefato de um pipeline que nao existe
    (`scripts/eda/`, `scripts/baselines/`, `paper/tables/`, `experiments/`).
-3. Que nenhuma cifra da rodada anterior de `max_gap` sobreviveu na prosa
+4. Que nenhuma cifra da rodada anterior de `max_gap` sobreviveu na prosa
    (lista `STALE_NUMBERS`) -- CLAIMS confere um numero contra sua fonte, mas
    nao sabe em quantos arquivos o mesmo numero foi repetido.
-4. Que todo `\\input{tabelas/...}` do texto aponta para arquivo existente.
+5. Que todo `\\input{tabelas/...}` do texto aponta para arquivo existente.
 
 USO
 ---
@@ -216,7 +221,21 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("s42 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_low", -0.053, 0.0005),
     ("s42 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_high", 0.018, 0.0005),
     ("s42 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.p_value", 0.345, 0.005),
+    ("s42 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.a", 0.880, 0.0005),
+    ("s42 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.b", 0.888, 0.0005),
     ("s43 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.p_value", 2.7e-8, 0.5e-8),
+    # `b` e `c` da semente 43 existem para tornar a DIRECAO do McNemar conferivel,
+    # e nao so o seu valor-p. O texto (6.6, 7.1, 8.1 e o resumo) afirma que o
+    # McNemar aponta para o BERTimbau (geral) nas DUAS sementes; quem sustenta essa
+    # afirmacao e c > b, aqui e na semente 42. Ja houve uma versao do texto que
+    # atribuia ao McNemar da semente 43 a direcao oposta -- a inversao de sinal e
+    # do `paired_bootstrap` sobre o F1 de `negation_of`, nao do McNemar. Ver
+    # `check_mcnemar_direction`, que confere a desigualdade explicitamente.
+    ("s43 signif: b", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.b_only_a_correct", 442, 0),
+    ("s43 signif: c", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.c_only_b_correct", 624, 0),
+    ("s43 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.n_discordant", 1066, 0),
+    ("s43 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.a", 0.898, 0.0005),
+    ("s43 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.b", 0.908, 0.0005),
     ("s43 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_low", 0.016, 0.0005),
     ("s43 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_high", 0.090, 0.0005),
     ("s43 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.p_value", 0.0054, 0.00005),
@@ -341,6 +360,56 @@ def check_inputs(tcc_src: Path, verbose: bool) -> list[str]:
     return failures
 
 
+def check_mcnemar_direction(results_dir: Path, verbose: bool) -> list[str]:
+    """Confere a DIRECAO do McNemar, e nao so o seu valor-p.
+
+    O texto afirma, em 6.6, 7.1, 8.1 e no resumo, que o McNemar aponta para o
+    BERTimbau (modelo B, geral) nas DUAS sementes, e que o que inverte na
+    semente 43 e apenas o `paired_bootstrap` sobre o F1 de `negation_of`. As
+    entradas de CLAIMS conferem os valores de `b` e `c` um a um; esta checagem
+    confere a RELACAO entre eles, que e o que a prosa de fato afirma, e o sinal
+    do bootstrap em cada semente. Uma reexecucao dos experimentos que trocasse a
+    direcao do McNemar reprovaria aqui mesmo que os literais de CLAIMS fossem
+    atualizados junto.
+    """
+    failures = []
+    bootstrap_esperado = {42: -1, 43: +1}  # sinal de a_minus_b por semente
+    for seed in (42, 43):
+        data = load_json(
+            results_dir / f"significance_biobertpt_vs_bertimbau_seed{seed}.json"
+        )
+        b = data["mcnemar"]["b_only_a_correct"]   # so o BioBERTpt (A) acerta
+        c = data["mcnemar"]["c_only_b_correct"]   # so o BERTimbau (B) acerta
+        if not c > b:
+            failures.append(
+                f"direcao do McNemar na semente {seed}: o texto diz que o McNemar "
+                f"aponta para o BERTimbau (geral) nas duas sementes, mas "
+                f"c={c} nao supera b={b}"
+            )
+        elif verbose:
+            print(f"  ok  McNemar s{seed} aponta para o BERTimbau: c={c} > b={b}")
+
+        if data["accuracy"]["b"] <= data["accuracy"]["a"]:
+            failures.append(
+                f"direcao da acuracia na semente {seed}: o texto diz que a "
+                f"acuracia acompanha o McNemar, mas o BERTimbau nao fica a frente"
+            )
+        elif verbose:
+            print(f"  ok  acuracia s{seed} acompanha o McNemar (B > A)")
+
+        diff = data["target_f1"]["a_minus_b"]
+        esperado = bootstrap_esperado[seed]
+        if (diff > 0) != (esperado > 0):
+            failures.append(
+                f"sinal da metrica-alvo na semente {seed}: o texto diz que a "
+                f"diferenca e {'positiva' if esperado > 0 else 'negativa'} "
+                f"(A - B), mas o JSON da {diff:+.4f}"
+            )
+        elif verbose:
+            print(f"  ok  F1 negation_of s{seed}: sinal de A - B = {diff:+.4f}")
+    return failures
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Confere os numeros do TCC contra results/ e data/.",
@@ -354,6 +423,7 @@ def main(argv: list[str] | None = None) -> int:
         ghost_failures, pending = check_ghost_paths(args.tcc_src, args.verbose)
         failures = (
             check_claims(args.results_dir, args.verbose)
+            + check_mcnemar_direction(args.results_dir, args.verbose)
             + ghost_failures
             + check_stale_numbers(args.tcc_src, args.verbose)
             + check_inputs(args.tcc_src, args.verbose)
@@ -380,8 +450,9 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"OK: {len(CLAIMS) + len(AMPLITUDE_CLAIMS)} afirmações numéricas do texto "
-        f"conferem com results/; nenhum caminho fantasma novo; nenhum dos "
-        f"{len(STALE_NUMBERS)} números obsoletos na prosa; todos os "
+        f"conferem com results/; a direção do McNemar e o sinal da métrica-alvo "
+        f"batem com o texto nas duas sementes; nenhum caminho fantasma novo; "
+        f"nenhum dos {len(STALE_NUMBERS)} números obsoletos na prosa; todos os "
         f"\\input{{tabelas/...}} existem."
     )
     return 0

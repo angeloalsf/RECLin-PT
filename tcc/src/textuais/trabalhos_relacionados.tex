@@ -14,7 +14,7 @@ corpora anotados e tarefas compartilhadas para problemas como relações entre
 medicamentos, dosagens e efeitos adversos. Esses esforços estabeleceram protocolos
 de avaliação e evidenciaram a importância de tratar adequadamente o desbalanceamento
 de classes e o vazamento de dados entre partições, preocupações transpostas para
-este trabalho: o vazamento é endereçado pelo particionamento em nível de documento
+este trabalho. O vazamento é endereçado pelo particionamento em nível de documento
 (Seção~\ref{sec:particao}), e o desbalanceamento, pela geração controlada de pares
 candidatos e pelo tratamento explícito da assimetria de classes que dela resulta
 (Seção~\ref{sec:candidatos}).
@@ -49,28 +49,28 @@ Quanto às tarefas efetivamente atacadas em português, o levantamento aqui
 conduzido aponta concentração fora da extração de relações. Uma revisão
 sistemática de 28 estudos de modelos de linguagem em português voltados à saúde,
 publicados entre janeiro de 2020 e novembro de 2024, inventaria as tarefas
-tratadas --- classificação (16 modelos), reconhecimento de entidades nomeadas
-(8), modelagem de tópicos, resposta a perguntas, geração de texto e agentes
-conversacionais --- e não contabiliza a extração de relações entre elas
-\cite{shimaoka_2026_revisao}. O desequilíbrio não é exclusivo do português: uma
+tratadas, a saber, classificação (16 modelos), reconhecimento de entidades
+nomeadas (8), modelagem de tópicos, resposta a perguntas, geração de texto e
+agentes conversacionais. A extração de relações não figura nesse inventário
+\cite{shimaoka_2026_revisao}. O desequilíbrio não é exclusivo do português. Uma
 revisão de 94 estudos de extração de informação em texto clínico registra 63
 dedicados a reconhecimento de entidades contra 13 dedicados a extração de
 relações \cite{navarro_2023_revisao}. O trabalho de extração de relações em
 texto clínico em português aqui localizado \cite{silva_2023_oncologia} anota um
 corpus próprio de oncologia em português brasileiro e menciona três
-\emph{encoders} candidatos --- BERT multilíngue, BioBERTpt e BERTimbau ---, mas
+\emph{encoders} candidatos (BERT multilíngue, BioBERTpt e BERTimbau), mas
 não reporta comparação entre eles e resolve a etapa de relações com uma rede
 BiLSTM, sem teste de significância; o efeito do pré-treinamento de domínio sobre
 a extração de relações, portanto, não é isolado ali.
 
 É digno de nota que os ganhos relatados para o BioBERTpt foram medidos em NER, e
-não em extração de relações: o modelo é avaliado em dois corpora de narrativas
+não em extração de relações. O modelo é avaliado em dois corpora de narrativas
 clínicas na tarefa de reconhecimento de entidades \cite{schneider_2020_biobertpt}.
 O BERTimbau, por sua vez, é avaliado em similaridade textual, inferência textual
 e reconhecimento de entidades, todas tarefas de domínio geral
 \cite{souza_2020_bertimbau}. A comparação direta entre os dois sobre o SemClinBr,
 sob protocolo de treinamento unificado, foi conduzida para o reconhecimento de
-entidades \cite{almeida_2026_benchmarkner} --- não para a extração de relações.
+entidades \cite{almeida_2026_benchmarkner}, e não para a extração de relações.
 Não localizamos, para o português, trabalho que verifique se a vantagem do
 pré-treinamento clínico se transfere para a extração de relações, lacuna que este
 trabalho endereça.

@@ -36,8 +36,8 @@ são executadas, são:
         espaço de classificação completo (Seção~\ref{sec:candidatos}).
   \item \textbf{Marcação de entidades (candidatos $\rightarrow$ texto marcado).}
         Cada par candidato é transformado na \emph{string} de entrada do
-        \emph{encoder}: uma janela de texto em torno do par, com as duas
-        entidades delimitadas por marcadores
+        \emph{encoder}, que consiste em uma janela de texto em torno do par,
+        com as duas entidades delimitadas por marcadores
         (Seção~\ref{sec:markers} do Capítulo~\ref{cap:prototipo}). É necessária
         para informar ao modelo \emph{quais} trechos da janela formam o par sob
         análise e qual deles é o primeiro argumento da relação.
@@ -72,7 +72,10 @@ antecede o \emph{pipeline} aqui descrito.
 \section{Corpus SemClinBr}
 \label{sec:corpus}
 
-O trabalho utiliza o corpus SemClinBr \cite{oliveira_2022_semclinbr}, composto por
+O trabalho utiliza o corpus SemClinBr \cite{oliveira_2022_semclinbr}\footnote{Repositório
+do corpus e formulário de requisição de acesso em
+\href{https://github.com/HAILab-PUCPR/SemClinBr}{github.com/HAILab-PUCPR/SemClinBr}.},
+composto por
 mil documentos clínicos em português anotados com entidades e relações. O corpus
 é distribuído sob licença restrita, mediante solicitação formal, e seus arquivos
 XML originais são tratados como \textbf{imutáveis} ao longo do \emph{pipeline}. As
@@ -85,10 +88,13 @@ criação e anotação do corpus.
 
 \section{Parsing e representação canônica}
 
-Um \emph{parser} converte cada arquivo XML em um registro canônico no formato JSONL, com
+Um \emph{parser} converte cada arquivo XML em um registro canônico no formato
+JSONL\footnote{JSONL (\foreignlanguage{english}{JSON Lines}) é um formato textual em
+que cada linha do arquivo é um objeto JSON independente, o que permite ler e
+gravar grandes conjuntos registro a registro.}, com
 identificador do documento, texto, lista de entidades (tipo e \emph{offsets}) e
-lista de relações. O \emph{parser} é \emph{fiel ao XML}: não normaliza tipos de entidade
-ou de relação, deixando tais decisões para etapas posteriores. A única
+lista de relações. O \emph{parser} é \emph{fiel ao XML}, ou seja, não normaliza tipos de entidade
+ou de relação, e deixa tais decisões para etapas posteriores. A única
 transformação aplicada ao texto é o colapso de quebras de linha
 (\texttt{\textbackslash r\textbackslash n}, \texttt{\textbackslash r},
 \texttt{\textbackslash n}) em espaço único, necessário para manter o alinhamento
@@ -134,15 +140,15 @@ quanto o tratamento explícito de classes nos modelos aprendidos.
 \subsection{Distância entre entidades relacionadas}
 
 A Tabela~\ref{tab:distancia} e a \autoref{fig:eda_dist}
-indicam que as relações ocorrem entre entidades próximas: a mediana da distância é
-de poucos caracteres e o percentil 95 não ultrapassa algumas dezenas
+indicam que as relações ocorrem entre entidades próximas, com mediana da distância
+de poucos caracteres e percentil 95 que não ultrapassa algumas dezenas
 (\texttt{associated\_with}: média $11{,}8$, mediana $4$, p95 $43$;
 \texttt{negation\_of}: média $3{,}5$, mediana $1$, p95 $15$). O contraste entre os
-dois tipos é o achado relevante: a negação é praticamente adjacente, pois em $75\%$
+dois tipos é o achado relevante. A negação é praticamente adjacente, pois em $75\%$
 dos casos a distância é de um único caractere, enquanto a associação se
 distribui por uma cauda bem mais longa. Essa assimetria fundamenta a escolha da
 janela máxima (\texttt{max\_gap}$=25$) na geração de pares candidatos, discutida na
-Seção~\ref{sec:teto_recall}: uma janela estreita preserva quase toda a classe-alvo
+Seção~\ref{sec:teto_recall}. Uma janela estreita preserva quase toda a classe-alvo
 e limita a explosão combinatória de negativos, ao custo de um teto de
 \emph{recall} concentrado em \texttt{associated\_with}.
 
@@ -188,7 +194,7 @@ com a importância do fenômeno de negação tratado neste trabalho.
 \label{sec:particao}
 
 A partição segue a razão 80/10/10 em \textbf{nível de documento}, e não de
-relação. Essa escolha previne o vazamento de dados: relações de um mesmo documento
+relação. Essa escolha previne o vazamento de dados, pois relações de um mesmo documento
 compartilham vocabulário e trechos repetidos, e dividi-las entre partições
 diferentes inflaria artificialmente as métricas de teste. A partição é
 \textbf{estratificada} pela presença das classes \texttt{negation\_of} e
@@ -196,7 +202,7 @@ diferentes inflaria artificialmente as métricas de teste. A partição é
 estratificação multirrótulo de \citeonline{sechidis_2011_stratification}, de modo
 a garantir representação estável da classe minoritária em todas as partições.
 
-A partição é gerada com semente fixa ($42$) e \textbf{congelada}: os arquivos de
+A partição é gerada com semente fixa ($42$) e \textbf{congelada}. Os arquivos de
 treino, desenvolvimento e teste e seus respectivos \emph{hashes} SHA-256 são
 versionados (Apêndice~\ref{ap:sha256}), evitando que comparações entre execuções
 sejam confundidas com variação de amostragem. O resultado são $800$ documentos de
@@ -207,10 +213,11 @@ partições. O ponto crítico é que a classe minoritária \texttt{negation\_of}
 representa $14{,}02\%$ das relações do corpus, permanece bem representada em todas
 as partições, com proporções de $14{,}09\%$ no treino, $15{,}70\%$ na validação e
 $12{,}16\%$ no teste. A estratificação atua sobre a \emph{presença} das classes em
-cada documento, e não sobre a contagem de relações: ela garante que nenhuma
-partição fique sem exemplos da classe rara, mas não iguala percentuais: daí a
-variação de cerca de três pontos percentuais observada. Essa garantia é o que
-importa para o protocolo: um particionamento puramente aleatório poderia, por azar
+cada documento, e não sobre a contagem de relações. Com isso, ela garante que
+nenhuma partição fique sem exemplos da classe rara, mas não iguala percentuais;
+daí a variação de cerca de três pontos percentuais observada. Essa garantia é o
+que importa para o protocolo, uma vez que um particionamento puramente aleatório
+poderia, por azar
 de amostragem, sub-representar \texttt{negation\_of} no conjunto de teste,
 comprometendo a estabilidade da estimativa de F1 dessa classe. Com $152$ relações
 \texttt{negation\_of} no teste, a estimativa permanece interpretável, ainda que com
@@ -222,7 +229,7 @@ confiança, e não apenas do valor pontual.
 
 A \autoref{fig:split_dist} apresenta a mesma informação em barras agrupadas (escala
 logarítmica), com o percentual de \texttt{negation\_of} de cada partição anotado na
-legenda. A leitura visual reforça o ponto anterior: a classe rara está presente em
+legenda. A leitura visual reforça o ponto anterior. A classe rara está presente em
 volume comparável nas três partições, mas sua fração não é constante, e a partição
 de teste é justamente a de menor proporção.
 
@@ -237,7 +244,7 @@ de teste é justamente a de menor proporção.
 \section{Geração de pares candidatos}
 \label{sec:candidatos}
 
-O SemClinBr anota apenas relações \emph{positivas}: cada relação registrada indica
+O SemClinBr anota apenas relações \emph{positivas}. Cada relação registrada indica
 que existe vínculo entre duas entidades, mas a ausência de anotação não é, por si,
 um exemplo negativo explícito. Avaliar um classificador no espaço
 \{\texttt{negation\_of}, \texttt{associated\_with}, \texttt{no\_relation}\} exige,
@@ -252,11 +259,11 @@ A geração é feita pela função \texttt{iter\_candidate\_pairs}
 (\texttt{src/candidates.py}), compartilhada por todos os modelos e
 \emph{baselines}, condição necessária para que os resultados fiquem na mesma
 régua estatística. Para cada documento, ela percorre todos os \textbf{pares
-ordenados} de entidades $(e_1, e_2)$, com $e_1 \neq e_2$, uma vez que a ordem
-importa: a direção é relevante para a negação. Em seguida, descarta os pares cuja
+ordenados} de entidades $(e_1, e_2)$, com $e_1 \neq e_2$. A ordem importa, uma vez
+que a direção é relevante para a negação. Em seguida, descarta os pares cuja
 distância em caracteres exceda a janela máxima (\texttt{max\_gap}$=25$) e os pares
-entre documentos distintos, e atribui o rótulo: se o par ordenado $(e_1, e_2)$
-coincide com uma relação anotada, recebe o tipo \emph{gold}; caso contrário, recebe
+entre documentos distintos, e atribui o rótulo. Se o par ordenado $(e_1, e_2)$
+coincide com uma relação anotada, ele recebe o tipo \emph{gold}; caso contrário, recebe
 \texttt{no\_relation}. A emissão segue ordenação determinística por
 $(\text{start}, \text{end}, \text{id})$, de modo que o conjunto de candidatos e
 o \emph{hash} das predições sejam estáveis entre execuções.
@@ -311,11 +318,11 @@ exemplo \texttt{[E1] OSTEOMIELITE [/E1] [E2] NÃO ESPECIFICADA [/E2]}
 
 A Tabela~\ref{tab:candidatos} reporta o resultado do procedimento nas três
 partições: $152\,686$ candidatos de treino, $19\,064$ de validação e $19\,210$ de
-teste. A consequência direta é um conjunto de teste fortemente desbalanceado: dos
+teste. A consequência direta é um conjunto de teste fortemente desbalanceado. Dos
 $19\,210$ pares candidatos, $18\,062$ ($94{,}02\%$) pertencem à classe
 \texttt{no\_relation}, enquanto \texttt{associated\_with} e \texttt{negation\_of}
 somam, respectivamente, $996$ e $152$ instâncias. Esse desbalanceamento de
-$\approx 16{:}1$ é intrínseco à tarefa, e não um artefato evitável: decorre da
+$\approx 16{:}1$ é intrínseco à tarefa, e não um artefato evitável, pois decorre da
 combinatória de pares de entidades. Ele é tratado, nos modelos aprendidos,
 pela reescala de perda \texttt{class\_weight="balanced"} (Capítulo~\ref{cap:prototipo}),
 e, na avaliação, pela escolha do macro-F1 como métrica principal, que dá peso igual
@@ -326,22 +333,22 @@ e, na avaliação, pela escolha do macro-F1 como métrica principal, que dá pes
 \subsection{Teto de recall imposto pela janela}
 \label{sec:teto_recall}
 
-A janela \texttt{max\_gap}$=25$ impõe um \textbf{teto de recall}: toda relação
+A janela \texttt{max\_gap}$=25$ impõe um \textbf{teto de recall}. Toda relação
 \emph{gold} cujo par fique a mais de $25$ caracteres jamais é gerada como candidato
 e, portanto, é irrecuperável por qualquer classificador, independentemente da
 arquitetura. A Tabela~\ref{tab:teto_recall} quantifica esse limite por partição, e
 o ponto essencial é que ele \textbf{não se distribui igualmente entre as classes}.
-Na classe-alvo \texttt{negation\_of}, a perda é nula ou marginal: \textbf{nenhuma}
+Na classe-alvo \texttt{negation\_of}, a perda é nula ou marginal, pois \textbf{nenhuma}
 das $152$ relações do conjunto de teste é descartada, contra $3$ de $155$ na
 validação e $27$ de $1\,299$ no treino ($2{,}08\%$), valor coerente com a mediana de
 distância de $1$ caractere observada na EDA. Em \texttt{associated\_with}, ao
-contrário, a perda é substantiva: $100$ de $1\,098$ no teste ($9{,}11\%$), o que puxa
+contrário, a perda é substantiva, com $100$ de $1\,098$ no teste ($9{,}11\%$), o que puxa
 o teto agregado do conjunto de teste para $92{,}00\%$.
 
-Trata-se de uma \textbf{decisão de projeto documentada}: um compromisso entre o
+Trata-se de uma \textbf{decisão de projeto documentada}, um compromisso entre o
 \emph{recall} de \texttt{associated\_with} e a explosão combinatória de candidatos
 negativos, tomado em favor da classe que este trabalho investiga. A consequência
-deve ser lida junto com os resultados: o F1 de \texttt{associated\_with} reportado
+deve ser lida junto com os resultados. O F1 de \texttt{associated\_with} reportado
 no Capítulo~\ref{cap:experimentos} é medido \emph{sob} esse teto, e não sobre o
 conjunto completo de relações anotadas. Como o teto é idêntico para todos os
 modelos, que recebem exatamente os mesmos candidatos, ele limita o
@@ -373,26 +380,26 @@ o que elimina a variância entre amostras da comparação e mede exatamente a
 diferença entre os modelos.
 
 O \textbf{teste de McNemar} \cite{dietterich_1998_mcnemar} olha apenas as
-instâncias em que os dois modelos discordam quanto ao acerto: monta-se a tabela de
+instâncias em que os dois modelos discordam quanto ao acerto. Monta-se a tabela de
 discordâncias ($b$ = o primeiro acerta e o segundo erra; $c$ = o inverso) e, sob a
 hipótese nula de mesma taxa de acerto, avalia-se
 $b \sim \mathrm{Binomial}(b+c,\,0{,}5)$ pelo \textbf{teste binomial exato}. Ele
 mede se os padrões de erro \emph{globais} diferem, mas não é específico de uma
 classe.
 
-O \textbf{\emph{bootstrap} pareado} responde à pergunta específica da classe-alvo:
-reamostram-se, com reposição, as instâncias do conjunto de teste $10\,000$ vezes;
+O \textbf{\emph{bootstrap} pareado} responde à pergunta específica da classe-alvo.
+Reamostram-se, com reposição, as instâncias do conjunto de teste $10\,000$ vezes;
 a cada reamostragem recalcula-se a diferença $F1_A - F1_B$ no F1 de
 \texttt{negation\_of}, e reportam-se a diferença média, o intervalo de confiança de
 95\% (percentis $2{,}5$/$97{,}5$) e um valor-$p$ bilateral. Adota-se como critério
-de decisão a \textbf{exclusão do zero pelo IC95\%}: se o intervalo contém zero, a
+de decisão a \textbf{exclusão do zero pelo IC95\%}. Se o intervalo contém zero, a
 diferença não é considerada estatisticamente significativa ao nível
 $\alpha = 0{,}05$.
 
 Por fim, como \textbf{análise de robustez à inicialização}, ambos os modelos são
 treinados também com uma segunda semente ($43$), e todo o protocolo acima é
 repetido sobre esses resultados. Essa análise é parte do protocolo, e não um
-complemento opcional: como o Capítulo~\ref{cap:experimentos} mostra, o veredito do
+complemento opcional, pois, como o Capítulo~\ref{cap:experimentos} mostra, o veredito do
 teste pareado depende da semente, e reportar uma única execução por modelo daria
 uma impressão de definitividade que os dados não sustentam.
 
@@ -401,7 +408,10 @@ uma impressão de definitividade que os dados não sustentam.
 
 As etapas de \emph{parsing}, particionamento, geração de candidatos, análise
 exploratória e testes de significância executam em CPU; o ajuste fino dos
-\emph{encoders} é executado em ambiente com GPU (Google Colab,
+\emph{encoders} é executado em ambiente com GPU (Google
+Colab\footnote{Ambiente hospedado pelo Google para execução de \emph{notebooks}
+Python com acesso a GPU, disponível em
+\href{https://colab.research.google.com}{colab.research.google.com}.},
 \foreignlanguage{english}{Tesla} T4), com o mesmo núcleo de código para os dois
 modelos. O Quadro~\ref{quad:ambiente} consolida o ambiente e os hiperparâmetros
 comuns às duas execuções.
@@ -438,4 +448,7 @@ em cada arquivo de resultado, junto com a configuração completa; os \emph{spli
 congelados são verificados por \emph{hashes} SHA-256 (Apêndice~\ref{ap:sha256});
 e cada métrica reportada tem um arquivo JSON correspondente em \texttt{results/},
 do qual as tabelas e figuras deste trabalho são geradas por \emph{script}, nunca
-transcritas à mão.
+transcritas à mão.\footnote{O código, os \emph{scripts} de geração das tabelas e
+figuras e os arquivos de resultado estão em
+\href{https://github.com/angeloalsf/RECLin-PT}{github.com/angeloalsf/RECLin-PT}. O
+corpus SemClinBr não é redistribuído ali, por ter licença própria e restrita.}

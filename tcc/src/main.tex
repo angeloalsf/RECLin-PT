@@ -4,7 +4,9 @@
   oneside,			  % para impressão em recto e verso. Oposto a oneside
   a4paper,			  % tamanho do papel. 
   chapter=TITLE,        % títulos de capítulos convertidos em letras maiúsculas
-  section=TITLE,        % títulos de seções convertidos em letras maiúsculas
+  % section=TITLE não é usada: o iftex.cls já aplica \MakeUppercase apenas ao
+  % título impresso da seção (\setsecheadstyle), deixando o sumário em caixa
+  % baixa, como nos TCCs de referência do curso.
   english,			  % idioma adicional para hifenização
   french,				  % idioma adicional para hifenização
   spanish,			  % idioma adicional para hifenização
@@ -36,6 +38,7 @@
   \pretextual
   \imprimiraprovacao
   \imprimirdedicatoria
+  \imprimirepigrafe
   
   % RESUMO - PT/EN
   \input{pre_textuais/resumo}

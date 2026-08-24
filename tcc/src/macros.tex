@@ -45,6 +45,18 @@ Instituto Federal de Educação, Ciência e Tecnologia do Espírito Santo, como 
 \cdd{000.00}
 \selectlanguage{brazil}
 
+% Nomes das listas pré-textuais alinhados aos TCCs de referência do curso
+% (LISTA DE FIGURAS / LISTA DE ABREVIATURAS). \listfigurename pertence às
+% captions de idioma do abntex2, e por isso precisa entrar via \addto: o babel
+% reaplica \captionsbrazil no \begin{document} e desfaria um \renewcommand solto.
+\addto\captionsbrazil{\renewcommand{\listfigurename}{Lista de figuras}}
+\renewcommand{\listadesiglasname}{Lista de abreviaturas}
+
+% Sumário com os títulos de seção na caixa em que foram escritos, como nos TCCs
+% de referência. O iftex.cls aponta \cftsectionfont para \Capitalize, que o
+% abntex2abrev define como \uppercase — daí o sumário sair todo em caixa alta.
+\renewcommand{\cftsectionfont}{\normalfont\normalsize}
+
 % Arial (para usar times-new-roman, comente as três linhas abaixo)
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}

@@ -21,8 +21,8 @@ dois compartilham a mesma arquitetura base (BERT) e diferem essencialmente no
 corpus de pré-treinamento, o que os torna candidatos naturais a um experimento
 controlado sobre a importância do domínio de pré-treino.
 
-A premissa metodológica central é a \textbf{paridade}: a infraestrutura descrita
-aqui não constitui um modelo com nome próprio, é apenas a cadeia que viabiliza a
+A premissa metodológica central é a \textbf{paridade}. A infraestrutura descrita
+aqui não constitui um modelo com nome próprio, e sim a cadeia que viabiliza a
 comparação de forma justa. Os dois \emph{baselines} compartilham um único núcleo de
 implementação (\texttt{src/relation\_extraction.py}) e são, por construção,
 idênticos em tudo exceto no \emph{checkpoint} carregado:
@@ -37,7 +37,7 @@ idênticos em tudo exceto no \emph{checkpoint} carregado:
         \texttt{class\_weight="balanced"};
   \item o mesmo escalonador linear com \emph{warmup} e os mesmos
         hiperparâmetros de otimização (Quadro~\ref{quad:ambiente});
-  \item a mesma semente de treino e o mesmo critério de seleção de modelo: maior
+  \item a mesma semente de treino e o mesmo critério de seleção de modelo, o maior
         macro-F1 no conjunto de validação.
 \end{itemize}
 
@@ -50,7 +50,9 @@ exatamente a condição para que a pergunta de pesquisa tenha resposta.
 
 \subsection{BioBERTpt --- \emph{encoder} de domínio clínico}
 
-O \textbf{BioBERTpt} (\texttt{pucpr/biobertpt-all}) \cite{schneider_2020_biobertpt}
+O \textbf{BioBERTpt} (\texttt{pucpr/biobertpt-all})\footnote{\emph{Checkpoint} público
+em \href{https://huggingface.co/pucpr/biobertpt-all}{huggingface.co/pucpr/biobertpt-all}.}
+\cite{schneider_2020_biobertpt}
 é um modelo contextual adaptado ao domínio clínico e biomédico em português
 brasileiro, com $177{,}9$ milhões de parâmetros. Sua adoção corresponde à
 expectativa, difundida na literatura e sustentada pelos ganhos relatados em
@@ -60,11 +62,13 @@ texto do próprio domínio produza representações mais adequadas a tarefas cl�
 
 \subsection{BERTimbau --- \emph{encoder} de domínio geral}
 
-O \textbf{BERTimbau} (\texttt{neuralmind/bert-base-portuguese-cased})
+O \textbf{BERTimbau}
+(\texttt{neuralmind/bert-base-portuguese-cased})\footnote{\emph{Checkpoint} público em
+\href{https://huggingface.co/neuralmind/bert-base-portuguese-cased}{huggingface.co/neuralmind/bert-base-portuguese-cased}.}
 \cite{souza_2020_bertimbau} é a referência de domínio geral para o português,
 pré-treinado no corpus brWaC, com $108{,}9$ milhões de parâmetros, cerca de
 $60\%$ do tamanho do BioBERTpt. Ele entra no experimento como o controle que isola
-o efeito do domínio de pré-treino, e não como modelo secundário: se o desempenho
+o efeito do domínio de pré-treino, e não como modelo secundário. Se o desempenho
 for equivalente, o modelo menor é preferível por custo de inferência e de memória,
 consideração concreta para implantação em ambientes clínicos com recursos
 limitados.
@@ -72,7 +76,7 @@ limitados.
 \section{Tratamento do desbalanceamento}
 
 Uma decisão central, comum aos dois \emph{baselines}, é o uso de
-\texttt{class\_weight="balanced"} na função de perda: o erro é reescalado de forma
+\texttt{class\_weight="balanced"} na função de perda, que reescala o erro de forma
 inversamente proporcional à frequência de cada classe. Sem esse ajuste, o
 otimizador minimizaria o erro simplesmente prevendo \texttt{no\_relation} para
 quase tudo, dado que essa classe concentra $94{,}02\%$ dos candidatos de teste. A
@@ -88,11 +92,11 @@ constam do Apêndice~\ref{ap:hiperparametros}.
 \section{Representação de entrada: marcadores de posição}
 \label{sec:markers}
 
-O modelo contextual não recebe o par de entidades de forma abstrata: recebe um
+O modelo contextual não recebe o par de entidades de forma abstrata, e sim um
 recorte do \emph{texto} do documento com o par delimitado por \textbf{marcadores
 de entidade}. A técnica é padrão em extração de relações com modelos baseados em
-\foreignlanguage{english}{BERT} \cite{soares_2019_markers}: inserir no próprio
-texto marcadores que delimitam $e_1$ e $e_2$ é mais eficaz do que concatenar
+\foreignlanguage{english}{BERT} \cite{soares_2019_markers}. Inserir no próprio texto
+marcadores que delimitam $e_1$ e $e_2$ é mais eficaz do que concatenar
 representações de \emph{span} isoladas, pois permite que o mecanismo de atenção
 condicione a codificação de toda a janela ao par sob análise.
 
@@ -107,7 +111,10 @@ recorta uma janela de $\pm 128$ caracteres em torno do par
 \texttt{[E2] superfície$_{e_2}$ [/E2]}
 \end{center}
 %
-Os quatro marcadores são registrados como \emph{tokens} especiais no
+Os quatro marcadores são registrados como \emph{tokens}\footnote{\emph{Tokens} são
+as unidades em que o \emph{tokenizer} divide o texto antes de entregá-lo ao
+modelo, e podem ser palavras inteiras ou fragmentos de palavra. Os especiais não
+vêm do texto e recebem um vetor próprio.} especiais no
 \emph{tokenizer} (\texttt{add\_special\_tokens}), e a matriz de \emph{embeddings}
 do modelo é redimensionada (\texttt{resize\_token\_embeddings}) para lhes dar um
 vetor dedicado, aprendido durante o ajuste fino.
@@ -120,7 +127,7 @@ exatamente \emph{que informação} o modelo recebe:
         quais trechos da janela formam o par e qual deles é o primeiro
         argumento, e nada mais. O \textbf{tipo semântico} anotado pelo SemClinBr
         (\texttt{Disease or Syndrome}, \texttt{Negation}, \texttt{Finding}\ldots)
-        \textbf{não é passado ao modelo}: cabe a ele inferir a natureza de cada
+        \textbf{não é passado ao modelo}, e cabe a ele inferir a natureza de cada
         entidade a partir da superfície textual e do contexto.
   \item \textbf{A direção vem da etiqueta, não da ordem.} A inserção é feita por
         deslocamento de caractere; quando $e_2$ precede $e_1$ no texto, a
@@ -132,7 +139,7 @@ exatamente \emph{que informação} o modelo recebe:
         cabeçote é o de \texttt{AutoModelForSequenceClassification}, que projeta
         a representação agregada da sequência (o \emph{token} \texttt{[CLS]}) nas
         três classes. Não há extração explícita dos estados ocultos dos
-        marcadores: eles influenciam a predição por meio da atenção, ao
+        marcadores. Eles influenciam a predição por meio da atenção, ao
         condicionar a codificação da janela inteira ao par delimitado.
 \end{enumerate}
 
@@ -145,8 +152,8 @@ dessas escolhas é compartilhado e não confunde a comparação
 Aplicado ao trecho do Quadro~\ref{quad:exemplo_candidatos}, o par \emph{gold}
 $16 \rightarrow 52$ produz a entrada reproduzida no Quadro~\ref{quad:entrada}.
 Note que nem \texttt{Disease or Syndrome} (tipo de ``OSTEOMIELITE'') nem
-\texttt{Negation} (tipo de ``NÃO ESPECIFICADA'') aparecem na entrada: o modelo vê
-apenas o texto e os delimitadores.
+\texttt{Negation} (tipo de ``NÃO ESPECIFICADA'') aparecem na entrada, pois o modelo
+vê apenas o texto e os delimitadores.
 
 \begin{quadro}[htbp]
   \centering
@@ -169,7 +176,7 @@ Registrar o que \emph{não} entra na representação é tão importante quanto
 descrever o que entra. O SemClinBr anota cada entidade com tipos semânticos da
 UMLS, frequentemente em \textbf{rótulos múltiplos} separados por ``\texttt{|}''
 (por exemplo, \texttt{Medical Device|Finding|Abbreviation}). Essa anotação
-\textbf{não chega ao modelo}: os resultados do Capítulo~\ref{cap:experimentos}
+\textbf{não chega ao modelo}. Os resultados do Capítulo~\ref{cap:experimentos}
 foram obtidos com marcadores puramente posicionais, e a natureza de cada entidade
 tem de ser inferida da superfície textual e do contexto.
 
@@ -177,12 +184,12 @@ A anotação de tipo, aliás, não é diretamente aproveitável na forma em que 
 conjunto de treino ocorrem apenas $89$ tipos \emph{atômicos} distintos, mas a
 combinação multirrótulo faz o número de \emph{strings} de tipo distintas subir para
 $828$, das quais $752$ contêm ``\texttt{|}''. Injetar essa \emph{string}
-diretamente no marcador seria contraproducente: cada uma das $828$ combinações
+diretamente no marcador seria contraproducente, pois cada uma das $828$ combinações
 viraria um símbolo praticamente único e mal povoado no treino, prejudicando a
 generalização. Aproveitá-la exigiria, antes, um esquema de normalização que
 colapsasse as combinações em um vocabulário pequeno e estável.
 
-Para a pergunta desta etapa, porém, a ausência do tipo é inclusive conveniente:
-como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
+Para a pergunta desta etapa, porém, a ausência do tipo é inclusive conveniente.
+Como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
 comparação mede a capacidade de cada um de \emph{inferi-la} do texto, e é
 exatamente aí que o pré-treinamento de domínio deveria fazer diferença.
