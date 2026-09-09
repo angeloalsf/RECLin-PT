@@ -1,0 +1,353 @@
+--- a/src/relation_extraction.py
++++ b/src/relation_extraction.py
+@@ -46,6 +46,29 @@
+ formato `save_pretrained`). Ao iniciar, se `last_checkpoint/` existir e a config
+ bater, retoma da PROXIMA epoca. Aponte --ckpt-dir para o Google Drive para
+ sobreviver a quedas do runtime do Colab.
++
++SIDECARS DE INSTRUMENTACAO (--save-split-preds / --save-probs / --test-eval-log)
++-------------------------------------------------------------------------------
++Alem do `<out>.json` de metricas, `run` grava arquivos AUXILIARES. Nenhum deles
++influencia treino, loss, scheduler ou selecao de melhor epoca -- sao registro do
++que ja aconteceu:
++
++- `<out>.preds.json`     -- predicoes do TEST (contrato de src/significance.py).
++- `<out>.dev_preds.json` -- predicoes do DEV geradas com os pesos da MELHOR
++  epoca (a mesma restaurada antes do test), nao da ultima. Sem elas nao ha como
++  calibrar honestamente um filtro lexico ou um limiar de decisao: calibrar no
++  test vaza o conjunto de avaliacao para dentro do metodo, e o `dev_history` so
++  guarda agregados (dev_loss, dev_macro_f1), nunca as predicoes individuais.
++- campo `probs` -- distribuicao softmax por instancia, na ordem de LABELS e
++  arredondada a 4 casas, para limiares do tipo P(negation_of) > tau com tau
++  escolhido no dev.
++- `<out>.test_evals.jsonl` -- uma linha por avaliacao final no TEST (timestamp,
++  hash da config, metricas). Nao impede reavaliar o test; deixa registro de
++  quantas vezes isso aconteceu, que e o que a analise de multiplicidade precisa
++  poder auditar.
++
++Os defaults ligam tudo. `--save-split-preds test --no-save-probs
++--no-test-eval-log` reproduz byte-a-byte a saida da versao anterior do modulo.
+ """
+ from __future__ import annotations
+ 
+@@ -165,16 +188,30 @@
+                       generator=g, collate_fn=collate)
+ 
+ 
+-def predict(model, loader, device):
+-    """So predicoes (usado no TEST)."""
++def predict(model, loader, device, *, return_probs=False):
++    """So predicoes (usado no TEST e, na melhor epoca, no DEV).
++
++    Com `return_probs=True` devolve `(preds, probs)`, onde `probs` e a softmax
++    sobre as 3 classes por instancia, na ordem de LABELS e na MESMA ordem de
++    `preds` (os loaders de avaliacao rodam com shuffle=False). O default mantem
++    a assinatura antiga: quem so quer o argmax continua recebendo uma lista.
++
++    A softmax e monotonica, entao `argmax(probs) == argmax(logits)`: acrescentar
++    as probabilidades nao pode alterar nenhuma predicao. A funcao roda em
++    `model.eval()` e sob `no_grad`, sem dropout e sem consumir RNG global.
++    """
+     import torch
+     model.eval()
+-    preds = []
++    preds, probs = [], []
+     with torch.no_grad():
+         for ids, attn, _ in loader:
+             logits = model(input_ids=ids.to(device),
+                            attention_mask=attn.to(device)).logits
+             preds.extend(logits.argmax(-1).cpu().tolist())
++            if return_probs:
++                probs.extend(torch.softmax(logits.float(), dim=-1).cpu().tolist())
++    if return_probs:
++        return preds, probs
+     return preds
+ 
+ 
+@@ -212,9 +249,129 @@
+ 
+ 
+ # --------------------------------------------------------------------------- #
++# Instrumentacao: sidecars de predicao/probabilidade e registro de avaliacao   #
++# --------------------------------------------------------------------------- #
++def best_epoch_from_history(history):
++    """Reconstroi QUAL epoca foi eleita a melhor, a partir do `dev_history`.
++
++    Replica exatamente o criterio do laco de treino (`macro > best_f1`, com
++    best_f1 inicial -1.0): em caso de empate vence a PRIMEIRA epoca. Derivar do
++    historico -- em vez de guardar um contador novo -- e o que faz a informacao
++    sobreviver a uma retomada: `history` ja viaja dentro do `last_checkpoint`,
++    um contador novo nao viajaria, e acrescenta-lo mudaria o formato do
++    checkpoint. Devolve (epoca, dev_macro_f1) ou (None, None).
++    """
++    best_ep, best_f1 = None, -1.0
++    for entry in history or []:
++        f1 = entry.get("dev_macro_f1")
++        if f1 is None:
++            continue
++        if f1 > best_f1:
++            best_f1, best_ep = f1, int(entry["epoch"])
++    return best_ep, (best_f1 if best_ep is not None else None)
++
++
++def round_probs(probs, ndigits=4):
++    """Arredonda as probabilidades para serializacao.
++
++    ~19 mil instancias x 3 classes x 2 splits x 4 execucoes: em float64 puro os
++    sidecars passam de 10 MB por execucao (e `results/` e versionado). Com 4
++    casas cada split fica em ~0,5 MB, resolucao muito acima do passo de qualquer
++    limiar calibrado no dev. Efeito colateral: as linhas deixam de somar
++    exatamente 1,0 -- renormalize se isso importar para o seu uso.
++    """
++    return [[round(float(p), ndigits) for p in row] for row in probs]
++
++
++def build_preds_payload(*, args, y_true_ids, y_pred_ids, probs=None, extra=None):
++    """Monta o payload de um sidecar de predicoes.
++
++    As cinco chaves originais (model, seed, labels, y_true, y_pred) vem primeiro
++    e na MESMA ordem de sempre: com `--save-split-preds test --no-save-probs` o
++    `<out>.preds.json` sai byte-a-byte igual ao da versao anterior deste modulo,
++    que e a condicao para comparar com os resultados ja escritos no TCC.
++    `src/significance.py` le por chave, entao o campo extra `probs` e inerte
++    para ele.
++    """
++    payload = {
++        "model": args.model, "seed": args.seed, "labels": LABELS,
++        "y_true": [int(i) for i in y_true_ids],
++        "y_pred": [int(i) for i in y_pred_ids],
++    }
++    if extra:
++        payload.update(extra)
++    if probs is not None:
++        payload["probs"] = round_probs(probs)
++    return payload
++
++
++def append_test_eval_log(out_path, *, args, n_test, macro_f1, negation_of_f1):
++    """Anexa uma linha a `<out>.test_evals.jsonl` a cada avaliacao final no TEST.
++
++    O que isto E: uma trilha de auditoria. Cada linha traz data/hora, hash da
++    configuracao de treino e as metricas obtidas, e `eval_index` conta quantas
++    avaliacoes ja existiam para aquele `--out`. Um `eval_index` maior que 1 com o
++    mesmo `config_sha1` e exatamente o cenario que a analise de multiplicidade
++    precisa declarar: a mesma configuracao teve o test medido mais de uma vez.
++
++    O que isto NAO E: uma trava. Nao impede reavaliar, e nao ve um "espiar" feito
++    abrindo o `<out>.json` a mao. O caminho e derivado de `--out`, entao o
++    registro acompanha o resultado a que se refere e nao depende do diretorio de
++    trabalho nem de nenhum estado global do processo.
++    """
++    import hashlib
++    log_path = Path(out_path).with_suffix(".test_evals.jsonl")
++    cfg = dict(_config_guard(args))
++    cfg.update({"class_weight": args.class_weight,
++                "weight_decay": args.weight_decay,
++                "warmup_ratio": args.warmup_ratio,
++                "splits_dir": str(args.splits_dir)})
++    digest = hashlib.sha1(
++        json.dumps(cfg, sort_keys=True).encode("utf-8")).hexdigest()[:12]
++
++    previous = 0
++    if log_path.is_file():
++        previous = sum(1 for ln in log_path.read_text(encoding="utf-8").splitlines()
++                       if ln.strip())
++    entry = {
++        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
++        "eval_index": previous + 1,
++        "out": str(out_path),
++        "model": args.model,
++        "seed": args.seed,
++        "config_sha1": digest,
++        "n_test": int(n_test),
++        "test_macro_f1": round(float(macro_f1), 6),
++        "test_negation_of_f1": round(float(negation_of_f1), 6),
++    }
++    log_path.parent.mkdir(parents=True, exist_ok=True)
++    # newline="\n" explicito: `*.jsonl` nao esta coberto pelo .gitattributes,
++    # entao deixar o Python traduzir a quebra de linha faria o arquivo virar
++    # CRLF se algum dia isto rodar no Windows.
++    with open(log_path, "a", encoding="utf-8", newline="\n") as f:
++        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
++    if entry["eval_index"] > 1:
++        log.warning("ATENCAO (multiplicidade): esta e a avaliacao #%d no TEST "
++                    "registrada em %s. Se as anteriores usaram a mesma config "
++                    "(config_sha1=%s), o test ja foi visto mais de uma vez para "
++                    "esta configuracao -- declare isso ao reportar.",
++                    entry["eval_index"], log_path, digest)
++    else:
++        log.info("Avaliacao no TEST registrada em %s (eval_index=1, "
++                 "config_sha1=%s)", log_path, digest)
++
++
++# --------------------------------------------------------------------------- #
+ # Checkpoint / retomada (pastas best_model/ e last_checkpoint/)               #
+ # --------------------------------------------------------------------------- #
+ def _config_guard(args):
++    # NAO inclui --save-split-preds / --save-probs / --test-eval-log de
++    # proposito: essas flags so decidem O QUE E GRAVADO DEPOIS que o treino
++    # termina, e nao tocam em pesos, loss, scheduler nem selecao de epoca. Um
++    # last_checkpoint gravado com uma combinacao e identico ao gravado com
++    # outra. Coloca-las aqui faria a guarda REJEITAR um checkpoint valido (o
++    # caminho de mismatch descarta o checkpoint e recomeca do zero, em silencio)
++    # por um motivo que nao tem nada a ver com o modelo -- horas de T4 perdidas.
+     return {
+         "model": args.model, "epochs": args.epochs,
+         "batch_size": args.batch_size, "max_length": args.max_length,
+@@ -366,6 +523,31 @@
+     ap.add_argument("--warmup-ratio", type=float, default=0.1)
+     ap.add_argument("--class-weight", choices=["balanced", "none"], default="balanced")
+     ap.add_argument("--seed", type=int, default=42)
++
++    # --- instrumentacao ---------------------------------------------------- #
++    # Nenhuma destas altera treino, loss, scheduler, selecao de melhor epoca ou
++    # qualquer hiperparametro: elas so decidem quais ARQUIVOS AUXILIARES sao
++    # gravados depois que o treino acabou. Os defaults ligam tudo; a combinacao
++    # `--save-split-preds test --no-save-probs --no-test-eval-log` reproduz
++    # byte-a-byte a saida da versao anterior do modulo.
++    ap.add_argument("--save-split-preds", choices=["test", "dev+test"],
++                    default="dev+test",
++                    help="Quais splits ganham sidecar de predicoes. 'dev+test' "
++                         "(default) grava tambem <out>.dev_preds.json com o DEV "
++                         "da MELHOR epoca, necessario para calibrar regras "
++                         "pos-hoc sem tocar no test. 'test' reproduz o "
++                         "comportamento antigo.")
++    ap.add_argument("--save-probs", action=argparse.BooleanOptionalAction,
++                    default=True,
++                    help="Grava tambem a softmax por instancia nos sidecars "
++                         "(campo 'probs', ordem de LABELS: negation_of, "
++                         "associated_with, no_relation), arredondada a 4 casas. "
++                         "Use --no-save-probs para o formato antigo.")
++    ap.add_argument("--test-eval-log", action=argparse.BooleanOptionalAction,
++                    default=True,
++                    help="Anexa uma linha a <out>.test_evals.jsonl a cada "
++                         "avaliacao final no TEST (auditoria de multiplicidade). "
++                         "Use --no-test-eval-log para desligar.")
+     return ap
+ 
+ 
+@@ -385,6 +567,9 @@
+              "lr=%g | class_weight=%s | max_gap=%d | ctx_chars=%d | seed=%d | ckpt_dir=%s",
+              args.model, args.epochs, args.batch_size, args.max_length, args.lr,
+              args.class_weight, args.max_gap, args.ctx_chars, args.seed, args.ckpt_dir)
++    log.info("Instrumentacao: save_split_preds=%s | save_probs=%s | "
++             "test_eval_log=%s", args.save_split_preds, args.save_probs,
++             args.test_eval_log)
+ 
+     import torch
+     from sklearn.metrics import (classification_report, confusion_matrix,
+@@ -513,12 +698,54 @@
+         best_state = load_best_state(args.ckpt_dir)
+         if best_state is not None:
+             log.info("Melhores pesos recuperados de best_model/ (sem novo melhor nesta sessao)")
++    restored_best_state = bool(best_state)
+     if best_state:
+         model.load_state_dict(best_state)
+         log.info("Melhor modelo (dev_macro_f1=%.4f) restaurado para avaliacao final", best_f1)
+ 
++    # ----- predicoes do DEV na MELHOR epoca (ANTES de tocar no test) -----
++    # Roda aqui, logo depois do load_state_dict(best_state), para que os pesos
++    # que produzem estas predicoes sejam inequivocamente os mesmos que serao
++    # reportados no test -- e nao os da ultima epoca de treino.
++    #
++    # Por que isto nao muda o resultado do test: `predict` roda em eval() e sob
++    # no_grad (sem dropout) e nao consome o RNG global; a criacao do iterador do
++    # DataLoader consome apenas o `torch.Generator` proprio do `dv_loader`, e o
++    # `te_loader` tem o seu. Logo as predicoes do test saem identicas as da
++    # versao anterior do modulo.
++    best_epoch, best_epoch_f1 = best_epoch_from_history(history)
++    dev_pred_ids, dev_probs, dev_macro_recomputed = None, None, None
++    if args.save_split_preds == "dev+test":
++        log.info("--- Predicoes do DEV na melhor epoca (epoca=%s) ---", best_epoch)
++        if not restored_best_state:
++            log.warning("Nenhum best_state para restaurar: as predicoes do dev "
++                        "correspondem aos pesos ATUAIS (ultima epoca), nao a "
++                        "melhor epoca. O sidecar registra "
++                        "'restored_best_state': false -- nao calibre nada em "
++                        "cima dele sem verificar.")
++        if args.save_probs:
++            dev_pred_ids, dev_probs = predict(model, dv_loader, device,
++                                              return_probs=True)
++        else:
++            dev_pred_ids = predict(model, dv_loader, device)
++        dev_macro_recomputed = float(f1_score(
++            ydv_str, [ID2LABEL[i] for i in dev_pred_ids],
++            labels=LABELS, average="macro", zero_division=0))
++        log.info("DEV (melhor epoca) macro-F1 recomputado=%.4f", dev_macro_recomputed)
++        # Guarda-corpo barato: se os pesos restaurados forem mesmo os da melhor
++        # epoca, este numero tem de bater com o que ficou no dev_history.
++        if best_epoch_f1 is not None and abs(dev_macro_recomputed - best_epoch_f1) > 1e-6:
++            log.warning("macro-F1 do dev recomputado (%.6f) DIFERE do registrado "
++                        "no dev_history para a epoca %s (%.6f). Os pesos avaliados "
++                        "podem nao ser os da melhor epoca -- investigue antes de "
++                        "calibrar qualquer regra sobre este sidecar.",
++                        dev_macro_recomputed, best_epoch, best_epoch_f1)
++
+     log.info("--- Avaliacao final no TEST ---")
+-    y_pred_ids = predict(model, te_loader, device)
++    if args.save_probs:
++        y_pred_ids, te_probs = predict(model, te_loader, device, return_probs=True)
++    else:
++        y_pred_ids, te_probs = predict(model, te_loader, device), None
+     y_pred = [ID2LABEL[i] for i in y_pred_ids]
+     y_true = [ID2LABEL[i] for i in yte]
+ 
+@@ -548,6 +775,19 @@
+         "test_f1_per_class": per_class,
+         "sklearn_report": report,
+         "confusion_matrix": {"labels": LABELS, "matrix": cm_list},
++        # Rastreabilidade das flags de instrumentacao. Fica FORA de `config` de
++        # proposito: scripts/_artifacts.py:load_pipeline_config() exige que o
++        # `config` das 4 execucoes seja IDENTICO e aborta a geracao dos
++        # artefatos do TCC se divergir. Rodar uma execucao com --no-save-probs
++        # (por espaco, por exemplo) travaria `make` por uma diferenca que nao
++        # tem efeito nenhum sobre os numeros -- um alarme falso caro.
++        "instrumentation": {
++            "save_split_preds": args.save_split_preds,
++            "save_probs": bool(args.save_probs),
++            "test_eval_log": bool(args.test_eval_log),
++            "best_epoch": best_epoch,
++            "restored_best_state": restored_best_state,
++        },
+     }
+     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+     Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2,
+@@ -556,13 +796,32 @@
+ 
+     # ----- predicoes do TEST (sidecar) para o teste de significancia -----
+     preds_path = Path(args.out).with_suffix(".preds.json")
+-    preds_payload = {
+-        "model": args.model, "seed": args.seed, "labels": LABELS,
+-        "y_true": [int(i) for i in yte],
+-        "y_pred": [int(i) for i in y_pred_ids],
+-    }
++    preds_payload = build_preds_payload(args=args, y_true_ids=yte,
++                                        y_pred_ids=y_pred_ids, probs=te_probs)
+     preds_path.write_text(json.dumps(preds_payload, ensure_ascii=False), encoding="utf-8")
+-    log.info("Predicoes do test salvas em %s (para src/significance.py)", preds_path)
++    log.info("Predicoes do test salvas em %s (para src/significance.py)%s",
++             preds_path, " [com probs]" if te_probs is not None else "")
++
++    # ----- predicoes do DEV na melhor epoca (sidecar de CALIBRACAO) -----
++    if dev_pred_ids is not None:
++        dev_preds_path = Path(args.out).with_suffix(".dev_preds.json")
++        dev_payload = build_preds_payload(
++            args=args, y_true_ids=ydv, y_pred_ids=dev_pred_ids, probs=dev_probs,
++            extra={"split": "dev",
++                   "best_epoch": best_epoch,
++                   "best_dev_macro_f1_history": best_epoch_f1,
++                   "dev_macro_f1_recomputed": dev_macro_recomputed,
++                   "restored_best_state": restored_best_state})
++        dev_preds_path.write_text(json.dumps(dev_payload, ensure_ascii=False),
++                                  encoding="utf-8")
++        log.info("Predicoes do dev (melhor epoca=%s) salvas em %s -- calibre "
++                 "regras pos-hoc AQUI, nunca no test", best_epoch, dev_preds_path)
++
++    # ----- registro de auditoria da avaliacao no TEST -----
++    if args.test_eval_log:
++        append_test_eval_log(args.out, args=args, n_test=len(yte),
++                             macro_f1=macro,
++                             negation_of_f1=per_class["negation_of"])
+ 
+     # ----- resumo final -----
+     log.info("=== RESULTADO (test) ===")
