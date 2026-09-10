@@ -17,48 +17,56 @@
     "matrix": [
       [
         137,
-        4,
-        11
+        2,
+        13
       ],
       [
         5,
-        758,
-        233
+        728,
+        263
       ],
       [
-        101,
-        1804,
-        16157
+        86,
+        1481,
+        16495
       ]
     ]
   },
   "dev_history": [
     {
-      "dev_loss": 0.47837507666632434,
-      "dev_macro_f1": 0.6328077533712735,
-      "dev_negation_of_f1": 0.6298076923076923,
-      "duration_s": 3400.7,
+      "dev_loss": 0.5168088862997473,
+      "dev_macro_f1": 0.6406451809874875,
+      "dev_negation_of_f1": 0.6507936507936508,
+      "duration_s": 3476.5,
       "epoch": 1,
-      "train_loss": 0.6995386365560654
+      "train_loss": 0.6977351659601312
     },
     {
-      "dev_loss": 0.4216841305543562,
-      "dev_macro_f1": 0.6495226798256409,
-      "dev_negation_of_f1": 0.6601941747572816,
-      "duration_s": 3402.7,
+      "dev_loss": 0.4815678109708648,
+      "dev_macro_f1": 0.659189017379827,
+      "dev_negation_of_f1": 0.6649874055415617,
+      "duration_s": 3352.2,
       "epoch": 2,
-      "train_loss": 0.4030793868996709
+      "train_loss": 0.39956673829092615
     },
     {
-      "dev_loss": 0.4492462180154836,
-      "dev_macro_f1": 0.6634656633245034,
-      "dev_negation_of_f1": 0.6949602122015915,
-      "duration_s": 3404.9,
+      "dev_loss": 0.47388679489584,
+      "dev_macro_f1": 0.6710081848250488,
+      "dev_negation_of_f1": 0.6847826086956522,
+      "duration_s": 3361.2,
       "epoch": 3,
-      "train_loss": 0.3054685621543445
+      "train_loss": 0.3010840512338279
     }
   ],
   "device": "cuda",
+  "instrumentation": {
+    "best_epoch": 3,
+    "hf_backup_repo": "angeloalsf/reclin-pt-bertimbau-seed42",
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
   "model": "neuralmind/bert-base-portuguese-cased",
   "n_candidates": {
     "dev": 19064,
@@ -68,45 +76,45 @@
   "n_params": 108928515,
   "seed": 42,
   "sklearn_report": {
-    "accuracy": 0.8876626756897449,
+    "accuracy": 0.9036959916710047,
     "associated_with": {
-      "f1-score": 0.42560359348680515,
-      "precision": 0.2954014029618083,
-      "recall": 0.7610441767068273,
+      "f1-score": 0.45400685999376367,
+      "precision": 0.32926277702397105,
+      "recall": 0.7309236947791165,
       "support": 996.0
     },
     "macro avg": {
-      "f1-score": 0.6856392497187439,
-      "precision": 0.6147700898515186,
-      "recall": 0.8522966395222457,
+      "f1-score": 0.7073832981172283,
+      "precision": 0.6378943302323016,
+      "recall": 0.8484942524743309,
       "support": 19210.0
     },
     "negation_of": {
-      "f1-score": 0.6936708860759494,
-      "precision": 0.5637860082304527,
+      "f1-score": 0.7210526315789474,
+      "precision": 0.6008771929824561,
       "recall": 0.9013157894736842,
       "support": 152.0
     },
     "no_relation": {
-      "f1-score": 0.9376432695934771,
-      "precision": 0.985122858362295,
-      "recall": 0.8945299523862252,
+      "f1-score": 0.9470904027789739,
+      "precision": 0.9835430206904776,
+      "recall": 0.9132432731701916,
       "support": 18062.0
     },
     "weighted avg": {
-      "f1-score": 0.9091645960017588,
-      "precision": 0.9460283361968119,
-      "recall": 0.8876626756897449,
+      "f1-score": 0.9197364751456333,
+      "precision": 0.9465920405497458,
+      "recall": 0.9036959916710047,
       "support": 19210.0
     }
   },
   "test_f1_per_class": {
-    "associated_with": 0.42560359348680515,
-    "negation_of": 0.6936708860759494,
-    "no_relation": 0.9376432695934771
+    "associated_with": 0.45400685999376367,
+    "negation_of": 0.7210526315789474,
+    "no_relation": 0.9470904027789739
   },
-  "test_macro_f1": 0.6856392497187439,
-  "test_mcc": 0.4601653107196301,
-  "test_micro_f1": 0.8876626756897449,
-  "test_weighted_f1": 0.9091645960017588
+  "test_macro_f1": 0.7073832981172283,
+  "test_mcc": 0.4816737716698052,
+  "test_micro_f1": 0.9036959916710047,
+  "test_weighted_f1": 0.9197364751456333
 }

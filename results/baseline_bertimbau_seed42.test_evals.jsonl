@@ -1,0 +1,1 @@
+{"timestamp": "2026-09-10T19:17:51+0000", "eval_index": 1, "out": "results/baseline_bertimbau_seed42.json", "model": "neuralmind/bert-base-portuguese-cased", "seed": 42, "config_sha1": "ac01c52aa595", "n_test": 19210, "test_macro_f1": 0.707383, "test_negation_of_f1": 0.721053}
