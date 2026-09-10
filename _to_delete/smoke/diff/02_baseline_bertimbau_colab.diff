@@ -1,0 +1,160 @@
+--- a/notebooks/02_baseline_bertimbau_colab.ipynb
++++ b/notebooks/02_baseline_bertimbau_colab.ipynb
+@@ -98,7 +98,63 @@
+     print(f'{f}: {n} docs')
+ 
+ # ===== celula 11 (markdown) =====
+-## 6. Treinar o baseline BERTimbau (com retomada)
++## 6. Token do Hugging Face Hub (Colab Secrets)
++
++Liga o **backup automático** do `best_model/` num repositório **privado** do HF Hub, a cada nova melhor época. É camada **extra**: o Drive continua sendo o destino principal. Serve para o caso de o runtime cair na época seguinte — ou de a cota do Drive estourar.
++
++O token nunca é colado em texto plano aqui; vem dos **Secrets** do Colab.
++
++1. Crie um Access Token do tipo **Write** em <https://huggingface.co/settings/tokens>
++2. No Colab: ícone de **chave** no painel esquerdo → **+ Add new secret** → nome `HF_TOKEN` → cole o valor → ligue **Notebook access**
++3. Rode a célula abaixo
++
++Sem o secret o treino roda igual; só o backup extra fica de fora.
++
++# ===== celula 12 (code) =====
++import os, re
++from google.colab import userdata
++
++HF_USER = 'angeloalsf'
++MODELO = 'bertimbau'
++
++# A semente sai do proprio CKPT_DIR (.../checkpoints_bertimbau_seed42), que ja e o que
++# voce edita a cada execucao -- assim o repo de backup nunca aponta para a
++# semente errada por esquecimento.
++_m = re.search(r'seed(\d+)$', CKPT_DIR)
++SEED = int(_m.group(1)) if _m else None
++HF_BACKUP_REPO = f'{HF_USER}/reclin-pt-{MODELO}-seed{SEED}' if SEED else None
++
++try:
++    hf_token = userdata.get('HF_TOKEN')
++except Exception as erro:
++    hf_token = None
++    print('Secret HF_TOKEN indisponivel (%s).' % type(erro).__name__)
++
++if hf_token and HF_BACKUP_REPO:
++    # Tambem no ambiente: se um dia voce tirar --hf-token do comando de treino,
++    # o pipeline ainda acha o token sozinho (e ele nao aparece no argv).
++    os.environ['HF_TOKEN'] = hf_token
++    HF_FLAGS = f'--hf-backup-repo {HF_BACKUP_REPO} --hf-token "{hf_token}"'
++    print('HF_TOKEN carregado dos Secrets do Colab (o valor nunca e impresso).')
++    print('Backup automatico ->', HF_BACKUP_REPO, '(repositorio PRIVADO)')
++    print('Semente lida do CKPT_DIR:', SEED,
++          '-- confira que bate com --seed na celula de treino.')
++else:
++    HF_FLAGS = ''
++    print('BACKUP NO HF HUB DESLIGADO nesta execucao.')
++    if not HF_BACKUP_REPO:
++        print('  Motivo: nao consegui ler a semente de CKPT_DIR =', CKPT_DIR)
++    else:
++        print('  Motivo: secret HF_TOKEN ausente ou sem "Notebook access".')
++        print('  1. Crie um token WRITE em https://huggingface.co/settings/tokens')
++        print('  2. Colab: icone de chave (Secrets) no painel esquerdo >')
++        print('     "+ Add new secret" > nome HF_TOKEN > cole o valor >')
++        print('     ligue "Notebook access"')
++        print('  3. Rode esta celula de novo.')
++    print('  O treino roda normalmente; so o backup extra fica de fora.')
++
++# ===== celula 13 (markdown) =====
++## 7. Treinar o baseline BERTimbau (com retomada)
+ 
+ Encoder `neuralmind/bert-base-portuguese-cased`, marcadores `[E1] [/E1] [E2] [/E2]`, 3 classes, `class_weight=balanced`. Melhor época pelo macro-F1 no **dev**; **test** uma única vez.
+ 
+@@ -108,7 +164,7 @@
+ 
+ > ⚠️ **`max_gap` = 25 (era 20).** Mudou após a análise de sensibilidade em `analysis/max_gap/`: a janela de 20 caracteres descartava 1.324 relações anotadas (1.272 delas `associated_with`) antes de virarem candidato. **Os quatro experimentos (2 modelos × 2 sementes) precisam ser refeitos do zero com 25** — apague/renomeie o `--ckpt-dir` antigo antes de rodar, senão a retomada carrega um checkpoint de `max_gap=20` e a config não bate.
+ 
+-# ===== celula 12 (code) =====
++# ===== celula 14 (code) =====
+ %cd $REPO
+ !python -u src/baseline_bertimbau.py \
+     --splits-dir data/splits \
+@@ -119,12 +175,13 @@
+     --max-length 128 \
+     --seed 42 \
+     --ckpt-dir "$CKPT_DIR" \
++    $HF_FLAGS \
+     --out results/baseline_bertimbau_seed42.json
+ 
+-# ===== celula 13 (markdown) =====
+-## 7. Resultados (métricas + matriz de confusão)
++# ===== celula 15 (markdown) =====
++## 8. Resultados (métricas + matriz de confusão)
+ 
+-# ===== celula 14 (code) =====
++# ===== celula 16 (code) =====
+ import json
+ r = json.load(open(os.path.join(REPO, 'results', 'baseline_bertimbau_seed42.json'), encoding='utf-8'))
+ print('Modelo:', r['model'], '| parâmetros:', f"{r['n_params']/1e6:.1f}M")
+@@ -144,12 +201,12 @@
+ for i, l in enumerate(labels):
+     print(l[:11].ljust(12) + ''.join(str(int(c)).rjust(10) for c in cm['matrix'][i]))
+ 
+-# ===== celula 15 (markdown) =====
+-## 8. Curvas de treino/validação
++# ===== celula 17 (markdown) =====
++## 9. Curvas de treino/validação
+ 
+ De `dev_history`: loss de treino vs. validação (overfitting) e F1 no dev por época (seleção de época).
+ 
+-# ===== celula 16 (code) =====
++# ===== celula 18 (code) =====
+ import matplotlib.pyplot as plt
+ h = r['dev_history']
+ ep = [e['epoch'] for e in h]
+@@ -162,12 +219,12 @@
+ ax[1].set_xlabel('época'); ax[1].set_ylabel('F1'); ax[1].set_title('F1 no dev'); ax[1].legend(); ax[1].grid(alpha=.3)
+ plt.tight_layout(); plt.show()
+ 
+-# ===== celula 17 (markdown) =====
+-## 9. Salvar resultados + predições no GitHub
++# ===== celula 19 (markdown) =====
++## 10. Salvar resultados + predições no GitHub
+ 
+ Forçamos o `add` (o `-f` é histórico: `results/` já não é gitignored) do JSON de métricas, do `.preds.json` (predições do test, usadas no notebook de significância), do `.dev_preds.json` (predições do dev na melhor época, base de qualquer calibração pós-hoc) e do `.test_evals.jsonl` (auditoria de multiplicidade). Sem isso os dois últimos morrem com o runtime.
+ 
+-# ===== celula 18 (code) =====
++# ===== celula 20 (code) =====
+ import subprocess
+ for f in ['results/baseline_bertimbau_seed42.json',
+           'results/baseline_bertimbau_seed42.preds.json',
+@@ -180,20 +237,23 @@
+ subprocess.run(['git', '-C', REPO, 'push'], check=False)
+ print('Push concluído (se houve mudanças).')
+ 
+-# ===== celula 19 (markdown) =====
+-## 10. (Opcional) Enviar o `best_model/` para o Hugging Face Hub
++# ===== celula 21 (markdown) =====
++## 11. (Reserva) Reenviar o `best_model/` para o HF Hub à mão
+ 
+-O modelo final (~440 MB) **não cabe no GitHub** (limite de 100 MB/arquivo). Para tirá-lo do Drive, envie ao **HF Hub** (grátis). Cadastre o secret `HF_TOKEN` e ajuste `HF_REPO`. Pule se não precisar.
++Com a seção 6 configurada, o `best_model/` já sobe **sozinho** a cada nova melhor época, durante o treino. Esta célula é a **rede de segurança**: use se o log tiver mostrado `Backup HF: envio ABANDONADO` (a rede caiu nas três tentativas), ou para reenviar um checkpoint antigo.
+ 
+-# ===== celula 20 (code) =====
+-from google.colab import userdata
+-from huggingface_hub import HfApi
++Usa a mesma função do pipeline (`src/hf_backup.py`), então o repositório sai **privado** igual — a versão anterior desta célula criava um repo **público**.
++
++# ===== celula 22 (code) =====
++import sys
++sys.path.insert(0, os.path.join(REPO, 'src'))
++from hf_backup import upload_best_model, resolve_token
+ 
+-HF_REPO = 'seu-usuario/reclin-pt-bertimbau'   # ajuste para o seu namespace
+ best = os.path.join(CKPT_DIR, 'best_model')
++token, origem = resolve_token()          # le de $HF_TOKEN, definido na secao 6
++print('token:', ('presente (via %s)' % origem) if token else 'AUSENTE')
+ 
+-api = HfApi(token=userdata.get('HF_TOKEN'))
+-api.create_repo(HF_REPO, repo_type='model', exist_ok=True)
+-api.upload_folder(folder_path=best, repo_id=HF_REPO, repo_type='model')
+-print('best_model enviado para https://huggingface.co/' + HF_REPO)
++upload_best_model(best, HF_BACKUP_REPO, token,
++                  commit_message='reenvio manual do best_model')
++print('best_model em https://huggingface.co/' + HF_BACKUP_REPO)
+ 

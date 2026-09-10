@@ -1,0 +1,137 @@
+--- a/src/relation_extraction.py
++++ b/src/relation_extraction.py
+@@ -69,6 +69,25 @@
+ 
+ Os defaults ligam tudo. `--save-split-preds test --no-save-probs
+ --no-test-eval-log` reproduz byte-a-byte a saida da versao anterior do modulo.
++
++BACKUP DO MELHOR CHECKPOINT NO HF HUB (--hf-backup-repo)
++--------------------------------------------------------
++Camada EXTRA de seguranca ALEM do --ckpt-dir no Drive, nunca no lugar dele.
++Passando `--hf-backup-repo <usuario>/<repo>`, toda vez que uma epoca bate o
++melhor dev macro-F1 o `best_model/` recem-gravado tambem sobe, em segundo plano,
++para um repositorio de modelo PRIVADO no Hugging Face Hub. O envio acontece na
++hora, a cada nova melhor epoca -- nao ao final -- justamente para o caso de o
++runtime cair na epoca seguinte.
++
++Toda a logica vive em `src/hf_backup.py`, que so e importado quando a flag e
++usada: sem ela nao ha import de `huggingface_hub` nem chamada de rede nova. O
++envio roda numa thread e NUNCA derruba o treino -- qualquer falha (rede, cota,
++rate limit, token invalido) vira WARNING. O token vem de --hf-token ou de
++$HF_TOKEN e nao e registrado no log em nenhum nivel.
++
++O backup depende de --ckpt-dir: e o `save_best_model` que dispara o envio, e ele
++so roda quando ha --ckpt-dir. Passar --hf-backup-repo sem --ckpt-dir emite um
++WARNING explicito na largada em vez de falhar em silencio.
+ """
+ from __future__ import annotations
+ 
+@@ -414,9 +433,17 @@
+     log.info("last_checkpoint salvo (epoca %d concluida) em %s", epoch, final)
+ 
+ 
+-def save_best_model(ckpt_dir, model, tokenizer):
++def save_best_model(ckpt_dir, model, tokenizer, *, hf_backup=None, hf_note=None):
+     """Grava SOMENTE os pesos do melhor epoch em <ckpt-dir>/best_model/ no
+-    formato HuggingFace (save_pretrained), de forma atomica via pasta .tmp."""
++    formato HuggingFace (save_pretrained), de forma atomica via pasta .tmp.
++
++    Com `hf_backup` (uma instancia de `hf_backup.HFBackup`, criada em `run` so
++    quando --hf-backup-repo e passado), dispara TAMBEM uma copia para o repo
++    privado no HF Hub, imediatamente. A chamada retorna na hora -- o envio roda
++    em outra thread -- e nunca levanta: falha de rede vira WARNING e o treino
++    continua. `hf_note` vira a mensagem de commit, o que faz o historico do repo
++    virar um registro de qual epoca gerou cada backup.
++    """
+     base = Path(ckpt_dir)
+     base.mkdir(parents=True, exist_ok=True)
+     best = base / BEST_MODEL_DIR
+@@ -430,6 +457,8 @@
+         shutil.rmtree(best)
+     os.replace(tmp, best)
+     log.info("best_model atualizado em %s", best)
++    if hf_backup is not None:
++        hf_backup.backup_model_async(model, tokenizer, note=hf_note)
+ 
+ 
+ def load_last_checkpoint(ckpt_dir, *, model, optimizer, scheduler, args):
+@@ -548,6 +577,19 @@
+                     help="Anexa uma linha a <out>.test_evals.jsonl a cada "
+                          "avaliacao final no TEST (auditoria de multiplicidade). "
+                          "Use --no-test-eval-log para desligar.")
++
++    # --- backup do checkpoint no Hugging Face Hub -------------------------- #
++    # Camada EXTRA alem do --ckpt-dir no Drive. Sem --hf-backup-repo nada muda:
++    # nenhum import de huggingface_hub, nenhuma chamada de rede.
++    ap.add_argument("--hf-backup-repo", default=None,
++                    help="Repositorio de modelo PRIVADO no HF Hub que recebe uma "
++                         "copia de best_model/ a cada nova melhor epoca (ex.: "
++                         "angeloalsf/reclin-pt-biobertpt-seed42). Omitido = "
++                         "backup desligado. Exige --ckpt-dir.")
++    ap.add_argument("--hf-token", default=None,
++                    help="Token de ESCRITA do HF Hub. Se omitido, e lido de "
++                         "$HF_TOKEN ou $HUGGING_FACE_HUB_TOKEN. O valor nunca e "
++                         "registrado no log.")
+     return ap
+ 
+ 
+@@ -571,6 +613,27 @@
+              "test_eval_log=%s", args.save_split_preds, args.save_probs,
+              args.test_eval_log)
+ 
++    # ----- backup do melhor checkpoint no HF Hub (opcional) -----
++    # Sem --hf-backup-repo este bloco inteiro nao roda: `hf_backup` sequer e
++    # importado. Com a flag, o repo privado e criado ja aqui -- antes de carregar
++    # dados e modelo -- para que um token invalido apareca AGORA e nao depois de
++    # uma hora de treino. Nada aqui pode levantar: ver src/hf_backup.py.
++    hf_backup = None
++    if args.hf_backup_repo:
++        from hf_backup import HFBackup, resolve_token  # noqa: E402
++        hf_token, token_origem = resolve_token(args.hf_token)
++        log.info("Backup HF: repo=%s | token=%s", args.hf_backup_repo,
++                 ("presente (via %s)" % token_origem) if hf_token
++                 else "AUSENTE (sera tentado o login em cache, se houver)")
++        if not args.ckpt_dir:
++            log.warning("Backup HF: --hf-backup-repo foi passado mas --ckpt-dir NAO. "
++                        "O best_model/ so e gravado (e so e enviado) quando ha "
++                        "--ckpt-dir, entao NENHUM backup sera feito nesta execucao. "
++                        "Passe --ckpt-dir para ativar o backup.")
++        else:
++            hf_backup = HFBackup(args.hf_backup_repo, hf_token, logger=log)
++        del hf_token  # o token nao precisa continuar vivo neste escopo
++
+     import torch
+     from sklearn.metrics import (classification_report, confusion_matrix,
+                                  f1_score, matthews_corrcoef)
+@@ -686,7 +749,10 @@
+                 best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+                 log.info("Epoca %d: novo MELHOR modelo (dev_macro_f1=%.4f)", ep, macro)
+                 if args.ckpt_dir:
+-                    save_best_model(args.ckpt_dir, model, tok)
++                    save_best_model(args.ckpt_dir, model, tok,
++                                    hf_backup=hf_backup,
++                                    hf_note="epoca %d | dev_macro_f1=%.4f | seed=%d"
++                                            % (ep, macro, args.seed))
+ 
+             # last_checkpoint por epoca (apos avaliar e atualizar o melhor)
+             if args.ckpt_dir:
+@@ -787,6 +853,9 @@
+             "test_eval_log": bool(args.test_eval_log),
+             "best_epoch": best_epoch,
+             "restored_best_state": restored_best_state,
++            # Onde esta o backup dos pesos que produziram estes numeros. Nunca
++            # contem o token -- so o nome do repo (None quando desligado).
++            "hf_backup_repo": args.hf_backup_repo,
+         },
+     }
+     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+@@ -831,4 +900,9 @@
+         marca = "  <<< NEGACAO" if l == "negation_of" else ""
+         log.info("  F1 %-18s %.4f%s", l, per_class[l], marca)
+     log.info("Tempo total: %.1fs", time.time() - t0)
++
++    # Espera o ultimo envio ao HF Hub terminar. Fica DEPOIS do resumo de
++    # proposito: os resultados aparecem no log na hora, sem esperar a rede.
++    if hf_backup is not None:
++        hf_backup.close()
+     return 0

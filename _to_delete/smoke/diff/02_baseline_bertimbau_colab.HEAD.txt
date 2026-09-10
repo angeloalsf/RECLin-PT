@@ -1,0 +1,199 @@
+# ===== celula 0 (markdown) =====
+# Baseline BERTimbau — RECLin-PT (Colab T4)
+
+Treina o baseline de extração de relação em 3 classes (`negation_of`, `associated_with`, `no_relation`) sobre os splits do SemClinBr usando o **BERTimbau** (`neuralmind/bert-base-portuguese-cased`), encoder **geral (pré-treinado no brWaC)** do português.
+
+É o **par de comparação** do baseline BioBERTpt (encoder **clínico**). Mesma representação de entrada, loss, scheduler, early stopping, salvamento, métricas, seed e logging — a **única** diferença é o checkpoint de pré-treino. Assim respondemos, de forma válida:
+
+> **"O pré-treinamento clínico importa para extração de relações em textos médicos em português?"**
+
+Métricas: Macro/Micro/Weighted-F1, **MCC**, F1 por classe, matriz de confusão e curvas de treino/validação. O **teste de significância** entre os dois modelos está no notebook `03_significance_colab.ipynb` (rode depois de treinar os dois).
+
+Antes de rodar: **Ambiente de execução → Alterar o tipo de ambiente → GPU (T4)** e cadastre o secret `GITHUB_PAT` (ícone de chave 🔑).
+
+O treino salva **`best_model/` + `last_checkpoint/` por época no Google Drive** e **retoma automaticamente** se o runtime cair.
+
+# ===== celula 1 (markdown) =====
+## 1. Clonar o repositório
+
+# ===== celula 2 (code) =====
+import os, subprocess
+from google.colab import userdata
+
+TOKEN = userdata.get('GITHUB_PAT')           # secret do Colab, nunca hard-coded
+REPO_NAME = 'RECLin-PT'                       # nome do repo no GitHub
+REPO = f'/content/{REPO_NAME}'
+GIT_USER_NAME = 'angeloalsf'
+GIT_USER_EMAIL = 'angeloalsf@gmail.com'
+
+url = f'https://{TOKEN}@github.com/angeloalsf/{REPO_NAME}'
+if not os.path.isdir(REPO):
+    subprocess.run(['git', 'clone', url, REPO], check=True)
+else:
+    print('Repo já clonado; fazendo pull --rebase para integrar mudanças remotas.')
+    subprocess.run(['git', '-C', REPO, 'pull', '--rebase', '--autostash'], check=False)
+
+subprocess.run(['git', '-C', REPO, 'config', 'user.name', GIT_USER_NAME], check=True)
+subprocess.run(['git', '-C', REPO, 'config', 'user.email', GIT_USER_EMAIL], check=True)
+subprocess.run(['git', '-C', REPO, 'remote', 'set-url', 'origin', url], check=True)
+print('Repo pronto em', REPO)
+
+# ===== celula 3 (markdown) =====
+## 2. Verificar a GPU (T4)
+
+# ===== celula 4 (code) =====
+!nvidia-smi
+import torch
+print('CUDA disponível:', torch.cuda.is_available())
+print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else '—')
+assert torch.cuda.is_available(), 'Sem GPU! Ative em Ambiente de execução → GPU (T4).'
+
+# ===== celula 5 (markdown) =====
+## 3. Montar o Google Drive (checkpoints)
+
+Checkpoints em `MyDrive/RECLin-PT/checkpoints_bertimbau_seed42/` — **pasta própria** deste modelo. Dentro: `best_model/` (pesos do melhor epoch) e `last_checkpoint/` (estado de retomada).
+
+# ===== celula 6 (code) =====
+from google.colab import drive
+drive.mount('/content/drive')
+
+CKPT_DIR = f'/content/drive/MyDrive/{REPO_NAME}/checkpoints_bertimbau_seed42'
+os.makedirs(CKPT_DIR, exist_ok=True)
+print('Checkpoints em:', CKPT_DIR)
+existe = os.path.isfile(os.path.join(CKPT_DIR, 'last_checkpoint', 'training_state.pt'))
+print('last_checkpoint existente?', existe, '(se True, o treino vai RETOMAR de onde parou)')
+
+# ===== celula 7 (markdown) =====
+## 4. Instalar dependências
+
+Fonte única: `requirements.txt` do repo — a mesma lista usada fora do Colab. O `torch` com CUDA que o Colab já traz satisfaz `torch>=2.2`, então o `pip` não o reinstala.
+
+# ===== celula 8 (code) =====
+!pip install -q -r $REPO/requirements.txt
+
+# ===== celula 9 (markdown) =====
+## 5. Conferir os splits
+
+Os splits (`data/splits/*.jsonl`) são versionados no repo (seed 42, nível de documento) — **os mesmos para os dois modelos**.
+
+# ===== celula 10 (code) =====
+import subprocess, sys
+splits = os.path.join(REPO, 'data', 'splits')
+need = ['train.jsonl', 'dev.jsonl', 'test.jsonl']
+have = all(os.path.isfile(os.path.join(splits, f)) for f in need)
+
+if not have:
+    xml = os.path.join(REPO, 'SemClinBr-xml-public-v1')
+    if os.path.isdir(xml) and os.listdir(xml):
+        print('Splits ausentes; gerando a partir dos XMLs...')
+        subprocess.run([sys.executable, 'src/parse_semclinbr.py',
+                        '--xml-dir', 'SemClinBr-xml-public-v1',
+                        '--out', 'data/processed/dataset.jsonl'], cwd=REPO, check=True)
+        subprocess.run([sys.executable, 'src/make_splits.py'], cwd=REPO, check=True)
+    else:
+        raise FileNotFoundError('Splits não encontrados e XMLs ausentes.')
+
+for f in need:
+    n = sum(1 for _ in open(os.path.join(splits, f), encoding='utf-8'))
+    print(f'{f}: {n} docs')
+
+# ===== celula 11 (markdown) =====
+## 6. Treinar o baseline BERTimbau (com retomada)
+
+Encoder `neuralmind/bert-base-portuguese-cased`, marcadores `[E1] [/E1] [E2] [/E2]`, 3 classes, `class_weight=balanced`. Melhor época pelo macro-F1 no **dev**; **test** uma única vez.
+
+**Hiperparâmetros idênticos entre os dois modelos.** Se o runtime cair, **rode esta célula de novo**: ele pula as épocas já feitas.
+
+Multi-seed manual: mude `--seed`, e use `--out results/baseline_bertimbau_seed43.json` e um `--ckpt-dir` com sufixo `_seed43`.
+
+> ⚠️ **`max_gap` = 25 (era 20).** Mudou após a análise de sensibilidade em `analysis/max_gap/`: a janela de 20 caracteres descartava 1.324 relações anotadas (1.272 delas `associated_with`) antes de virarem candidato. **Os quatro experimentos (2 modelos × 2 sementes) precisam ser refeitos do zero com 25** — apague/renomeie o `--ckpt-dir` antigo antes de rodar, senão a retomada carrega um checkpoint de `max_gap=20` e a config não bate.
+
+# ===== celula 12 (code) =====
+%cd $REPO
+!python -u src/baseline_bertimbau.py \
+    --splits-dir data/splits \
+    --model neuralmind/bert-base-portuguese-cased \
+    --epochs 3 \
+    --batch-size 64 \
+    --max-gap 25 \
+    --max-length 128 \
+    --seed 42 \
+    --ckpt-dir "$CKPT_DIR" \
+    --out results/baseline_bertimbau_seed42.json
+
+# ===== celula 13 (markdown) =====
+## 7. Resultados (métricas + matriz de confusão)
+
+# ===== celula 14 (code) =====
+import json
+r = json.load(open(os.path.join(REPO, 'results', 'baseline_bertimbau_seed42.json'), encoding='utf-8'))
+print('Modelo:', r['model'], '| parâmetros:', f"{r['n_params']/1e6:.1f}M")
+print('Candidatos:', r['n_candidates'])
+print('Macro-F1 :', round(r['test_macro_f1'], 4))
+print('Micro-F1 :', round(r['test_micro_f1'], 4))
+print('Weighted :', round(r['test_weighted_f1'], 4))
+print('MCC      :', round(r['test_mcc'], 4))
+print('\nF1 por classe:')
+for k, v in r['test_f1_per_class'].items():
+    mark = '   <<< NEGAÇÃO' if k == 'negation_of' else ''
+    print(f'  {k:<18s} {v:.4f}{mark}')
+
+cm = r['confusion_matrix']; labels = cm['labels']
+print('\nMatriz de confusão (linhas=verdadeiro, colunas=predito):')
+print('true\\pred'.ljust(12) + ''.join(s[:8].rjust(10) for s in labels))
+for i, l in enumerate(labels):
+    print(l[:11].ljust(12) + ''.join(str(int(c)).rjust(10) for c in cm['matrix'][i]))
+
+# ===== celula 15 (markdown) =====
+## 8. Curvas de treino/validação
+
+De `dev_history`: loss de treino vs. validação (overfitting) e F1 no dev por época (seleção de época).
+
+# ===== celula 16 (code) =====
+import matplotlib.pyplot as plt
+h = r['dev_history']
+ep = [e['epoch'] for e in h]
+fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+ax[0].plot(ep, [e['train_loss'] for e in h], 'o-', label='train_loss')
+ax[0].plot(ep, [e.get('dev_loss') for e in h], 's-', label='dev_loss')
+ax[0].set_xlabel('época'); ax[0].set_ylabel('loss'); ax[0].set_title('Loss'); ax[0].legend(); ax[0].grid(alpha=.3)
+ax[1].plot(ep, [e['dev_macro_f1'] for e in h], 'o-', label='dev_macro_f1')
+ax[1].plot(ep, [e['dev_negation_of_f1'] for e in h], 's-', label='dev_negation_of_f1')
+ax[1].set_xlabel('época'); ax[1].set_ylabel('F1'); ax[1].set_title('F1 no dev'); ax[1].legend(); ax[1].grid(alpha=.3)
+plt.tight_layout(); plt.show()
+
+# ===== celula 17 (markdown) =====
+## 9. Salvar resultados + predições no GitHub
+
+Forçamos o `add` (o `-f` é histórico: `results/` já não é gitignored) do JSON de métricas, do `.preds.json` (predições do test, usadas no notebook de significância), do `.dev_preds.json` (predições do dev na melhor época, base de qualquer calibração pós-hoc) e do `.test_evals.jsonl` (auditoria de multiplicidade). Sem isso os dois últimos morrem com o runtime.
+
+# ===== celula 18 (code) =====
+import subprocess
+for f in ['results/baseline_bertimbau_seed42.json',
+          'results/baseline_bertimbau_seed42.preds.json',
+          'results/baseline_bertimbau_seed42.dev_preds.json',
+          'results/baseline_bertimbau_seed42.test_evals.jsonl']:
+    subprocess.run(['git', '-C', REPO, 'add', '-f', f], check=True)
+subprocess.run(['git', '-C', REPO, 'commit', '-m',
+                'resultados: baseline BERTimbau (Colab T4)'], check=False)
+subprocess.run(['git', '-C', REPO, 'pull', '--rebase', '--autostash'], check=False)
+subprocess.run(['git', '-C', REPO, 'push'], check=False)
+print('Push concluído (se houve mudanças).')
+
+# ===== celula 19 (markdown) =====
+## 10. (Opcional) Enviar o `best_model/` para o Hugging Face Hub
+
+O modelo final (~440 MB) **não cabe no GitHub** (limite de 100 MB/arquivo). Para tirá-lo do Drive, envie ao **HF Hub** (grátis). Cadastre o secret `HF_TOKEN` e ajuste `HF_REPO`. Pule se não precisar.
+
+# ===== celula 20 (code) =====
+from google.colab import userdata
+from huggingface_hub import HfApi
+
+HF_REPO = 'seu-usuario/reclin-pt-bertimbau'   # ajuste para o seu namespace
+best = os.path.join(CKPT_DIR, 'best_model')
+
+api = HfApi(token=userdata.get('HF_TOKEN'))
+api.create_repo(HF_REPO, repo_type='model', exist_ok=True)
+api.upload_folder(folder_path=best, repo_id=HF_REPO, repo_type='model')
+print('best_model enviado para https://huggingface.co/' + HF_REPO)
+
