@@ -1,0 +1,132 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_length": 128
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        139,
+        2,
+        11
+      ],
+      [
+        6,
+        768,
+        222
+      ],
+      [
+        94,
+        1716,
+        16252
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.483039197024433,
+      "dev_macro_f1": 0.639649801242514,
+      "dev_negation_of_f1": 0.6737967914438503,
+      "duration_s": 3667.4,
+      "epoch": 1,
+      "train_loss": 0.696943684211758
+    },
+    {
+      "dev_loss": 0.4256192975640047,
+      "dev_macro_f1": 0.6613701093488715,
+      "dev_negation_of_f1": 0.688,
+      "duration_s": 3681.0,
+      "epoch": 2,
+      "train_loss": 0.396074310177742
+    },
+    {
+      "dev_loss": 0.45051568045574647,
+      "dev_macro_f1": 0.671124931145207,
+      "dev_negation_of_f1": 0.7029972752043597,
+      "duration_s": 3678.1,
+      "epoch": 3,
+      "train_loss": 0.2973548799428436
+    }
+  ],
+  "device": "cuda",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "gpu": "Tesla T4",
+    "numpy": "2.1.3",
+    "python": "3.13.15",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu128",
+    "transformers": "5.16.1"
+  },
+  "instrumentation": {
+    "best_epoch": 3,
+    "hf_backup_repo": "angeloalsf/reclin-pt-bertimbau-seed42",
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "neuralmind/bert-base-portuguese-cased",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 108928515,
+  "seed": 42,
+  "sklearn_report": {
+    "accuracy": 0.8932326913066111,
+    "associated_with": {
+      "f1-score": 0.4411257897759908,
+      "precision": 0.3089300080450523,
+      "recall": 0.7710843373493976,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.6976621347139881,
+      "precision": 0.6254619683120763,
+      "recall": 0.8617825450377468,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.710997442455243,
+      "precision": 0.5815899581589958,
+      "recall": 0.9144736842105263,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9408631719107303,
+      "precision": 0.9858659387321808,
+      "recall": 0.8997896135533163,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9131339671484484,
+      "precision": 0.9475693153062825,
+      "recall": 0.8932326913066111,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.4411257897759908,
+    "negation_of": 0.710997442455243,
+    "no_relation": 0.9408631719107303
+  },
+  "test_macro_f1": 0.6976621347139881,
+  "test_mcc": 0.47611358862895364,
+  "test_micro_f1": 0.8932326913066111,
+  "test_weighted_f1": 0.9131339671484484
+}
