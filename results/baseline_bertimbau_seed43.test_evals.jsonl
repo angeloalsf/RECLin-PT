@@ -1,0 +1,2 @@
+{"timestamp": "2026-09-17T13:54:13+0000", "eval_index": 1, "out": "results/baseline_bertimbau_seed43.json", "model": "neuralmind/bert-base-portuguese-cased", "seed": 43, "config_sha1": "6c0e457e0091", "n_test": 19210, "test_macro_f1": 0.703512, "test_negation_of_f1": 0.718346}
+{"timestamp": "2026-09-17T14:30:37+0000", "eval_index": 2, "out": "results/baseline_bertimbau_seed43.json", "model": "neuralmind/bert-base-portuguese-cased", "seed": 43, "config_sha1": "6c0e457e0091", "n_test": 19210, "test_macro_f1": 0.703512, "test_negation_of_f1": 0.718346}

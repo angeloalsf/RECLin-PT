@@ -1,0 +1,132 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_length": 128
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        139,
+        3,
+        10
+      ],
+      [
+        4,
+        739,
+        253
+      ],
+      [
+        92,
+        1565,
+        16405
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.43226931942939356,
+      "dev_macro_f1": 0.5641721494383455,
+      "dev_negation_of_f1": 0.52465483234714,
+      "duration_s": 3443.0,
+      "epoch": 1,
+      "train_loss": 0.7277549551479825
+    },
+    {
+      "dev_loss": 0.47278175660215266,
+      "dev_macro_f1": 0.6507673701057352,
+      "dev_negation_of_f1": 0.6564885496183206,
+      "duration_s": 3240.0,
+      "epoch": 2,
+      "train_loss": 0.41532278507370235
+    },
+    {
+      "dev_loss": 0.4686237645723026,
+      "dev_macro_f1": 0.6638938523728363,
+      "dev_negation_of_f1": 0.6904109589041096,
+      "duration_s": 3245.7,
+      "epoch": 3,
+      "train_loss": 0.31965861091903924
+    }
+  ],
+  "device": "cuda",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "gpu": "Tesla T4",
+    "numpy": "2.1.3",
+    "python": "3.13.15",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu128",
+    "transformers": "5.16.1"
+  },
+  "instrumentation": {
+    "best_epoch": 3,
+    "hf_backup_repo": "angeloalsf/reclin-pt-bertimbau-seed43",
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "neuralmind/bert-base-portuguese-cased",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 108928515,
+  "seed": 43,
+  "sklearn_report": {
+    "accuracy": 0.8996876626756898,
+    "associated_with": {
+      "f1-score": 0.44747199515591884,
+      "precision": 0.3203294321629822,
+      "recall": 0.7419678714859438,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.703511543971994,
+      "precision": 0.6320133520547087,
+      "recall": 0.8549006639905077,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.7183462532299741,
+      "precision": 0.5914893617021276,
+      "recall": 0.9144736842105263,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9447163835300892,
+      "precision": 0.9842212622990161,
+      "recall": 0.9082604362750526,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9171440945854619,
+      "precision": 0.946692292402805,
+      "recall": 0.8996876626756898,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.44747199515591884,
+    "negation_of": 0.7183462532299741,
+    "no_relation": 0.9447163835300892
+  },
+  "test_macro_f1": 0.703511543971994,
+  "test_mcc": 0.4779117845370963,
+  "test_micro_f1": 0.8996876626756898,
+  "test_weighted_f1": 0.9171440945854619
+}
