@@ -1,0 +1,29 @@
+{
+  "accuracy": {
+    "a": 0.9021863612701718,
+    "b": 0.8996876626756898
+  },
+  "mcnemar": {
+    "b_only_a_correct": 51,
+    "c_only_b_correct": 3,
+    "n_discordant": 54,
+    "p_value": 2.9187763317395365e-12
+  },
+  "model_a": "filtro(neuralmind/bert-base-portuguese-cased s43)",
+  "model_b": "neuralmind/bert-base-portuguese-cased",
+  "n_test": 19210,
+  "paired_bootstrap": {
+    "ci95_high": 0.14254023463556886,
+    "ci95_low": 0.07601081387880682,
+    "mean_diff": 0.10831823409441278,
+    "n_boot": 10000,
+    "observed_diff": 0.1084014671347675,
+    "p_value": 0.0
+  },
+  "target_class": "negation_of",
+  "target_f1": {
+    "a": 0.8267477203647416,
+    "a_minus_b": 0.1084014671347675,
+    "b": 0.7183462532299741
+  }
+}

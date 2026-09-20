@@ -1,0 +1,396 @@
+{
+  "drawn_run": "filtro_biobertpt_seed43",
+  "draw_seed": 20260920,
+  "n_fp": 33,
+  "counts": {
+    "provavel erro de anotacao do gold": 18,
+    "erro do modelo": 9,
+    "ambiguidade genuina": 6
+  },
+  "cases": [
+    {
+      "doc_id": "8940",
+      "e1": "SEM",
+      "e2": "PRESENÇA DE GRUMOS",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...DIA QUANTIDADE, SVD COM DIURESE CONCENTRADA, SEM PRESENÇA DE GRUMOS. ELIMINAÇÕES INTESTINAIS AUSENTES ATÉ O MOME..."
+    },
+    {
+      "doc_id": "8940",
+      "e1": "AUSENTES",
+      "e2": "ELIMINAÇÕES INTESTINAIS",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...DIURESE CONCENTRADA, SEM PRESENÇA DE GRUMOS. ELIMINAÇÕES INTESTINAIS AUSENTES ATÉ O MOMENTO, REALIZADO MEDIDAS E HIGIENE E..."
+    },
+    {
+      "doc_id": "8965",
+      "e1": "Nega",
+      "e2": "queixas",
+      "gap": 18,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "algias"
+      ],
+      "kind": "erro do modelo",
+      "why": "5: escopo estendido sem coordenacao",
+      "snippet": "...al Philadelphia já solicitado pelos médicos. Nega algias ou outras queixas. Boa aceitação alimentar. Aguarda realização..."
+    },
+    {
+      "doc_id": "9000",
+      "e1": "sem",
+      "e2": "prescriçao medica",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...egue cuidados. Recebido plantao com paciente sem prescriçao medica, entrado em contato com plantao da ortopedia..."
+    },
+    {
+      "doc_id": "9055",
+      "e1": "S/",
+      "e2": "RA",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...ar ambiente com ausculta pulmonar com MV +, S/ RA, saturando 98%. Cabeceira do leito \"ZERO GRA..."
+    },
+    {
+      "doc_id": "9095",
+      "e1": "S/",
+      "e2": "SUCESSO",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...O PARA PCR. REALIZADO MANOBRAS DE REANIMAÇÃO S/ SUCESSO, EVOLUIU PARA ÓBITO AS 0:30HS. FRATURA PERTR..."
+    },
+    {
+      "doc_id": "9112",
+      "e1": "evacuação",
+      "e2": "ausente",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...A +. PAM em radial D permeável. SVD anúrica, evacuação ausente. Edema e exudato em MMSS, importante fragili..."
+    },
+    {
+      "doc_id": "9112",
+      "e1": "ausente",
+      "e2": "evacuação",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...A +. PAM em radial D permeável. SVD anúrica, evacuação ausente. Edema e exudato em MMSS, importante fragili..."
+    },
+    {
+      "doc_id": "9116",
+      "e1": "NEGA",
+      "e2": "RESPONSIVA AOS REFLEXOS",
+      "gap": 11,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "CEFALEIA"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...TIVA, ORINTADA NO TEMPO E NO ESPAÇO, CORADA. NEGA CEFALEIA, RESPONSIVA AOS REFLEXOS. ACESSO VENOSO EM FOSSA CUBITAL D SEM ALTERA..."
+    },
+    {
+      "doc_id": "9118",
+      "e1": "evacuação",
+      "e2": "ausente",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...so, flácido, RHA +, SVD com diurese efetiva, evacuação ausente, extremidades bem perfundidas, higienizado e..."
+    },
+    {
+      "doc_id": "9215",
+      "e1": "sem",
+      "e2": "queixas algicas",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...emodinamicamente, refere bom sono e repouso, sem queixas algicas, aceitando a dieta oferecida. Pele integra e..."
+    },
+    {
+      "doc_id": "9215",
+      "e1": "SEM",
+      "e2": "QUEIXAS",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...XXXX. EXAME GERAL E INVESTIGACAO DE PESSOAS SEM QUEIXAS OU DIAGNOSTICO RELATADO"
+    },
+    {
+      "doc_id": "9298",
+      "e1": "evacuação",
+      "e2": "após",
+      "gap": 9,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "ausente"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...eg umbilical. nega algia. diurese presente e evacuação ausente após cirurgia. corado, abdome flácido. avp permeá..."
+    },
+    {
+      "doc_id": "9298",
+      "e1": "ausente",
+      "e2": "evacuação",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...eg umbilical. nega algia. diurese presente e evacuação ausente após cirurgia. corado, abdome flácido. avp p..."
+    },
+    {
+      "doc_id": "9325",
+      "e1": "SEM",
+      "e2": "LESÕES OBSTRUTIVAS SIGNIFICATIVAS",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...ISMO CARDÍACO , O QUAL DEMONSTROU CORONÁRIAS SEM LESÕES OBSTRUTIVAS SIGNIFICATIVAS , E ECOCARDIOGRAMA COM AE = 50 , VE = 56/37..."
+    },
+    {
+      "doc_id": "9336",
+      "e1": "NÃO",
+      "e2": "MANOBRAS DE RCP",
+      "gap": 16,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "erro do modelo",
+      "why": "2: pista sem alvo anotado no documento, alvo distante",
+      "snippet": "...ARRITMIA >> NOVA PCR EM FV >> ASSISTOLIA , NÃO RESPONDENDO ÀS MANOBRAS DE RCP , DURAÇÃO DE 45 MINUTOS . ÓBITO ÀS 12H48MIN..."
+    },
+    {
+      "doc_id": "9348",
+      "e1": "Nega",
+      "e2": "palpitação",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...sforço. Discreto edema mmii pricn a esquerda.Nega palpitação.Dor a movimentação do torax. MV normodist s..."
+    },
+    {
+      "doc_id": "9454",
+      "e1": "NEGA",
+      "e2": "ALTERAÇÃO",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...TA , ,PAROU HÁ 6 MESES (FUMAVA DESDE 9 ANOS) NEGA ALTERAÇÃO TIRÓIDE, IAM, AVE EM USO DE LST 50 2X, AAS,..."
+    },
+    {
+      "doc_id": "9540",
+      "e1": "não",
+      "e2": "evidencia doença coronariana importante",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...ao sistolica pulmonar de 20mmHg. Cateterismo não evidencia doença coronariana importante Laboratorio 13/08/2014 Creatinina 0,98 Glic..."
+    },
+    {
+      "doc_id": "9544",
+      "e1": "NEGA",
+      "e2": "EDEMA",
+      "gap": 17,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "DOR PRECORDIAL"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...S # RELATA DISPNEIA PARA MODERADOS ESFORÇOS. NEGA DOR PRECORDIAL, EDEMA DE MMII, ORTOPNEIA E DPN. - CINTILO (06/10/..."
+    },
+    {
+      "doc_id": "9570",
+      "e1": "não",
+      "e2": "medicações",
+      "gap": 16,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "erro do modelo",
+      "why": "2: pista sem alvo anotado no documento, alvo distante",
+      "snippet": "...ou há 12 anos, CT alta # Em uso de marevan - não sabe as outras medicações que usa Lab 26/01/2013 - Cr 1,2 / Glic 89/ U..."
+    },
+    {
+      "doc_id": "9593",
+      "e1": "SEM",
+      "e2": "PRESENCA DE SINTOMAS",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...SODIOS NAO SUSTENTADOS DE TAQUICARDIA ATRIAL SEM PRESENCA DE SINTOMAS. # PACIENTE REFERE ESTAR SE SENTINDO BEM COM..."
+    },
+    {
+      "doc_id": "9593",
+      "e1": "NEGA",
+      "e2": "PALPITAÇÕES",
+      "gap": 13,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "SINTOMAS"
+      ],
+      "kind": "erro do modelo",
+      "why": "5: escopo estendido sem coordenacao",
+      "snippet": "...ERE ESTAR SE SENTINDO BEM COM AS MEDICAÇÕES. NEGA SINTOMAS DE PALPITAÇÕES. RELATA DISPNEIA AOS GRANDES ESFORCOS, COM M..."
+    },
+    {
+      "doc_id": "9625",
+      "e1": "Sem",
+      "e2": "família",
+      "gap": 20,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "cancer"
+      ],
+      "kind": "erro do modelo",
+      "why": "5: escopo estendido sem coordenacao",
+      "snippet": "...emas cardíacos (?). Pai, 90anos, hipertenso. Sem casos de cancer na família. Hipertensa há 15 anos. Hipotireoidismo; ref..."
+    },
+    {
+      "doc_id": "9774",
+      "e1": "NEGA",
+      "e2": "TRAUMAS OCULARES",
+      "gap": 13,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "CIRURGIAS"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...AL, HA 2 ANOS, NAO SABE REFERIR BEM A CAUSA. NEGA CIRURGIAS E TRAUMAS OCULARES. NEGA HF DE GLAUCOMA E CEGUEIRA. AV: 20/25..."
+    },
+    {
+      "doc_id": "9844",
+      "e1": "sem",
+      "e2": "sinais de isquemia miocárdica",
+      "gap": 8,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "dor"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...rcorrências. Evoluiu bem após procedimento, sem dor ou sinais de isquemia miocárdica. Recebe alta em excelente estado geral, sin..."
+    },
+    {
+      "doc_id": "9844",
+      "e1": "sem",
+      "e2": "alterações",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...reito, já presente em radiografias prévias e sem alterações; como a característica e a evolução radiográ..."
+    },
+    {
+      "doc_id": "9861",
+      "e1": "NÃO",
+      "e2": "FALTAR CONSULTA",
+      "gap": 1,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "provavel erro de anotacao do gold",
+      "why": "1: pista sem alvo anotado no documento, adjacente ao alvo",
+      "snippet": "...- 50, mantido demais, retorno em 30 DIAS + NÃO FALTAR CONSULTA COM Doutor Vital Brazil."
+    },
+    {
+      "doc_id": "9888",
+      "e1": "NEGA",
+      "e2": "NEOPLASIA",
+      "gap": 22,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "erro do modelo",
+      "why": "2: pista sem alvo anotado no documento, alvo distante",
+      "snippet": "...CERCA DE 1-2 ANOS. AM: NEGA PATOLOGIAS. AF: NEGA HISTORIA FAMILIAR DE NEOPLASIA. NAO TRAZ EXAMES COMPLEMENTARES. AO EXAME: P..."
+    },
+    {
+      "doc_id": "9904",
+      "e1": "NEGA",
+      "e2": "DOR INCIDIOSA",
+      "gap": 11,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "TRAUMA"
+      ],
+      "kind": "ambiguidade genuina",
+      "why": "3: item coordenado do mesmo alvo anotado",
+      "snippet": "...DO LAR DOR EM COLUNA LOMBAR DE LONGA DATA, NEGA TRAUMA DOR INCIDIOSA, NEGA USO DE ANALGESICO JÁ REALIZOU FST, NO..."
+    },
+    {
+      "doc_id": "9904",
+      "e1": "NEGA",
+      "e2": "TRATANDO",
+      "gap": 23,
+      "gold_label": "no_relation",
+      "gold_targets": [
+        "HAS",
+        "DM"
+      ],
+      "kind": "erro do modelo",
+      "why": "5: escopo estendido sem coordenacao",
+      "snippet": "...SE DE QUADRIL A ESQUERDA REALIZADA EM 2007. NEGA HAS / DM, REFRE ESTRA TRATANDO PARA HIPOTIREOIDISMO, PACIENTE OBESA PACIEN..."
+    },
+    {
+      "doc_id": "9904",
+      "e1": "NEGA",
+      "e2": "FLEXO-EXTENSÃO",
+      "gap": 7,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "erro do modelo",
+      "why": "2: pista sem alvo anotado no documento, alvo distante",
+      "snippet": "...M DIFICULDADE COLUNA APARENTEMENTE NO EIXO NEGA DOR A FLEXO-EXTENSÃO E ROTAÇÕES SEM DOR A PALPAÇAO EM COLUNA LOM..."
+    },
+    {
+      "doc_id": "9907",
+      "e1": "NEGA",
+      "e2": "DOENÇA RENAL",
+      "gap": 13,
+      "gold_label": "no_relation",
+      "gold_targets": [],
+      "kind": "erro do modelo",
+      "why": "2: pista sem alvo anotado no documento, alvo distante",
+      "snippet": "...40 ANOS MAÇO, PAROU HÁ 5 ANOS - SEDENTÁRIA - NEGA HISTÓRIA DE DOENÇA RENAL NA FAMÍLIA TROUXE EXAMES LABORATORIAIS: - H..."
+    }
+  ]
+}
