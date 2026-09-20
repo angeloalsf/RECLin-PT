@@ -119,3 +119,43 @@ removê-los quebraria a compilação do `main.tex`.
 > Atenção: `check_mcnemar_direction` lê `results/significance_*.json`. Enquanto
 > esses arquivos não forem regerados junto com as preds, o check dá **falso OK**
 > na direção do McNemar.
+
+---
+
+# Adendo (20/09/2026): a investigação de determinismo está encerrada
+
+`COMPARACAO_determinismo_20set.md`, nesta pasta, **é o documento que fecha a
+investigação**. Ele compara execução a execução esta rodada arquivada (10-12/09)
+com a de 17-20/09, feita já com `torch.use_deterministic_algorithms(True)`,
+`CUBLAS_WORKSPACE_CONFIG` e as versões fixadas em `requirements.txt`.
+
+**Veredito: as duas lacunas listadas acima foram fechadas e ainda assim a rodada
+nova diverge.** O campo `environment` é idêntico nas 4 execuções e bate com os
+pins; `config`, `config_sha1`, `n_candidates`, `n_params` e `best_epoch` batem com
+esta pasta; o `y_true` do test é bit-a-bit idêntico. Mesmo assim 15 das 24 métricas
+estouram 0,005 e 3% a 4% das predições do test mudam. Reavaliar o *mesmo*
+checkpoint reproduz exatamente — **a inferência é determinística, o treino não**.
+A causa mais provável é kernel de gradiente não-determinístico do CUDA
+(`scatter_add` em `resize_token_embeddings`), limitação conhecida do PyTorch e
+fora do escopo deste projeto.
+
+Por isso esta pasta **não** será substituída por uma rodada "definitiva": ela é
+metade da evidência. A rodada de **17-20/09 permanece em `results/` como os
+números oficiais e finais do Capítulo 6**, e a instabilidade residual entre as
+duas rodadas é documentada como ameaça à validade.
+
+## Também arquivado aqui
+
+- `COMPARACAO_determinismo_20set.md` — movido de `results/` em 20/09/2026.
+- `significance_biobertpt_vs_bertimbau_seed43.OFFSPEC-bootstrap-seed42.json` —
+  o arquivo que esteve em `results/` entre 20/09 16:30 e a regeneração da mesma
+  data, gerado com `--seed 42` no bootstrap em vez de `--seed 43`. Difere do
+  oficial só no *bootstrap* (IC95% [−0,016; +0,057], p = 0,2804, contra
+  [−0,018; +0,057], p = 0,2878); McNemar, acurácia e F1 são idênticos, e o
+  veredito ("Não") não muda. Preservado porque `COMPARACAO_determinismo_20set.md`
+  ainda cita os valores dele.
+
+> O aviso do `check_mcnemar_direction` acima está **resolvido**: os
+> `results/significance_*.json` foram regerados junto com as preds em 20/09/2026,
+> e o falso OK na direção do McNemar acabou — o check agora acusa a inversão nas
+> duas sementes.

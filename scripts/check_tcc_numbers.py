@@ -18,11 +18,13 @@ correspondente; ao acrescentar uma, acrescente a entrada.
 O QUE VERIFICA
 --------------
 1. Afirmacoes numericas do corpo do texto (lista `CLAIMS`).
-2. A DIRECAO dos testes de significancia, e nao so os seus valores-p
-   (`check_mcnemar_direction`): que o McNemar aponta para o BERTimbau nas
-   duas sementes e que so o sinal da metrica-alvo inverte na semente 43.
-   CLAIMS confere valores; um valor certo com a direcao descrita ao
-   contrario na prosa passaria sem esta checagem -- e ja passou.
+2. A DIRECAO e o VEREDITO dos testes de significancia, e nao so os seus
+   valores-p (`check_significance_reading`): que nenhum dos dois testes
+   rejeita H0 em qualquer das sementes, que a contagem do McNemar e a
+   acuracia apontam para o BioBERTpt nas duas, e que so o sinal da
+   metrica-alvo inverte na semente 43. CLAIMS confere valores; um valor
+   certo com a direcao descrita ao contrario na prosa passaria sem esta
+   checagem -- e ja passou.
 3. Que nenhum capitulo cita artefato de um pipeline que nao existe
    (`scripts/eda/`, `scripts/baselines/`, `paper/tables/`, `experiments/`).
 4. Que nenhuma cifra da rodada anterior de `max_gap` sobreviveu na prosa
@@ -193,72 +195,91 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("hp: epocas", "tcc_eda.json", "pipeline_config.epochs", 3, 0),
     ("hp: learning rate", "tcc_eda.json", "pipeline_config.lr", 2e-5, 0),
     # --- Cap. Experimentos: curvas ----------------------------------------
-    ("curva bertimbau s43: dev_loss ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_loss", 0.426, 0.0005),
-    ("curva bertimbau s43: dev_loss ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_loss", 0.474, 0.0005),
-    ("curva bertimbau s43: macroF1 ep2", "baseline_bertimbau_seed43.json", "dev_history.1.dev_macro_f1", 0.654, 0.0005),
-    ("curva bertimbau s43: macroF1 ep3", "baseline_bertimbau_seed43.json", "dev_history.2.dev_macro_f1", 0.680, 0.0005),
-    ("curva biobertpt s43: F1neg ep1", "baseline_biobertpt_seed43.json", "dev_history.0.dev_negation_of_f1", 0.588, 0.0005),
-    ("curva biobertpt s42: F1neg ep1", "baseline_biobertpt_seed42.json", "dev_history.0.dev_negation_of_f1", 0.436, 0.0005),
-    ("curva bertimbau s42: F1neg ep1", "baseline_bertimbau_seed42.json", "dev_history.0.dev_negation_of_f1", 0.630, 0.0005),
-    ("curva bertimbau s43: F1neg ep1", "baseline_bertimbau_seed43.json", "dev_history.0.dev_negation_of_f1", 0.573, 0.0005),
+    # O exemplo de "macro-F1 sobe enquanto a perda de validacao piora" deixou de
+    # existir no BERTimbau s43 na rodada de 17-20/09 (a perda passou a CAIR da
+    # epoca 2 para a 3). O par citado em 6.2 e agora o BioBERTpt s42.
+    ("curva biobertpt s42: dev_loss ep2", "baseline_biobertpt_seed42.json", "dev_history.1.dev_loss", 0.380, 0.0005),
+    ("curva biobertpt s42: dev_loss ep3", "baseline_biobertpt_seed42.json", "dev_history.2.dev_loss", 0.426, 0.0005),
+    ("curva biobertpt s42: macroF1 ep2", "baseline_biobertpt_seed42.json", "dev_history.1.dev_macro_f1", 0.654, 0.0005),
+    ("curva biobertpt s42: macroF1 ep3", "baseline_biobertpt_seed42.json", "dev_history.2.dev_macro_f1", 0.673, 0.0005),
+    ("curva biobertpt s43: F1neg ep1", "baseline_biobertpt_seed43.json", "dev_history.0.dev_negation_of_f1", 0.628, 0.0005),
+    ("curva biobertpt s42: F1neg ep1", "baseline_biobertpt_seed42.json", "dev_history.0.dev_negation_of_f1", 0.643, 0.0005),
+    ("curva bertimbau s42: F1neg ep1", "baseline_bertimbau_seed42.json", "dev_history.0.dev_negation_of_f1", 0.674, 0.0005),
+    ("curva bertimbau s43: F1neg ep1", "baseline_bertimbau_seed43.json", "dev_history.0.dev_negation_of_f1", 0.525, 0.0005),
     # --- Cap. Experimentos: teste, semente 42 -----------------------------
-    ("s42 biobertpt: macro-F1", "baseline_biobertpt_seed42.json", "test_macro_f1", 0.675, 0.0005),
-    ("s42 bertimbau: macro-F1", "baseline_bertimbau_seed42.json", "test_macro_f1", 0.686, 0.0005),
-    ("s42 biobertpt: F1 negation_of", "baseline_biobertpt_seed42.json", "test_f1_per_class.negation_of", 0.677, 0.0005),
-    ("s42 bertimbau: F1 negation_of", "baseline_bertimbau_seed42.json", "test_f1_per_class.negation_of", 0.694, 0.0005),
-    ("s42 biobertpt: recall negation_of", "baseline_biobertpt_seed42.json", "sklearn_report.negation_of.recall", 0.901, 0.0005),
-    ("s42 bertimbau: recall negation_of", "baseline_bertimbau_seed42.json", "sklearn_report.negation_of.recall", 0.901, 0.0005),
-    ("s42 biobertpt: F1 associated_with", "baseline_biobertpt_seed42.json", "test_f1_per_class.associated_with", 0.415, 0.0005),
-    ("s42 bertimbau: F1 associated_with", "baseline_bertimbau_seed42.json", "test_f1_per_class.associated_with", 0.426, 0.0005),
+    ("s42 biobertpt: macro-F1", "baseline_biobertpt_seed42.json", "test_macro_f1", 0.693, 0.0005),
+    ("s42 bertimbau: macro-F1", "baseline_bertimbau_seed42.json", "test_macro_f1", 0.698, 0.0005),
+    ("s42 biobertpt: F1 negation_of", "baseline_biobertpt_seed42.json", "test_f1_per_class.negation_of", 0.696, 0.0005),
+    ("s42 bertimbau: F1 negation_of", "baseline_bertimbau_seed42.json", "test_f1_per_class.negation_of", 0.711, 0.0005),
+    # O recall de `negation_of` deixou de ser identico entre os dois encoders na
+    # rodada de 17-20/09; a palavra "identico" saiu de 6.3 junto com o 0,901.
+    ("s42 biobertpt: recall negation_of", "baseline_biobertpt_seed42.json", "sklearn_report.negation_of.recall", 0.934, 0.0005),
+    ("s42 bertimbau: recall negation_of", "baseline_bertimbau_seed42.json", "sklearn_report.negation_of.recall", 0.914, 0.0005),
+    ("s42 biobertpt: precisao negation_of", "baseline_biobertpt_seed42.json", "sklearn_report.negation_of.precision", 0.555, 0.0005),
+    ("s42 bertimbau: precisao negation_of", "baseline_bertimbau_seed42.json", "sklearn_report.negation_of.precision", 0.582, 0.0005),
+    ("s42 biobertpt: F1 associated_with", "baseline_biobertpt_seed42.json", "test_f1_per_class.associated_with", 0.442, 0.0005),
+    ("s42 bertimbau: F1 associated_with", "baseline_bertimbau_seed42.json", "test_f1_per_class.associated_with", 0.441, 0.0005),
+    # Colunas que a Tabela 6 passou a atribuir ao encoder clinico e que 6.3 cita
+    # uma a uma para mostrar que a tabela nao ordena os dois modelos.
+    ("s42 biobertpt: F1 no_relation", "baseline_biobertpt_seed42.json", "test_f1_per_class.no_relation", 0.942, 0.0005),
+    ("s42 bertimbau: F1 no_relation", "baseline_bertimbau_seed42.json", "test_f1_per_class.no_relation", 0.941, 0.0005),
+    ("s42 biobertpt: MCC", "baseline_biobertpt_seed42.json", "test_mcc", 0.478, 0.0005),
+    ("s42 bertimbau: MCC", "baseline_bertimbau_seed42.json", "test_mcc", 0.476, 0.0005),
     ("s42 biobertpt: n_params", "baseline_biobertpt_seed42.json", "n_params", 177_853_443, 500_000),
     ("s42 bertimbau: n_params", "baseline_bertimbau_seed42.json", "n_params", 108_928_515, 0),
     # --- Cap. Experimentos: significancia ---------------------------------
-    ("s42 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed42.json", "target_f1.a_minus_b", -0.017, 0.0005),
-    ("s42 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.p_value", 1.1e-5, 0.5e-5),
+    ("s42 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed42.json", "target_f1.a_minus_b", -0.015, 0.0005),
+    ("s42 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.p_value", 0.479, 0.0005),
     ("s42 signif: b", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.b_only_a_correct", 540, 0),
-    ("s42 signif: c", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.c_only_b_correct", 695, 0),
-    ("s42 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.n_discordant", 1235, 0),
-    ("s42 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_low", -0.053, 0.0005),
-    ("s42 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_high", 0.018, 0.0005),
-    ("s42 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.p_value", 0.345, 0.005),
-    ("s42 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.a", 0.880, 0.0005),
-    ("s42 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.b", 0.888, 0.0005),
-    ("s43 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.p_value", 2.7e-8, 0.5e-8),
+    ("s42 signif: c", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.c_only_b_correct", 516, 0),
+    ("s42 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed42.json", "mcnemar.n_discordant", 1056, 0),
+    ("s42 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_low", -0.051, 0.0005),
+    ("s42 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.ci95_high", 0.021, 0.0005),
+    ("s42 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed42.json", "paired_bootstrap.p_value", 0.420, 0.0005),
+    ("s42 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.a", 0.894, 0.0005),
+    ("s42 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed42.json", "accuracy.b", 0.893, 0.0005),
+    ("s43 signif: McNemar p", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.p_value", 0.142, 0.0005),
     # `b` e `c` da semente 43 existem para tornar a DIRECAO do McNemar conferivel,
-    # e nao so o seu valor-p. O texto (6.6, 7.1, 8.1 e o resumo) afirma que o
-    # McNemar aponta para o BERTimbau (geral) nas DUAS sementes; quem sustenta essa
-    # afirmacao e c > b, aqui e na semente 42. Ja houve uma versao do texto que
-    # atribuia ao McNemar da semente 43 a direcao oposta -- a inversao de sinal e
-    # do `paired_bootstrap` sobre o F1 de `negation_of`, nao do McNemar. Ver
-    # `check_mcnemar_direction`, que confere a desigualdade explicitamente.
-    ("s43 signif: b", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.b_only_a_correct", 442, 0),
-    ("s43 signif: c", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.c_only_b_correct", 624, 0),
-    ("s43 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.n_discordant", 1066, 0),
-    ("s43 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.a", 0.898, 0.0005),
-    ("s43 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.b", 0.908, 0.0005),
-    ("s43 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_low", 0.016, 0.0005),
-    ("s43 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_high", 0.090, 0.0005),
-    ("s43 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.p_value", 0.0054, 0.00005),
-    ("s43 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed43.json", "target_f1.a_minus_b", 0.053, 0.0005),
+    # e nao so o seu valor-p. Ate a rodada arquivada em `archive_pre_determinismo`
+    # o texto (6.6, 7.1, 8.1 e o resumo) afirmava que o McNemar apontava para o
+    # BERTimbau (geral) nas DUAS sementes. Na rodada de 17-20/09 a contagem
+    # inverteu nas duas (b > c) e o valor-p subiu de ordens de 1e-5/1e-8 para
+    # 0,479 e 0,142, de modo que o teste deixou de rejeitar H0. O texto passou a
+    # afirmar o contrario, e quem sustenta essa afirmacao e b > c, aqui e na
+    # semente 42. A inversao de SINAL da metrica-alvo continua sendo do
+    # `paired_bootstrap` sobre o F1 de `negation_of`, nao do McNemar. Ver
+    # `check_significance_reading`, que confere as desigualdades explicitamente.
+    ("s43 signif: b", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.b_only_a_correct", 559, 0),
+    ("s43 signif: c", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.c_only_b_correct", 510, 0),
+    ("s43 signif: discordantes", "significance_biobertpt_vs_bertimbau_seed43.json", "mcnemar.n_discordant", 1069, 0),
+    ("s43 signif: acuracia A", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.a", 0.902, 0.0005),
+    ("s43 signif: acuracia B", "significance_biobertpt_vs_bertimbau_seed43.json", "accuracy.b", 0.900, 0.0005),
+    ("s43 signif: IC baixo", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_low", -0.018, 0.0005),
+    ("s43 signif: IC alto", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.ci95_high", 0.057, 0.0005),
+    ("s43 signif: bootstrap p", "significance_biobertpt_vs_bertimbau_seed43.json", "paired_bootstrap.p_value", 0.288, 0.0005),
+    ("s43 signif: diferenca", "significance_biobertpt_vs_bertimbau_seed43.json", "target_f1.a_minus_b", 0.020, 0.0005),
     # --- Cap. Experimentos / Conclusao: robustez --------------------------
-    ("s43 biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.by_seed.43", 0.712, 0.0005),
-    ("s43 biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.by_seed.43", 0.754, 0.0005),
+    ("s43 biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.by_seed.43", 0.713, 0.0005),
+    ("s43 biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.by_seed.43", 0.739, 0.0005),
     ("s43 bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.by_seed.43", 0.704, 0.0005),
-    ("s43 bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.by_seed.43", 0.702, 0.0005),
+    ("s43 bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.by_seed.43", 0.718, 0.0005),
     # Medias entre as duas sementes, citadas em 6.6, na Discussao e na Conclusao.
-    ("media biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.mean", 0.694, 0.0005),
-    ("media bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.mean", 0.695, 0.0005),
-    ("media biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.mean", 0.715, 0.0005),
-    ("media bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.mean", 0.698, 0.0005),
+    ("media biobertpt: macro-F1", "summary_by_seed.json", "models.biobertpt.metrics.macro_f1.mean", 0.703, 0.0005),
+    ("media bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.mean", 0.701, 0.0005),
+    ("media biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.mean", 0.717, 0.0005),
+    ("media bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.mean", 0.715, 0.0005),
 ]
 
-# Amplitudes citadas em prosa ("0,070" no BioBERTpt, "0,008" no BERTimbau).
-# Sao derivadas, nao um campo do JSON, entao vao num teste proprio.
+# Amplitudes citadas em prosa ("0,043" no BioBERTpt, "0,007" no BERTimbau).
+# Sao derivadas, nao um campo do JSON, entao vao num teste proprio. A razao
+# entre as duas primeiras e o "cerca de seis vezes" de 6.6, da Discussao, da
+# Conclusao e do resumo; a razao entre as duas ultimas e o fator citado para o
+# macro-F1. Antes da rodada de 17-20/09 essas razoes eram "dez vezes".
 AMPLITUDE_CLAIMS = [
-    ("biobertpt", "f1_negation_of", 0.078),
-    ("bertimbau", "f1_negation_of", 0.008),
-    ("biobertpt", "macro_f1", 0.038),
-    ("bertimbau", "macro_f1", 0.018),
+    ("biobertpt", "f1_negation_of", 0.043),
+    ("bertimbau", "f1_negation_of", 0.007),
+    ("biobertpt", "macro_f1", 0.020),
+    ("bertimbau", "macro_f1", 0.006),
 ]
 
 
@@ -360,45 +381,84 @@ def check_inputs(tcc_src: Path, verbose: bool) -> list[str]:
     return failures
 
 
-def check_mcnemar_direction(results_dir: Path, verbose: bool) -> list[str]:
-    """Confere a DIRECAO do McNemar, e nao so o seu valor-p.
+def check_significance_reading(results_dir: Path, verbose: bool) -> list[str]:
+    """Confere o VEREDITO e a DIRECAO dos testes, e nao so os seus valores-p.
 
-    O texto afirma, em 6.6, 7.1, 8.1 e no resumo, que o McNemar aponta para o
-    BERTimbau (modelo B, geral) nas DUAS sementes, e que o que inverte na
-    semente 43 e apenas o `paired_bootstrap` sobre o F1 de `negation_of`. As
-    entradas de CLAIMS conferem os valores de `b` e `c` um a um; esta checagem
-    confere a RELACAO entre eles, que e o que a prosa de fato afirma, e o sinal
-    do bootstrap em cada semente. Uma reexecucao dos experimentos que trocasse a
-    direcao do McNemar reprovaria aqui mesmo que os literais de CLAIMS fossem
-    atualizados junto.
+    O texto afirma, em 6.5, 6.6, 7.1, 7.3, 8.1 e no resumo, quatro coisas que
+    CLAIMS sozinho nao consegue checar, porque sao relacoes entre campos e nao
+    valores isolados:
+
+    1. NENHUM dos dois testes rejeita H0 em qualquer das sementes. Esta e a
+       afirmacao central do capitulo depois da rodada de 17-20/09, e a que mais
+       custaria caro se uma reexecucao a invertesse em silencio.
+    2. O IC95% do bootstrap inclui o zero nas duas sementes, que e o criterio de
+       decisao declarado na metodologia (Secao 4.6).
+    3. A contagem de discordancias do McNemar e a acuracia global apontam, nas
+       duas sementes, para o BioBERTpt (modelo A, clinico), por margem
+       compativel com o acaso.
+    4. O sinal da metrica-alvo e negativo na semente 42 e positivo na 43, que e
+       a inversao descrita em 6.6.
+
+    Uma reexecucao dos experimentos que trocasse qualquer uma dessas quatro
+    leituras reprovaria aqui mesmo que os literais de CLAIMS fossem atualizados
+    junto. Foi assim que a versao anterior desta funcao pegou a inversao do
+    McNemar: ela codificava `c > b`, e a rodada nova deu `b > c`.
     """
     failures = []
-    bootstrap_esperado = {42: -1, 43: +1}  # sinal de a_minus_b por semente
+    alfa = 0.05
+    sinal_esperado = {42: -1, 43: +1}  # sinal de a_minus_b por semente
     for seed in (42, 43):
         data = load_json(
             results_dir / f"significance_biobertpt_vs_bertimbau_seed{seed}.json"
         )
         b = data["mcnemar"]["b_only_a_correct"]   # so o BioBERTpt (A) acerta
         c = data["mcnemar"]["c_only_b_correct"]   # so o BERTimbau (B) acerta
-        if not c > b:
+
+        p_mcnemar = data["mcnemar"]["p_value"]
+        if p_mcnemar <= alfa:
             failures.append(
-                f"direcao do McNemar na semente {seed}: o texto diz que o McNemar "
-                f"aponta para o BERTimbau (geral) nas duas sementes, mas "
-                f"c={c} nao supera b={b}"
+                f"veredito do McNemar na semente {seed}: o texto diz que o teste "
+                f"nao rejeita H0 em nenhuma das sementes, mas p={p_mcnemar:.4f} "
+                f"<= {alfa}"
             )
         elif verbose:
-            print(f"  ok  McNemar s{seed} aponta para o BERTimbau: c={c} > b={b}")
+            print(f"  ok  McNemar s{seed} nao rejeita H0: p={p_mcnemar:.4f}")
 
-        if data["accuracy"]["b"] <= data["accuracy"]["a"]:
+        p_boot = data["paired_bootstrap"]["p_value"]
+        ci_low = data["paired_bootstrap"]["ci95_low"]
+        ci_high = data["paired_bootstrap"]["ci95_high"]
+        if p_boot <= alfa or not (ci_low < 0 < ci_high):
+            failures.append(
+                f"veredito do bootstrap na semente {seed}: o texto diz que o IC95% "
+                f"inclui o zero e o teste nao rejeita H0 nas duas sementes, mas "
+                f"p={p_boot:.4f} e IC=[{ci_low:+.4f}; {ci_high:+.4f}]"
+            )
+        elif verbose:
+            print(
+                f"  ok  bootstrap s{seed} nao rejeita H0: p={p_boot:.4f}, "
+                f"IC=[{ci_low:+.4f}; {ci_high:+.4f}] inclui o zero"
+            )
+
+        if not b > c:
+            failures.append(
+                f"direcao do McNemar na semente {seed}: o texto diz que a contagem "
+                f"de discordancias favorece o BioBERTpt (clinico) nas duas "
+                f"sementes, mas b={b} nao supera c={c}"
+            )
+        elif verbose:
+            print(f"  ok  McNemar s{seed} favorece o BioBERTpt: b={b} > c={c}")
+
+        if data["accuracy"]["a"] <= data["accuracy"]["b"]:
             failures.append(
                 f"direcao da acuracia na semente {seed}: o texto diz que a "
-                f"acuracia acompanha o McNemar, mas o BERTimbau nao fica a frente"
+                f"acuracia acompanha a contagem do McNemar, mas o BioBERTpt nao "
+                f"fica a frente"
             )
         elif verbose:
-            print(f"  ok  acuracia s{seed} acompanha o McNemar (B > A)")
+            print(f"  ok  acuracia s{seed} acompanha o McNemar (A > B)")
 
         diff = data["target_f1"]["a_minus_b"]
-        esperado = bootstrap_esperado[seed]
+        esperado = sinal_esperado[seed]
         if (diff > 0) != (esperado > 0):
             failures.append(
                 f"sinal da metrica-alvo na semente {seed}: o texto diz que a "
@@ -423,7 +483,7 @@ def main(argv: list[str] | None = None) -> int:
         ghost_failures, pending = check_ghost_paths(args.tcc_src, args.verbose)
         failures = (
             check_claims(args.results_dir, args.verbose)
-            + check_mcnemar_direction(args.results_dir, args.verbose)
+            + check_significance_reading(args.results_dir, args.verbose)
             + ghost_failures
             + check_stale_numbers(args.tcc_src, args.verbose)
             + check_inputs(args.tcc_src, args.verbose)
@@ -450,8 +510,9 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"OK: {len(CLAIMS) + len(AMPLITUDE_CLAIMS)} afirmações numéricas do texto "
-        f"conferem com results/; a direção do McNemar e o sinal da métrica-alvo "
-        f"batem com o texto nas duas sementes; nenhum caminho fantasma novo; "
+        f"conferem com results/; nenhum dos dois testes rejeita H0, e a direção "
+        f"do McNemar e o sinal da métrica-alvo batem com o texto nas duas "
+        f"sementes; nenhum caminho fantasma novo; "
         f"nenhum dos {len(STALE_NUMBERS)} números obsoletos na prosa; todos os "
         f"\\input{{tabelas/...}} existem."
     )

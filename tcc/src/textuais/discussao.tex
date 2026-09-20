@@ -11,20 +11,22 @@ pré-treinamento clínico}. Para a extração de relações no SemClinBr, no esp
 três classes, o BioBERTpt não produz ganho estável sobre o BERTimbau, nem mesmo na
 classe \texttt{negation\_of}, em que a especialização de domínio seria mais
 plausível. Convém precisar o que os testes sustentam, porque o quadro é menos
-confortável que um empate. Na métrica-alvo, o veredito de \emph{empate} vale para a
-semente $42$ e não se repete na semente $43$, em que o \emph{bootstrap} pareado
-sobre o F1 de \texttt{negation\_of} acusa diferença significativa, e em favor do
-\emph{encoder} clínico. O que \emph{não} se mantém entre as duas sementes é a
-\emph{direção nessa classe}, uma vez que o sinal da diferença se inverte. A
-instabilidade é da métrica-alvo, e não do padrão global de erro. O teste de McNemar,
-que incide sobre o
-conjunto dos candidatos, rejeita a hipótese nula nas duas sementes e aponta nas duas
-para o \emph{encoder} geral ($540$ contra $695$ discordâncias na semente $42$; $442$
-contra $624$ na $43$), assim como a acurácia. O que se mantém, além dessa direção
-agregada, é a \emph{magnitude relativa}. Em ambas as sementes, a variação de um
-mesmo \emph{encoder} entre sementes supera a diferença medida entre \emph{encoders}
-distintos (Seção~\ref{sec:robustez}). É nesse sentido, e apenas nesse, que não há
-ganho atribuível ao domínio de pré-treino. O motivo não é uma derrota do clínico,
+confortável que um empate. Na métrica-alvo, o veredito de \emph{empate} vale para
+as duas sementes, uma vez que o \emph{bootstrap} pareado sobre o F1 de
+\texttt{negation\_of} não rejeita a hipótese nula nem na semente $42$ nem na $43$.
+O que \emph{não} se mantém entre elas é a \emph{direção nessa classe}, dado que o
+sinal da diferença se inverte e passa a favorecer o \emph{encoder} clínico. O teste
+de McNemar, que incide sobre o conjunto dos candidatos, tampouco rejeita a hipótese
+nula em qualquer das sementes, e a contagem de discordâncias aponta, nas duas, para
+o \emph{encoder} clínico, por margem compatível com o acaso ($540$ contra $516$ na
+semente $42$; $559$ contra $510$ na $43$), assim como a acurácia. Nenhum dos testes
+aplicados detecta, portanto, diferença entre os dois \emph{encoders}. O que se
+mantém, além dessa ausência de diferença, é a \emph{magnitude relativa}. A variação
+do \emph{encoder} clínico entre sementes ($0{,}043$ na métrica-alvo) supera a
+diferença medida entre os dois \emph{encoders} em qualquer das sementes ($0{,}015$
+na $42$ e $0{,}020$ na $43$), ao passo que a variação do \emph{encoder} geral
+($0{,}007$) fica abaixo dela (Seção~\ref{sec:robustez}). É nesse sentido, e apenas
+nesse, que não há ganho atribuível ao domínio de pré-treino. O motivo não é uma derrota do clínico,
 que chega a ficar à frente na negação sob a semente $43$, mas o fato de a diferença
 entre os dois na classe investigada não sobreviver à troca de uma semente. Esse
 achado contrasta com a expectativa difundida, bem como com os ganhos relatados
@@ -56,13 +58,14 @@ apenas chegam a números próximos, mas concentram o erro no mesmo lugar, a
 fronteira entre \texttt{associated\_with} e \texttt{no\_relation}.
 
 Um corolário prático, e diretamente relevante para o desenvolvimento do
-RECLin-PT, é a \textbf{eficiência}. O BERTimbau iguala o BioBERTpt em macro-F1
-médio ($0{,}695$ contra $0{,}694$) com aproximadamente $60\%$ dos parâmetros
+RECLin-PT, é a \textbf{eficiência}. O BERTimbau acompanha o BioBERTpt em macro-F1
+médio, ficando $0{,}002$ atrás ($0{,}701$ contra $0{,}703$), com aproximadamente
+$60\%$ dos parâmetros
 ($108{,}9$ contra $177{,}9$ milhões). Quando o desempenho é equivalente, o modelo
 menor é preferível por custo de inferência e de memória, consideração concreta para
 implantação em ambientes clínicos com recursos limitados. A esse argumento soma-se a
-estabilidade, dado que a amplitude entre sementes do BERTimbau na métrica-alvo ($0{,}008$) é
-cerca de dez vezes menor que a do BioBERTpt ($0{,}078$), o que torna seu desempenho
+estabilidade, dado que a amplitude entre sementes do BERTimbau na métrica-alvo ($0{,}007$) é
+cerca de seis vezes menor que a do BioBERTpt ($0{,}043$), o que torna seu desempenho
 mais previsível em uma nova execução. Vale registrar a contrapartida. É justamente
 essa dispersão que permite ao BioBERTpt superar o geral na semente $43$, de modo que
 a preferência pelo \emph{encoder} menor se justifica por previsibilidade e custo,
@@ -71,7 +74,7 @@ não por superioridade média na métrica-alvo.
 \section{A classe \texttt{associated\_with}}
 
 A classe \texttt{associated\_with} permanece a mais difícil para os dois modelos
-(F1 $\approx 0{,}43$), com alta cobertura e baixa precisão. Duas causas se somam.
+(F1 $\approx 0{,}44$), com alta cobertura e baixa precisão. Duas causas se somam.
 
 A primeira é \textbf{conceitual}. Distinguir associação genuína de mera proximidade
 textual é intrinsecamente ambíguo em texto clínico telegráfico, em que entidades
@@ -90,10 +93,12 @@ em conta.
 
 \section{Limitações}
 
-A limitação mais séria recai sobre a própria caracterização de empate. Ela vale
-para a semente $42$; a comparação pareada refeita na semente $43$ acusa diferença
-significativa, e em favor do BioBERTpt clínico, invertendo o sinal observado na
-semente de referência. A conclusão prática, a ausência de ganho \emph{confiável}
+A limitação mais séria recai sobre o alcance da caracterização de empate. O
+veredito de ausência de diferença vale para as duas sementes, mas resulta de uma
+\textbf{não rejeição} da hipótese nula, e não de uma demonstração de equivalência.
+Soma-se a isso que a comparação pareada refeita na semente $43$ inverte o sinal da
+diferença observado na semente de referência, passando a apontar para o BioBERTpt
+clínico. A conclusão prática, a ausência de ganho \emph{confiável}
 atribuível ao pré-treinamento clínico, sobrevive a essa inversão, porque se apoia na
 instabilidade da diferença e não em sua direção; mas qualquer afirmação sobre
 \emph{qual} \emph{encoder} é superior depende inteiramente da semente e não está
@@ -134,8 +139,7 @@ vocabulário, de modo que o intervalo de confiança reportado é provavelmente m
 estreito que o real. Essa ameaça atenua-se, mas não desaparece, pelo fato de a
 comparação ser \emph{pareada}, já que ambos os modelos são avaliados exatamente sobre as
 mesmas instâncias, e a dependência afeta os dois igualmente. Ainda assim, a
-conclusão de empate na semente $42$ (e a de diferença significativa na
-semente $43$) deve ser lida com essa ressalva.
+conclusão de empate nas duas sementes deve ser lida com essa ressalva.
 
 Quanto à \textbf{validade externa}, o SemClinBr, apesar de multi-institucional e
 multiespecialidade, representa um conjunto específico de instituições e estilos de
