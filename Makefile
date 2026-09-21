@@ -68,6 +68,22 @@ BASELINES := $(foreach m,$(MODELS),$(foreach s,$(SEEDS),results/baseline_$(m)_se
 SIGNIF    := $(foreach s,$(SEEDS),results/significance_biobertpt_vs_bertimbau_seed$(s).json)
 SUMMARY   := results/summary_by_seed.json
 
+# Fase 2 (filtro de pista lexical e regra pura). Saida de
+# scripts/run_fase2_test.py, scripts/run_fase2_significance.py e
+# scripts/audit_residual_fp.py. Nao ha alvo que a produza aqui: ela parte das
+# PREDICOES ja salvas das quatro execucoes oficiais, e nao de treino novo.
+# Entra como pre-requisito porque as duas tabelas da Secao 6.7 do TCC e a
+# conferencia de numeros leem estes arquivos.
+FASE2_BASE_KEYS := $(foreach s,$(SEEDS),$(foreach m,$(MODELS),baseline_$(m)_seed$(s)))
+FASE2_RUN_KEYS  := $(foreach s,$(SEEDS),$(foreach m,$(MODELS),filtro_$(m)_seed$(s)))
+FASE2_PREDS     := results/regra_pura.preds.json \
+                   $(foreach k,$(FASE2_RUN_KEYS),results/$(k).preds.json)
+FASE2_SIGNIF    := $(foreach a,$(FASE2_RUN_KEYS) regra_pura,\
+                     $(foreach b,$(FASE2_BASE_KEYS),results/significance_$(a)_vs_$(b).json))
+FASE2           := results/CALIBRACAO_filtro.json \
+                   results/AUDITORIA_fp_negation_of.json \
+                   $(FASE2_PREDS) $(FASE2_SIGNIF)
+
 TABLES  := artigo-sbc/tables/tab_resultados.tex artigo-sbc/tables/tab_signif.tex
 FIGURES := artigo-sbc/figs/f1_por_classe.pdf artigo-sbc/figs/cm_biobertpt.pdf \
            artigo-sbc/figs/cm_bertimbau.pdf
@@ -213,7 +229,7 @@ $(TCC_EDA_CANON): $(SPLITS) $(MANIFEST) $(BASELINES) \
 
 tcc-eda: $(TCC_EDA_CANON)
 
-tcc-artifacts: $(BASELINES) $(SIGNIF) $(SUMMARY)
+tcc-artifacts: $(BASELINES) $(SIGNIF) $(SUMMARY) $(FASE2)
 	$(PYTHON) scripts/make_tcc_artifacts.py
 
 tcc-curves: $(BASELINES)

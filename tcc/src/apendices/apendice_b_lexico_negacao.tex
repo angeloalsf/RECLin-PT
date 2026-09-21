@@ -11,10 +11,12 @@ Entre as duas sementes avaliadas, a diferença entre os dois nessa classe não
 mantém sequer o sinal.
 
 Este apêndice registra os marcadores mais frequentes observados no SemClinBr, a
-título de caracterização linguística do fenômeno. Eles \textbf{não} constituem
-parâmetro de nenhum dos modelos avaliados, uma vez que os dois \emph{encoders} comparados no
-Capítulo~\ref{cap:experimentos} não recebem lista alguma de gatilhos, e aprendem o
-sinal de negação diretamente do texto marcado.
+título de caracterização linguística do fenômeno. Os dois \emph{encoders}
+comparados no Capítulo~\ref{cap:experimentos} \textbf{não} recebem lista alguma de
+gatilhos, e aprendem o sinal de negação diretamente do texto marcado. O léxico
+empregado pelo filtro de pista do RECLin-PT (Seção~\ref{sec:reclin}) é objeto
+distinto deste quadro, por ser induzido automaticamente do conjunto de treino e não
+redigido a partir de observação linguística.
 
 \begin{quadro}[htbp]
   \centering
@@ -43,4 +45,6 @@ morfologicamente e que, no SemClinBr, aparecem anotados como entidades da catego
 trataria negação de escopo amplo (``o paciente não apresenta nenhum dos seguintes:
 A, B, C''), negação estendida por conjunção, nem a direção da relação, limitações
 que motivam o uso de modelos contextuais, capazes de aprender o escopo a partir do
-contexto em vez de aplicar uma regra rígida de janela.
+contexto em vez de aplicar uma regra rígida de janela. A Seção~\ref{sec:fase2_resultados}
+mede essa limitação, ao comparar uma regra puramente léxica com os modelos
+contextuais sobre o mesmo conjunto de teste.

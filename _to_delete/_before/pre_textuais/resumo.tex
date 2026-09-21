@@ -19,27 +19,18 @@
   para o português são ajustados variando apenas o \emph{checkpoint} de
   pré-treino: um de domínio clínico (BioBERTpt) e um de domínio geral (BERTimbau).
   No conjunto de teste congelado, os dois empatam estatisticamente no F1 de
-  \texttt{negation\_of} na semente de referência (0,696 contra 0,711;
-  \emph{bootstrap} pareado IC95\% $[-0{,}051; +0{,}021]$, $p=0{,}420$), e esse
-  empate se repete na semente 43, em que o intervalo também inclui o zero
-  (IC95\% $[-0{,}018; +0{,}057]$, $p=0{,}288$). O que não se repete é a
-  \emph{direção} da diferença, que \emph{inverte de sinal} e passa a favorecer o
-  \emph{encoder} clínico. A variação entre sementes de um mesmo modelo supera a
-  diferença entre os modelos, de modo que essa direção não é estável \emph{nessa
-  classe}, ao passo que, no padrão global de acertos, o teste de McNemar tampouco
-  rejeita a hipótese nula em qualquer das sementes. Esses resultados indicam que
-  o RECLin-PT pode ser construído sobre o \emph{encoder} geral, que acompanha o
-  clínico em macro-F1 médio (0,701 contra 0,703) com cerca de 60\% dos parâmetros
-  e é cerca de seis vezes mais estável entre reinicializações na métrica-alvo.
-  Sobre esse \emph{encoder} de melhor relação custo-benefício, o RECLin-PT é
-  construído por meio de um filtro de pista lexical calibrado no conjunto de
-  desenvolvimento, que restringe a predição de \texttt{negation\_of} aos pares cujo
-  primeiro argumento é um gatilho de negação induzido do conjunto de treino. O ganho
-  é estatisticamente significativo sobre os dois \emph{baselines} nas duas sementes,
-  uma vez que as dezesseis comparações pareadas entre execução filtrada e
-  \emph{baseline} apresentam intervalo de confiança de 95\% inteiramente acima de
-  zero, com F1 de \texttt{negation\_of} entre 0,817 e 0,851 contra a faixa de 0,696
-  a 0,739 dos \emph{baselines}.
+  \texttt{negation\_of} na semente de referência (0,677 contra 0,694;
+  \emph{bootstrap} pareado IC95\% $[-0{,}053; +0{,}018]$, $p=0{,}345$), mas esse
+  veredito não se sustenta nas duas sementes testadas. Na semente 43 a diferença
+  \emph{inverte de sinal} e passa a favorecer o \emph{encoder} clínico de forma
+  significativa (IC95\% $[+0{,}016; +0{,}090]$). A variação entre sementes de um
+  mesmo modelo supera a diferença entre os modelos, de modo que nem o veredito
+  nem sua direção são estáveis \emph{nessa classe}, ao passo que, no padrão
+  global de acertos, o teste de McNemar aponta para o \emph{encoder} geral nas
+  duas sementes. Esses resultados indicam que o RECLin-PT pode ser
+  construído sobre o \emph{encoder} geral, que acompanha o clínico em macro-F1
+  médio com cerca de 60\% dos parâmetros e é cerca de dez vezes mais estável
+  entre reinicializações.
 
   \vspace{\onelineskip}
 
@@ -68,25 +59,16 @@
   changing only the pre-trained checkpoint: a clinical-domain one (BioBERTpt) and
   a general-domain one (BERTimbau). On the frozen test set, the two are
   statistically tied on the \texttt{negation\_of} F1 under the reference seed
-  (0.696 vs.\ 0.711; paired bootstrap 95\% CI $[-0.051, +0.021]$, $p=0.420$), and
-  this tie also holds under seed 43, where the interval likewise includes zero
-  (95\% CI $[-0.018, +0.057]$, $p=0.288$). What does not hold is the
-  \emph{direction} of the difference, which \emph{flips sign} and comes to favour
-  the clinical encoder. Seed-to-seed variation of a single model exceeds
-  the gap between the models, so that direction is not stable
+  (0.677 vs.\ 0.694; paired bootstrap 95\% CI $[-0.053, +0.018]$, $p=0.345$), but
+  this verdict does not hold across the two seeds we tested. Under seed 43 the
+  difference \emph{flips sign} and significantly favours the clinical encoder
+  (95\% CI $[+0.016, +0.090]$). Seed-to-seed variation of a single model exceeds
+  the gap between the models, so neither the verdict nor its direction is stable
   \emph{on that class}, whereas on the overall pattern of correct predictions
-  McNemar's test likewise fails to reject the null hypothesis under either seed.
+  McNemar's test points to the general encoder under both seeds.
   These results indicate that RECLin-PT can be built on the general encoder,
-  which matches the clinical one in mean macro-F1 (0.701 vs.\ 0.703) with about
-  60\% of the parameters and is roughly six times more stable across restarts on
-  the target metric. On that best cost-benefit encoder, RECLin-PT is then built by
-  means of a lexical cue filter calibrated on the development set, which restricts
-  \texttt{negation\_of} predictions to pairs whose first argument is a negation
-  trigger induced from the training set. The gain is statistically significant over
-  both baselines under both seeds, since all sixteen paired comparisons between a
-  filtered run and a baseline yield a 95\% confidence interval entirely above zero,
-  with \texttt{negation\_of} F1 between 0.817 and 0.851 against the 0.696 to 0.739
-  range of the baselines.
+  which matches the clinical one in mean macro-F1 with about 60\% of the
+  parameters and is roughly ten times more stable across restarts.
 
   \vspace{\onelineskip}
 

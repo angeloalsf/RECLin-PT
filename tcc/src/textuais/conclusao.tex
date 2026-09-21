@@ -9,7 +9,10 @@ desenvolvimento do \textbf{RECLin-PT}, conduziu-se um experimento controlado de
 projeto seguintes: o pré-treinamento clínico importa para a extração de relações em
 textos médicos em português? A ênfase recaiu, simultaneamente, sobre a resposta a
 essa pergunta e sobre a construção de uma cadeia experimental reprodutível, do
-texto bruto às métricas finais.
+texto bruto às métricas finais. Respondida a pergunta, a segunda etapa construiu o
+RECLin-PT sobre a base por ela indicada, por meio de um filtro de pista lexical
+induzido do conjunto de treino e calibrado no de desenvolvimento, e mediu-o sob o
+mesmo protocolo aplicado aos \emph{baselines}.
 
 \section{Contribuições}
 
@@ -24,7 +27,13 @@ modelos, com o teto de \emph{recall} imposto pela janela quantificado por parti�
 e por classe; (v) uma infraestrutura experimental de paridade total, em que os dois
 \emph{encoders} comparados diferem apenas no \emph{checkpoint} de pré-treino; e
 (vi) uma comparação empírica com teste de significância pareado entre um
-\emph{encoder} clínico e um geral sobre a mesma tarefa.
+\emph{encoder} clínico e um geral sobre a mesma tarefa; (vii) o \textbf{RECLin-PT}
+propriamente dito, sistema híbrido que combina o \emph{encoder} escolhido a um
+filtro de pista lexical induzido do conjunto de treino e calibrado no de
+desenvolvimento, entregue e avaliado sob o mesmo protocolo estatístico aplicado aos
+\emph{baselines}; e (viii) uma auditoria dos falsos positivos remanescentes da
+classe-alvo, sob critério fixado antes da leitura dos casos, que dimensiona quanto
+do erro residual é divergência de anotação do corpus.
 
 Quanto aos resultados, não se observou vantagem \emph{consistente} do
 pré-treinamento clínico. Na semente de referência ($42$), a diferença no F1 de
@@ -46,59 +55,94 @@ de dispersão. O \emph{encoder} geral acompanha o clínico em macro-F1 médio
 ($0{,}701$ contra $0{,}703$) com cerca de $60\%$ dos parâmetros e com desempenho
 cerca de seis vezes mais estável entre reinicializações na métrica-alvo.
 
+Quanto à segunda etapa, o RECLin-PT supera os \emph{baselines} na classe-alvo com
+significância estatística nas duas sementes e nos dois \emph{encoders}. As
+dezesseis comparações entre cada execução filtrada e cada \emph{baseline} oficial
+apresentam intervalo de confiança de 95\% do \emph{bootstrap} pareado inteiramente
+acima de zero, e o caso mais desfavorável possível, a execução filtrada mais fraca
+contra o \emph{baseline} mais forte, dá $+0{,}0780$ com IC95\%
+$[+0{,}0340;\,+0{,}1225]$. O F1 de \texttt{negation\_of} passa da faixa de
+$0{,}6961$--$0{,}7388$ dos \emph{baselines} para $0{,}8168$--$0{,}8509$, e o
+macro-F1, de $0{,}6932$--$0{,}7128$ para $0{,}7334$--$0{,}7506$. O ganho não decorre
+da restrição lexical isolada, uma vez que a regra pura, aplicada sem o
+\emph{encoder}, empata estatisticamente com os quatro \emph{baselines}. Convém
+enunciar com precisão o que foi entregue. O RECLin-PT não possui pesos próprios, e
+nenhum modelo foi retreinado nesta etapa. Ele é um sistema híbrido, em que um filtro
+determinístico restringe o espaço em que \texttt{negation\_of} pode ser predita e o
+\emph{encoder} já ajustado decide o alvo dentro desse espaço.
+
 \section{Trabalhos futuros}
 
-Entregar um estudo de \emph{baselines} e deixar a especialização do modelo para a fase
-seguinte é uma decisão de sequenciamento, e não uma lacuna. A escolha do \emph{encoder}
-é pré-requisito de qualquer aprimoramento posterior. Fixada a base por expectativa
-(e a expectativa de partida, registrada na Seção~\ref{sec:motivacao}, era a de
-vantagem do pré-treino clínico), todo ganho ou perda medido depois ficaria
-confundido com o efeito do \emph{checkpoint}, sem meio de separar um do outro. E o
-resultado obtido é, ele próprio, um achado de consequência prática, e não um resultado
-nulo vazio. Sob teste pareado e sob duas sementes de treino, o \emph{encoder} clínico
-não leva vantagem \emph{confiável} nesta tarefa (a diferença medida troca de sinal
-entre sementes), o que libera a construção do RECLin-PT sobre um modelo
-sensivelmente menor. Isso não equivale a custo zero, pois, tomada a média das duas
-sementes, o \emph{encoder} clínico fica $0{,}003$ à frente na métrica-alvo
-($0{,}717$ contra $0{,}715$), e é esse o custo esperado da escolha. Ele é, contudo,
-muito menor que a própria amplitude entre sementes do BioBERTpt ($0{,}043$), o que o
-torna mal estimado por duas execuções. Como registra o
-Capítulo~\ref{cap:relacionados}, não localizamos avaliação controlada equivalente para
-o português, de modo que esse achado não era obtenível por consulta à literatura.
+Conduzir o estudo de \emph{baselines} antes da especialização foi uma decisão de
+sequenciamento, e não uma lacuna. A escolha do \emph{encoder} é pré-requisito de
+qualquer aprimoramento posterior, pois, fixada a base por expectativa (e a
+expectativa de partida, registrada na Seção~\ref{sec:motivacao}, era a de vantagem
+do pré-treino clínico), todo ganho ou perda medido depois ficaria confundido com o
+efeito do \emph{checkpoint}, sem meio de separar um do outro. E o resultado dessa
+primeira etapa é, ele próprio, um achado de consequência prática, e não um
+resultado nulo vazio. Sob teste pareado e sob duas sementes de treino, o
+\emph{encoder} clínico não leva vantagem \emph{confiável} nesta tarefa (a diferença
+medida troca de sinal entre sementes), o que liberou a construção do RECLin-PT
+sobre um modelo sensivelmente menor. Isso não equivale a custo zero, pois, tomada a
+média das duas sementes, o \emph{encoder} clínico fica $0{,}003$ à frente na
+métrica-alvo ($0{,}717$ contra $0{,}715$), e é esse o custo esperado da escolha. Ele
+é, contudo, muito menor que a própria amplitude entre sementes do BioBERTpt
+($0{,}043$), o que o torna mal estimado por duas execuções. Como registra o
+Capítulo~\ref{cap:relacionados}, não localizamos avaliação controlada equivalente
+para o português, de modo que esse achado não era obtenível por consulta à
+literatura.
 
-Esses resultados orientam diretamente a fase seguinte. O RECLin-PT não é um trabalho a
-iniciar. Os \emph{baselines} aqui reportados são a sua primeira fase, e o que
-constitui trabalho futuro imediato é a especialização do modelo sobre a base
-escolhida. Como o BERTimbau geral acompanha o clínico em macro-F1 médio, exige cerca de $60\%$
-dos parâmetros e varia cerca de seis vezes menos entre sementes na métrica-alvo, ele se
-apresenta como a base mais atraente por eficiência e previsibilidade, ressalvado
-que a semente $43$ mostra o clínico à frente na negação, de modo que a escolha se
-apoia em custo e estabilidade, e não em superioridade média demonstrada. Esse refinamento terá como foco o
-aprimoramento da classe \texttt{negation\_of}, a mais crítica para a correta
-interpretação clínica.
+As duas etapas anunciadas na Introdução foram concluídas neste trabalho. O
+RECLin-PT não é um sistema a construir, e sim um sistema construído, medido e
+comparado aos \emph{baselines} sob o mesmo crivo estatístico a que eles foram
+submetidos. O que permanece aberto não é a sua existência, e sim o caminho de
+aprimoramento que ela torna possível.
 
-Cabe explicitar que essa prioridade não recai sobre a classe de pior desempenho. A
-Seção~\ref{sec:resultados} mostra que \texttt{associated\_with} é a mais difícil das
-três (F1 $\approx 0{,}44$, contra $\approx 0{,}70$--$0{,}71$ de
-\texttt{negation\_of}). O critério é de criticidade clínica, e não de facilidade. Uma
-negação lida como afirmação inverte o sentido de um achado no prontuário, ao passo que
-um \texttt{associated\_with} não recuperado empobrece a extração sem alterar o sentido
+A extensão natural do que foi entregue é o \textbf{ajuste fino propriamente dito}.
+O RECLin-PT restringe o espaço de candidatos em que \texttt{negation\_of} pode ser
+predita e delega ao \emph{encoder} já ajustado a escolha do alvo dentro desse
+espaço, sem que os pesos desse \emph{encoder} tenham sido revisitados. O passo
+seguinte consiste em treinar um modelo dedicado \emph{dentro} do espaço restrito,
+isto é, ajustar um classificador cujos exemplos negativos sejam apenas os
+candidatos que sobrevivem ao filtro. A hipótese a testar é a de que, removida a
+massa de pares que o filtro descarta de qualquer modo, a capacidade do modelo passe
+a ser empregada na fronteira que de fato decide a classe, que é a escolha do alvo
+entre os candidatos iniciados por um gatilho. Trata-se de uma extensão do sistema
+entregue, e não de uma pendência dele, uma vez que o ganho a medir passa a ser o
+ganho \emph{sobre} o RECLin-PT, tomado agora como \emph{baseline}. A auditoria
+discutida na Seção~\ref{sec:discussao_filtro} dimensiona o que há a ganhar nessa
+direção e recomenda cautela, dado que parte expressiva do erro residual é
+divergência de anotação do corpus, que nenhum treino adicional corrige.
+
+Cabe explicitar que a prioridade dada à negação não recai sobre a classe de pior
+desempenho. A Seção~\ref{sec:resultados} mostra que \texttt{associated\_with} é a
+mais difícil das três (F1 $\approx 0{,}44$, contra $\approx 0{,}70$--$0{,}71$ de
+\texttt{negation\_of} nos \emph{baselines} e $\approx 0{,}82$--$0{,}85$ no
+RECLin-PT). O critério é de criticidade clínica, e não de facilidade. Uma negação
+lida como afirmação inverte o sentido de um achado no prontuário, ao passo que um
+\texttt{associated\_with} não recuperado empobrece a extração sem alterar o sentido
 do que foi extraído. O teto de \emph{recall} de \texttt{associated\_with} permanece,
 ainda assim, entre as continuidades previstas a seguir.
 
-Como continuidade, prevê-se ainda: estimar o desempenho dos \emph{baselines} sob um
-número maior de sementes de treino, com agregação formal, para obter um intervalo
-de confiança da diferença mais estreito; enriquecer a representação de entrada com
-o \textbf{tipo semântico} das entidades, hoje ausente dos marcadores
-(Seção~\ref{sec:markers_limitacao}), medindo se o ganho difere entre o
-\emph{encoder} clínico e o geral; reavaliar a janela \texttt{max\_gap} da
-geração de pares candidatos, elevando o teto de \emph{recall} de
-\texttt{associated\_with} sem inviabilizar o custo de treino; investigar o
-tratamento explícito do escopo da negação e da direção das relações; estender o
-espaço de relações para além das três classes atuais; avaliar modelos maiores e
-\emph{encoders} multilíngues \cite{conneau_2020_xlmr}; e integrar uma etapa de
-reconhecimento de entidades nomeadas automática, medindo a extração de relações em
-um cenário fim a fim.
+Como continuidade, prevê-se ainda: corrigir o alinhamento entre os \emph{offsets}
+de entidade e o texto do documento (Seção~\ref{sec:ameaca_offsets}), medindo quanto
+do desempenho absoluto é limitado por marcadores deslocados; estimar o desempenho
+dos \emph{baselines} e do RECLin-PT sob um número maior de sementes de treino, com
+agregação formal, para obter um intervalo de confiança da diferença mais estreito;
+submeter parte dos falsos positivos remanescentes a revisão humana, de modo a
+substituir por medida o teto hipotético estimado pela auditoria; enriquecer a
+representação de entrada com o \textbf{tipo semântico} das entidades, hoje ausente
+dos marcadores (Seção~\ref{sec:markers_limitacao}), medindo se o ganho difere entre
+o \emph{encoder} clínico e o geral; reavaliar a janela \texttt{max\_gap} da geração
+de pares candidatos, elevando o teto de \emph{recall} de \texttt{associated\_with}
+sem inviabilizar o custo de treino; investigar o tratamento explícito do escopo da
+negação e da direção das relações; estender o espaço de relações para além das três
+classes atuais; avaliar modelos maiores e \emph{encoders} multilíngues
+\cite{conneau_2020_xlmr}; e integrar uma etapa de reconhecimento de entidades
+nomeadas automática, medindo a extração de relações em um cenário fim a fim.
 
-O trabalho encontra-se, portanto, em andamento. Os \emph{baselines} aqui reportados
-estabelecem o ponto de partida do RECLin-PT, e não um encerramento.
+O trabalho entrega, portanto, as duas etapas anunciadas. Os \emph{baselines}
+respondem à pergunta de projeto, e o RECLin-PT, construído sobre a base que eles
+indicam, entrega ganho estatisticamente significativo na classe clinicamente mais
+crítica. O que se abre a seguir é a continuidade de um resultado, e não o
+encerramento de uma pendência.

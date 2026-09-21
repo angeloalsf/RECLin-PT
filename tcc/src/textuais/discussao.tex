@@ -71,6 +71,52 @@ essa dispersão que permite ao BioBERTpt superar o geral na semente $43$, de mod
 a preferência pelo \emph{encoder} menor se justifica por previsibilidade e custo,
 não por superioridade média na métrica-alvo.
 
+\section{O ganho do filtro de pista lexical}
+\label{sec:discussao_filtro}
+
+A primeira das duas explicações oferecidas na análise anterior para a ausência de
+vantagem do \emph{encoder} clínico era a lexicalização forte da negação em
+português. Até a comparação entre \emph{baselines}, ela permanecia justificativa
+linguística,
+apoiada na regularidade dos gatilhos e na mediana de distância de um único
+caractere entre a pista e o achado negado. O filtro de pista a converte em medida.
+Um léxico de apenas $11$ formas, induzido automaticamente do conjunto de treino,
+cobre $0{,}9467$ dos pares \texttt{negation\_of} do conjunto de desenvolvimento, e
+exigir a presença de uma dessas formas no primeiro argumento eleva a precisão da
+classe no teste de $0{,}5547$--$0{,}6167$ para $0{,}7514$--$0{,}8059$, ao custo de
+cerca de dois pontos centesimais de \emph{recall}
+(Seção~\ref{sec:fase2_resultados}). O que esse resultado mostra é que a maior parte
+dos falsos positivos do modelo contextual ocorre em pares que nenhum gatilho de
+negação inicia, ou seja, fora do espaço em que a classe poderia legitimamente
+existir. Confirma-se, assim, por medida direta e não apenas por argumento, que o
+sinal de negação no português clínico é regular o bastante para ser delimitado por
+uma lista curta, e é essa mesma propriedade que torna dispensável o
+pré-treinamento de domínio para capturá-lo.
+
+O erro que resta depois do filtro foi auditado, e a sua composição qualifica o
+quanto ainda há a ganhar. A auditoria incide sobre uma execução sorteada entre as
+quatro, com a semente do sorteio fixada em código antes do primeiro sorteio, e
+recaiu sobre o RECLin-PT aplicado ao BioBERTpt na semente $43$. Essa execução
+produz $33$ falsos positivos, classificados por um critério estrutural fixado antes
+da leitura dos casos, que decide pela evidência do \emph{gold} e não por leitura
+clínica caso a caso. Dos $33$, $18$ ($54{,}5\%$) são prováveis erros de anotação do
+\emph{gold}, em que a pista e o alvo são adjacentes e o corpus não registra relação
+alguma para aquela pista; $6$ ($18{,}2\%$) são ambiguidades genuínas, tipicamente
+listas coordenadas em que o \emph{gold} anota apenas o primeiro alvo; e $9$
+($27{,}3\%$) são erros do modelo. Se toda a divergência de anotação fosse resolvida
+a favor do modelo, os $24$ casos que não configuram erro de leitura clínica
+deixariam de contar como falsos positivos, e a precisão dessa execução passaria de
+$0{,}8059$ para $0{,}9384$, com F1 de $0{,}9195$. \textbf{Esse valor não é um
+resultado do sistema.} Ele é um \emph{teto hipotético}, condicionado a uma
+resolução favorável de divergências que esta auditoria não estabelece, e presta-se
+apenas a dimensionar quanta precisão ainda resta disponível antes de se investir
+GPU nessa direção. O desempenho efetivamente medido dessa execução continua sendo o
+F1 de $0{,}8509$ da Tabela~\ref{tab:fase2_resultados}. Cabe registrar também o
+limite da própria auditoria, cujo critério mecânico acerta o padrão dominante, que
+é a lista coordenada, e erra em casos que exigiriam interpretar o que a frase quer
+dizer. Uma revisão humana pode mover casos entre as três classes, e o trecho de
+contexto de cada caso consta do relatório justamente para permiti-la.
+
 \section{A classe \texttt{associated\_with}}
 
 A classe \texttt{associated\_with} permanece a mais difícil para os dois modelos
@@ -148,3 +194,36 @@ relação deve ser feita com cautela. As inconsistências de anotação conhecid
 corpus, ainda que tratadas e registradas pelo \emph{parser}, também impõem um limite
 superior ao desempenho alcançável, limite que se aplica igualmente aos dois
 modelos comparados.
+
+\subsection{Deriva dos \emph{offsets} de entidade}
+\label{sec:ameaca_offsets}
+
+Uma última ameaça à validade interna foi identificada durante a construção do
+RECLin-PT e merece registro próprio, por não ter sido considerada no protocolo
+original. Os \emph{offsets} das entidades do corpus não indexam corretamente o
+texto do documento na representação canônica. No conjunto de teste, apenas
+$64{,}4\%$ das entidades satisfazem a identidade entre o trecho recortado pelo
+\emph{offset} e o texto anotado da própria entidade, contra $58{,}9\%$ no treino e
+$65{,}8\%$ no desenvolvimento. A deriva é cumulativa e negativa ao longo do
+documento, assinatura compatível com uma normalização de espaço em branco aplicada
+ao texto \emph{depois} do cálculo dos \emph{offsets}. A etapa exata em que ela
+ocorre permanece por identificar, e a correção automática de deslocamentos de
+$\pm 1$ e $\pm 2$ caracteres executada pelo \emph{parser}
+(Capítulo~\ref{cap:metodologia}) não alcança uma deriva acumulada dessa magnitude.
+
+Três razões circunscrevem o alcance dessa ameaça. A primeira é que ela afeta os
+dois \emph{encoders} de forma idêntica, por atuar na construção da janela marcada
+(Seção~\ref{sec:markers}), que é compartilhada, de modo que a comparação do
+Capítulo~\ref{cap:experimentos} permanece válida. A segunda é que o filtro de pista
+do RECLin-PT não consulta \emph{offset} algum, pois decide pela forma de superfície
+registrada na própria entidade, e o resultado da Seção~\ref{sec:fase2_resultados}
+não depende, portanto, desse alinhamento. A terceira é que a distância entre
+entidades empregada na geração de candidatos e na regra pura é calculada entre
+\emph{offsets} mutuamente consistentes, permanecendo válida como medida relativa.
+
+O que a deriva sugere é um teto de desempenho a recuperar, e não um erro de
+comparação. Em cerca de $36\%$ das entidades do conjunto de teste, os marcadores
+\texttt{[E1]} e \texttt{[E2]} são inseridos alguns caracteres deslocados em relação
+à superfície que deveriam delimitar, e todos os valores absolutos deste trabalho
+foram medidos sob essa condição. Corrigir o alinhamento é, por isso, uma das
+continuidades previstas no Capítulo~\ref{cap:conclusao}.

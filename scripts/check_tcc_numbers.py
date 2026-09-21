@@ -31,11 +31,29 @@ O QUE VERIFICA
    (lista `STALE_NUMBERS`) -- CLAIMS confere um numero contra sua fonte, mas
    nao sabe em quantos arquivos o mesmo numero foi repetido.
 5. Que todo `\\input{tabelas/...}` do texto aponta para arquivo existente.
+6. As cifras da fase 2 que nao sao campo de JSON: as metricas dos nove
+   sistemas da Secao 6.7, recalculadas dos proprios sidecars de predicao
+   (`check_fase2_systems`); as 16 comparacoes pareadas da tabela mais as 4 da
+   regra pura, com as leituras que a prosa faz delas
+   (`check_fase2_significance`); e o teto hipotetico da auditoria de falsos
+   positivos, derivado dos TP/FN da execucao sorteada
+   (`check_auditoria_teto`).
+7. Duas afirmacoes que so o CORPUS sustenta, reproduzidas de `data/splits/` em
+   vez de copiadas de um relatorio: a cobertura do lexico e o F1 da regra pura
+   no DEV (`check_fase2_dev`).
+8. As fracoes de entidades cujo offset recorta exatamente o texto anotado, que
+   sustentam a ameaca a validade da Secao 7.4 (`check_offset_alignment`).
+
+Os itens 1 a 5 leem so `results/` e `tcc/src/`. Os itens 6 a 8 leem tambem
+`data/splits/`, e o 7 importa `src/negation_lexicon.py` para reproduzir a
+inducao do lexico -- e o unico ponto deste script que depende de `src/`, e o
+import e tardio por isso.
 
 USO
 ---
     python scripts/check_tcc_numbers.py
     python scripts/check_tcc_numbers.py --verbose   # imprime tambem os OK
+    python scripts/check_tcc_numbers.py --data-dir /outro/data
 
 Sai com codigo 1 na primeira divergencia, para poder rodar em CI.
 """
@@ -43,17 +61,28 @@ Sai com codigo 1 na primeira divergencia, para poder rodar em CI.
 from __future__ import annotations
 
 import argparse
+import logging
 import re
 import sys
 from pathlib import Path
 
 from _artifacts import (
+    CLASS_ORDER,
     DEFAULT_DATA_DIR,
     DEFAULT_RESULTS_DIR,
+    FASE2_BASELINE_KEYS,
+    FASE2_FILTER_KEYS,
+    FASE2_RULE_KEY,
+    FASE2_TARGET_CLASS,
     REPO_ROOT,
+    SPLIT_ORDER,
     TCC_SRC,
     MissingResultError,
+    class_metrics,
+    load_fase2_significance,
+    load_fase2_systems,
     load_json,
+    read_jsonl,
 )
 
 TEXT_DIRS = ["textuais", "pre_textuais", "apendices"]
@@ -268,6 +297,22 @@ CLAIMS: list[tuple[str, str, str, float, float]] = [
     ("media bertimbau: macro-F1", "summary_by_seed.json", "models.bertimbau.metrics.macro_f1.mean", 0.701, 0.0005),
     ("media biobertpt: F1 negation_of", "summary_by_seed.json", "models.biobertpt.metrics.f1_negation_of.mean", 0.717, 0.0005),
     ("media bertimbau: F1 negation_of", "summary_by_seed.json", "models.bertimbau.metrics.f1_negation_of.mean", 0.715, 0.0005),
+    # --- Cap. Proposta / Experimentos: configuracao da fase 2 -------------
+    # Citados em 5.6.4, 5.6.5, 6.7 e 7.2. A cobertura do lexico no dev e o F1
+    # da regra no dev NAO estao neste JSON, que guarda so a configuracao
+    # escolhida; os dois sao reproduzidos do corpus em `check_fase2_dev`.
+    ("filtro: min_freq", "CALIBRACAO_filtro.json", "min_freq", 3, 0),
+    ("filtro: formas do lexico", "CALIBRACAO_filtro.json", "lexicon_size", 11, 0),
+    ("filtro: max_gap do espaco de candidatos", "CALIBRACAO_filtro.json", "combined_gap", 25, 0),
+    ("regra pura: limiar de gap", "CALIBRACAO_filtro.json", "rule_gap", 1, 0),
+    # --- Cap. Discussao: auditoria dos FP remanescentes -------------------
+    # As fracoes (54,5%, 27,3%, 18,2%), os 24 casos e o teto hipotetico de
+    # precisao e F1 sao derivados destas contagens e conferidos em
+    # `check_auditoria_teto`.
+    ("auditoria: FP remanescentes", "AUDITORIA_fp_negation_of.json", "n_fp", 33, 0),
+    ("auditoria: erros de anotacao do gold", "AUDITORIA_fp_negation_of.json", "counts.provavel erro de anotacao do gold", 18, 0),
+    ("auditoria: erros do modelo", "AUDITORIA_fp_negation_of.json", "counts.erro do modelo", 9, 0),
+    ("auditoria: ambiguidades genuinas", "AUDITORIA_fp_negation_of.json", "counts.ambiguidade genuina", 6, 0),
 ]
 
 # Amplitudes citadas em prosa ("0,043" no BioBERTpt, "0,007" no BERTimbau).
@@ -281,6 +326,124 @@ AMPLITUDE_CLAIMS = [
     ("biobertpt", "macro_f1", 0.020),
     ("bertimbau", "macro_f1", 0.006),
 ]
+
+
+# --------------------------------------------------------------------------- #
+# Fase 2: filtro de pista lexical, regra pura e auditoria                      #
+# --------------------------------------------------------------------------- #
+# As Secoes 5.6, 6.7 e 7.2 citam numeros que nao existem em nenhum
+# `baseline_*.json`. Eles vem de tres lugares, e cada um tem a sua lista:
+#
+#   1. das PREDICOES da fase 2 (`results/<sistema>.preds.json`), recalculadas
+#      aqui -- FASE2_SYSTEM_CLAIMS e FASE2_RANGE_CLAIMS;
+#   2. dos testes pareados (`results/significance_*_vs_*.json`)
+#      -- FASE2_SIGNIFICANCE_CLAIMS;
+#   3. do proprio corpus (`data/splits/`), reproduzidos do zero
+#      -- DEV_COVERAGE_CLAIM, DEV_RULE_F1_CLAIM e OFFSET_EXACT_CLAIMS.
+#
+# Os numeros de configuracao e de auditoria (min_freq, formas do lexico, FP por
+# categoria) sao campos de JSON e entram em CLAIMS, com o resto.
+
+# Uma linha por sistema da Tabela do Cap. 6.7, na ordem em que a tabela as
+# imprime: (chave do sidecar, precisao, recall, F1, macro-F1). Precisao, recall
+# e F1 sao de `negation_of`. Os quatro valores sao recalculados de `y_pred`, e
+# nao lidos de `FASE2_test_summary.json`: um resumo regerado sozinho ficaria
+# conferindo consigo mesmo.
+FASE2_SYSTEM_CLAIMS: list[tuple[str, float, float, float, float]] = [
+    ("baseline_biobertpt_seed42", 0.5547, 0.9342, 0.6961, 0.6932),
+    ("baseline_bertimbau_seed42", 0.5816, 0.9145, 0.7110, 0.6977),
+    ("baseline_biobertpt_seed43", 0.6167, 0.9211, 0.7388, 0.7128),
+    ("baseline_bertimbau_seed43", 0.5915, 0.9145, 0.7183, 0.7035),
+    ("filtro_biobertpt_seed42", 0.7596, 0.9145, 0.8299, 0.7383),
+    ("filtro_bertimbau_seed42", 0.7514, 0.8947, 0.8168, 0.7334),
+    ("filtro_biobertpt_seed43", 0.8059, 0.9013, 0.8509, 0.7506),
+    ("filtro_bertimbau_seed43", 0.7684, 0.8947, 0.8267, 0.7401),
+    ("regra_pura", 0.6324, 0.7697, 0.6944, 0.5549),
+]
+
+# As faixas que 6.7, 7.2, 8.1 e o resumo citam ("de 0,5547--0,6167 para
+# 0,7514--0,8059"). Conferir a faixa nao e o mesmo que conferir cada linha: ela
+# afirma tambem QUEM e o extremo, e uma execucao nova que entrasse fora dela
+# passaria pelas linhas e reprovaria aqui.
+# (descricao, grupo, metrica, minimo, maximo)
+FASE2_RANGE_CLAIMS: list[tuple[str, str, str, float, float]] = [
+    ("baselines: precisao negation_of", "baseline", "precision", 0.5547, 0.6167),
+    ("baselines: recall negation_of", "baseline", "recall", 0.9145, 0.9342),
+    ("baselines: F1 negation_of", "baseline", "f1", 0.6961, 0.7388),
+    ("baselines: macro-F1", "baseline", "macro_f1", 0.6932, 0.7128),
+    ("RECLin-PT: precisao negation_of", "filtro", "precision", 0.7514, 0.8059),
+    ("RECLin-PT: recall negation_of", "filtro", "recall", 0.8947, 0.9145),
+    ("RECLin-PT: F1 negation_of", "filtro", "f1", 0.8168, 0.8509),
+    ("RECLin-PT: macro-F1", "filtro", "macro_f1", 0.7334, 0.7506),
+]
+
+# As 16 comparacoes da tabela de significancia da fase 2 e as 4 da regra pura,
+# nesta ordem: (sistema A, baseline B, diferenca, IC baixo, IC alto). O arquivo
+# de origem e `significance_<A>_vs_<B>.json`.
+#
+# As 16 estao numa tabela GERADA, que por isso nao pode divergir do JSON. Elas
+# entram aqui mesmo assim porque a prosa as RESUME ("as dezesseis comparacoes
+# apresentam intervalo inteiramente acima de zero", "o caso mais desfavoravel
+# ... da +0,0780"), e um resumo desses envelhece em silencio se uma reexecucao
+# mudar a tabela por baixo dele. As 4 da regra pura sao citadas uma a uma na
+# prosa de 6.7.3.
+FASE2_SIGNIFICANCE_CLAIMS: list[tuple[str, str, float, float, float]] = [
+    ("filtro_biobertpt_seed42", "baseline_biobertpt_seed42", +0.1338, +0.0998, +0.1700),
+    ("filtro_biobertpt_seed42", "baseline_bertimbau_seed42", +0.1189, +0.0789, +0.1613),
+    ("filtro_biobertpt_seed42", "baseline_biobertpt_seed43", +0.0911, +0.0473, +0.1356),
+    ("filtro_biobertpt_seed42", "baseline_bertimbau_seed43", +0.1115, +0.0691, +0.1562),
+    ("filtro_bertimbau_seed42", "baseline_biobertpt_seed42", +0.1207, +0.0780, +0.1647),
+    ("filtro_bertimbau_seed42", "baseline_bertimbau_seed42", +0.1058, +0.0749, +0.1399),
+    ("filtro_bertimbau_seed42", "baseline_biobertpt_seed43", +0.0780, +0.0340, +0.1225),
+    ("filtro_bertimbau_seed42", "baseline_bertimbau_seed43", +0.0985, +0.0596, +0.1392),
+    ("filtro_biobertpt_seed43", "baseline_biobertpt_seed42", +0.1549, +0.1110, +0.2009),
+    ("filtro_biobertpt_seed43", "baseline_bertimbau_seed42", +0.1399, +0.0969, +0.1843),
+    ("filtro_biobertpt_seed43", "baseline_biobertpt_seed43", +0.1121, +0.0788, +0.1476),
+    ("filtro_biobertpt_seed43", "baseline_bertimbau_seed43", +0.1326, +0.0874, +0.1781),
+    ("filtro_bertimbau_seed43", "baseline_biobertpt_seed42", +0.1307, +0.0859, +0.1762),
+    ("filtro_bertimbau_seed43", "baseline_bertimbau_seed42", +0.1158, +0.0767, +0.1556),
+    ("filtro_bertimbau_seed43", "baseline_biobertpt_seed43", +0.0880, +0.0430, +0.1348),
+    ("filtro_bertimbau_seed43", "baseline_bertimbau_seed43", +0.1084, +0.0760, +0.1425),
+    ("regra_pura", "baseline_biobertpt_seed42", -0.0017, -0.0588, +0.0540),
+    ("regra_pura", "baseline_bertimbau_seed42", -0.0166, -0.0716, +0.0386),
+    ("regra_pura", "baseline_biobertpt_seed43", -0.0444, -0.1022, +0.0145),
+    ("regra_pura", "baseline_bertimbau_seed43", -0.0240, -0.0818, +0.0334),
+]
+
+# O par que a prosa de 6.7.2 destaca como "o caso mais desfavoravel possivel":
+# a execucao filtrada mais fraca contra o baseline mais forte. Nao e uma cifra,
+# e uma leitura -- conferida em `check_fase2_significance`, que recalcula quem
+# sao esses dois extremos em vez de acreditar na frase.
+FASE2_WORST_CASE = ("filtro_bertimbau_seed42", "baseline_biobertpt_seed43")
+
+# Numeros do DEV citados em 5.6.4, 5.6.5 e 7.2. Nenhum deles esta em
+# `results/`: `CALIBRACAO_filtro.json` guarda so a configuracao escolhida, e a
+# varredura que a justifica ficou no `.md`. Sao portanto reproduzidos do zero a
+# partir de `data/splits/`, induzindo o lexico do TRAIN com o `min_freq`
+# congelado e aplicando a regra escolhida ao DEV. Conferir contra o corpus e
+# mais forte que conferir contra um JSON que o mesmo pipeline escreveu.
+DEV_COVERAGE_CLAIM = 0.9467   # fracao dos pares negation_of do dev com e1 no lexico
+DEV_RULE_F1_CLAIM = 0.6935    # F1 de negation_of da regra R3 (gap <= 1) no dev
+
+# Secao 7.4 (ameaca a validade dos offsets). Fracao das entidades cujo offset
+# recorta exatamente o texto anotado da propria entidade, por particao.
+OFFSET_EXACT_CLAIMS = {"train": 58.9, "dev": 65.8, "test": 64.4}
+# "em cerca de 36% das entidades do conjunto de teste" -- complemento do valor
+# acima, com a tolerancia frouxa que o "cerca de" do texto autoriza.
+OFFSET_MISALIGNED_TEST_CLAIM = 36.0
+
+# Teto hipotetico de precisao e F1 citado em 7.2, sempre com a ressalva de que
+# nao e resultado do sistema. Nao e campo de JSON: sai dos TP/FN da execucao
+# sorteada somados as contagens do relatorio de auditoria, e e recalculado em
+# `check_auditoria_teto`.
+AUDIT_CEILING_PRECISION = 0.9384
+AUDIT_CEILING_F1 = 0.9195
+AUDIT_NON_MODEL_FP = 24  # os 18 de anotacao mais as 6 ambiguidades
+AUDIT_SHARE_PCT = {
+    "provavel erro de anotacao do gold": 54.5,
+    "erro do modelo": 27.3,
+    "ambiguidade genuina": 18.2,
+}
 
 
 def check_claims(results_dir: Path, verbose: bool) -> list[str]:
@@ -470,25 +633,415 @@ def check_significance_reading(results_dir: Path, verbose: bool) -> list[str]:
     return failures
 
 
+def check_fase2_systems(systems: dict[str, dict], verbose: bool) -> list[str]:
+    """Confere linha a linha a tabela da Secao 6.7 e as faixas citadas em prosa.
+
+    As metricas sao recalculadas dos vetores de predicao (`load_fase2_systems`),
+    de modo que a conferencia nao passa por nenhum resumo intermediario.
+
+    Alem dos valores, confere tres leituras que a prosa faz da regra de
+    rebaixamento e que nenhum numero isolado sustenta: que o filtro eleva a
+    precisao, que ele nunca eleva o recall e que o F1 de `associated_with` fica
+    intacto em todos os digitos. Se alguem trocar o destino do rebaixamento ou
+    passar a promover predicoes, os numeros ate podem melhorar, mas a descricao
+    do sistema na Secao 5.6.3 deixa de ser verdadeira -- e e isso que reprova
+    aqui.
+    """
+    failures = []
+    fields = (
+        ("precisao", "precision"),
+        ("recall", "recall"),
+        ("F1", "f1"),
+        ("macro-F1", "macro_f1"),
+    )
+    for claim in FASE2_SYSTEM_CLAIMS:
+        key, expected_row = claim[0], claim[1:]
+        for (name, field), expected in zip(fields, expected_row):
+            actual = systems[key][field]
+            if abs(actual - expected) > 0.00005:
+                failures.append(
+                    f"fase 2, {key}: texto/tabela diz {name} {expected}, "
+                    f"{key}.preds.json da {actual:.4f}"
+                )
+            elif verbose:
+                print(f"  ok  fase 2 {key}: {name} {expected} ({actual:.4f})")
+
+    for description, group, field, low, high in FASE2_RANGE_CLAIMS:
+        keys = FASE2_BASELINE_KEYS if group == "baseline" else FASE2_FILTER_KEYS
+        values = {key: systems[key][field] for key in keys}
+        for edge, expected, actual in (
+            ("minimo", low, min(values.values())),
+            ("maximo", high, max(values.values())),
+        ):
+            if abs(actual - expected) > 0.00005:
+                failures.append(
+                    f"faixa {description}: texto diz {edge} {expected}, os "
+                    f"sidecars dao {actual:.4f}"
+                )
+            elif verbose:
+                print(f"  ok  faixa {description}: {edge} {expected}")
+
+    # As duas listas estao na mesma ordem (mesmo encoder, mesma semente), entao
+    # `zip` pareia cada baseline com a sua propria versao filtrada.
+    for base_key, filter_key in zip(FASE2_BASELINE_KEYS, FASE2_FILTER_KEYS):
+        base, filtered = systems[base_key], systems[filter_key]
+        base_assoc = base["f1_by_class"]["associated_with"]
+        filtered_assoc = filtered["f1_by_class"]["associated_with"]
+        if filtered_assoc != base_assoc:
+            failures.append(
+                f"regra de rebaixamento em {filter_key}: o texto (5.6.3 e 6.7.1) "
+                f"diz que o F1 de associated_with fica inalterado em todos os "
+                f"digitos, mas {base_assoc:.6f} virou {filtered_assoc:.6f}"
+            )
+        elif verbose:
+            print(f"  ok  {filter_key}: F1 de associated_with intacto")
+
+        if filtered["recall"] > base["recall"]:
+            failures.append(
+                f"regra de rebaixamento em {filter_key}: o texto diz que o "
+                f"filtro nao pode elevar o recall, mas ele subiu de "
+                f"{base['recall']:.4f} para {filtered['recall']:.4f}"
+            )
+        elif verbose:
+            print(f"  ok  {filter_key}: recall nao subiu")
+
+        if filtered["precision"] <= base["precision"]:
+            failures.append(
+                f"efeito do filtro em {filter_key}: o texto diz que o ganho e "
+                f"de precisao, mas ela nao subiu ({base['precision']:.4f} -> "
+                f"{filtered['precision']:.4f})"
+            )
+        elif verbose:
+            print(f"  ok  {filter_key}: precisao subiu")
+    return failures
+
+
+def check_fase2_significance(
+    results_dir: Path, systems: dict[str, dict], verbose: bool
+) -> list[str]:
+    """Confere as 20 comparacoes pareadas e o que a prosa LE nelas.
+
+    Tres leituras, alem dos valores:
+
+    1. As dezesseis comparacoes entre execucao filtrada e baseline tem IC95%
+       inteiramente acima de zero. E a afirmacao central da Secao 6.7.2, do
+       Capitulo 8 e do resumo.
+    2. O par destacado como "caso mais desfavoravel possivel" continua sendo a
+       execucao filtrada de menor F1 contra o baseline de maior F1, e continua
+       sendo o de menor diferenca entre os dezesseis. A frase descreve uma
+       posicao no conjunto, nao um par fixo.
+    3. Os quatro intervalos da regra pura contem o zero, que e o que sustenta
+       "empata estatisticamente com os quatro" em 6.7.3 e na Conclusao.
+    """
+    failures = []
+    differences: dict[tuple[str, str], float] = {}
+    for a_key, b_key, diff, ci_low, ci_high in FASE2_SIGNIFICANCE_CLAIMS:
+        data = load_fase2_significance(results_dir, a_key, b_key)
+        boot = data["paired_bootstrap"]
+        name = f"significance_{a_key}_vs_{b_key}.json"
+        for measure, expected, actual in (
+            ("diferenca", diff, data["target_f1"]["a_minus_b"]),
+            ("IC baixo", ci_low, boot["ci95_low"]),
+            ("IC alto", ci_high, boot["ci95_high"]),
+        ):
+            if abs(actual - expected) > 0.00005:
+                failures.append(
+                    f"fase 2, {a_key} vs {b_key}: texto/tabela diz {measure} "
+                    f"{expected}, {name} tem {actual:.4f}"
+                )
+            elif verbose:
+                print(f"  ok  {a_key} vs {b_key}: {measure} {expected}")
+
+        # Guarda-corpo: o teste pareado tem de ter medido os MESMOS vetores que
+        # a tabela de desempenho imprime. Se um dos dois for regerado sozinho,
+        # as duas tabelas passam a falar de execucoes diferentes.
+        for role, key in (("a", a_key), ("b", b_key)):
+            if abs(data["target_f1"][role] - systems[key]["f1"]) > 1e-9:
+                failures.append(
+                    f"{name}: F1({role})={data['target_f1'][role]:.6f} nao bate "
+                    f"com {key}.preds.json ({systems[key]['f1']:.6f}) -- um dos "
+                    f"dois foi regerado sem o outro"
+                )
+
+        differences[(a_key, b_key)] = data["target_f1"]["a_minus_b"]
+        if a_key == FASE2_RULE_KEY:
+            if not boot["ci95_low"] < 0 < boot["ci95_high"]:
+                failures.append(
+                    f"veredito da regra pura contra {b_key}: o texto diz que os "
+                    f"quatro intervalos contem o zero, mas "
+                    f"IC=[{boot['ci95_low']:+.4f}; {boot['ci95_high']:+.4f}]"
+                )
+            elif verbose:
+                print(f"  ok  regra pura vs {b_key}: IC contem o zero")
+        else:
+            if not boot["ci95_low"] > 0:
+                failures.append(
+                    f"veredito de {a_key} contra {b_key}: o texto diz que as "
+                    f"dezesseis comparacoes tem IC95% inteiramente acima de "
+                    f"zero, mas IC=[{boot['ci95_low']:+.4f}; "
+                    f"{boot['ci95_high']:+.4f}]"
+                )
+            elif verbose:
+                print(f"  ok  {a_key} vs {b_key}: IC95% acima de zero")
+
+    filtered_pairs = {
+        pair: value
+        for pair, value in differences.items()
+        if pair[0] != FASE2_RULE_KEY
+    }
+    observed_worst = min(filtered_pairs, key=filtered_pairs.get)
+    if observed_worst != FASE2_WORST_CASE:
+        failures.append(
+            f"caso mais desfavoravel: o texto destaca "
+            f"{FASE2_WORST_CASE[0]} contra {FASE2_WORST_CASE[1]}, mas a menor "
+            f"das dezesseis diferencas agora e {observed_worst[0]} contra "
+            f"{observed_worst[1]} ({filtered_pairs[observed_worst]:+.4f})"
+        )
+    elif verbose:
+        print(
+            f"  ok  caso mais desfavoravel: {observed_worst[0]} vs "
+            f"{observed_worst[1]}"
+        )
+
+    weakest = min(FASE2_FILTER_KEYS, key=lambda key: systems[key]["f1"])
+    strongest = max(FASE2_BASELINE_KEYS, key=lambda key: systems[key]["f1"])
+    if (weakest, strongest) != FASE2_WORST_CASE:
+        failures.append(
+            f"leitura do caso mais desfavoravel: o texto o descreve como a "
+            f"execucao filtrada mais fraca contra o baseline mais forte, mas "
+            f"esses sao {weakest} e {strongest}"
+        )
+    elif verbose:
+        print("  ok  o caso destacado e o filtrado mais fraco vs o baseline mais forte")
+    return failures
+
+
+def check_fase2_dev(results_dir: Path, data_dir: Path, verbose: bool) -> list[str]:
+    """Reproduz do corpus as duas afirmacoes do DEV (Secoes 5.6.4 e 5.6.5).
+
+    `CALIBRACAO_filtro.json` guarda a configuracao escolhida, nao a varredura
+    que a justifica, entao a cobertura do lexico e o F1 da regra no
+    desenvolvimento nao existem como campo em `results/`. Em vez de copia-los do
+    relatorio em Markdown, esta funcao induz o lexico do TRAIN com o `min_freq`
+    congelado e mede no DEV. Conferir contra o corpus e mais forte do que
+    conferir contra um arquivo que o mesmo pipeline escreveu.
+    """
+    # Import tardio, e o unico deste script que depende de `src/`: todo o resto
+    # roda so com `results/` e `_artifacts.py`.
+    for path in (REPO_ROOT / "src", REPO_ROOT / "scripts"):
+        if str(path) not in sys.path:
+            sys.path.insert(0, str(path))
+    try:
+        from candidates import iter_candidate_pairs
+        from make_rule_baseline import predict_rule
+        from negation_lexicon import LABELS as LEXICON_LABELS
+        from negation_lexicon import induce_lexicon, is_cue
+    except ImportError as error:
+        return [
+            f"conferencia do DEV: nao foi possivel importar src/ ({error}). "
+            f"Rode este script a partir do repositorio completo."
+        ]
+    # A inducao loga em INFO; aqui ela e meio, e nao resultado a reportar.
+    logging.getLogger("negation_lexicon").setLevel(logging.WARNING)
+
+    failures = []
+    if LEXICON_LABELS != CLASS_ORDER:
+        return [
+            f"src/negation_lexicon.LABELS ({LEXICON_LABELS}) divergiu da ordem "
+            f"canonica de classes ({CLASS_ORDER}); as metricas abaixo sairiam "
+            f"trocadas"
+        ]
+
+    calib = load_json(results_dir / "CALIBRACAO_filtro.json")
+    max_gap = calib["combined_gap"]
+    lexicon = induce_lexicon(
+        read_jsonl(data_dir / "splits" / "train.jsonl"), max_gap, calib["min_freq"]
+    )
+    if len(lexicon) != calib["lexicon_size"]:
+        failures.append(
+            f"lexico induzido do train com min_freq={calib['min_freq']}: "
+            f"{len(lexicon)} formas, mas CALIBRACAO_filtro.json registra "
+            f"{calib['lexicon_size']}"
+        )
+    elif verbose:
+        print(f"  ok  lexico do train: {len(lexicon)} formas")
+
+    candidates = [
+        candidate
+        for doc in read_jsonl(data_dir / "splits" / "dev.jsonl")
+        for candidate in iter_candidate_pairs(doc, max_gap=max_gap)
+    ]
+    target_pairs = [c for c in candidates if c["label"] == FASE2_TARGET_CLASS]
+    coverage = sum(
+        1 for c in target_pairs if is_cue(c["e1"], lexicon)
+    ) / len(target_pairs)
+    if abs(coverage - DEV_COVERAGE_CLAIM) > 0.00005:
+        failures.append(
+            f"cobertura do lexico no dev: texto diz {DEV_COVERAGE_CLAIM}, o "
+            f"corpus da {coverage:.4f}"
+        )
+    elif verbose:
+        print(f"  ok  cobertura do lexico no dev: {coverage:.4f}")
+
+    y_true = [CLASS_ORDER.index(c["label"]) for c in candidates]
+    y_pred = predict_rule(candidates, lexicon, calib["rule"], calib["rule_gap"])
+    f1 = class_metrics(y_true, y_pred, CLASS_ORDER.index(FASE2_TARGET_CLASS))["f1"]
+    if abs(f1 - DEV_RULE_F1_CLAIM) > 0.00005:
+        failures.append(
+            f"F1 da regra {calib['rule']} (gap <= {calib['rule_gap']}) no dev: "
+            f"texto diz {DEV_RULE_F1_CLAIM}, o corpus da {f1:.4f}"
+        )
+    elif verbose:
+        print(f"  ok  F1 da regra pura no dev: {f1:.4f}")
+    return failures
+
+
+def check_offset_alignment(data_dir: Path, verbose: bool) -> list[str]:
+    """Confere as fracoes de entidades bem ancoradas citadas na Secao 7.4.
+
+    A ameaca a validade descrita la e uma propriedade do corpus, nao um
+    resultado de experimento, entao a fonte e `data/splits/` e nao `results/`.
+    """
+    failures = []
+    exact_pct = {}
+    for split in SPLIT_ORDER:
+        exact = total = 0
+        for doc in read_jsonl(data_dir / "splits" / f"{split}.jsonl"):
+            text = doc["text"]
+            for entity in doc["entities"]:
+                total += 1
+                if text[entity["start"]:entity["end"]] == entity["text"]:
+                    exact += 1
+        exact_pct[split] = 100.0 * exact / total
+        expected = OFFSET_EXACT_CLAIMS[split]
+        if abs(exact_pct[split] - expected) > 0.05:
+            failures.append(
+                f"offsets exatos em {split}: texto diz {expected}%, o corpus da "
+                f"{exact_pct[split]:.1f}%"
+            )
+        elif verbose:
+            print(f"  ok  offsets exatos em {split}: {expected}%")
+
+    # "em cerca de 36% das entidades do conjunto de teste": complemento do
+    # valor acima, com a tolerancia frouxa que o "cerca de" autoriza.
+    misaligned = 100.0 - exact_pct["test"]
+    if abs(misaligned - OFFSET_MISALIGNED_TEST_CLAIM) > 1.0:
+        failures.append(
+            f"entidades deslocadas no teste: texto diz cerca de "
+            f"{OFFSET_MISALIGNED_TEST_CLAIM:.0f}%, o corpus da {misaligned:.1f}%"
+        )
+    elif verbose:
+        print(f"  ok  entidades deslocadas no teste: {misaligned:.1f}%")
+    return failures
+
+
+def check_auditoria_teto(
+    results_dir: Path, systems: dict[str, dict], verbose: bool
+) -> list[str]:
+    """Confere o teto hipotetico de precisao e F1 citado na Secao 7.2.
+
+    O teto nao e um campo de `AUDITORIA_fp_negation_of.json`: ele e derivado dos
+    TP/FN da execucao sorteada com os FP que a auditoria nao atribui ao modelo.
+    Recalcula-lo aqui e o que impede o texto de citar um teto que ja nao
+    corresponde a contagem publicada -- foi justamente um deslocamento de uma
+    casa nesse par de numeros que precisou ser corrigido antes de o texto
+    entrar.
+    """
+    failures = []
+    audit = load_json(results_dir / "AUDITORIA_fp_negation_of.json")
+    drawn = audit["drawn_run"]
+    if drawn not in systems:
+        return [
+            f"auditoria: a execucao sorteada ({drawn}) nao esta entre os "
+            f"sistemas da fase 2 -- o sorteio ou os sidecars mudaram"
+        ]
+    metrics = systems[drawn]
+
+    # Os FP contados um a um pelo relatorio tem de ser os FP do sidecar.
+    if metrics["fp"] != audit["n_fp"]:
+        failures.append(
+            f"auditoria: o relatorio classifica {audit['n_fp']} falsos "
+            f"positivos, mas {drawn}.preds.json tem {metrics['fp']}"
+        )
+    elif verbose:
+        print(f"  ok  auditoria: {audit['n_fp']} FP, igual ao sidecar")
+
+    counts = audit["counts"]
+    for kind, expected in AUDIT_SHARE_PCT.items():
+        share = 100.0 * counts[kind] / audit["n_fp"]
+        if abs(share - expected) > 0.05:
+            failures.append(
+                f"auditoria, {kind}: texto diz {expected}% dos FP, as contagens "
+                f"dao {share:.1f}%"
+            )
+        elif verbose:
+            print(f"  ok  auditoria, {kind}: {expected}%")
+
+    model_errors = counts["erro do modelo"]
+    non_model = audit["n_fp"] - model_errors
+    if non_model != AUDIT_NON_MODEL_FP:
+        failures.append(
+            f"auditoria: o texto fala em {AUDIT_NON_MODEL_FP} casos que nao "
+            f"configuram erro de leitura clinica, as contagens dao {non_model}"
+        )
+    elif verbose:
+        print(f"  ok  auditoria: {non_model} FP fora de erro do modelo")
+
+    # Teto: os FP que nao sao erro do modelo passam a contar como acerto. Os FN
+    # continuam contando, porque a auditoria nao os examinou.
+    tp, fn = metrics["tp"], metrics["fn"]
+    ceiling_precision = tp / (tp + model_errors)
+    ceiling_f1 = 2 * tp / (2 * tp + model_errors + fn)
+    for measure, expected, actual in (
+        ("precisao", AUDIT_CEILING_PRECISION, ceiling_precision),
+        ("F1", AUDIT_CEILING_F1, ceiling_f1),
+    ):
+        if abs(actual - expected) > 0.00005:
+            failures.append(
+                f"teto hipotetico da auditoria ({measure}): texto diz "
+                f"{expected}, o par (sidecar, contagens) da {actual:.4f}"
+            )
+        elif verbose:
+            print(f"  ok  teto hipotetico, {measure}: {expected} ({actual:.4f})")
+    return failures
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Confere os numeros do TCC contra results/ e data/.",
     )
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=DEFAULT_DATA_DIR,
+        help=(
+            "corpus e splits congelados; fonte das afirmacoes do dev e dos "
+            "offsets (padrao: data/)."
+        ),
+    )
     parser.add_argument("--tcc-src", type=Path, default=TCC_SRC)
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args(argv)
 
     try:
         ghost_failures, pending = check_ghost_paths(args.tcc_src, args.verbose)
+        # Carregado uma vez e passado adiante: as tres conferencias da fase 2
+        # falam dos mesmos nove vetores de predicao.
+        systems = load_fase2_systems(args.results_dir)
         failures = (
             check_claims(args.results_dir, args.verbose)
             + check_significance_reading(args.results_dir, args.verbose)
+            + check_fase2_systems(systems, args.verbose)
+            + check_fase2_significance(args.results_dir, systems, args.verbose)
+            + check_auditoria_teto(args.results_dir, systems, args.verbose)
+            + check_fase2_dev(args.results_dir, args.data_dir, args.verbose)
+            + check_offset_alignment(args.data_dir, args.verbose)
             + ghost_failures
             + check_stale_numbers(args.tcc_src, args.verbose)
             + check_inputs(args.tcc_src, args.verbose)
         )
-    except (MissingResultError, KeyError, IndexError) as error:
+    except (MissingResultError, KeyError, IndexError, ValueError) as error:
         print(f"ERRO ao ler a fonte: {error}", file=sys.stderr)
         print(
             "  Rode `python scripts/make_tcc_eda.py` para (re)gerar "
@@ -508,11 +1061,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  - {failure}", file=sys.stderr)
         return 1
 
+    total = (
+        len(CLAIMS)
+        + len(AMPLITUDE_CLAIMS)
+        + 4 * len(FASE2_SYSTEM_CLAIMS)
+        + 2 * len(FASE2_RANGE_CLAIMS)
+        + 3 * len(FASE2_SIGNIFICANCE_CLAIMS)
+        + len(AUDIT_SHARE_PCT)
+        + 3  # os 24 casos e o par (precisão, F1) do teto hipotético
+        + 2  # cobertura do léxico e F1 da regra pura, no dev
+        + len(OFFSET_EXACT_CLAIMS)
+        + 1  # as entidades deslocadas no teste
+    )
     print(
-        f"OK: {len(CLAIMS) + len(AMPLITUDE_CLAIMS)} afirmações numéricas do texto "
-        f"conferem com results/; nenhum dos dois testes rejeita H0, e a direção "
-        f"do McNemar e o sinal da métrica-alvo batem com o texto nas duas "
-        f"sementes; nenhum caminho fantasma novo; "
+        f"OK: {total} afirmações numéricas do texto conferem com results/ e "
+        f"data/; nenhum dos dois testes rejeita H0, e a direção do McNemar e o "
+        f"sinal da métrica-alvo batem com o texto nas duas sementes; as "
+        f"dezesseis comparações da fase 2 têm IC95% acima de zero e os quatro "
+        f"intervalos da regra pura contêm o zero; nenhum caminho fantasma novo; "
         f"nenhum dos {len(STALE_NUMBERS)} números obsoletos na prosa; todos os "
         f"\\input{{tabelas/...}} existem."
     )

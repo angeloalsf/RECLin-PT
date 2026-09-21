@@ -161,7 +161,7 @@ estável entre execuções.
 | | arquivo (README) | nova | |
 |---|---|---|---|
 | **s42** | Δ = −0,0119; IC95 [−0,0489; +0,0248]; p = 0,521 → não significativo | Δ = −0,0149; IC95 [−0,0509; +0,0209]; p = 0,4204 → não significativo | conclusão preservada |
-| **s43** | Δ = **+0,0466**; IC95 [+0,0123; +0,0815]; p = 0,0078 → **significativo** | Δ = **+0,0204**; IC95 [−0,0164; +0,0573]; p = 0,2804 → **não significativo** | **perde a significância** |
+| **s43** | Δ = **+0,0466**; IC95 [+0,0123; +0,0815]; p = 0,0078 → **significativo** | Δ = **+0,0204**; IC95 [−0,0176; +0,0575]; p = 0,2878 → **não significativo** | **perde a significância** |
 
 O único resultado significativo que a rodada de 10-12/09 tinha (a vantagem do
 BioBERTpt em `negation_of` na s43) desaparece: o Δ observado cai 2,3× e o IC95

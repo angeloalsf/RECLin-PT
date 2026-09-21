@@ -63,6 +63,11 @@ MODEL_SLUGS = {
     "neuralmind/bert-base-portuguese-cased": "bertimbau",
 }
 
+# Caminho inverso: do apelido curto de volta ao checkpoint. As chaves dos
+# arquivos de `results/` carregam o apelido, e e por ele que a fase 2 encontra o
+# rotulo publicado de cada sistema.
+SLUG_MODELS = {slug: model for model, slug in MODEL_SLUGS.items()}
+
 # Ordem em que os baselines aparecem nas tabelas e nas figuras: clinico
 # primeiro (e a hipotese sob teste), geral depois.
 BASELINE_ORDER = ["biobertpt", "bertimbau"]
@@ -145,6 +150,125 @@ def load_significance(results_dir: Path, seed: int) -> dict:
     return load_json(
         results_dir / f"significance_biobertpt_vs_bertimbau_seed{seed}.json"
     )
+
+
+# --------------------------------------------------------------------------- #
+# Fase 2: sistemas pos-hoc sobre as predicoes salvas                           #
+# --------------------------------------------------------------------------- #
+# `scripts/run_fase2_test.py` grava as predicoes dos cinco sistemas da fase 2
+# (as quatro execucoes filtradas e a regra pura) em `results/<chave>.preds.json`,
+# no MESMO espaco de candidatos e com o MESMO `y_true` dos sidecars dos
+# baselines. As metricas abaixo sao derivadas desses vetores, e nao lidas de um
+# resumo ja calculado: assim a tabela do TCC, a conferencia de numeros e o teste
+# pareado leem todos a mesma fonte primaria. `results/FASE2_test_summary.json`
+# continua existindo como registro da execucao, mas nao e fonte de numero
+# publicado.
+
+# Chaves dos sistemas, na ordem em que a Tabela da Secao 6.7 os lista. A ordem
+# e `for seed in SEEDS for slug in BASELINE_ORDER`, que e a de `RUNS` em
+# `run_fase2_test.py`: clinico antes de geral, semente 42 antes de 43.
+FASE2_BASELINE_KEYS = [
+    f"baseline_{slug}_seed{seed}" for seed in SEEDS for slug in BASELINE_ORDER
+]
+FASE2_FILTER_KEYS = [
+    f"filtro_{slug}_seed{seed}" for seed in SEEDS for slug in BASELINE_ORDER
+]
+FASE2_RULE_KEY = "regra_pura"
+FASE2_SYSTEM_KEYS = FASE2_BASELINE_KEYS + FASE2_FILTER_KEYS + [FASE2_RULE_KEY]
+
+# Classe que a fase 2 ataca. Tudo o que a Secao 6.7 chama de precisao, recall e
+# F1 sem qualificar e desta classe.
+FASE2_TARGET_CLASS = "negation_of"
+
+
+def load_preds(results_dir: Path, key: str) -> dict:
+    """Carrega um `<chave>.preds.json` e valida o espaco de rotulos.
+
+    O campo `labels` do sidecar e a ordem em que `y_true`/`y_pred` codificam as
+    classes. Se ela nao for a ordem canonica, os indices abaixo significariam
+    outra coisa e as metricas sairiam trocadas em silencio.
+    """
+    data = load_json(results_dir / f"{key}.preds.json")
+    if data.get("labels") != CLASS_ORDER:
+        raise ValueError(
+            f"{key}.preds.json: labels {data.get('labels')} diferem da ordem "
+            f"canonica {CLASS_ORDER}."
+        )
+    return data
+
+
+def class_metrics(y_true: list[int], y_pred: list[int], index: int) -> dict:
+    """Precisao, recall e F1 de UMA classe, pela sua posicao em `CLASS_ORDER`.
+
+    Mesma definicao de `scripts/make_rule_baseline.score`, reescrita aqui para
+    que `scripts/` nao precise de `src/` no `sys.path` (o TCC e compilado em
+    container sem o pacote instalado, e e esta camada que gera as tabelas).
+    """
+    tp = sum(1 for t, p in zip(y_true, y_pred) if t == index and p == index)
+    fp = sum(1 for t, p in zip(y_true, y_pred) if t != index and p == index)
+    fn = sum(1 for t, p in zip(y_true, y_pred) if t == index and p != index)
+    precision = tp / (tp + fp) if tp + fp else 0.0
+    recall = tp / (tp + fn) if tp + fn else 0.0
+    den = 2 * tp + fp + fn
+    return {
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "precision": precision,
+        "recall": recall,
+        "f1": (2 * tp / den) if den else 0.0,
+    }
+
+
+def macro_f1(y_true: list[int], y_pred: list[int]) -> float:
+    """Media aritmetica do F1 das tres classes, sem ponderar por suporte."""
+    return sum(
+        class_metrics(y_true, y_pred, index)["f1"]
+        for index in range(len(CLASS_ORDER))
+    ) / len(CLASS_ORDER)
+
+
+def preds_metrics(preds: dict) -> dict:
+    """Metricas da classe-alvo mais o macro-F1, de um sidecar de predicoes."""
+    y_true, y_pred = preds["y_true"], preds["y_pred"]
+    target = CLASS_ORDER.index(FASE2_TARGET_CLASS)
+    metrics = class_metrics(y_true, y_pred, target)
+    metrics["macro_f1"] = macro_f1(y_true, y_pred)
+    metrics["f1_by_class"] = {
+        name: class_metrics(y_true, y_pred, index)["f1"]
+        for index, name in enumerate(CLASS_ORDER)
+    }
+    metrics["n"] = len(y_true)
+    return metrics
+
+
+def load_fase2_systems(results_dir: Path) -> dict[str, dict]:
+    """Os nove sistemas da Secao 6.7, com as metricas recalculadas do sidecar.
+
+    Exige que os nove compartilhem o `y_true`. E a mesma condicao que o teste
+    pareado impoe (`run_fase2_significance.py` aborta quando ela falha), e sem
+    ela a tabela compararia sistemas medidos em espacos de candidatos
+    diferentes.
+    """
+    systems: dict[str, dict] = {}
+    reference: list[int] | None = None
+    for key in FASE2_SYSTEM_KEYS:
+        preds = load_preds(results_dir, key)
+        if reference is None:
+            reference = preds["y_true"]
+        elif preds["y_true"] != reference:
+            raise ValueError(
+                f"{key}.preds.json nao esta no mesmo espaco de candidatos de "
+                f"{FASE2_SYSTEM_KEYS[0]}.preds.json: o `y_true` difere. "
+                f"Regere a fase 2 com `python scripts/run_fase2_test.py`."
+            )
+        systems[key] = {"preds": preds, **preds_metrics(preds)}
+    return systems
+
+
+def load_fase2_significance(results_dir: Path, a_key: str, b_key: str) -> dict:
+    """Comparacao pareada `<a>` contra `<b>` gravada por `run_fase2_significance`."""
+    return load_json(results_dir / f"significance_{a_key}_vs_{b_key}.json")
 
 
 def load_pipeline_config(results_dir: Path, seeds: list[int] | None = None) -> dict:
@@ -350,6 +474,16 @@ def display_path(path: Path) -> str:
 def ptbr(value: float, decimals: int = 3) -> str:
     """Formata com virgula decimal, como no corpo do artigo."""
     return f"{value:.{decimals}f}".replace(".", ",")
+
+
+def signed(value: float, decimals: int = 4) -> str:
+    """Formata com sinal explicito, para diferencas e limites de intervalo.
+
+    O `+` dos positivos nao e enfeite: numa coluna em que o sinal e a leitura
+    (a diferenca favorece A ou B?), imprimir `0,0780` deixaria o leitor inferir
+    o sinal da ausencia de `-`.
+    """
+    return f"{'+' if value >= 0 else ''}{ptbr(value, decimals)}"
 
 
 def ptbr_int(value: int) -> str:

@@ -8,7 +8,9 @@ construção, conduz-se um \textbf{experimento controlado de \emph{baselines}} q
 responde a uma pergunta de projeto anterior a qualquer aprimoramento: \emph{o
 pré-treinamento clínico importa para a extração de relações em textos médicos em
 português?} A resposta determina sobre qual \emph{encoder} o RECLin-PT deve ser
-construído.
+construído. Respondida essa pergunta, a Seção~\ref{sec:reclin} descreve a segunda
+etapa, em que o RECLin-PT é construído sobre a base assim escolhida por meio de um
+filtro de pista lexical calibrado no conjunto de desenvolvimento.
 
 \section{Visão geral e papel dos \emph{baselines}}
 \label{sec:visao_baselines}
@@ -193,3 +195,147 @@ Para a pergunta desta etapa, porém, a ausência do tipo é inclusive convenient
 Como nenhum dos dois \emph{encoders} recebe a informação semântica pronta, a
 comparação mede a capacidade de cada um de \emph{inferi-la} do texto, e é
 exatamente aí que o pré-treinamento de domínio deveria fazer diferença.
+
+\section{Construção do RECLin-PT}
+\label{sec:reclin}
+
+Respondida a pergunta de projeto, esta seção descreve a segunda etapa da
+construção. A especialização é dirigida à classe \texttt{negation\_of}, pelo
+critério de criticidade clínica enunciado na Seção~\ref{sec:motivacao}, e toma a
+forma de um \textbf{filtro de pista lexical} aplicado às predições do
+\emph{encoder} já ajustado.
+
+\subsection{O diagnóstico que motiva o filtro}
+
+O ponto de partida está nas colunas de precisão e \emph{recall} da classe-alvo.
+Nas quatro execuções dos \emph{baselines}, o \emph{recall} de
+\texttt{negation\_of} varia entre $0{,}9145$ e $0{,}9342$, ao passo que a precisão
+fica entre $0{,}5547$ e $0{,}6167$ (Tabela~\ref{tab:fase2_resultados}). O gargalo
+da classe é, portanto, de \textbf{precisão}, e não de cobertura. O modelo localiza
+o contexto de negação e o atribui ao par errado, produzindo falsos positivos em
+candidatos que sequer começam por uma expressão de negação. Um ganho nessa classe
+depende, por esse motivo, de restringir \emph{onde} ela pode ser predita, e não de
+deslocar a fronteira entre \texttt{negation\_of} e \texttt{associated\_with}.
+
+\subsection{Indução do léxico de gatilhos}
+
+Toda relação \texttt{negation\_of} anotada no SemClinBr tem, como primeiro
+argumento, uma expressão que marca a negação (``sem'', ``nega'', ``não'',
+``ausência'', além das negações morfológicas registradas no
+Apêndice~\ref{ap:lexico}). O léxico de gatilhos empregado pelo filtro
+(\texttt{src/negation\_lexicon.py}) é induzido \textbf{exclusivamente do conjunto
+de treino}. Induzi-lo do corpus completo configuraria vazamento de dados, pela
+mesma razão que motiva o particionamento em nível de documento
+(Seção~\ref{sec:particao}), e comprometeria a leitura de qualquer ganho medido no
+conjunto de teste.
+
+A indução percorre o \emph{espaço de candidatos} do treino, gerado por
+\texttt{iter\_candidate\_pairs} sob a mesma janela \texttt{max\_gap}$=25$
+(Seção~\ref{sec:candidatos}), e não o conjunto de relações anotadas. Os dois
+diferem, uma vez que parte das relações \emph{gold} fica fora da janela e nunca
+chega a ser candidata (Seção~\ref{sec:teto_recall}). Como o filtro opera sobre
+predições feitas no espaço de candidatos, o léxico é induzido desse mesmo espaço,
+de modo que ambos falem do mesmo objeto. São contadas as formas de superfície de
+$e_1$ nos pares candidatos rotulados \texttt{negation\_of}, e retêm-se aquelas
+cuja frequência atinge o limiar \texttt{min\_freq}.
+
+As formas são comparadas sob normalização por decomposição NFKD, remoção de
+diacríticos, colapso de espaço em branco e \emph{casefold}. A remoção de
+diacríticos não é cosmética. No corpus, a mesma forma ocorre acentuada e não
+acentuada (``NÃO'' e ``NAO'', ``AUSÊNCIA'' e ``AUSENCIA''), e sem essa
+normalização um único gatilho se partiria em duas formas, cada uma delas abaixo
+do limiar de frequência por artefato de digitação.
+
+\subsection{A regra de rebaixamento}
+
+A regra de decisão atua sobre predições já produzidas e é de \textbf{rebaixamento}.
+Toda predição \texttt{negation\_of} cujo primeiro argumento não pertença ao léxico
+é reescrita como \texttt{no\_relation}. Nenhuma predição é promovida a
+\texttt{negation\_of}, e nenhuma outra classe é tocada.
+
+Dessa assimetria decorrem duas consequências que importam para a leitura dos
+resultados. A primeira é que o F1 de \texttt{associated\_with} permanece inalterado
+em todos os dígitos nas quatro execuções, de modo que o ganho de macro-F1 provém
+exclusivamente das outras duas classes. A segunda é que o filtro não pode elevar o
+\emph{recall}, apenas a precisão, e a cobertura do léxico passa a ser um teto de
+\emph{recall} da classe-alvo, somado ao teto já imposto pela janela
+(Seção~\ref{sec:teto_recall}).
+
+Convém precisar o que esta etapa é e o que ela não é. \textbf{Nenhum modelo é
+retreinado aqui.} Os pesos empregados são os das execuções reportadas no
+Capítulo~\ref{cap:experimentos}, e o RECLin-PT resultante \textbf{não possui pesos
+próprios}. Trata-se de um sistema híbrido, em que um componente determinístico
+restringe o espaço de decisão e o \emph{encoder} já ajustado escolhe, dentro desse
+espaço, qual entidade é negada. O filtro tampouco representa um retorno a
+abordagens puramente léxicas como o NegEx \cite{chapman_2001_negex}, pois ele não
+decide a relação. Quem decide o alvo da negação continua sendo o classificador
+contextual, e a Seção~\ref{sec:regra_pura} introduz o sistema de referência que
+mede quanto a restrição léxica alcança sozinha.
+
+\subsection{Calibração de \texttt{min\_freq} no conjunto de desenvolvimento}
+\label{sec:calibracao}
+
+O único parâmetro livre do filtro é o limiar \texttt{min\_freq}, e a sua escolha é
+feita \textbf{no conjunto de desenvolvimento}, nunca no de teste. O critério foi
+fixado antes da varredura. Seleciona-se o \texttt{min\_freq} que maximiza a
+\emph{média} do F1 de \texttt{negation\_of} no desenvolvimento sobre as quatro
+execuções, com empate resolvido pelo menor limiar, que corresponde ao léxico de
+maior cobertura e, portanto, ao maior teto de \emph{recall}. A varredura sobre
+$\{1,\,2,\,3,\,5,\,10\}$ seleciona \texttt{min\_freq}$=3$, com léxico de $11$
+formas e cobertura de $0{,}9467$ dos pares \texttt{negation\_of} do
+desenvolvimento.
+
+Essa escolha de partição é o ponto metodologicamente decisivo da etapa, e o seu
+custo é mensurável. Uma análise exploratória anterior, conduzida diretamente sobre
+o conjunto de teste, encontrava ganho monotônico com léxicos cada vez mais
+restritivos, e o seu melhor valor estava em \texttt{min\_freq}$=10$. No conjunto
+de desenvolvimento, por sua vez, o máximo é \emph{interior} e recai sobre
+\texttt{min\_freq}$=3$, porque a cobertura começa a diminuir antes que o ganho de
+precisão a compense. A configuração metodologicamente defensável não é, portanto,
+a que o conjunto de teste premiaria, e a distância entre as duas é exatamente o que
+a disciplina de calibração custa. Registrar esse custo é parte do argumento, e não
+um detalhe de implementação, uma vez que é ele que sustenta que o ganho reportado
+no Capítulo~\ref{cap:experimentos} não decorre de ajuste ao conjunto de avaliação.
+O conjunto de teste foi lido uma única vez por sistema, com a configuração já
+fechada, conforme o protocolo da Seção~\ref{sec:avaliacao}.
+
+A mesma calibração avaliou ainda um sistema combinado, em que a condição de
+distância da regra descrita a seguir seria aplicada também sobre as predições já
+filtradas. O limiar vencedor no conjunto de desenvolvimento desliga essa condição,
+de modo que o sistema combinado colapsa no filtro isolado. Ele não foi, por esse
+motivo, levado ao conjunto de teste como sistema separado.
+
+\subsection{A regra pura como terceiro sistema de referência}
+\label{sec:regra_pura}
+
+A comparação entre dois \emph{encoders} não responde à pergunta que se formula em
+seguida. O que o modelo contextual acrescenta sobre uma regra fixa? Para
+respondê-la, define-se um terceiro sistema de referência que dispensa qualquer
+rede neural e opera somente sobre o mesmo léxico induzido do treino
+(\texttt{scripts/make\_rule\_baseline.py}). Quatro variantes foram consideradas,
+todas partindo da condição de que $e_1$ seja um gatilho do léxico, e sendo
+\texttt{gap} a distância em caracteres entre os \emph{spans}, a mesma grandeza
+empregada na geração de candidatos:
+
+\begin{enumerate}
+  \item \textbf{R1}: todo par cujo $e_1$ é gatilho recebe \texttt{negation\_of}.
+  \item \textbf{R2}: R1 restrita ao alvo mais próximo de cada gatilho, um alvo por
+        gatilho.
+  \item \textbf{R3}: R1 restrita aos pares cujo \texttt{gap} não excede um limiar.
+  \item \textbf{R4}: R1 sob as duas restrições anteriores simultaneamente.
+\end{enumerate}
+
+A variante e o limiar também são escolhidos no conjunto de desenvolvimento, pelo
+F1 de \texttt{negation\_of}, com empates resolvidos pela regra de menor índice e
+depois pelo menor limiar. A escolha recai sobre \textbf{R3 com \texttt{gap}$\leq
+1$}, que alcança F1 de $0{,}6935$ no desenvolvimento. A regra nunca prediz
+\texttt{associated\_with} e não constitui, por isso, um sistema completo de
+extração de relações. Ela entra como piso da classe-alvo, e o seu papel é delimitar
+quanto do ganho do RECLin-PT seria atribuível à restrição lexical isolada.
+
+As predições dos cinco sistemas introduzidos nesta seção são gravadas no
+\textbf{espaço completo} de candidatos da partição, na mesma ordem e com o mesmo
+\emph{gold} dos arquivos de predição das execuções dos \emph{baselines}. Essa
+condição é o que permite compará-los sob o mesmo teste pareado aplicado no
+Capítulo~\ref{cap:experimentos}, que aborta quando os rótulos de referência de
+dois sistemas divergem.

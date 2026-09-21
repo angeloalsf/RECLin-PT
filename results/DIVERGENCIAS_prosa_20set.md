@@ -45,8 +45,8 @@ Teste (n = 19.210):
 |---|---|---|---|---|---|---|---|---|
 | BioBERTpt s42 | 0,693 | 0,696 | 0,555 | 0,934 | 0,442 | 0,942 | 0,478 | 0,894 |
 | BioBERTpt s43 | 0,713 | 0,739 | 0,617 | 0,921 | 0,453 | 0,946 | 0,485 | 0,902 |
-| BERTimbau s42 | 0,698 | 0,711 | 0,582 | 0,915 | 0,441 | 0,941 | 0,476 | 0,893 |
-| BERTimbau s43 | 0,704 | 0,718 | 0,592 | 0,915 | 0,447 | 0,945 | 0,478 | 0,900 |
+| BERTimbau s42 | 0,698 | 0,711 | 0,582 | 0,914 | 0,441 | 0,941 | 0,476 | 0,893 |
+| BERTimbau s43 | 0,704 | 0,718 | 0,592 | 0,914 | 0,447 | 0,945 | 0,478 | 0,900 |
 
 Média e amplitude entre sementes:
 
@@ -81,7 +81,7 @@ BERT s42 0,674 / s43 0,525 (**Δ 0,149**).
 | 77 | macro-F1 0,686 (BERTimbau) e 0,675 (BioBERTpt) | 0,698 e 0,693 |
 | 78 | diferença de 0,011 a favor do geral | **0,004** |
 | 79–80 | F1 `negation_of` 0,694 (BERTimbau) contra 0,677 (BioBERTpt) | 0,711 e 0,696 |
-| 82 | recall na negação *idêntico*, 0,901 nos dois | **0,934** (Bio) e **0,915** (BERT) — não são mais iguais |
+| 82 | recall na negação *idêntico*, 0,901 nos dois | **0,934** (Bio) e **0,914** (BERT) — não são mais iguais |
 | 83 | precisão ≈ 0,54–0,56 | 0,555 (Bio) e 0,582 (BERT) → ≈ 0,55–0,58 |
 | 84 | F1 de `associated_with` ≈ 0,42–0,43 | 0,442 e 0,441 → ≈ 0,44 |
 | 140 | diferença observada de −0,017 | **−0,015** |
@@ -183,7 +183,7 @@ F1 `negation_of`; BioBERTpt leva `associated_with`, `no_relation`, MCC e acurác
 O texto de §6.3 que liga a "vantagem em `associated_with`" ao *encoder* geral
 (linha 150) ficou invertido.
 
-**8. O recall de `negation_of` deixou de ser idêntico** (0,934 × 0,915). A palavra
+**8. O recall de `negation_of` deixou de ser idêntico** (0,934 × 0,914). A palavra
 *idêntico* na linha 82 precisa sair.
 
 ---

@@ -1,0 +1,103 @@
+\chapter[Conclusão]{Conclusão}
+\label{cap:conclusao}
+
+Este trabalho abordou a extração de relações entre entidades clínicas em português
+sobre o corpus SemClinBr, no espaço de rótulos \texttt{negation\_of},
+\texttt{associated\_with} e \texttt{no\_relation}. Como etapa inicial do
+desenvolvimento do \textbf{RECLin-PT}, conduziu-se um experimento controlado de
+\emph{baselines} para responder a uma pergunta que fundamenta as decisões de
+projeto seguintes: o pré-treinamento clínico importa para a extração de relações em
+textos médicos em português? A ênfase recaiu, simultaneamente, sobre a resposta a
+essa pergunta e sobre a construção de uma cadeia experimental reprodutível, do
+texto bruto às métricas finais.
+
+\section{Contribuições}
+
+As principais contribuições são: (i) um \emph{parser} fiel e determinístico do
+formato XML do SemClinBr, com verificação de sanidade e correção controlada de
+\emph{offsets}; (ii) uma caracterização do corpus que evidencia o desbalanceamento
+das relações e a proximidade entre entidades relacionadas, em particular a
+quase adjacência dos pares de negação; (iii) um protocolo de particionamento em
+nível de documento, estratificado e congelado, que previne vazamento de dados;
+(iv) um gerador determinístico de pares candidatos compartilhado por todos os
+modelos, com o teto de \emph{recall} imposto pela janela quantificado por partição
+e por classe; (v) uma infraestrutura experimental de paridade total, em que os dois
+\emph{encoders} comparados diferem apenas no \emph{checkpoint} de pré-treino; e
+(vi) uma comparação empírica com teste de significância pareado entre um
+\emph{encoder} clínico e um geral sobre a mesma tarefa.
+
+Quanto aos resultados, não se observou vantagem \emph{consistente} do
+pré-treinamento clínico. Na semente de referência ($42$), a diferença no F1 de
+\texttt{negation\_of} entre BioBERTpt e BERTimbau é de $0{,}017$ a favor do geral e
+não é estatisticamente significativa na métrica-alvo (\emph{bootstrap} pareado
+IC95\% $[-0{,}053;\,+0{,}018]$, $p=0{,}345$); na semente $43$, o mesmo
+\emph{bootstrap} sobre essa métrica inverte o sinal e passa a favorecer o BioBERTpt
+clínico, agora de forma significativa (IC95\% $[+0{,}016;\,+0{,}090]$,
+$p=0{,}0054$). Nem o veredito estatístico nem a \emph{direção} da diferença
+\textbf{na classe-alvo}, portanto, são estáveis entre sementes, pois a variação de
+inicialização de um mesmo modelo ($0{,}078$ de amplitude no BioBERTpt) supera com
+folga a diferença entre os dois modelos. Essa instabilidade é da métrica-alvo e
+\textbf{não se estende ao padrão global de acertos}. O teste de McNemar, que incide
+sobre as três classes, rejeita a hipótese nula nas duas sementes e aponta nas duas
+para o \emph{encoder} geral ($540$ contra $695$ discordâncias na semente $42$; $442$
+contra $624$ na $43$). O que é estável, além dessa direção agregada, é a assimetria
+de dispersão. O \emph{encoder} geral acompanha o clínico em macro-F1 médio
+($0{,}695$ contra $0{,}694$) com cerca de $60\%$ dos parâmetros e com desempenho
+cerca de dez vezes mais estável entre reinicializações na métrica-alvo.
+
+\section{Trabalhos futuros}
+
+Entregar um estudo de \emph{baselines} e deixar a especialização do modelo para a fase
+seguinte é uma decisão de sequenciamento, e não uma lacuna. A escolha do \emph{encoder}
+é pré-requisito de qualquer aprimoramento posterior. Fixada a base por expectativa
+(e a expectativa de partida, registrada na Seção~\ref{sec:motivacao}, era a de
+vantagem do pré-treino clínico), todo ganho ou perda medido depois ficaria
+confundido com o efeito do \emph{checkpoint}, sem meio de separar um do outro. E o
+resultado obtido é, ele próprio, um achado de consequência prática, e não um resultado
+nulo vazio. Sob teste pareado e sob duas sementes de treino, o \emph{encoder} clínico
+não leva vantagem \emph{confiável} nesta tarefa (a diferença medida troca de sinal
+entre sementes), o que libera a construção do RECLin-PT sobre um modelo
+sensivelmente menor. Isso não equivale a custo zero, pois, tomada a média das duas
+sementes, o \emph{encoder} clínico fica $0{,}017$ à frente na métrica-alvo
+($0{,}715$ contra $0{,}698$), e é esse o custo esperado da escolha. Ele é, contudo,
+menor que a própria amplitude entre sementes do BioBERTpt ($0{,}078$), o que o
+torna mal estimado por duas execuções. Como registra o
+Capítulo~\ref{cap:relacionados}, não localizamos avaliação controlada equivalente para
+o português, de modo que esse achado não era obtenível por consulta à literatura.
+
+Esses resultados orientam diretamente a fase seguinte. O RECLin-PT não é um trabalho a
+iniciar. Os \emph{baselines} aqui reportados são a sua primeira fase, e o que
+constitui trabalho futuro imediato é a especialização do modelo sobre a base
+escolhida. Como o BERTimbau geral acompanha o clínico em macro-F1 médio, exige cerca de $60\%$
+dos parâmetros e varia cerca de dez vezes menos entre sementes na métrica-alvo, ele se
+apresenta como a base mais atraente por eficiência e previsibilidade, ressalvado
+que a semente $43$ mostra o clínico à frente na negação, de modo que a escolha se
+apoia em custo e estabilidade, e não em superioridade média demonstrada. Esse refinamento terá como foco o
+aprimoramento da classe \texttt{negation\_of}, a mais crítica para a correta
+interpretação clínica.
+
+Cabe explicitar que essa prioridade não recai sobre a classe de pior desempenho. A
+Seção~\ref{sec:resultados} mostra que \texttt{associated\_with} é a mais difícil das
+três (F1 $\approx 0{,}42$--$0{,}43$, contra $\approx 0{,}68$--$0{,}69$ de
+\texttt{negation\_of}). O critério é de criticidade clínica, e não de facilidade. Uma
+negação lida como afirmação inverte o sentido de um achado no prontuário, ao passo que
+um \texttt{associated\_with} não recuperado empobrece a extração sem alterar o sentido
+do que foi extraído. O teto de \emph{recall} de \texttt{associated\_with} permanece,
+ainda assim, entre as continuidades previstas a seguir.
+
+Como continuidade, prevê-se ainda: estimar o desempenho dos \emph{baselines} sob um
+número maior de sementes de treino, com agregação formal, para obter um intervalo
+de confiança da diferença mais estreito; enriquecer a representação de entrada com
+o \textbf{tipo semântico} das entidades, hoje ausente dos marcadores
+(Seção~\ref{sec:markers_limitacao}), medindo se o ganho difere entre o
+\emph{encoder} clínico e o geral; reavaliar a janela \texttt{max\_gap} da
+geração de pares candidatos, elevando o teto de \emph{recall} de
+\texttt{associated\_with} sem inviabilizar o custo de treino; investigar o
+tratamento explícito do escopo da negação e da direção das relações; estender o
+espaço de relações para além das três classes atuais; avaliar modelos maiores e
+\emph{encoders} multilíngues \cite{conneau_2020_xlmr}; e integrar uma etapa de
+reconhecimento de entidades nomeadas automática, medindo a extração de relações em
+um cenário fim a fim.
+
+O trabalho encontra-se, portanto, em andamento. Os \emph{baselines} aqui reportados
+estabelecem o ponto de partida do RECLin-PT, e não um encerramento.

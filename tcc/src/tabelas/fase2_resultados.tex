@@ -1,0 +1,28 @@
+%% GERADO AUTOMATICAMENTE por scripts/make_tcc_artifacts.py -- nao edite a mao.
+%% Para atualizar: python scripts/make_tcc_artifacts.py
+%% Fonte dos dados: results/*.preds.json + results/CALIBRACAO_filtro.json
+\begin{table}[htbp]
+  \centering
+  \caption{Desempenho na classe \texttt{negation\_of} e macro-F1 no conjunto de teste ($n=19.210$) dos quatro \emph{baselines}, das quatro execuções do RECLin-PT e da regra pura R3. Negrito indica o melhor valor por coluna.}
+  \label{tab:fase2_resultados}
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
+  \begin{tabular}{lcccc}
+  \toprule
+  Sistema & P$_{\text{neg}}$ & R$_{\text{neg}}$ & F1$_{\text{neg}}$ & Macro-F1 \\
+  \midrule
+  BioBERTpt (clínico), semente 42 & 0,5547 & \textbf{0,9342} & 0,6961 & 0,6932 \\
+  BERTimbau (geral), semente 42 & 0,5816 & 0,9145 & 0,7110 & 0,6977 \\
+  BioBERTpt (clínico), semente 43 & 0,6167 & 0,9211 & 0,7388 & 0,7128 \\
+  BERTimbau (geral), semente 43 & 0,5915 & 0,9145 & 0,7183 & 0,7035 \\
+  \midrule
+  RECLin-PT sobre BioBERTpt, semente 42 & 0,7596 & 0,9145 & 0,8299 & 0,7383 \\
+  RECLin-PT sobre BERTimbau, semente 42 & 0,7514 & 0,8947 & 0,8168 & 0,7334 \\
+  RECLin-PT sobre BioBERTpt, semente 43 & \textbf{0,8059} & 0,9013 & \textbf{0,8509} & \textbf{0,7506} \\
+  RECLin-PT sobre BERTimbau, semente 43 & 0,7684 & 0,8947 & 0,8267 & 0,7401 \\
+  \midrule
+  Regra pura R3 (\texttt{gap}$\leq 1$) & 0,6324 & 0,7697 & 0,6944 & 0,5549 \\
+  \bottomrule
+  \end{tabular}}
+  \\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor (\texttt{scripts/run\_fase2\_test.py} $\rightarrow$ \texttt{results/*.preds.json}).}
+\end{table}

@@ -248,3 +248,98 @@ informativa como estimativa de desempenho esperado. Com duas execuções por mod
 nenhuma leitura estatística de direção deve ser tomada como definitiva; o que os
 dados sustentam é que a escolha do \emph{checkpoint} de pré-treino tem, nesta
 tarefa, efeito menor que o da semente de treino.
+
+\section{O RECLin-PT no conjunto de teste}
+\label{sec:fase2_resultados}
+
+As seções anteriores compararam os dois \emph{baselines} entre si. Esta seção
+reporta o sistema construído sobre eles, o RECLin-PT, descrito na
+Seção~\ref{sec:reclin}, e o terceiro sistema de referência introduzido na
+Seção~\ref{sec:regra_pura}. Todos são avaliados sobre o mesmo conjunto de teste de
+$19\,210$ candidatos, sob a configuração fechada no conjunto de desenvolvimento
+(\texttt{min\_freq}$=3$, léxico de $11$ formas e regra R3 com \texttt{gap}$\leq 1$),
+com uma única leitura do teste por sistema.
+
+Convém reiterar que nenhuma das quatro execuções filtradas envolve treino. Elas
+partem das predições salvas da execução correspondente reportada nas seções
+anteriores, às quais a regra de rebaixamento é aplicada, de modo que o RECLin-PT
+compartilha os pesos dos \emph{baselines} e não introduz pesos próprios. A
+configuração de referência é a que aplica o filtro sobre o BERTimbau,
+\emph{encoder} indicado pela Seção~\ref{sec:robustez} por custo e previsibilidade.
+O filtro foi aplicado também ao BioBERTpt, nas duas sementes, para verificar que o
+ganho não depende do \emph{checkpoint} de pré-treino.
+
+\subsection{Desempenho na classe-alvo}
+
+A Tabela~\ref{tab:fase2_resultados} consolida os nove sistemas sob as mesmas
+métricas.
+
+\input{tabelas/fase2_resultados}
+
+O efeito do filtro é de precisão, como o diagnóstico da Seção~\ref{sec:reclin}
+previa. A precisão de \texttt{negation\_of} passa da faixa de
+$0{,}5547$--$0{,}6167$ dos \emph{baselines} para $0{,}7514$--$0{,}8059$, ao custo
+de cerca de dois pontos centesimais de \emph{recall}, que cai de
+$0{,}9145$--$0{,}9342$ para $0{,}8947$--$0{,}9145$. O F1 da classe sobe, em
+consequência, de $0{,}6961$--$0{,}7388$ para $0{,}8168$--$0{,}8509$, e o macro-F1,
+de $0{,}6932$--$0{,}7128$ para $0{,}7334$--$0{,}7506$. O ganho de macro-F1 é
+integralmente atribuível às classes \texttt{negation\_of} e \texttt{no\_relation},
+dado que o F1 de \texttt{associated\_with} permanece inalterado em todos os dígitos
+nas quatro execuções, conforme a regra de rebaixamento faz prever
+(Seção~\ref{sec:reclin}).
+
+A regra pura R3 ocupa a última linha da tabela, e o contraste entre as suas duas
+colunas de F1 merece leitura cuidadosa. Na classe-alvo ela alcança $0{,}6944$,
+valor da mesma ordem dos quatro \emph{baselines}. Em macro-F1 ela fica em
+$0{,}5549$, abaixo de todos os demais sistemas, porque nunca prediz
+\texttt{associated\_with} e zera o F1 dessa classe. Ela é, portanto, um piso alto
+para a negação e não um sistema de extração de relações, e é sob essa leitura que
+entra na comparação seguinte.
+
+\subsection{Significância das dezesseis comparações}
+
+O critério de decisão é o intervalo de confiança de 95\% do \emph{bootstrap}
+pareado sobre o F1 de \texttt{negation\_of}, o mesmo adotado na
+Seção~\ref{sec:significancia} e definido na Seção~\ref{sec:avaliacao}. O teste de
+McNemar não é informativo entre um sistema e a sua própria versão filtrada, uma vez
+que a regra altera predições em uma única direção e torna a tabela de discordâncias
+degenerada por construção. Por esse motivo ele é omitido desta seção.
+
+\input{tabelas/fase2_significancia}
+
+A Tabela~\ref{tab:fase2_significancia} cruza cada uma das quatro execuções do
+RECLin-PT com cada um dos quatro \emph{baselines} oficiais, incluindo as
+comparações cruzadas entre \emph{encoders} e entre sementes. \textbf{As dezesseis
+comparações apresentam intervalo de confiança inteiramente acima de zero}, sem
+exceção, nas duas sementes e nos dois \emph{encoders}. O caso mais desfavorável
+possível é a execução filtrada mais fraca medida contra o \emph{baseline} mais
+forte, isto é, o RECLin-PT sobre o BERTimbau na semente $42$ ($0{,}8168$) contra o
+BioBERTpt na semente $43$ ($0{,}7388$), e mesmo ele produz diferença de $+0{,}0780$
+com IC95\% $[+0{,}0340;\,+0{,}1225]$. Diferentemente da diferença entre os dois
+\emph{baselines} examinada na Seção~\ref{sec:robustez}, o ganho não depende nem do
+\emph{checkpoint} de pré-treino nem da semente de treino.
+
+\subsection{O que a restrição lexical alcança sozinha}
+
+A regra pura R3 foi submetida ao mesmo teste contra os quatro \emph{baselines}, e o
+resultado é o oposto. Contra o BioBERTpt na semente $42$ a diferença é de
+$-0{,}0017$, com IC95\% $[-0{,}0588;\,+0{,}0540]$; contra o BERTimbau na mesma
+semente, de $-0{,}0166$, com IC95\% $[-0{,}0716;\,+0{,}0386]$; contra o BioBERTpt
+na semente $43$, de $-0{,}0444$, com IC95\% $[-0{,}1022;\,+0{,}0145]$; e contra o
+BERTimbau na semente $43$, de $-0{,}0240$, com IC95\% $[-0{,}0818;\,+0{,}0334]$. Os
+quatro intervalos contêm o zero. \textbf{A regra pura não supera nenhum dos
+\emph{baselines} com significância estatística}, e empata estatisticamente com os
+quatro sob o critério adotado.
+
+Esse resultado foi produzido precisamente para ser reportado, e não apesar disso.
+Ele delimita a contribuição do RECLin-PT, que não está na restrição lexical
+isolada. Uma lista de onze formas, aplicada sem modelo algum, alcança na classe-alvo
+o mesmo patamar das quatro execuções ajustadas em GPU, e não mais do que isso.
+
+A leitura conjunta dos dois resultados é o argumento central desta etapa. A
+restrição lexical restringe o espaço de decisão, e o \emph{encoder} decide, dentro
+desse espaço, qual é o alvo correto da negação. Nenhum dos dois basta sozinho. O
+\emph{encoder} isolado localiza o contexto de negação e erra o par, razão pela qual
+a sua precisão na classe não passa de $0{,}6167$. A regra isolada aplica a restrição
+sem decidir o alvo, razão pela qual empata com os \emph{baselines}. O ganho medido
+aparece somente na combinação das duas, que é o que o RECLin-PT é.
