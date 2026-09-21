@@ -279,7 +279,9 @@ métricas.
 O efeito do filtro é de precisão, como o diagnóstico da Seção~\ref{sec:reclin}
 previa. A precisão de \texttt{negation\_of} passa da faixa de
 $0{,}5547$--$0{,}6167$ dos \emph{baselines} para $0{,}7514$--$0{,}8059$, ao custo
-de cerca de dois pontos centesimais de \emph{recall}, que cai de
+de cerca de dois pontos centesimais\footnote{Ponto centesimal é a diferença
+absoluta de $0{,}01$ em uma métrica expressa entre $0$ e $1$, análogo ao ponto
+percentual das métricas expressas em porcentagem.} de \emph{recall}, que cai de
 $0{,}9145$--$0{,}9342$ para $0{,}8947$--$0{,}9145$. O F1 da classe sobe, em
 consequência, de $0{,}6961$--$0{,}7388$ para $0{,}8168$--$0{,}8509$, e o macro-F1,
 de $0{,}6932$--$0{,}7128$ para $0{,}7334$--$0{,}7506$. O ganho de macro-F1 é
@@ -301,9 +303,20 @@ entra na comparação seguinte.
 O critério de decisão é o intervalo de confiança de 95\% do \emph{bootstrap}
 pareado sobre o F1 de \texttt{negation\_of}, o mesmo adotado na
 Seção~\ref{sec:significancia} e definido na Seção~\ref{sec:avaliacao}. O teste de
-McNemar não é informativo entre um sistema e a sua própria versão filtrada, uma vez
-que a regra altera predições em uma única direção e torna a tabela de discordâncias
-degenerada por construção. Por esse motivo ele é omitido desta seção.
+McNemar não é informativo entre um sistema e a sua própria versão filtrada. A regra
+altera predições em uma única direção, de \texttt{negation\_of} para
+\texttt{no\_relation}, mas o rebaixamento pode tanto corrigir um falso positivo
+quanto desfazer um acerto. O segundo caso ocorre quando a regra atinge uma predição
+correta cujo $e_1$ não pertence ao léxico, e corresponde ao custo de \emph{recall}
+registrado na subseção anterior. Nas quatro execuções, a tabela de discordâncias é
+fortemente assimétrica, com dezenas de falsos positivos corrigidos para poucos
+acertos desfeitos, mas nenhuma das suas duas células é nula. Entretanto, a versão
+filtrada não é um segundo modelo, e sim uma transformação determinística das
+predições do primeiro. Toda discordância entre os dois corresponde, portanto, a uma
+predição rebaixada, e o teste apenas contaria quantos rebaixamentos corrigiram um
+erro e quantos o introduziram, contagem já refletida na variação de precisão e de
+\emph{recall} da Tabela~\ref{tab:fase2_resultados}. Por esse motivo ele é omitido
+desta seção.
 
 \input{tabelas/fase2_significancia}
 

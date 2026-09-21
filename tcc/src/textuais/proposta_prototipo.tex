@@ -10,7 +10,10 @@ pré-treinamento clínico importa para a extração de relações em textos méd
 português?} A resposta determina sobre qual \emph{encoder} o RECLin-PT deve ser
 construído. Respondida essa pergunta, a Seção~\ref{sec:reclin} descreve a segunda
 etapa, em que o RECLin-PT é construído sobre a base assim escolhida por meio de um
-filtro de pista lexical calibrado no conjunto de desenvolvimento.
+filtro de pista lexical\footnote{Pista lexical é uma palavra ou expressão cuja
+simples presença no texto sinaliza um fenômeno linguístico, aqui a negação. O
+filtro verifica apenas se o primeiro argumento de cada par predito como
+\texttt{negation\_of} é uma dessas pistas, sem analisar o restante da sentença.} calibrado no conjunto de desenvolvimento.
 
 \section{Visão geral e papel dos \emph{baselines}}
 \label{sec:visao_baselines}
@@ -222,7 +225,12 @@ deslocar a fronteira entre \texttt{negation\_of} e \texttt{associated\_with}.
 Toda relação \texttt{negation\_of} anotada no SemClinBr tem, como primeiro
 argumento, uma expressão que marca a negação (``sem'', ``nega'', ``não'',
 ``ausência'', além das negações morfológicas registradas no
-Apêndice~\ref{ap:lexico}). O léxico de gatilhos empregado pelo filtro
+Apêndice~\ref{ap:lexico}). O léxico de gatilhos\footnote{Neste método, gatilho é
+cada forma retida no léxico induzido do treino, e um par começa por um gatilho
+quando o texto de $e_1$, após a normalização descrita adiante, coincide com uma
+dessas formas. O conceito é operacional e distinto dos marcadores do
+Apêndice~\ref{ap:lexico}, que caracterizam o fenômeno linguisticamente e não
+participam do filtro.} empregado pelo filtro
 (\texttt{src/negation\_lexicon.py}) é induzido \textbf{exclusivamente do conjunto
 de treino}. Induzi-lo do corpus completo configuraria vazamento de dados, pela
 mesma razão que motiva o particionamento em nível de documento
@@ -237,10 +245,20 @@ chega a ser candidata (Seção~\ref{sec:teto_recall}). Como o filtro opera sobre
 predições feitas no espaço de candidatos, o léxico é induzido desse mesmo espaço,
 de modo que ambos falem do mesmo objeto. São contadas as formas de superfície de
 $e_1$ nos pares candidatos rotulados \texttt{negation\_of}, e retêm-se aquelas
-cuja frequência atinge o limiar \texttt{min\_freq}.
+cuja frequência atinge o limiar \texttt{min\_freq}\footnote{\texttt{min\_freq} é o número
+mínimo de pares candidatos \texttt{negation\_of} do treino em que uma forma
+precisa figurar como $e_1$ para ser retida no léxico, e o seu valor é calibrado
+na Seção~\ref{sec:calibracao}.}.
 
-As formas são comparadas sob normalização por decomposição NFKD, remoção de
-diacríticos, colapso de espaço em branco e \emph{casefold}. A remoção de
+As formas são comparadas sob normalização por decomposição NFKD\footnote{NFKD
+(\foreignlanguage{english}{Normalization Form Compatibility Decomposition}) é uma
+das formas de normalização do padrão Unicode, que decompõe cada letra acentuada
+em letra-base seguida de um diacrítico combinante, o que permite remover o
+acento descartando este último.}, remoção de
+diacríticos, colapso de espaço em branco e \emph{casefold}\footnote{\emph{Casefold} é a conversão para
+caixa baixa definida pelo padrão Unicode para comparar textos sem distinguir
+maiúsculas de minúsculas, de modo que ``NEGA'' e ``nega'' passam a ter a mesma
+forma.}. A remoção de
 diacríticos não é cosmética. No corpus, a mesma forma ocorre acentuada e não
 acentuada (``NÃO'' e ``NAO'', ``AUSÊNCIA'' e ``AUSENCIA''), e sem essa
 normalização um único gatilho se partiria em duas formas, cada uma delas abaixo
@@ -257,7 +275,9 @@ Dessa assimetria decorrem duas consequências que importam para a leitura dos
 resultados. A primeira é que o F1 de \texttt{associated\_with} permanece inalterado
 em todos os dígitos nas quatro execuções, de modo que o ganho de macro-F1 provém
 exclusivamente das outras duas classes. A segunda é que o filtro não pode elevar o
-\emph{recall}, apenas a precisão, e a cobertura do léxico passa a ser um teto de
+\emph{recall}, apenas a precisão, e a cobertura do léxico\footnote{Cobertura do léxico é a
+proporção, entre os pares candidatos de uma partição cujo rótulo de referência é
+\texttt{negation\_of}, daqueles cujo $e_1$ normalizado pertence ao léxico.} passa a ser um teto de
 \emph{recall} da classe-alvo, somado ao teto já imposto pela janela
 (Seção~\ref{sec:teto_recall}).
 
