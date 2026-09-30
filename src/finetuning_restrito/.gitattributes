@@ -1,0 +1,5 @@
+# Normalizacao de quebras de linha desta frente. O .gitattributes da raiz nao
+# cobre *.ipynb nem *.txt; este arquivo cobre so esta pasta, sem tocar no da raiz.
+*.py text eol=lf
+*.md text eol=lf
+*.ipynb text eol=lf

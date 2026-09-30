@@ -1,0 +1,153 @@
+{
+  "checagens": {
+    "1_lexico": {
+      "formas": [
+        "sem",
+        "nega",
+        "nao",
+        "ausente",
+        "ausencia",
+        "s",
+        "evacuacao",
+        "s/",
+        "ausentes",
+        "eliminacao fecal",
+        "indolor"
+      ],
+      "min_freq": 3,
+      "n_formas": 11,
+      "sha1": "70c93fa807de"
+    },
+    "2_y_true_identico_aos_sidecars": [
+      "baseline_biobertpt_seed42.dev_preds.json",
+      "baseline_biobertpt_seed42.preds.json",
+      "baseline_biobertpt_seed43.dev_preds.json",
+      "baseline_biobertpt_seed43.preds.json",
+      "baseline_bertimbau_seed42.dev_preds.json",
+      "baseline_bertimbau_seed42.preds.json",
+      "baseline_bertimbau_seed43.dev_preds.json",
+      "baseline_bertimbau_seed43.preds.json"
+    ],
+    "3_janelas_identicas_ao_build_dataset": {
+      "dev": 774,
+      "test": 800,
+      "train": 6805
+    },
+    "4_pesos": {
+      "completo_reproduz_nucleo": {
+        "associated_with": 7.1724,
+        "negation_of": 40.5541,
+        "no_relation": 0.3526
+      },
+      "restrito_efetivo": {
+        "associated_with": 133.4314,
+        "negation_of": 1.8762,
+        "no_relation": 0.4066
+      }
+    },
+    "5_remapeamento_ficticio": {
+      "dev": {
+        "n_completo": 19064,
+        "n_restrito": 774,
+        "oraculo_f1": 0.9726027397260274,
+        "oraculo_recall": 0.9466666666666667,
+        "tamanho_preservado": true,
+        "teto_recall": 0.9466666666666667
+      },
+      "test": {
+        "n_completo": 19210,
+        "n_restrito": 800,
+        "oraculo_f1": 0.9866666666666667,
+        "oraculo_recall": 0.9736842105263158,
+        "tamanho_preservado": true,
+        "teto_recall": 0.9736842105263158
+      }
+    },
+    "6_remap_reproduz_filtro_fase2_f1_negation_of": {
+      "bertimbau_seed42": 0.816817,
+      "bertimbau_seed43": 0.826748,
+      "biobertpt_seed42": 0.829851,
+      "biobertpt_seed43": 0.850932
+    },
+    "7_significance_py_inalterado": {
+      "chaves_de_saida": [
+        "accuracy",
+        "mcnemar",
+        "model_a",
+        "model_b",
+        "n_test",
+        "paired_bootstrap",
+        "target_class",
+        "target_f1"
+      ],
+      "codigo_saida": 0,
+      "f1_a_confere": true,
+      "n_test": 19210,
+      "nota": "predicao FICTICIA sorteada; numeros sem significado, so contrato"
+    }
+  },
+  "data": "2026-09-26T23:05:06-0300",
+  "duracao_s": 9.1,
+  "espaco_restrito": {
+    "dev": {
+      "contagens_completo": {
+        "associated_with": 763,
+        "negation_of": 150,
+        "no_relation": 18151
+      },
+      "contagens_restrito": {
+        "associated_with": 5,
+        "negation_of": 142,
+        "no_relation": 627
+      },
+      "fracao": 0.0406,
+      "n_completo": 19064,
+      "n_restrito": 774,
+      "razao_no_relation_por_negation_of": 4.4155,
+      "teto_recall_associated_with": 0.00655307994757536,
+      "teto_recall_negation_of": 0.9466666666666667
+    },
+    "test": {
+      "contagens_completo": {
+        "associated_with": 996,
+        "negation_of": 152,
+        "no_relation": 18062
+      },
+      "contagens_restrito": {
+        "associated_with": 2,
+        "negation_of": 148,
+        "no_relation": 650
+      },
+      "fracao": 0.041645,
+      "n_completo": 19210,
+      "n_restrito": 800,
+      "razao_no_relation_por_negation_of": 4.3919,
+      "teto_recall_associated_with": 0.002008032128514056,
+      "teto_recall_negation_of": 0.9736842105263158
+    },
+    "train": {
+      "contagens_completo": {
+        "associated_with": 7096,
+        "negation_of": 1255,
+        "no_relation": 144335
+      },
+      "contagens_restrito": {
+        "associated_with": 17,
+        "negation_of": 1209,
+        "no_relation": 5579
+      },
+      "fracao": 0.044569,
+      "n_completo": 152686,
+      "n_restrito": 6805,
+      "razao_no_relation_por_negation_of": 4.6146,
+      "teto_recall_associated_with": 0.002395715896279594,
+      "teto_recall_negation_of": 0.9633466135458167
+    }
+  },
+  "pesos_classe_efetivos_restrito": {
+    "associated_with": 133.4313725490196,
+    "negation_of": 1.8762062310449408,
+    "no_relation": 0.40658421461432753
+  },
+  "resultado": "OK: 7 checagens"
+}

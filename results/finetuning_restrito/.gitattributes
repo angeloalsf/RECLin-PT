@@ -1,0 +1,6 @@
+# Normalizacao de quebras de linha desta frente. O .gitattributes da raiz nao
+# cobre *.jsonl nem *.txt (logs de treino); este arquivo cobre so esta pasta.
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
