@@ -1,0 +1,151 @@
+[2026-10-02 11:41:58] [INFO] [finetuning_restrito] === Fine-tuning RESTRITO iniciado (encoder=biobertpt, model=pucpr/biobertpt-all, seed=43) ===
+[2026-10-02 11:41:58] [INFO] [finetuning_restrito] Lexico: 11 formas, min_freq=3, sha1=70c93fa807de: sem, nega, nao, ausente, ausencia, s, evacuacao, s/, ausentes, eliminacao fecal, indolor
+[2026-10-02 11:41:58] [INFO] [finetuning_restrito] Config: {"batch_size": 64, "class_weight": "balanced", "ctx_chars": 128, "epochs": 10, "espaco": "restrito: e1 no lexico induzido do train", "lexicon_min_freq": 3, "lexicon_sha1": "70c93fa807de", "lr": 2e-05, "max_gap": 25, "max_length": 128, "remapeamento": "fora do espaco restrito -> no_relation", "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo", "warmup_ratio": 0.1, "weight_decay": 0.01}
+[2026-10-02 11:41:58] [INFO] [finetuning_restrito] Backup HF: repo=angeloalsf/reclin-pt-restrito-biobertpt-seed43 | token=presente (via $HF_TOKEN)
+[2026-10-02 11:41:59] [INFO] [finetuning_restrito] Backup HF: repo privado pronto -> angeloalsf/reclin-pt-restrito-biobertpt-seed43
+[2026-10-02 11:42:12] [INFO] [finetuning_restrito] Dispositivo: CUDA (Tesla T4)
+[2026-10-02 11:42:14] [INFO] [finetuning_restrito] Espaco restrito train:   6805 de 152686 candidatos (4.46%) | teto de recall negation_of=0.9633
+[2026-10-02 11:42:14] [INFO] [finetuning_restrito] Espaco restrito dev  :    774 de  19064 candidatos (4.06%) | teto de recall negation_of=0.9467
+[2026-10-02 11:42:15] [INFO] [finetuning_restrito] Espaco restrito test :    800 de  19210 candidatos (4.16%) | teto de recall negation_of=0.9737
+[2026-10-02 11:42:15] [INFO] [finetuning_restrito] y_true do dev confere com baseline_biobertpt_seed42.dev_preds.json
+[2026-10-02 11:42:15] [INFO] [finetuning_restrito] y_true do test confere com baseline_biobertpt_seed42.preds.json
+[2026-10-02 11:42:15] [INFO] [finetuning_restrito] Distribuicao (train restrito): {'negation_of': 1209, 'associated_with': 17, 'no_relation': 5579}
+[2026-10-02 11:42:19] [INFO] [finetuning_restrito] Tokenizer pucpr/biobertpt-all | marcadores adicionados: 4
+[2026-10-02 11:42:33] [INFO] [finetuning_restrito] Modelo carregado | parametros: 177.9M
+[2026-10-02 11:42:33] [INFO] [finetuning_restrito] Pesos de classe efetivos (balanced, recalculados no train RESTRITO): {'negation_of': 1.876206, 'associated_with': 133.431373, 'no_relation': 0.406584}
+[2026-10-02 11:42:33] [WARNING] [finetuning_restrito] Classe(s) rara(s) no train restrito {'associated_with': 17}: o balanced da a elas peso {'associated_with': 133.431373}. Registrado no JSON; leia junto com o resultado.
+[2026-10-02 11:42:33] [INFO] [finetuning_restrito] AdamW | passos totais=1070 | warmup=107 | passos/epoca=107
+[2026-10-02 11:42:33] [INFO] [relation_extraction] Nenhum last_checkpoint em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt -- comecando do zero
+[2026-10-02 11:42:36] [WARNING] [py.warnings] /usr/local/lib/python3.13/dist-packages/torch/autograd/graph.py:869: UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+
+[2026-10-02 11:42:59] [INFO] [finetuning_restrito]   epoca 1 | passo 20/107 | loss media=1.1066
+[2026-10-02 11:43:24] [INFO] [finetuning_restrito]   epoca 1 | passo 40/107 | loss media=1.1229
+[2026-10-02 11:43:50] [INFO] [finetuning_restrito]   epoca 1 | passo 60/107 | loss media=1.0501
+[2026-10-02 11:44:17] [INFO] [finetuning_restrito]   epoca 1 | passo 80/107 | loss media=1.0407
+[2026-10-02 11:44:45] [INFO] [finetuning_restrito]   epoca 1 | passo 100/107 | loss media=0.9932
+[2026-10-02 11:45:01] [INFO] [finetuning_restrito] Epoca 1: train_loss=0.9912 | dev_loss(restrito)=1.1948 | dev_macro_f1(remap)=0.5005 | dev_negation_of_f1(remap)=0.5273 | restrito: macro=0.4576 neg=0.5375 | 147.8s
+[2026-10-02 11:45:02] [INFO] [finetuning_restrito] Epoca 1: novo MELHOR modelo (dev_macro_f1 remapeado=0.5005)
+[2026-10-02 11:45:07] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 11:45:12] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 1 | dev_macro_f1=0.5005 | dev_neg_f1=0.5273 | seed=43)
+[2026-10-02 11:45:40] [INFO] [relation_extraction] last_checkpoint salvo (epoca 1 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 11:45:46] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 34s)
+[2026-10-02 11:45:46] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 1 | dev_macro_f1=0.5005 | dev_neg_f1=0.5273 | seed=43 | tentativa 1/3
+[2026-10-02 11:46:07] [INFO] [finetuning_restrito]   epoca 2 | passo 20/107 | loss media=0.7192
+[2026-10-02 11:46:36] [INFO] [finetuning_restrito]   epoca 2 | passo 40/107 | loss media=0.7519
+[2026-10-02 11:47:04] [INFO] [finetuning_restrito]   epoca 2 | passo 60/107 | loss media=0.8111
+[2026-10-02 11:47:31] [INFO] [finetuning_restrito]   epoca 2 | passo 80/107 | loss media=0.7867
+[2026-10-02 11:48:00] [INFO] [finetuning_restrito]   epoca 2 | passo 100/107 | loss media=0.7779
+[2026-10-02 11:48:14] [INFO] [finetuning_restrito] Epoca 2: train_loss=0.7753 | dev_loss(restrito)=1.0033 | dev_macro_f1(remap)=0.5488 | dev_negation_of_f1(remap)=0.6701 | restrito: macro=0.5284 neg=0.6842 | 154.8s
+[2026-10-02 11:48:15] [INFO] [finetuning_restrito] Epoca 2: novo MELHOR modelo (dev_macro_f1 remapeado=0.5488)
+[2026-10-02 11:48:19] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 11:49:02] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 2 | dev_macro_f1=0.5488 | dev_neg_f1=0.6701 | seed=43)
+[2026-10-02 11:49:34] [INFO] [relation_extraction] last_checkpoint salvo (epoca 2 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 11:49:35] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 33s)
+[2026-10-02 11:49:35] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 2 | dev_macro_f1=0.5488 | dev_neg_f1=0.6701 | seed=43 | tentativa 1/3
+[2026-10-02 11:50:02] [INFO] [finetuning_restrito]   epoca 3 | passo 20/107 | loss media=0.5851
+[2026-10-02 11:50:31] [INFO] [finetuning_restrito]   epoca 3 | passo 40/107 | loss media=0.5766
+[2026-10-02 11:50:59] [INFO] [finetuning_restrito]   epoca 3 | passo 60/107 | loss media=0.5687
+[2026-10-02 11:51:27] [INFO] [finetuning_restrito]   epoca 3 | passo 80/107 | loss media=0.5903
+[2026-10-02 11:51:56] [INFO] [finetuning_restrito]   epoca 3 | passo 100/107 | loss media=0.5568
+[2026-10-02 11:52:11] [INFO] [finetuning_restrito] Epoca 3: train_loss=0.5430 | dev_loss(restrito)=1.0841 | dev_macro_f1(remap)=0.5728 | dev_negation_of_f1(remap)=0.7410 | restrito: macro=0.5664 neg=0.7593 | 157.1s
+[2026-10-02 11:52:12] [INFO] [finetuning_restrito] Epoca 3: novo MELHOR modelo (dev_macro_f1 remapeado=0.5728)
+[2026-10-02 11:52:19] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 11:52:29] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 3 | dev_macro_f1=0.5728 | dev_neg_f1=0.7410 | seed=43)
+[2026-10-02 11:53:00] [INFO] [relation_extraction] last_checkpoint salvo (epoca 3 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 11:53:05] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 36s)
+[2026-10-02 11:53:05] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 3 | dev_macro_f1=0.5728 | dev_neg_f1=0.7410 | seed=43 | tentativa 1/3
+[2026-10-02 11:53:27] [INFO] [finetuning_restrito]   epoca 4 | passo 20/107 | loss media=0.2668
+[2026-10-02 11:53:56] [INFO] [finetuning_restrito]   epoca 4 | passo 40/107 | loss media=0.3165
+[2026-10-02 11:54:24] [INFO] [finetuning_restrito]   epoca 4 | passo 60/107 | loss media=0.3289
+[2026-10-02 11:54:52] [INFO] [finetuning_restrito]   epoca 4 | passo 80/107 | loss media=0.3062
+[2026-10-02 11:55:21] [INFO] [finetuning_restrito]   epoca 4 | passo 100/107 | loss media=0.2860
+[2026-10-02 11:55:36] [INFO] [finetuning_restrito] Epoca 4: train_loss=0.3084 | dev_loss(restrito)=1.2627 | dev_macro_f1(remap)=0.5712 | dev_negation_of_f1(remap)=0.7365 | restrito: macro=0.5625 neg=0.7536 | 156.2s
+[2026-10-02 11:55:50] [INFO] [relation_extraction] last_checkpoint salvo (epoca 4 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 11:56:18] [INFO] [finetuning_restrito]   epoca 5 | passo 20/107 | loss media=0.3469
+[2026-10-02 11:56:46] [INFO] [finetuning_restrito]   epoca 5 | passo 40/107 | loss media=0.2945
+[2026-10-02 11:57:14] [INFO] [finetuning_restrito]   epoca 5 | passo 60/107 | loss media=0.2888
+[2026-10-02 11:57:42] [INFO] [finetuning_restrito]   epoca 5 | passo 80/107 | loss media=0.2593
+[2026-10-02 11:58:11] [INFO] [finetuning_restrito]   epoca 5 | passo 100/107 | loss media=0.2400
+[2026-10-02 11:58:27] [INFO] [finetuning_restrito] Epoca 5: train_loss=0.2315 | dev_loss(restrito)=1.3790 | dev_macro_f1(remap)=0.5763 | dev_negation_of_f1(remap)=0.7515 | restrito: macro=0.5706 neg=0.7702 | 157.0s
+[2026-10-02 11:58:27] [INFO] [finetuning_restrito] Epoca 5: novo MELHOR modelo (dev_macro_f1 remapeado=0.5763)
+[2026-10-02 11:58:35] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 11:58:44] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 5 | dev_macro_f1=0.5763 | dev_neg_f1=0.7515 | seed=43)
+[2026-10-02 11:59:19] [INFO] [relation_extraction] last_checkpoint salvo (epoca 5 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 11:59:20] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 36s)
+[2026-10-02 11:59:20] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 5 | dev_macro_f1=0.5763 | dev_neg_f1=0.7515 | seed=43 | tentativa 1/3
+[2026-10-02 11:59:48] [INFO] [finetuning_restrito]   epoca 6 | passo 20/107 | loss media=0.1570
+[2026-10-02 12:00:16] [INFO] [finetuning_restrito]   epoca 6 | passo 40/107 | loss media=0.1416
+[2026-10-02 12:00:44] [INFO] [finetuning_restrito]   epoca 6 | passo 60/107 | loss media=0.1315
+[2026-10-02 12:01:12] [INFO] [finetuning_restrito]   epoca 6 | passo 80/107 | loss media=0.1304
+[2026-10-02 12:01:40] [INFO] [finetuning_restrito]   epoca 6 | passo 100/107 | loss media=0.1317
+[2026-10-02 12:01:56] [INFO] [finetuning_restrito] Epoca 6: train_loss=0.1308 | dev_loss(restrito)=1.4257 | dev_macro_f1(remap)=0.5776 | dev_negation_of_f1(remap)=0.7553 | restrito: macro=0.5717 neg=0.7740 | 156.0s
+[2026-10-02 12:01:56] [INFO] [finetuning_restrito] Epoca 6: novo MELHOR modelo (dev_macro_f1 remapeado=0.5776)
+[2026-10-02 12:02:34] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 12:02:50] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 6 | dev_macro_f1=0.5776 | dev_neg_f1=0.7553 | seed=43)
+[2026-10-02 12:03:25] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 35s)
+[2026-10-02 12:03:25] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 6 | dev_macro_f1=0.5776 | dev_neg_f1=0.7553 | seed=43 | tentativa 1/3
+[2026-10-02 12:03:29] [INFO] [relation_extraction] last_checkpoint salvo (epoca 6 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 12:03:57] [INFO] [finetuning_restrito]   epoca 7 | passo 20/107 | loss media=0.1191
+[2026-10-02 12:04:26] [INFO] [finetuning_restrito]   epoca 7 | passo 40/107 | loss media=0.1403
+[2026-10-02 12:04:54] [INFO] [finetuning_restrito]   epoca 7 | passo 60/107 | loss media=0.1241
+[2026-10-02 12:05:21] [INFO] [finetuning_restrito]   epoca 7 | passo 80/107 | loss media=0.1132
+[2026-10-02 12:05:50] [INFO] [finetuning_restrito]   epoca 7 | passo 100/107 | loss media=0.1097
+[2026-10-02 12:06:05] [INFO] [finetuning_restrito] Epoca 7: train_loss=0.1089 | dev_loss(restrito)=1.6071 | dev_macro_f1(remap)=0.5779 | dev_negation_of_f1(remap)=0.7562 | restrito: macro=0.5732 neg=0.7756 | 155.9s
+[2026-10-02 12:06:06] [INFO] [finetuning_restrito] Epoca 7: novo MELHOR modelo (dev_macro_f1 remapeado=0.5779)
+[2026-10-02 12:06:35] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 12:06:40] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 7 | dev_macro_f1=0.5779 | dev_neg_f1=0.7562 | seed=43)
+[2026-10-02 12:07:10] [INFO] [relation_extraction] last_checkpoint salvo (epoca 7 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 12:07:19] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 39s)
+[2026-10-02 12:07:19] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 7 | dev_macro_f1=0.5779 | dev_neg_f1=0.7562 | seed=43 | tentativa 1/3
+[2026-10-02 12:07:38] [INFO] [finetuning_restrito]   epoca 8 | passo 20/107 | loss media=0.2114
+[2026-10-02 12:08:06] [INFO] [finetuning_restrito]   epoca 8 | passo 40/107 | loss media=0.1338
+[2026-10-02 12:08:34] [INFO] [finetuning_restrito]   epoca 8 | passo 60/107 | loss media=0.1104
+[2026-10-02 12:09:02] [INFO] [finetuning_restrito]   epoca 8 | passo 80/107 | loss media=0.1094
+[2026-10-02 12:09:30] [INFO] [finetuning_restrito]   epoca 8 | passo 100/107 | loss media=0.0978
+[2026-10-02 12:09:46] [INFO] [finetuning_restrito] Epoca 8: train_loss=0.0954 | dev_loss(restrito)=1.7380 | dev_macro_f1(remap)=0.5764 | dev_negation_of_f1(remap)=0.7516 | restrito: macro=0.5718 neg=0.7712 | 155.9s
+[2026-10-02 12:10:44] [INFO] [relation_extraction] last_checkpoint salvo (epoca 8 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 12:11:12] [INFO] [finetuning_restrito]   epoca 9 | passo 20/107 | loss media=0.0683
+[2026-10-02 12:11:41] [INFO] [finetuning_restrito]   epoca 9 | passo 40/107 | loss media=0.0574
+[2026-10-02 12:12:09] [INFO] [finetuning_restrito]   epoca 9 | passo 60/107 | loss media=0.0554
+[2026-10-02 12:12:37] [INFO] [finetuning_restrito]   epoca 9 | passo 80/107 | loss media=0.0575
+[2026-10-02 12:13:06] [INFO] [finetuning_restrito]   epoca 9 | passo 100/107 | loss media=0.0573
+[2026-10-02 12:13:21] [INFO] [finetuning_restrito] Epoca 9: train_loss=0.0569 | dev_loss(restrito)=1.6463 | dev_macro_f1(remap)=0.5859 | dev_negation_of_f1(remap)=0.7802 | restrito: macro=0.5832 neg=0.8000 | 156.9s
+[2026-10-02 12:13:22] [INFO] [finetuning_restrito] Epoca 9: novo MELHOR modelo (dev_macro_f1 remapeado=0.5859)
+[2026-10-02 12:13:32] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 12:13:42] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 9 | dev_macro_f1=0.5859 | dev_neg_f1=0.7802 | seed=43)
+[2026-10-02 12:14:13] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 30s)
+[2026-10-02 12:14:13] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 9 | dev_macro_f1=0.5859 | dev_neg_f1=0.7802 | seed=43 | tentativa 1/3
+[2026-10-02 12:14:13] [INFO] [relation_extraction] last_checkpoint salvo (epoca 9 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 12:14:41] [INFO] [finetuning_restrito]   epoca 10 | passo 20/107 | loss media=0.0417
+[2026-10-02 12:15:10] [INFO] [finetuning_restrito]   epoca 10 | passo 40/107 | loss media=0.0483
+[2026-10-02 12:15:38] [INFO] [finetuning_restrito]   epoca 10 | passo 60/107 | loss media=0.0484
+[2026-10-02 12:16:06] [INFO] [finetuning_restrito]   epoca 10 | passo 80/107 | loss media=0.0476
+[2026-10-02 12:16:34] [INFO] [finetuning_restrito]   epoca 10 | passo 100/107 | loss media=0.0446
+[2026-10-02 12:16:49] [INFO] [finetuning_restrito] Epoca 10: train_loss=0.0445 | dev_loss(restrito)=1.6977 | dev_macro_f1(remap)=0.5871 | dev_negation_of_f1(remap)=0.7837 | restrito: macro=0.5851 neg=0.8039 | 156.4s
+[2026-10-02 12:16:50] [INFO] [finetuning_restrito] Epoca 10: novo MELHOR modelo (dev_macro_f1 remapeado=0.5871)
+[2026-10-02 12:17:18] [INFO] [relation_extraction] best_model atualizado em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/best_model
+[2026-10-02 12:17:21] [INFO] [finetuning_restrito] Backup HF: envio de 714 MB enfileirado (restrito | epoca 10 | dev_macro_f1=0.5871 | dev_neg_f1=0.7837 | seed=43)
+[2026-10-02 12:17:48] [INFO] [finetuning_restrito] Backup HF: best_model enviado para angeloalsf/reclin-pt-restrito-biobertpt-seed43 (714 MB em 26s)
+[2026-10-02 12:17:48] [INFO] [finetuning_restrito] Backup HF: restrito | epoca 10 | dev_macro_f1=0.5871 | dev_neg_f1=0.7837 | seed=43 | tentativa 1/3
+[2026-10-02 12:17:56] [INFO] [relation_extraction] last_checkpoint salvo (epoca 10 concluida) em /content/drive/MyDrive/RECLin-PT/checkpoints_restrito_biobertpt_seed43/last_checkpoint/training_state.pt
+[2026-10-02 12:17:56] [INFO] [finetuning_restrito] Melhor epoca restaurada (dev_macro_f1 remapeado=0.5871)
+[2026-10-02 12:18:09] [INFO] [finetuning_restrito] Matriz de confusao TEST remapeado (linhas=verdadeiro):
+true\pred     negation  associat  no_relat
+negation_of        130         0        22
+associated_          0         0       996
+no_relation         33         2     18027
+[2026-10-02 12:18:09] [WARNING] [py.warnings] /usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
+
+[2026-10-02 12:18:09] [WARNING] [py.warnings] /usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+  parse = parser.parseString(pattern)
+
+[2026-10-02 12:18:09] [WARNING] [py.warnings] /usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+  parser.resetCache()
+
+[2026-10-02 12:18:10] [INFO] [finetuning_restrito] === RESULTADO (test remapeado, 19210 pares) ===
+[2026-10-02 12:18:10] [INFO] [finetuning_restrito] F1 negation_of=0.8254  (dev: 0.7837, melhor epoca 10 de 10)
+[2026-10-02 12:18:10] [INFO] [finetuning_restrito] Avisos capturados: 4 distintos
+[2026-10-02 12:18:10] [INFO] [finetuning_restrito] Saidas em /content/RECLin-PT/results/finetuning_restrito | tempo total 2173.0s
+[2026-10-02 12:18:10] [INFO] [finetuning_restrito] Backup HF: 8 envio(s) concluido(s), 0 falha(s) | repo: angeloalsf/reclin-pt-restrito-biobertpt-seed43
