@@ -1,10 +1,10 @@
 {
-  "data": "2026-10-02T11:23:30+0000",
-  "delta_medio_vs_baseline": -0.008018188707843876,
+  "data": "2026-10-02T13:34:31+0000",
+  "delta_medio_vs_baseline": 0.06483626978096724,
   "encoder": "biobertpt",
-  "gpu_total_s": 473.4,
+  "gpu_total_s": 3106.0,
   "n_restrito_dev": 774,
-  "passa": false,
+  "passa": true,
   "por_semente": [
     {
       "avisos_capturados": 4,
@@ -16,15 +16,15 @@
         "r": 0.8933333333333333,
         "tp": 134
       },
-      "best_epoch": 2,
+      "best_epoch": 9,
       "best_epoch_e_a_ultima": false,
       "bootstrap_dev_vs_baseline": {
-        "ci95_high": 0.0385355834460693,
-        "ci95_low": -0.05335231634573744,
-        "mean_diff": -0.007907148429446523,
+        "ci95_high": 0.1192675254797848,
+        "ci95_low": 0.019845998150236886,
+        "mean_diff": 0.06846196165904903,
         "n_boot": 10000,
-        "observed_diff": -0.008018188707843876,
-        "p_value": 0.7366
+        "observed_diff": 0.06834544765579254,
+        "p_value": 0.0068
       },
       "confusao_dentro_do_espaco_restrito": {
         "labels": [
@@ -34,31 +34,38 @@
         ],
         "matriz": [
           [
-            123,
-            0,
-            19
+            120,
+            2,
+            20
           ],
           [
-            4,
+            3,
             0,
-            1
+            2
           ],
           [
-            73,
+            35,
             0,
-            554
+            592
           ]
         ]
       },
-      "delta_f1_vs_baseline": -0.008018188707843876,
-      "delta_f1_vs_filtro": -0.10578483245149917,
+      "delta_f1_vs_baseline": 0.06834544765579254,
+      "delta_f1_vs_filtro": -0.029421196087862755,
       "dev_history_negation_of_f1": [
-        0.6211,
-        0.7029,
-        0.7008
+        0.2353,
+        0.6791,
+        0.6807,
+        0.6959,
+        0.7593,
+        0.7516,
+        0.7485,
+        0.7664,
+        0.7792,
+        0.7752
       ],
-      "duracao_treino_s": 473.4,
-      "epochs": 3,
+      "duracao_treino_s": 1552.0,
+      "epochs": 10,
       "filtro_fase2_no_dev": {
         "f1": 0.808641975308642,
         "fn": 19,
@@ -68,23 +75,105 @@
         "tp": 131
       },
       "gpu": "Tesla T4",
-      "negation_of_predito_associated_with": 0,
+      "negation_of_predito_associated_with": 2,
       "restrito": {
-        "f1": 0.7028571428571428,
-        "fn": 27,
-        "fp": 77,
-        "p": 0.615,
-        "r": 0.82,
-        "tp": 123
+        "f1": 0.7792207792207793,
+        "fn": 30,
+        "fp": 38,
+        "p": 0.759493670886076,
+        "r": 0.8,
+        "tp": 120
       },
       "seed": 42,
-      "supera_baseline": false
+      "supera_baseline": true
+    },
+    {
+      "avisos_capturados": 4,
+      "baseline": {
+        "f1": 0.7223719676549866,
+        "fn": 16,
+        "fp": 87,
+        "p": 0.6063348416289592,
+        "r": 0.8933333333333333,
+        "tp": 134
+      },
+      "best_epoch": 10,
+      "best_epoch_e_a_ultima": true,
+      "bootstrap_dev_vs_baseline": {
+        "ci95_high": 0.10688025953329185,
+        "ci95_low": 0.016501431159037013,
+        "mean_diff": 0.06155195126286976,
+        "n_boot": 10000,
+        "observed_diff": 0.06132709190614194,
+        "p_value": 0.0058
+      },
+      "confusao_dentro_do_espaco_restrito": {
+        "labels": [
+          "negation_of",
+          "associated_with",
+          "no_relation"
+        ],
+        "matriz": [
+          [
+            125,
+            0,
+            17
+          ],
+          [
+            3,
+            0,
+            2
+          ],
+          [
+            41,
+            0,
+            586
+          ]
+        ]
+      },
+      "delta_f1_vs_baseline": 0.06132709190614194,
+      "delta_f1_vs_filtro": -0.016300940438871536,
+      "dev_history_negation_of_f1": [
+        0.5273,
+        0.6701,
+        0.741,
+        0.7365,
+        0.7515,
+        0.7553,
+        0.7562,
+        0.7516,
+        0.7802,
+        0.7837
+      ],
+      "duracao_treino_s": 1554.0,
+      "epochs": 10,
+      "filtro_fase2_no_dev": {
+        "f1": 0.8,
+        "fn": 18,
+        "fp": 48,
+        "p": 0.7333333333333333,
+        "r": 0.88,
+        "tp": 132
+      },
+      "gpu": "Tesla T4",
+      "negation_of_predito_associated_with": 0,
+      "restrito": {
+        "f1": 0.7836990595611285,
+        "fn": 25,
+        "fp": 44,
+        "p": 0.7396449704142012,
+        "r": 0.8333333333333334,
+        "tp": 125
+      },
+      "seed": 43,
+      "supera_baseline": true
     }
   ],
   "regra": "PASSA sse F1_dev(negation_of) restrito > baseline do mesmo encoder e semente, para todas as sementes; dev remapeado, 19.064 pares",
   "seeds": [
-    42
+    42,
+    43
   ],
   "teto_recall_dev": 0.9466666666666667,
-  "veredito": "NAO PASSA: o restrito nao supera o baseline no DEV em todas as sementes. PARAR aqui; este e o veredito da frente."
+  "veredito": "PASSA: o restrito supera o baseline no DEV em todas as sementes. Prosseguir para a Tarefa 3."
 }
