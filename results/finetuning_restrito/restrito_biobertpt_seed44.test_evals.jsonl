@@ -1,0 +1,1 @@
+{"timestamp": "2026-10-02T14:11:57+0000", "eval_index": 1, "eval_index_for_config": 1, "out": "/content/RECLin-PT/results/finetuning_restrito/restrito_biobertpt_seed44.json", "model": "pucpr/biobertpt-all", "seed": 44, "config_sha1": "7496d7fa1c84", "n_test": 19210, "test_macro_f1": 0.598009, "test_negation_of_f1": 0.822368, "espaco": "restrito remapeado ao completo"}
