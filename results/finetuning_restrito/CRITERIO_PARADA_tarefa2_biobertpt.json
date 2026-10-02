@@ -1,0 +1,90 @@
+{
+  "data": "2026-10-02T11:23:30+0000",
+  "delta_medio_vs_baseline": -0.008018188707843876,
+  "encoder": "biobertpt",
+  "gpu_total_s": 473.4,
+  "n_restrito_dev": 774,
+  "passa": false,
+  "por_semente": [
+    {
+      "avisos_capturados": 4,
+      "baseline": {
+        "f1": 0.7108753315649867,
+        "fn": 16,
+        "fp": 93,
+        "p": 0.5903083700440529,
+        "r": 0.8933333333333333,
+        "tp": 134
+      },
+      "best_epoch": 2,
+      "best_epoch_e_a_ultima": false,
+      "bootstrap_dev_vs_baseline": {
+        "ci95_high": 0.0385355834460693,
+        "ci95_low": -0.05335231634573744,
+        "mean_diff": -0.007907148429446523,
+        "n_boot": 10000,
+        "observed_diff": -0.008018188707843876,
+        "p_value": 0.7366
+      },
+      "confusao_dentro_do_espaco_restrito": {
+        "labels": [
+          "negation_of",
+          "associated_with",
+          "no_relation"
+        ],
+        "matriz": [
+          [
+            123,
+            0,
+            19
+          ],
+          [
+            4,
+            0,
+            1
+          ],
+          [
+            73,
+            0,
+            554
+          ]
+        ]
+      },
+      "delta_f1_vs_baseline": -0.008018188707843876,
+      "delta_f1_vs_filtro": -0.10578483245149917,
+      "dev_history_negation_of_f1": [
+        0.6211,
+        0.7029,
+        0.7008
+      ],
+      "duracao_treino_s": 473.4,
+      "epochs": 3,
+      "filtro_fase2_no_dev": {
+        "f1": 0.808641975308642,
+        "fn": 19,
+        "fp": 43,
+        "p": 0.7528735632183908,
+        "r": 0.8733333333333333,
+        "tp": 131
+      },
+      "gpu": "Tesla T4",
+      "negation_of_predito_associated_with": 0,
+      "restrito": {
+        "f1": 0.7028571428571428,
+        "fn": 27,
+        "fp": 77,
+        "p": 0.615,
+        "r": 0.82,
+        "tp": 123
+      },
+      "seed": 42,
+      "supera_baseline": false
+    }
+  ],
+  "regra": "PASSA sse F1_dev(negation_of) restrito > baseline do mesmo encoder e semente, para todas as sementes; dev remapeado, 19.064 pares",
+  "seeds": [
+    42
+  ],
+  "teto_recall_dev": 0.9466666666666667,
+  "veredito": "NAO PASSA: o restrito nao supera o baseline no DEV em todas as sementes. PARAR aqui; este e o veredito da frente."
+}

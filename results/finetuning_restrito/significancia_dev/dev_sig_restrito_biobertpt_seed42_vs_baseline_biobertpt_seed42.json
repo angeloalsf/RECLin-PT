@@ -1,0 +1,29 @@
+{
+  "accuracy": {
+    "a": 0.9547314309693663,
+    "b": 0.8930444817456987
+  },
+  "mcnemar": {
+    "b_only_a_correct": 1791,
+    "c_only_b_correct": 615,
+    "n_discordant": 2406,
+    "p_value": 2.63360882756877e-132
+  },
+  "model_a": "pucpr/biobertpt-all",
+  "model_b": "pucpr/biobertpt-all",
+  "n_test": 19064,
+  "paired_bootstrap": {
+    "ci95_high": 0.0385355834460693,
+    "ci95_low": -0.05335231634573744,
+    "mean_diff": -0.007907148429446523,
+    "n_boot": 10000,
+    "observed_diff": -0.008018188707843876,
+    "p_value": 0.7366
+  },
+  "target_class": "negation_of",
+  "target_f1": {
+    "a": 0.7028571428571428,
+    "a_minus_b": -0.008018188707843876,
+    "b": 0.7108753315649867
+  }
+}
