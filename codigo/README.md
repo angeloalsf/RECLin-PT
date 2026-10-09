@@ -65,6 +65,30 @@ python codigo/scripts/analisar.py lexico                 # léxico congelado: 11
 python codigo/scripts/analisar.py lexico --min-freq 2    # outro limiar, sem a guarda do congelado
 ```
 
+Estratégias sem GPU (calibração no DEV, filtro de pistas e regra pura):
+
+```bash
+REF=codigo/testes/referencia/resultados_legado
+
+# calibração no DEV (lê só train e dev): CALIBRACAO_filtro.json, conferido byte a byte
+python codigo/scripts/calibrar.py --resultados $REF --saida reproducao/CALIBRACAO_filtro.json \
+    --detalhes reproducao/calibracao_detalhes.json --conferir $REF/CALIBRACAO_filtro.json
+
+# filtro de pistas sobre os quatro baselines: execuções filtro_<encoder>_seed<N> (DEV e TEST)
+python codigo/scripts/filtro_pistas.py --resultados $REF --calibracao $REF/CALIBRACAO_filtro.json \
+    --saida reproducao/execucoes --conferir $REF
+
+# regra pura: execução regra_pura (DEV e TEST)
+python codigo/scripts/regra_pura.py --calibracao $REF/CALIBRACAO_filtro.json \
+    --saida reproducao/execucoes --conferir $REF
+```
+
+`--resultados` é onde estão as predições das execuções de base (formato novo
+ou do legado); sem `--saida`, as execuções vão para `codigo/resultados/execucoes/`.
+`--conferir` compara os bytes com os arquivos de referência e sai com 1 se
+algum diferir. Os scripts das estratégias usam o léxico congelado e recusam
+uma calibração que não corresponda a ele.
+
 Avaliação:
 
 ```bash
@@ -83,8 +107,8 @@ python codigo/scripts/comparar.py protocolo \
 ## Testes
 
 ```bash
-python -m pytest codigo                  # tudo (~1,5 min, dominado pelas 26 comparações)
-python -m pytest codigo -m "not lento"   # sem as 26 comparações (~25 s)
+python -m pytest codigo                  # tudo (~2 min, dominado pelas 26 comparações)
+python -m pytest codigo -m "not lento"   # sem as 26 comparações (~40 s)
 ```
 
 | Pasta | O que verifica |
@@ -113,7 +137,7 @@ O pacote `reclin` tem três níveis, e um nível só importa os de cima:
 Os módulos de `reclin/` não configuram logging, não alteram `os.environ` e não
 mexem em `sys.path` ao serem importados; isso fica com os scripts.
 
-### O que já existe (etapas 1 a 3)
+### O que já existe (etapas 1 a 4)
 
 | Caminho | Responsabilidade |
 | --- | --- |
@@ -123,13 +147,18 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/execucao/` | O formato em disco das execuções: sidecar de predições (`predicoes`), diretório da execução (`diretorio`) e trilha das avaliações do TEST (`trilha`) |
 | `reclin/avaliacao/` | Métricas (`metricas`), McNemar e bootstrap pareado (`significancia`), as 26 comparações do TCC (`protocolo`) e a agregação entre sementes (`agregacao`) |
 | `reclin/negacao/lexico.py` | Especialização: normalização, indução do léxico de pistas no TRAIN, `e_pista`, `lexico_sha1`, cobertura e o léxico congelado com a guarda (`min_freq=3`, 11 formas, `70c93fa807de`) |
+| `reclin/estrategias/filtro_pistas.py` | Estratégia: filtro de pistas sobre as predições de outra execução, com a calibração de `min_freq` e da porta de gap no DEV |
+| `reclin/estrategias/regra_pura.py` | Estratégia: regra pura R1 a R4 (pista + distância, sem modelo), com a calibração da regra no DEV |
 | `reclin/util/` | JSON/JSONL e SHA-256 (`io`), logging configurado só por scripts (`log`), caminhos padrão (`caminhos`) |
 | `scripts/preparar_dados.py` | `conferir`, `manifesto` e `particionar` |
 | `scripts/avaliar.py` | Métricas de sidecars ou de uma execução |
 | `scripts/comparar.py` | Uma comparação (`par`) ou as 26 do TCC (`protocolo`) |
 | `scripts/analisar.py` | `lexico`: o léxico de pistas, seu hash e a cobertura por partição |
+| `scripts/calibrar.py` | Calibração no DEV do filtro e da regra (`CALIBRACAO_filtro.json`) |
+| `scripts/filtro_pistas.py` | Execuções do filtro de pistas sobre execuções de base |
+| `scripts/regra_pura.py` | Execução da regra pura |
 | `dados/particoes/` | `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados) |
-| `testes/` | 275 testes (unidade, equivalência com o legado e estrutura do pacote) e as referências do legado |
+| `testes/` | 337 testes (unidade, equivalência com o legado e estrutura do pacote) e as referências do legado |
 | `docs/entregas/` | Índice das entregas e, por etapa, o que foi entregue, como foi verificado e o que ficou pendente |
 
 `dados/brutos/` (XML do SemClinBr) e `dados/processados/` (`dataset.jsonl`)

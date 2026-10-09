@@ -340,7 +340,8 @@ def lista_resultados() -> list[str]:
             nomes.append(f"filtro_{encoder}_seed{seed}.preds.json")
     nomes += ["regra_pura.preds.json", "regra_pura.test_evals.jsonl",
               "FASE2_test_summary.json", "summary_by_seed.json",
-              "CALIBRACAO_filtro.json"]       # guarda do léxico congelado (etapa 3)
+              "CALIBRACAO_filtro.json",       # guarda do léxico congelado (etapa 3)
+              "CALIBRACAO_filtro.md"]         # varredura completa da calibração (etapa 4)
     comparacoes = sorted(p.name for p in RESULTS.glob("significance_*.json"))
     if len(comparacoes) != N_COMPARACOES:
         raise SystemExit(f"esperadas {N_COMPARACOES} comparações em results/, há {len(comparacoes)}")

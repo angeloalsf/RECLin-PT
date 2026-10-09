@@ -156,15 +156,17 @@ def ler_manifesto(pasta: str | Path) -> dict[str, Any]:
     return ler_json(Path(pasta) / ARQUIVO_MANIFESTO)
 
 
-def conferir_particoes(pasta: str | Path) -> list[str]:
+def conferir_particoes(pasta: str | Path, nomes: Iterable[str] = PARTICOES) -> list[str]:
     """Compara os arquivos das partições com o MANIFEST da pasta.
 
     Devolve a lista de divergências; vazia quando tudo confere. Deve ser
     chamada antes de qualquer uso das partições que gere números para o TCC.
+    `nomes` restringe a conferência às partições que serão lidas (a calibração
+    no DEV, por exemplo, não abre o arquivo do TEST).
     """
     manifesto = ler_manifesto(pasta)
     divergencias = []
-    for nome in PARTICOES:
+    for nome in nomes:
         arquivo = arquivo_particao(pasta, nome)
         if not arquivo.exists():
             divergencias.append(f"{arquivo.name}: arquivo ausente")

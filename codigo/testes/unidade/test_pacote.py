@@ -9,10 +9,14 @@ está implementado:
 * todos os módulos de `reclin`, descobertos automaticamente, importam sem
   efeitos colaterais (nada de logging configurado, arquivos criados,
   `os.environ` ou `sys.path` alterados);
+* um nível só importa os de cima: o núcleo não importa `negacao` nem
+  `estrategias`, `negacao` não importa `estrategias`, e uma estratégia não
+  importa outra;
 * todos os scripts de `codigo/scripts/` respondem a `--help`.
 """
 from __future__ import annotations
 
+import ast
 import subprocess
 import sys
 
@@ -91,3 +95,34 @@ def test_scripts_respondem_a_ajuda(script):
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     assert "usage" in r.stdout.lower()
+
+
+def _importacoes_reclin(arquivo) -> set[str]:
+    importados = set()
+    for no in ast.walk(ast.parse(arquivo.read_text(encoding="utf-8"))):
+        if isinstance(no, ast.ImportFrom) and no.module:
+            importados.add(no.module)
+            importados.update(f"{no.module}.{a.name}" for a in no.names)
+        elif isinstance(no, ast.Import):
+            importados.update(a.name for a in no.names)
+    return {n for n in importados if n.startswith("reclin")}
+
+
+PACOTE = caminhos.CODIGO / "reclin"
+MODULOS = sorted(p for p in PACOTE.rglob("*.py") if "__pycache__" not in p.parts)
+
+
+@pytest.mark.parametrize("arquivo", MODULOS, ids=lambda p: p.relative_to(PACOTE).as_posix())
+def test_um_nivel_so_importa_os_de_cima(arquivo):
+    partes = arquivo.relative_to(PACOTE).parts
+    importados = _importacoes_reclin(arquivo)
+    if partes[0] == "estrategias":
+        proprio = "reclin.estrategias." + arquivo.stem
+        outras = {n for n in importados if n.startswith("reclin.estrategias")
+                  and not n.startswith(proprio)}
+        assert not outras, f"uma estratégia não importa outra: {outras}"
+    elif partes[0] == "negacao":
+        assert not any(n.startswith("reclin.estrategias") for n in importados)
+    else:
+        assert not any(n.startswith(("reclin.negacao", "reclin.estrategias")) for n in importados), \
+            f"o núcleo não importa especialização nem estratégias: {importados}"

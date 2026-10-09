@@ -28,7 +28,9 @@ Origem no legado: dez implementações. O sklearn em
 `make_rule_baseline.score`, `criterio_parada.prf`, `_artifacts.class_metrics`
 e outras. Uma delas (`make_rule_baseline.score`) calculava o F1 como
 2·P·R / (P + R), que difere de 2·TP / (2·TP + FP + FN) na última casa decimal;
-é a fórmula do `FASE2_test_summary.json` (ver a nota da etapa 2).
+é a fórmula do `FASE2_test_summary.json` (ver a nota da etapa 2) e do
+critério da calibração do filtro de pistas e da regra pura no DEV; ela fica
+aqui como `resumo_alvo_pr`, usada só onde o critério histórico a usava.
 """
 from __future__ import annotations
 
@@ -134,3 +136,19 @@ def resumo_alvo(y_true: Sequence[int], y_pred: Sequence[int], classe: int = NEG)
     alvo = m["por_classe"][LABELS[classe]]
     return {k: alvo[k] for k in ("tp", "fp", "fn", "precision", "recall", "f1")} | {
         "macro_f1": m["macro_f1"]}
+
+
+def f1_pr(precisao: float, recall: float) -> float:
+    """F1 como 2·P·R / (P + R), a fórmula de `make_rule_baseline.score` do
+    legado. Pode diferir de 2·TP / (2·TP + FP + FN) na última casa decimal."""
+    return 2 * precisao * recall / (precisao + recall) if precisao + recall else 0.0
+
+
+def resumo_alvo_pr(y_true: Sequence[int], y_pred: Sequence[int], classe: int = NEG) -> dict[str, Any]:
+    """Contagens, P, R e F1 da classe-alvo com o F1 de `f1_pr`: o `score` do
+    legado, critério das calibrações no DEV do filtro de pistas e da regra pura
+    (`reclin.estrategias`). Fora delas, use `avaliar` ou `resumo_alvo`."""
+    alvo = metricas_classe(matriz_confusao(y_true, y_pred), classe)
+    return {"tp": alvo["tp"], "fp": alvo["fp"], "fn": alvo["fn"],
+            "precision": alvo["precision"], "recall": alvo["recall"],
+            "f1": f1_pr(alvo["precision"], alvo["recall"])}

@@ -50,7 +50,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 3 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação) e o léxico de pistas de negação, validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 4 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação e as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -131,6 +131,20 @@ O léxico de pistas congelado (11 formas) e a sua cobertura em cada partição:
 
 ```bash
 python codigo/scripts/analisar.py lexico
+```
+
+As estratégias sem GPU — a calibração no DEV, o filtro de pistas sobre os
+baselines do legado e a regra pura —, conferidas byte a byte contra os
+arquivos do legado:
+
+```bash
+REF=codigo/testes/referencia/resultados_legado
+python codigo/scripts/calibrar.py --resultados $REF --saida reproducao/CALIBRACAO_filtro.json \
+    --conferir $REF/CALIBRACAO_filtro.json
+python codigo/scripts/filtro_pistas.py --resultados $REF --calibracao $REF/CALIBRACAO_filtro.json \
+    --saida reproducao/execucoes --conferir $REF
+python codigo/scripts/regra_pura.py --calibracao $REF/CALIBRACAO_filtro.json \
+    --saida reproducao/execucoes --conferir $REF
 ```
 
 Os comandos de treino e de geração dos artefatos do TCC entram nas etapas
