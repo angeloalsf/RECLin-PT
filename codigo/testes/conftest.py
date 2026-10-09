@@ -18,6 +18,7 @@ from reclin.util import caminhos
 from reclin.util.io import ler_json
 
 REFERENCIA = Path(__file__).resolve().parent / "referencia"
+RESULTADOS_LEGADO = REFERENCIA / "resultados_legado"
 
 
 @pytest.fixture(scope="session")
@@ -34,3 +35,16 @@ def documentos() -> dict:
 @pytest.fixture(scope="session")
 def manifesto() -> dict:
     return particoes.ler_manifesto(caminhos.PARTICOES)
+
+
+@pytest.fixture(scope="session")
+def legado():
+    """Lê (com cache) um arquivo de `referencia/resultados_legado/`, pelo
+    caminho relativo a `results/` do legado."""
+    cache: dict[str, object] = {}
+
+    def ler(relativo: str):
+        if relativo not in cache:
+            cache[relativo] = ler_json(RESULTADOS_LEGADO / relativo)
+        return cache[relativo]
+    return ler

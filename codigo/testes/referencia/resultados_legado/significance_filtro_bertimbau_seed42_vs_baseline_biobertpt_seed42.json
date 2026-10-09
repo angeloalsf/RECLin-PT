@@ -1,0 +1,29 @@
+{
+  "accuracy": {
+    "a": 0.8956272774596564,
+    "b": 0.8944820406038522
+  },
+  "mcnemar": {
+    "b_only_a_correct": 551,
+    "c_only_b_correct": 529,
+    "n_discordant": 1080,
+    "p_value": 0.5228356755029242
+  },
+  "model_a": "filtro(neuralmind/bert-base-portuguese-cased s42)",
+  "model_b": "pucpr/biobertpt-all",
+  "n_test": 19210,
+  "paired_bootstrap": {
+    "ci95_high": 0.1646892555146184,
+    "ci95_low": 0.07796240847966138,
+    "mean_diff": 0.12100599552033241,
+    "n_boot": 10000,
+    "observed_diff": 0.12073838544426785,
+    "p_value": 0.0
+  },
+  "target_class": "negation_of",
+  "target_f1": {
+    "a": 0.8168168168168168,
+    "a_minus_b": 0.12073838544426785,
+    "b": 0.696078431372549
+  }
+}

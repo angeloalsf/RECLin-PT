@@ -61,6 +61,13 @@ def gravar_json(caminho: str | Path, obj: Any) -> None:
     _gravar_atomico(caminho, [texto])
 
 
+def gravar_texto(caminho: str | Path, texto: str) -> None:
+    """Grava `texto` exatamente como está (UTF-8, LF, sem acrescentar quebra
+    final). Para formatos cujo conteúdo byte a byte faz parte do contrato,
+    como os relatórios de comparação herdados do legado."""
+    _gravar_atomico(caminho, [texto])
+
+
 def sha256_arquivo(caminho: str | Path) -> str:
     """SHA-256 do conteúdo do arquivo, lido em blocos de 1 MiB."""
     digest = hashlib.sha256()

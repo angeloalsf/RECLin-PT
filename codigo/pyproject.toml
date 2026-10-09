@@ -9,10 +9,11 @@ description = "RECLin-PT: extração de relações em notas clínicas em portugu
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-# As dependências entram junto com o módulo que as usa. Até aqui (tarefa,
-# partições, configuração e utilitários) o pacote só usa a biblioteca padrão.
-# As versões exatas dos experimentos ficam em requirements.txt.
-dependencies = []
+# As dependências entram junto com o módulo que as usa: numpy e scipy desde a
+# etapa 2 (avaliação). As versões exatas dos experimentos ficam em
+# requirements.txt; para reproduzir as comparações do legado byte a byte,
+# instale com `-c codigo/requirements.txt` (ver codigo/README.md).
+dependencies = ["numpy>=1.24", "scipy>=1.11"]
 
 [project.optional-dependencies]
 testes = ["pytest>=8"]
@@ -23,3 +24,4 @@ include = ["reclin*"]
 [tool.pytest.ini_options]
 testpaths = ["testes"]
 addopts = "-p no:cacheprovider --import-mode=importlib"
+markers = ["lento: reproduz as 26 comparações do legado (cerca de 2 minutos); pule com -m \"not lento\""]

@@ -1,0 +1,29 @@
+{
+  "accuracy": {
+    "a": 0.942790213430505,
+    "b": 0.8932326913066111
+  },
+  "mcnemar": {
+    "b_only_a_correct": 1784,
+    "c_only_b_correct": 832,
+    "n_discordant": 2616,
+    "p_value": 6.482683709496208e-79
+  },
+  "model_a": "regra R3 (gap<=1, min_freq=3)",
+  "model_b": "neuralmind/bert-base-portuguese-cased",
+  "n_test": 19210,
+  "paired_bootstrap": {
+    "ci95_high": 0.038610361024154154,
+    "ci95_low": -0.07155268062112072,
+    "mean_diff": -0.016546296975259694,
+    "n_boot": 10000,
+    "observed_diff": -0.016635424651088693,
+    "p_value": 0.5602
+  },
+  "target_class": "negation_of",
+  "target_f1": {
+    "a": 0.6943620178041543,
+    "a_minus_b": -0.016635424651088693,
+    "b": 0.710997442455243
+  }
+}

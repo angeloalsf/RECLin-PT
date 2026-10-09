@@ -1,0 +1,367 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 10,
+    "espaco": "restrito: e1 no lexico induzido do train",
+    "lexicon_min_freq": 3,
+    "lexicon_sha1": "70c93fa807de",
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_length": 128,
+    "remapeamento": "fora do espaco restrito -> no_relation",
+    "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        125,
+        0,
+        27
+      ],
+      [
+        0,
+        0,
+        996
+      ],
+      [
+        27,
+        2,
+        18033
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 1.074054099046267,
+      "dev_macro_f1": 0.49347853355010934,
+      "dev_negation_of_f1": 0.5072765072765073,
+      "dev_restrito_macro_f1": 0.435503480797982,
+      "dev_restrito_negation_of_f1": 0.5158562367864693,
+      "duration_s": 147.9,
+      "epoch": 1,
+      "train_loss": 1.0652566671928512
+    },
+    {
+      "dev_loss": 0.9097423908802179,
+      "dev_macro_f1": 0.5557582313125851,
+      "dev_negation_of_f1": 0.6909090909090909,
+      "dev_restrito_macro_f1": 0.5376486450006294,
+      "dev_restrito_negation_of_f1": 0.7055702917771883,
+      "duration_s": 155.2,
+      "epoch": 2,
+      "train_loss": 0.7046392245270382
+    },
+    {
+      "dev_loss": 1.1381314041522832,
+      "dev_macro_f1": 0.5695423438259274,
+      "dev_negation_of_f1": 0.73125,
+      "dev_restrito_macro_f1": 0.5637893593919653,
+      "dev_restrito_negation_of_f1": 0.75,
+      "duration_s": 157.2,
+      "epoch": 3,
+      "train_loss": 0.5647294634831286
+    },
+    {
+      "dev_loss": 1.204700886630095,
+      "dev_macro_f1": 0.579647783585754,
+      "dev_negation_of_f1": 0.7612903225806451,
+      "dev_restrito_macro_f1": 0.5771253927327064,
+      "dev_restrito_negation_of_f1": 0.7814569536423841,
+      "duration_s": 157.1,
+      "epoch": 4,
+      "train_loss": 0.4083590806575022
+    },
+    {
+      "dev_loss": 1.5005258098244667,
+      "dev_macro_f1": 0.5780114945949381,
+      "dev_negation_of_f1": 0.7564102564102564,
+      "dev_restrito_macro_f1": 0.5751012145748988,
+      "dev_restrito_negation_of_f1": 0.7763157894736842,
+      "duration_s": 156.2,
+      "epoch": 5,
+      "train_loss": 0.32766273882344504
+    },
+    {
+      "dev_loss": 1.3743261551627746,
+      "dev_macro_f1": 0.5765357612929196,
+      "dev_negation_of_f1": 0.7522388059701492,
+      "dev_restrito_macro_f1": 0.570444709782406,
+      "dev_restrito_negation_of_f1": 0.7706422018348624,
+      "duration_s": 156.5,
+      "epoch": 6,
+      "train_loss": 0.2272978225357343
+    },
+    {
+      "dev_loss": 1.4000943045919905,
+      "dev_macro_f1": 0.5689448414169282,
+      "dev_negation_of_f1": 0.7298050139275766,
+      "dev_restrito_macro_f1": 0.5586168370482096,
+      "dev_restrito_negation_of_f1": 0.7464387464387464,
+      "duration_s": 156.6,
+      "epoch": 7,
+      "train_loss": 0.11928980761843029
+    },
+    {
+      "dev_loss": 1.576059870995008,
+      "dev_macro_f1": 0.5737173992278409,
+      "dev_negation_of_f1": 0.74375,
+      "dev_restrito_macro_f1": 0.5682871097156811,
+      "dev_restrito_negation_of_f1": 0.7628205128205128,
+      "duration_s": 157.1,
+      "epoch": 8,
+      "train_loss": 0.09865886620550512
+    },
+    {
+      "dev_loss": 1.6335019873311887,
+      "dev_macro_f1": 0.579851792440866,
+      "dev_negation_of_f1": 0.7619047619047619,
+      "dev_restrito_macro_f1": 0.5771719486077602,
+      "dev_restrito_negation_of_f1": 0.7817589576547231,
+      "duration_s": 156.9,
+      "epoch": 9,
+      "train_loss": 0.06706400693472579
+    },
+    {
+      "dev_loss": 1.6669326751277997,
+      "dev_macro_f1": 0.5819681945572682,
+      "dev_negation_of_f1": 0.7682539682539683,
+      "dev_restrito_macro_f1": 0.5793435012679122,
+      "dev_restrito_negation_of_f1": 0.7882736156351792,
+      "duration_s": 156.7,
+      "epoch": 10,
+      "train_loss": 0.05653709651049331
+    }
+  ],
+  "device": "cuda",
+  "encoder": "biobertpt",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "13.0",
+    "cudnn": 92700,
+    "gpu": "Tesla T4",
+    "numpy": "2.1.3",
+    "python": "3.13.15",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.16.1"
+  },
+  "environment_extra": {
+    "huggingface_hub": "1.29.0",
+    "lxml": "6.1.2",
+    "matplotlib": "3.10.0",
+    "pythonhashseed_no_ambiente": "0",
+    "pythonhashseed_valeu_no_processo": true,
+    "tokenizers": "0.23.2"
+  },
+  "instrumentation": {
+    "avisos_capturados": [
+      "/usr/local/lib/python3.13/dist-packages/torch/autograd/graph.py:869: UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)\n  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass",
+      "/usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'\n  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+      "/usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'\n  parse = parser.parseString(pattern)",
+      "/usr/local/lib/python3.13/dist-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'\n  parser.resetCache()"
+    ],
+    "best_epoch": 10,
+    "best_epoch_is_last": true,
+    "dev_macro_f1_recomputed": 0.5819681945572682,
+    "dev_negation_of_f1_recomputed": 0.7682539682539683,
+    "hf_backup_repo": "angeloalsf/reclin-pt-restrito-biobertpt-seed44",
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "pucpr/biobertpt-all",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 177858819,
+  "restricted_space": {
+    "class_weight": "balanced",
+    "lexico": {
+      "fonte": "negation_lexicon.induce_lexicon(train)",
+      "formas": {
+        "ausencia": 11,
+        "ausente": 12,
+        "ausentes": 5,
+        "eliminacao fecal": 4,
+        "evacuacao": 10,
+        "indolor": 3,
+        "nao": 128,
+        "nega": 353,
+        "s": 11,
+        "s/": 10,
+        "sem": 662
+      },
+      "max_gap": 25,
+      "min_freq": 3,
+      "n_formas": 11,
+      "sha1": "70c93fa807de"
+    },
+    "n_candidates_restrito": {
+      "dev": 774,
+      "test": 800,
+      "train": 6805
+    },
+    "pesos_classe_efetivos": {
+      "associated_with": 133.431373,
+      "negation_of": 1.876206,
+      "no_relation": 0.406584
+    },
+    "pesos_classe_espaco_completo_baselines": {
+      "associated_with": 7.17,
+      "negation_of": 40.55,
+      "no_relation": 0.3526
+    },
+    "por_split": {
+      "dev": {
+        "contagens_completo": {
+          "associated_with": 763,
+          "negation_of": 150,
+          "no_relation": 18151
+        },
+        "contagens_restrito": {
+          "associated_with": 5,
+          "negation_of": 142,
+          "no_relation": 627
+        },
+        "fracao": 0.0406,
+        "n_completo": 19064,
+        "n_restrito": 774,
+        "razao_no_relation_por_negation_of": 4.4155,
+        "teto_recall_associated_with": 0.00655307994757536,
+        "teto_recall_negation_of": 0.9466666666666667
+      },
+      "test": {
+        "contagens_completo": {
+          "associated_with": 996,
+          "negation_of": 152,
+          "no_relation": 18062
+        },
+        "contagens_restrito": {
+          "associated_with": 2,
+          "negation_of": 148,
+          "no_relation": 650
+        },
+        "fracao": 0.041645,
+        "n_completo": 19210,
+        "n_restrito": 800,
+        "razao_no_relation_por_negation_of": 4.3919,
+        "teto_recall_associated_with": 0.002008032128514056,
+        "teto_recall_negation_of": 0.9736842105263158
+      },
+      "train": {
+        "contagens_completo": {
+          "associated_with": 7096,
+          "negation_of": 1255,
+          "no_relation": 144335
+        },
+        "contagens_restrito": {
+          "associated_with": 17,
+          "negation_of": 1209,
+          "no_relation": 5579
+        },
+        "fracao": 0.044569,
+        "n_completo": 152686,
+        "n_restrito": 6805,
+        "razao_no_relation_por_negation_of": 4.6146,
+        "teto_recall_associated_with": 0.002395715896279594,
+        "teto_recall_negation_of": 0.9633466135458167
+      }
+    },
+    "remapeamento": {
+      "fora_do_espaco": "no_relation",
+      "probs_fora_do_espaco": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "y_true": "gold do espaco completo, nunca remapeado"
+    },
+    "ressalva_metricas": "associated_with fica quase todo fora do espaco restrito: F1 de associated_with, macro-F1, micro/weighted, MCC e o McNemar de significance.py NAO sao comparaveis aos dos baselines. A metrica comparavel e o F1 de negation_of.",
+    "test_restrito": {
+      "confusion_matrix": [
+        [
+          125,
+          0,
+          23
+        ],
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          27,
+          2,
+          621
+        ]
+      ],
+      "f1_per_class": {
+        "associated_with": 0.0,
+        "negation_of": 0.8333333333333334,
+        "no_relation": 0.9583333333333334
+      },
+      "macro_f1": 0.5972222222222222
+    },
+    "teto_recall_negation_of": {
+      "dev": 0.9466666666666667,
+      "test": 0.9736842105263158,
+      "train": 0.9633466135458167
+    }
+  },
+  "seed": 44,
+  "sklearn_report": {
+    "accuracy": 0.9452368558042686,
+    "associated_with": {
+      "f1-score": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.5980087922538173,
+      "precision": 0.5895615139864775,
+      "recall": 0.6069209467584363,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.8223684210526315,
+      "precision": 0.8223684210526315,
+      "recall": 0.8223684210526315,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9716579557088205,
+      "precision": 0.9463161209068011,
+      "recall": 0.9983944192226775,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9200981778247119,
+      "precision": 0.8962707847901427,
+      "recall": 0.9452368558042686,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.0,
+    "negation_of": 0.8223684210526315,
+    "no_relation": 0.9716579557088205
+  },
+  "test_macro_f1": 0.5980087922538173,
+  "test_mcc": 0.29380105051484745,
+  "test_micro_f1": 0.9452368558042686,
+  "test_weighted_f1": 0.9200981778247119
+}

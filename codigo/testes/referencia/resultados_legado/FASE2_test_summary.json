@@ -1,0 +1,120 @@
+{
+  "calibration": {
+    "combined_gap": 25,
+    "lexicon_size": 11,
+    "min_freq": 3,
+    "rule": "R3",
+    "rule_gap": 1
+  },
+  "n_test": 19210,
+  "systems": [
+    {
+      "system": "filtro(biobertpt s42)",
+      "path": "filtro_biobertpt_seed42.preds.json",
+      "seed": 42,
+      "tp": 139,
+      "fp": 44,
+      "fn": 13,
+      "precision": 0.7595628415300546,
+      "recall": 0.9144736842105263,
+      "f1": 0.8298507462686567,
+      "macro_f1": 0.7382914044806376
+    },
+    {
+      "system": "filtro(bertimbau s42)",
+      "path": "filtro_bertimbau_seed42.preds.json",
+      "seed": 42,
+      "tp": 136,
+      "fp": 45,
+      "fn": 16,
+      "precision": 0.7513812154696132,
+      "recall": 0.8947368421052632,
+      "f1": 0.8168168168168167,
+      "macro_f1": 0.733353599201889
+    },
+    {
+      "system": "filtro(biobertpt s43)",
+      "path": "filtro_biobertpt_seed43.preds.json",
+      "seed": 43,
+      "tp": 137,
+      "fp": 33,
+      "fn": 15,
+      "precision": 0.8058823529411765,
+      "recall": 0.9013157894736842,
+      "f1": 0.8509316770186336,
+      "macro_f1": 0.7505892051298647
+    },
+    {
+      "system": "filtro(bertimbau s43)",
+      "path": "filtro_bertimbau_seed43.preds.json",
+      "seed": 43,
+      "tp": 136,
+      "fp": 41,
+      "fn": 16,
+      "precision": 0.768361581920904,
+      "recall": 0.8947368421052632,
+      "f1": 0.8267477203647415,
+      "macro_f1": 0.7400976913833577
+    },
+    {
+      "system": "regra R3",
+      "path": "regra_pura.preds.json",
+      "seed": null,
+      "tp": 117,
+      "fp": 68,
+      "fn": 35,
+      "precision": 0.6324324324324324,
+      "recall": 0.7697368421052632,
+      "f1": 0.6943620178041543,
+      "macro_f1": 0.5549096642516486
+    },
+    {
+      "system": "baseline biobertpt s42",
+      "path": "baseline_biobertpt_seed42.preds.json",
+      "seed": 42,
+      "tp": 142,
+      "fp": 114,
+      "fn": 10,
+      "precision": 0.5546875,
+      "recall": 0.9342105263157895,
+      "f1": 0.6960784313725491,
+      "macro_f1": 0.6932268537339498
+    },
+    {
+      "system": "baseline bertimbau s42",
+      "path": "baseline_bertimbau_seed42.preds.json",
+      "seed": 42,
+      "tp": 139,
+      "fp": 100,
+      "fn": 13,
+      "precision": 0.5815899581589958,
+      "recall": 0.9144736842105263,
+      "f1": 0.710997442455243,
+      "macro_f1": 0.6976621347139881
+    },
+    {
+      "system": "baseline biobertpt s43",
+      "path": "baseline_biobertpt_seed43.preds.json",
+      "seed": 43,
+      "tp": 140,
+      "fp": 87,
+      "fn": 12,
+      "precision": 0.6167400881057269,
+      "recall": 0.9210526315789473,
+      "f1": 0.7387862796833773,
+      "macro_f1": 0.7127856751095191
+    },
+    {
+      "system": "baseline bertimbau s43",
+      "path": "baseline_bertimbau_seed43.preds.json",
+      "seed": 43,
+      "tp": 139,
+      "fp": 96,
+      "fn": 13,
+      "precision": 0.5914893617021276,
+      "recall": 0.9144736842105263,
+      "f1": 0.7183462532299741,
+      "macro_f1": 0.703511543971994
+    }
+  ]
+}

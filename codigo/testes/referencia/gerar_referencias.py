@@ -35,6 +35,14 @@ treino/
     Cada treino roda duas vezes; as predições precisam sair idênticas, senão a
     referência não serve para teste de equivalência e o script falha.
 
+resultados_legado/
+    Cópia sem alteração dos resultados do legado que a nova implementação
+    precisa reproduzir (etapa 2): os quatro baselines (métricas, sidecars do
+    TEST e do DEV, trilha), os sidecars do filtro e da regra pura com o
+    resumo da fase 2, as 26 comparações de significância, a agregação entre
+    sementes, as cinco execuções do fine-tuning restrito e a Pair-Aware. Mesma
+    estrutura de pastas de `results/`.
+
 referencias.json
     Ambiente, comandos, SHA-256 de cada arquivo gerado, resultado da checagem
     de determinismo e dos dois testes de CPU do legado.
@@ -314,6 +322,49 @@ def gerar_treino(modelo: Path, destino: Path, so: set[str] | None = None) -> dic
 
 
 # --------------------------------------------------------------------------- #
+# Parte E: resultados do legado (etapa 2)                                     #
+# --------------------------------------------------------------------------- #
+N_COMPARACOES = 26
+
+
+def lista_resultados() -> list[str]:
+    """Arquivos de `results/` copiados, relativos a ele. Ficam de fora os
+    `archive_*` (rodadas substituídas), as comparações de DEV dos critérios de
+    parada e os `filtro_dev/`, que pertencem às etapas das estratégias."""
+    nomes = []
+    for encoder in ("biobertpt", "bertimbau"):
+        for seed in (42, 43):
+            nomes += [f"baseline_{encoder}_seed{seed}{s}"
+                      for s in (".json", ".preds.json", ".dev_preds.json", ".test_evals.jsonl")]
+            nomes.append(f"filtro_{encoder}_seed{seed}.preds.json")
+    nomes += ["regra_pura.preds.json", "regra_pura.test_evals.jsonl",
+              "FASE2_test_summary.json", "summary_by_seed.json"]
+    comparacoes = sorted(p.name for p in RESULTS.glob("significance_*.json"))
+    if len(comparacoes) != N_COMPARACOES:
+        raise SystemExit(f"esperadas {N_COMPARACOES} comparações em results/, há {len(comparacoes)}")
+    nomes += comparacoes
+    for seed in range(42, 47):
+        nomes += [f"finetuning_restrito/restrito_biobertpt_seed{seed}{s}"
+                  for s in (".json", ".preds.json", ".dev_preds.json", ".test_evals.jsonl")]
+    nomes += ["pair_aware/pairaware_biobertpt_seed42.json",
+              "pair_aware/pairaware_biobertpt_seed42.dev_preds.json"]
+    return nomes
+
+
+def copiar_resultados(destino: Path) -> dict:
+    if destino.exists():
+        shutil.rmtree(destino)
+    nomes = lista_resultados()
+    for nome in nomes:
+        alvo = destino / nome
+        alvo.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(RESULTS / nome, alvo)
+        if sha256_arquivo(alvo) != sha256_arquivo(RESULTS / nome):
+            raise SystemExit(f"cópia de {nome} não confere")
+    return {"origem": "results/", "arquivos": len(nomes), "comparacoes": N_COMPARACOES}
+
+
+# --------------------------------------------------------------------------- #
 # Parte D: testes de CPU do legado                                            #
 # --------------------------------------------------------------------------- #
 def rodar_testes_legado() -> dict:
@@ -360,8 +411,8 @@ def main() -> int:
     ap.add_argument("--legado", type=Path, default=None,
                     help="checkout do repositório original no commit a5f055c "
                          "(default: a pasta legado/ ao lado de codigo/, se existir)")
-    ap.add_argument("--partes", default="dados,modelo,treino,testes",
-                    help="subconjunto de: dados, modelo, treino, testes")
+    ap.add_argument("--partes", default="dados,modelo,treino,testes,resultados",
+                    help="subconjunto de: dados, modelo, treino, testes, resultados")
     ap.add_argument("--treinos", default=None,
                     help="na parte treino, so estes (separados por virgula)")
     args = ap.parse_args()
@@ -389,6 +440,9 @@ def main() -> int:
         so = set(args.treinos.split(",")) if args.treinos else None
         manifesto.setdefault("treino", {}).update(
             gerar_treino(AQUI / "modelo_minusculo", AQUI / "treino", so))
+    if "resultados" in partes:
+        print("Parte E: resultados do legado", flush=True)
+        manifesto["resultados_legado"] = copiar_resultados(AQUI / "resultados_legado")
     if "testes" in partes:
         print("Parte D: testes de CPU do legado", flush=True)
         manifesto["testes_cpu_legado"] = rodar_testes_legado()

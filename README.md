@@ -50,7 +50,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapa 1 concluída: tarefa, partições congeladas, configuração base e testes contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 e 2 concluídas: tarefa, partições congeladas, configuração base, formato das execuções e avaliação (métricas, significância e agregação), validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -74,19 +74,22 @@ referenciado num único arquivo, `modelo_final.py`.
 
 ## Pré-requisitos
 
-**Python 3.10 ou mais novo.** As execuções originais usaram 3.10; o núcleo novo
-foi testado em 3.10, 3.12 e 3.13.
+**Python 3.10 ou mais novo; recomendado 3.12 ou 3.13.** Os resultados
+registrados do legado foram produzidos com Python 3.13 no Google Colab (numpy
+2.1.3, scipy 1.16.3, scikit-learn 1.6.1, torch 2.11.0), conforme o campo
+`environment` de cada execução. O código novo foi testado em 3.10, 3.12 e 3.13.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r codigo/requirements.txt
-pip install -e "codigo/[testes]"
+pip install -e "codigo/[testes]" -c codigo/requirements.txt
 ```
 
-A partir da etapa 1, instalar e rodar os testes não exige as dependências de
-`requirements.txt`: o que existe até aqui usa só a biblioteca padrão. Elas
-passam a ser necessárias quando entrarem o treino e a avaliação.
+Até a etapa 2, o pacote depende só de numpy e scipy; o `-c` fixa as versões dos
+experimentos (detalhes e a exceção do Python 3.10 em
+[`codigo/README.md`](codigo/README.md)). As demais dependências de
+`codigo/requirements.txt` (torch, transformers...) passam a ser necessárias
+quando entrar o treino: `pip install -r codigo/requirements.txt`.
 
 **Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e precisa
 ser solicitado aos autores do corpus (Oliveira et al.). Os arquivos `.xml` vão
@@ -115,8 +118,17 @@ python codigo/scripts/preparar_dados.py conferir
 python -m pytest codigo
 ```
 
-Os comandos de treino, avaliação e geração dos artefatos do TCC entram nas
-etapas seguintes.
+As 26 comparações de significância do TCC podem ser refeitas a partir dos
+resultados do legado e conferidas byte a byte:
+
+```bash
+python codigo/scripts/comparar.py protocolo \
+    --resultados codigo/testes/referencia/resultados_legado \
+    --saida comparacoes --conferir codigo/testes/referencia/resultados_legado
+```
+
+Os comandos de treino e de geração dos artefatos do TCC entram nas etapas
+seguintes.
 
 ## Métricas e como interpretar
 
