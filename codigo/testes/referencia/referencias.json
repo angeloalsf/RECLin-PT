@@ -26,6 +26,7 @@
     "modelo_minusculo/model.safetensors": "18512e0c05a65cbec5d350445948b6ca2491fb9d90cc81aadaa299de9c576981",
     "modelo_minusculo/tokenizer.json": "d357844717336f8d672f038e7be92b791066c476a19a1df02a92fc2a3e90f965",
     "modelo_minusculo/tokenizer_config.json": "d4256a5548edb3820dd70fd151fdb0c3c70e44b8f0c6ea0ce4a5d9b248754551",
+    "resultados_legado/CALIBRACAO_filtro.json": "c790f8ddd2289b623a46a97782b4c5350b46c9c38c82e8734c3f38cbc4616fb1",
     "resultados_legado/FASE2_test_summary.json": "4c3a02aa3def8379c48ab1817887b016e074bb0043bdf14bf799bfb33d66e665",
     "resultados_legado/baseline_bertimbau_seed42.dev_preds.json": "6c65793c6fe1af365b56af1f3ee3333cd2003b6f4ad6aee49c1d64bbc049bd5c",
     "resultados_legado/baseline_bertimbau_seed42.json": "2c96129ad2fc4e3a1796fbe5fcda72e5c22f6d3332c6c071d524ee0282be7697",
@@ -114,7 +115,7 @@
     "repositorio": "https://github.com/angeloalsf/RECLin-PT"
   },
   "resultados_legado": {
-    "arquivos": 72,
+    "arquivos": 73,
     "comparacoes": 26,
     "origem": "results/"
   },

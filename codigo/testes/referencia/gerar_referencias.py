@@ -39,9 +39,10 @@ resultados_legado/
     Cópia sem alteração dos resultados do legado que a nova implementação
     precisa reproduzir (etapa 2): os quatro baselines (métricas, sidecars do
     TEST e do DEV, trilha), os sidecars do filtro e da regra pura com o
-    resumo da fase 2, as 26 comparações de significância, a agregação entre
-    sementes, as cinco execuções do fine-tuning restrito e a Pair-Aware. Mesma
-    estrutura de pastas de `results/`.
+    resumo da fase 2 e a calibração do filtro (que congelou o léxico), as 26
+    comparações de significância, a agregação entre sementes, as cinco
+    execuções do fine-tuning restrito e a Pair-Aware. Mesma estrutura de
+    pastas de `results/`.
 
 referencias.json
     Ambiente, comandos, SHA-256 de cada arquivo gerado, resultado da checagem
@@ -338,7 +339,8 @@ def lista_resultados() -> list[str]:
                       for s in (".json", ".preds.json", ".dev_preds.json", ".test_evals.jsonl")]
             nomes.append(f"filtro_{encoder}_seed{seed}.preds.json")
     nomes += ["regra_pura.preds.json", "regra_pura.test_evals.jsonl",
-              "FASE2_test_summary.json", "summary_by_seed.json"]
+              "FASE2_test_summary.json", "summary_by_seed.json",
+              "CALIBRACAO_filtro.json"]       # guarda do léxico congelado (etapa 3)
     comparacoes = sorted(p.name for p in RESULTS.glob("significance_*.json"))
     if len(comparacoes) != N_COMPARACOES:
         raise SystemExit(f"esperadas {N_COMPARACOES} comparações em results/, há {len(comparacoes)}")

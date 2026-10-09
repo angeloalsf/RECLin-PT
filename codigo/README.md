@@ -58,6 +58,13 @@ python codigo/scripts/preparar_dados.py particionar   # regera as partições a 
 corpus SemClinBr (a conversão do XML entra numa etapa seguinte). Os dois
 primeiros comandos funcionam sem o corpus.
 
+Léxico de pistas de negação (especialização):
+
+```bash
+python codigo/scripts/analisar.py lexico                 # léxico congelado: 11 formas, lexico_sha1 e cobertura por partição
+python codigo/scripts/analisar.py lexico --min-freq 2    # outro limiar, sem a guarda do congelado
+```
+
 Avaliação:
 
 ```bash
@@ -77,7 +84,7 @@ python codigo/scripts/comparar.py protocolo \
 
 ```bash
 python -m pytest codigo                  # tudo (~1,5 min, dominado pelas 26 comparações)
-python -m pytest codigo -m "not lento"   # sem as 26 comparações (~10 s)
+python -m pytest codigo -m "not lento"   # sem as 26 comparações (~25 s)
 ```
 
 | Pasta | O que verifica |
@@ -106,7 +113,7 @@ O pacote `reclin` tem três níveis, e um nível só importa os de cima:
 Os módulos de `reclin/` não configuram logging, não alteram `os.environ` e não
 mexem em `sys.path` ao serem importados; isso fica com os scripts.
 
-### O que já existe (etapas 1 e 2)
+### O que já existe (etapas 1 a 3)
 
 | Caminho | Responsabilidade |
 | --- | --- |
@@ -115,12 +122,14 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/config.py` | `Config`, a configuração base das estratégias treinadas, e `ENCODERS` |
 | `reclin/execucao/` | O formato em disco das execuções: sidecar de predições (`predicoes`), diretório da execução (`diretorio`) e trilha das avaliações do TEST (`trilha`) |
 | `reclin/avaliacao/` | Métricas (`metricas`), McNemar e bootstrap pareado (`significancia`), as 26 comparações do TCC (`protocolo`) e a agregação entre sementes (`agregacao`) |
+| `reclin/negacao/lexico.py` | Especialização: normalização, indução do léxico de pistas no TRAIN, `e_pista`, `lexico_sha1`, cobertura e o léxico congelado com a guarda (`min_freq=3`, 11 formas, `70c93fa807de`) |
 | `reclin/util/` | JSON/JSONL e SHA-256 (`io`), logging configurado só por scripts (`log`), caminhos padrão (`caminhos`) |
 | `scripts/preparar_dados.py` | `conferir`, `manifesto` e `particionar` |
 | `scripts/avaliar.py` | Métricas de sidecars ou de uma execução |
 | `scripts/comparar.py` | Uma comparação (`par`) ou as 26 do TCC (`protocolo`) |
+| `scripts/analisar.py` | `lexico`: o léxico de pistas, seu hash e a cobertura por partição |
 | `dados/particoes/` | `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados) |
-| `testes/` | 228 testes (unidade, equivalência com o legado e estrutura do pacote) e as referências do legado |
+| `testes/` | 275 testes (unidade, equivalência com o legado e estrutura do pacote) e as referências do legado |
 | `docs/entregas/` | Índice das entregas e, por etapa, o que foi entregue, como foi verificado e o que ficou pendente |
 
 `dados/brutos/` (XML do SemClinBr) e `dados/processados/` (`dataset.jsonl`)

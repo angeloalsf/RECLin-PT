@@ -10,13 +10,14 @@ nova da mesma etapa substitui a anterior.
 | --- | --- | --- | --- | --- | --- |
 | 1 | 1 | 09/10/2026 | `RECLin-PT-etapa-1.zip` | Substituída pela versão 2: não trazia `CITATION.cff` e `LICENSE`, então não era autossuficiente | — |
 | 1 | 2 | 09/10/2026 | `RECLin-PT-etapa-1-v2.zip` | Substituída pela etapa 2 (que a contém) | [etapa-1.md](etapa-1.md) |
-| 2 | 1 | 09/10/2026 | `RECLin-PT-etapa-2-v1.zip` | Atual | [etapa-2.md](etapa-2.md) |
+| 2 | 1 | 09/10/2026 | `RECLin-PT-etapa-2-v1.zip` | Substituída pela etapa 3 (que a contém) | [etapa-2.md](etapa-2.md) |
+| 3 | 1 | 09/10/2026 | `RECLin-PT-etapa-3-v1.zip` | Atual | [etapa-3.md](etapa-3.md) |
 
 ## O que nunca vai no pacote
 
 | Item | Por quê | Onde obter |
 | --- | --- | --- |
-| Projeto legado | É só referência; o que dele os testes usam está em `codigo/testes/referencia/` (inclusive os 72 resultados copiados em `resultados_legado/`) | Repositório original, commit `a5f055c` |
+| Projeto legado | É só referência; o que dele os testes usam está em `codigo/testes/referencia/` (inclusive os 73 resultados copiados em `resultados_legado/`) | Repositório original, commit `a5f055c` |
 | XML do SemClinBr e `dataset.jsonl` (`codigo/dados/brutos/`, `codigo/dados/processados/`) | Licença restrita do corpus | Autores do corpus; ver o README da raiz |
 | Ambientes virtuais, caches (`__pycache__`, `.pytest_cache`, `*.egg-info`) | Gerados na instalação | `pip install -e "codigo/[testes]"` |
 | Pesos de modelos e checkpoints | Centenas de MB; gerados pelo treino | Treino (etapas seguintes) ou Hugging Face Hub |
