@@ -1,0 +1,135 @@
+{
+  "ambiente": {
+    "plataforma": "Linux-6.18.44-fc-v80-x86_64-with-glibc2.39",
+    "python": "3.13.16",
+    "variaveis_treino": {
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0",
+      "TOKENIZERS_PARALLELISM": "false"
+    },
+    "versoes": {
+      "huggingface_hub": "1.29.0",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0",
+      "scipy": "1.16.3",
+      "sklearn": "1.6.1",
+      "tokenizers": "0.23.2",
+      "torch": "2.11.0+cu130",
+      "transformers": "5.16.1"
+    }
+  },
+  "arquivos_sha256": {
+    "dados.json": "2a8a2bfd7c4f5eddaa3b2cdfc5ac2c0772087af6385c9c3a94a2e00bb76e8e98",
+    "modelo_minusculo/config.json": "02d186ab3424917a9382637467a8a47d48e8c14f140bba84e4d88370070ccb68",
+    "modelo_minusculo/model.safetensors": "18512e0c05a65cbec5d350445948b6ca2491fb9d90cc81aadaa299de9c576981",
+    "modelo_minusculo/tokenizer.json": "d357844717336f8d672f038e7be92b791066c476a19a1df02a92fc2a3e90f965",
+    "modelo_minusculo/tokenizer_config.json": "d4256a5548edb3820dd70fd151fdb0c3c70e44b8f0c6ea0ce4a5d9b248754551",
+    "treino/baseline_minusculo_seed42.dev_preds.json": "467873ca0b5cc62b83eee48ffe552b953693969fb65b931774760bd303609800",
+    "treino/baseline_minusculo_seed42.json": "3d5d6b3a3e243c888948b7cabc276c968f2498b0c758afd958088760e779db2e",
+    "treino/baseline_minusculo_seed42.preds.json": "332ec74259d79be954de99e4f42b291c3e2c9c676722031d2a40dc232732b0dc",
+    "treino/pairaware_minusculo_seed42.dev_preds.json": "92e651a0ab3329f77f4c72d19d59731349993bdb043e97e39b386ad862514f63",
+    "treino/pairaware_minusculo_seed42.json": "55c4342dc99957bf5317bf458a762436edd309aafe7bcd73fced588aa5fdf88a",
+    "treino/pairaware_minusculo_seed42.preds.json": "afd45de621f63b2964a4c2a8534569799b1e28e30eedb38cb645758da2c1219f",
+    "treino/restrito_minusculo_seed42.dev_preds.json": "b51552245b0678e8acc464a30e283223354b002e5e765857156c493aed7ca230",
+    "treino/restrito_minusculo_seed42.json": "c61678394367f3b8b434b327c2509377117ac0ec13bbc128360c6d383ba64755",
+    "treino/restrito_minusculo_seed42.preds.json": "96145e184704b1a2d7cf1e7688f86195532183e4bbe798258db0120fb2240228"
+  },
+  "origem": {
+    "commit": "a5f055c",
+    "legado": "raiz do checkout passado em --legado",
+    "repositorio": "https://github.com/angeloalsf/RECLin-PT"
+  },
+  "testes_cpu_legado": {
+    "test_pair_aware": {
+      "codigo_saida": 0,
+      "resumo": "10 de 10 checagens OK em 22.8s"
+    },
+    "test_remapeamento": {
+      "codigo_saida": 0,
+      "resumo": "OK: 7 checagens do espaco restrito e do remapeamento (10.1s)"
+    }
+  },
+  "treino": {
+    "baseline_minusculo_seed42": {
+      "comando": [
+        "python",
+        "src/baseline_biobertpt.py",
+        "--splits-dir",
+        "data/splits",
+        "--epochs",
+        "2",
+        "--batch-size",
+        "64",
+        "--max-gap",
+        "25",
+        "--max-length",
+        "128",
+        "--model",
+        "<modelo_minusculo>",
+        "--seed",
+        "42",
+        "--lr",
+        "1e-3",
+        "--out",
+        "<saida>/baseline_minusculo_seed42.json"
+      ],
+      "cwd": "legado/",
+      "deterministico_em_duas_rodadas": true,
+      "duracao_s": {
+        "a": 671.0,
+        "b": 699.3
+      }
+    },
+    "pairaware_minusculo_seed42": {
+      "comando": [
+        "python",
+        "src/pair_aware/train_pair_aware.py",
+        "--encoder",
+        "biobertpt",
+        "--epochs",
+        "3",
+        "--avaliar-test",
+        "--model",
+        "<modelo_minusculo>",
+        "--seed",
+        "42",
+        "--lr",
+        "1e-3",
+        "--out",
+        "<saida>/pairaware_minusculo_seed42.json"
+      ],
+      "cwd": "legado/",
+      "deterministico_em_duas_rodadas": true,
+      "duracao_s": {
+        "a": 54.6,
+        "b": 53.2
+      }
+    },
+    "restrito_minusculo_seed42": {
+      "comando": [
+        "python",
+        "src/finetuning_restrito/train_restrito.py",
+        "--encoder",
+        "biobertpt",
+        "--epochs",
+        "10",
+        "--model",
+        "<modelo_minusculo>",
+        "--seed",
+        "42",
+        "--lr",
+        "1e-3",
+        "--out",
+        "<saida>/restrito_minusculo_seed42.json"
+      ],
+      "cwd": "legado/",
+      "deterministico_em_duas_rodadas": true,
+      "duracao_s": {
+        "a": 149.5,
+        "b": 153.5
+      }
+    }
+  }
+}

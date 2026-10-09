@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reclin"
+version = "0.1.0"
+description = "RECLin-PT: extração de relações em notas clínicas em português, com foco em negation_of"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+# As dependências entram junto com o módulo que as usa. Até aqui (tarefa,
+# partições, configuração e utilitários) o pacote só usa a biblioteca padrão.
+# As versões exatas dos experimentos ficam em requirements.txt.
+dependencies = []
+
+[project.optional-dependencies]
+testes = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["reclin*"]
+
+[tool.pytest.ini_options]
+testpaths = ["testes"]
+addopts = "-p no:cacheprovider --import-mode=importlib"

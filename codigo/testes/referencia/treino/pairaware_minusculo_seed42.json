@@ -1,0 +1,423 @@
+{
+  "config": {
+    "batch_size": 64,
+    "cabeca": {
+      "arquitetura": "concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Linear(3d, m) -> GELU -> Dropout(p) -> Linear(m, C)",
+      "dropout": "hidden_dropout_prob do encoder",
+      "fallback_marcador_ausente": "h_cls",
+      "lr_cabeca": "a mesma do encoder (--lr)",
+      "mlp_hidden": "hidden do encoder"
+    },
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 3,
+    "espaco": "restrito: e1 no lexico induzido do train",
+    "lexicon_min_freq": 3,
+    "lexicon_sha1": "70c93fa807de",
+    "lr": 0.001,
+    "max_gap": 25,
+    "max_length": 128,
+    "perda": "CrossEntropyLoss(weight=balanced no train restrito)",
+    "remapeamento": "fora do espaco restrito -> no_relation",
+    "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        127,
+        0,
+        25
+      ],
+      [
+        2,
+        0,
+        994
+      ],
+      [
+        340,
+        0,
+        17722
+      ]
+    ]
+  },
+  "dev_best_confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        126,
+        0,
+        24
+      ],
+      [
+        5,
+        0,
+        758
+      ],
+      [
+        325,
+        0,
+        17826
+      ]
+    ]
+  },
+  "dev_best_f1_per_class": {
+    "associated_with": 0.0,
+    "negation_of": 0.4158415841584158,
+    "no_relation": 0.969884926140537
+  },
+  "dev_best_macro_f1": 0.4619088367663176,
+  "dev_history": [
+    {
+      "dev_loss": 1.2712786060113173,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.0,
+      "epoch": 1,
+      "train_loss": 0.9978158084031578
+    },
+    {
+      "dev_loss": 1.2382109348590558,
+      "dev_macro_f1": 0.4575878330038667,
+      "dev_negation_of_f1": 0.40372670807453415,
+      "dev_restrito_macro_f1": 0.3332547458735805,
+      "dev_restrito_negation_of_f1": 0.4088050314465409,
+      "duration_s": 14.2,
+      "epoch": 2,
+      "train_loss": 1.076933571111376
+    },
+    {
+      "dev_loss": 1.2591834389246428,
+      "dev_macro_f1": 0.4619088367663176,
+      "dev_negation_of_f1": 0.4158415841584158,
+      "dev_restrito_macro_f1": 0.3535193738092289,
+      "dev_restrito_negation_of_f1": 0.4214046822742475,
+      "duration_s": 15.0,
+      "epoch": 3,
+      "train_loss": 1.0133537661249392
+    }
+  ],
+  "device": "cpu",
+  "encoder": "biobertpt",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "13.0",
+    "cudnn": 91900,
+    "gpu": null,
+    "numpy": "2.1.3",
+    "python": "3.13.16",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.16.1"
+  },
+  "environment_extra": {
+    "huggingface_hub": "1.29.0",
+    "lxml": "6.1.2",
+    "matplotlib": "3.10.0",
+    "pythonhashseed_no_ambiente": "0",
+    "pythonhashseed_valeu_no_processo": true,
+    "tokenizers": "0.23.2"
+  },
+  "instrumentation": {
+    "avisos_capturados": [
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'\n  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'\n  parse = parser.parseString(pattern)",
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'\n  parser.resetCache()"
+    ],
+    "best_epoch": 3,
+    "best_epoch_is_last": true,
+    "dev_macro_f1_recomputed": 0.4619088367663176,
+    "dev_negation_of_f1_recomputed": 0.4158415841584158,
+    "hf_backup_repo": null,
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "/home/claude/angeloalsf/reclin-pt/codigo/testes/referencia/modelo_minusculo",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 15491,
+  "pair_aware": {
+    "cabeca": {
+      "arquitetura": "concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Linear(3d, m) -> GELU -> Dropout(p) -> Linear(m, C)",
+      "dropout": 0.1,
+      "e1_token_id": 118,
+      "e2_token_id": 120,
+      "encoder_class": "BertModel",
+      "fallback_marcador_ausente": "posicao 0 (h_cls)",
+      "formato": 1,
+      "hidden_size": 16,
+      "id2label": {
+        "0": "negation_of",
+        "1": "associated_with",
+        "2": "no_relation"
+      },
+      "initializer_range": 0.02,
+      "label2id": {
+        "associated_with": 1,
+        "negation_of": 0,
+        "no_relation": 2
+      },
+      "mlp_hidden": 16,
+      "num_labels": 3,
+      "tem_pooler": false
+    },
+    "dev_restrito": {
+      "confusion_matrix": [
+        [
+          126,
+          0,
+          16
+        ],
+        [
+          5,
+          0,
+          0
+        ],
+        [
+          325,
+          0,
+          302
+        ]
+      ],
+      "f1_per_class": {
+        "associated_with": 0.0,
+        "negation_of": 0.4214046822742475,
+        "no_relation": 0.6391534391534391
+      },
+      "macro_f1": 0.3535193738092289
+    },
+    "entrada": "build_marked_window com os offsets crus (sem correcao da deriva), a mesma dos baselines, do filtro e do fine-tuning restrito; ver results/pair_aware/AUDITORIA_marcadores.md",
+    "marcadores_ausentes": {
+      "dev": {
+        "E1_ausente": 108,
+        "E1_fora_do_texto": 4,
+        "E1_truncado": 104,
+        "E2_ausente": 34,
+        "E2_fora_do_texto": 1,
+        "E2_truncado": 33,
+        "algum_ausente": 141,
+        "max_length": 128,
+        "n": 774
+      },
+      "test": {
+        "E1_ausente": 106,
+        "E1_fora_do_texto": 10,
+        "E1_truncado": 96,
+        "E2_ausente": 46,
+        "E2_fora_do_texto": 5,
+        "E2_truncado": 41,
+        "algum_ausente": 149,
+        "max_length": 128,
+        "n": 800
+      },
+      "train": {
+        "E1_ausente": 901,
+        "E1_fora_do_texto": 63,
+        "E1_truncado": 838,
+        "E2_ausente": 381,
+        "E2_fora_do_texto": 40,
+        "E2_truncado": 341,
+        "algum_ausente": 1264,
+        "max_length": 128,
+        "n": 6805
+      }
+    },
+    "n_params_cabeca": 835
+  },
+  "restricted_space": {
+    "class_weight": "balanced",
+    "lexico": {
+      "fonte": "negation_lexicon.induce_lexicon(train)",
+      "formas": {
+        "ausencia": 11,
+        "ausente": 12,
+        "ausentes": 5,
+        "eliminacao fecal": 4,
+        "evacuacao": 10,
+        "indolor": 3,
+        "nao": 128,
+        "nega": 353,
+        "s": 11,
+        "s/": 10,
+        "sem": 662
+      },
+      "max_gap": 25,
+      "min_freq": 3,
+      "n_formas": 11,
+      "sha1": "70c93fa807de"
+    },
+    "n_candidates_restrito": {
+      "dev": 774,
+      "test": 800,
+      "train": 6805
+    },
+    "pesos_classe_efetivos": {
+      "associated_with": 133.431373,
+      "negation_of": 1.876206,
+      "no_relation": 0.406584
+    },
+    "pesos_classe_espaco_completo_baselines": {
+      "associated_with": 7.17,
+      "negation_of": 40.55,
+      "no_relation": 0.3526
+    },
+    "por_split": {
+      "dev": {
+        "contagens_completo": {
+          "associated_with": 763,
+          "negation_of": 150,
+          "no_relation": 18151
+        },
+        "contagens_restrito": {
+          "associated_with": 5,
+          "negation_of": 142,
+          "no_relation": 627
+        },
+        "fracao": 0.0406,
+        "n_completo": 19064,
+        "n_restrito": 774,
+        "razao_no_relation_por_negation_of": 4.4155,
+        "teto_recall_associated_with": 0.00655307994757536,
+        "teto_recall_negation_of": 0.9466666666666667
+      },
+      "test": {
+        "contagens_completo": {
+          "associated_with": 996,
+          "negation_of": 152,
+          "no_relation": 18062
+        },
+        "contagens_restrito": {
+          "associated_with": 2,
+          "negation_of": 148,
+          "no_relation": 650
+        },
+        "fracao": 0.041645,
+        "n_completo": 19210,
+        "n_restrito": 800,
+        "razao_no_relation_por_negation_of": 4.3919,
+        "teto_recall_associated_with": 0.002008032128514056,
+        "teto_recall_negation_of": 0.9736842105263158
+      },
+      "train": {
+        "contagens_completo": {
+          "associated_with": 7096,
+          "negation_of": 1255,
+          "no_relation": 144335
+        },
+        "contagens_restrito": {
+          "associated_with": 17,
+          "negation_of": 1209,
+          "no_relation": 5579
+        },
+        "fracao": 0.044569,
+        "n_completo": 152686,
+        "n_restrito": 6805,
+        "razao_no_relation_por_negation_of": 4.6146,
+        "teto_recall_associated_with": 0.002395715896279594,
+        "teto_recall_negation_of": 0.9633466135458167
+      }
+    },
+    "remapeamento": {
+      "fora_do_espaco": "no_relation",
+      "probs_fora_do_espaco": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "y_true": "gold do espaco completo, nunca remapeado"
+    },
+    "ressalva_metricas": "associated_with fica quase todo fora do espaco restrito: F1 de associated_with, macro-F1, micro/weighted, MCC e o McNemar de significance.py NAO sao comparaveis aos dos baselines. A metrica comparavel e o F1 de negation_of.",
+    "test_restrito": {
+      "confusion_matrix": [
+        [
+          127,
+          0,
+          21
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          340,
+          0,
+          310
+        ]
+      ],
+      "f1_per_class": {
+        "associated_with": 0.0,
+        "negation_of": 0.41166936790923825,
+        "no_relation": 0.6320081549439348
+      },
+      "macro_f1": 0.34789250761772433
+    },
+    "teto_recall_negation_of": {
+      "dev": 0.9466666666666667,
+      "test": 0.9736842105263158,
+      "train": 0.9633466135458167
+    }
+  },
+  "seed": 42,
+  "sklearn_report": {
+    "accuracy": 0.9291514836022905,
+    "associated_with": {
+      "f1-score": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.45736379194623583,
+      "precision": 0.4054720489952685,
+      "recall": 0.6055674217655755,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.40901771336553944,
+      "precision": 0.27078891257995735,
+      "recall": 0.8355263157894737,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.963073662473168,
+      "precision": 0.9456272344058482,
+      "recall": 0.9811759495072528,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9087562302978616,
+      "precision": 0.8912586685346476,
+      "recall": 0.9291514836022905,
+      "support": 19210.0
+    }
+  },
+  "test_avaliado": true,
+  "test_f1_per_class": {
+    "associated_with": 0.0,
+    "negation_of": 0.40901771336553944,
+    "no_relation": 0.963073662473168
+  },
+  "test_macro_f1": 0.45736379194623583,
+  "test_mcc": 0.15897740503199703,
+  "test_micro_f1": 0.9291514836022905,
+  "test_weighted_f1": 0.9087562302978616
+}

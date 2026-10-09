@@ -1,0 +1,63 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Ambientes virtuais ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Dados: corpus restrito e derivados diretos ---
+# SemClinBr tem licenca restrita: NUNCA versionar.
+SemClinBr-xml-public-v1/
+data/processed/
+codigo/dados/brutos/
+codigo/dados/processados/
+# NOTA: codigo/dados/particoes/ E versionado de proposito (congela o test entre
+# os modelos; conferido pelo SHA-256 do MANIFEST.json).
+
+# --- Modelos e checkpoints (centenas de MB) ---
+checkpoints/
+best_model/
+last_checkpoint/
+*.pt
+*.pth
+*.bin
+*.safetensors
+# Excecao: o modelo minusculo das referencias de validacao (~60 KB) e versionado.
+!codigo/testes/referencia/modelo_minusculo/*.safetensors
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- LaTeX (artefatos de compilacao; artigo.bbl E versionado) ---
+*.aux
+*.blg
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# --- SO e editores ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# NOTA: os resultados (codigo/resultados/, quando existirem) NAO sao ignorados.
+# Custam horas de GPU e sustentam os numeros do TCC. Apenas pesos eventualmente
+# salvos la sao excluidos pelas regras de *.pt / *.safetensors acima.

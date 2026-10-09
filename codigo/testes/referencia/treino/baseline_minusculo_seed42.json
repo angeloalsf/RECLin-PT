@@ -1,0 +1,124 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 2,
+    "lr": 0.001,
+    "max_gap": 25,
+    "max_length": 128
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        45,
+        0,
+        107
+      ],
+      [
+        5,
+        0,
+        991
+      ],
+      [
+        447,
+        0,
+        17615
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 1.0413770117615693,
+      "dev_macro_f1": 0.350042447294878,
+      "dev_negation_of_f1": 0.081145584725537,
+      "duration_s": 312.3,
+      "epoch": 1,
+      "train_loss": 1.0562057920293657
+    },
+    {
+      "dev_loss": 0.9642178722275984,
+      "dev_macro_f1": 0.3743652284380317,
+      "dev_negation_of_f1": 0.15853658536585366,
+      "duration_s": 329.1,
+      "epoch": 2,
+      "train_loss": 0.9951051925523683
+    }
+  ],
+  "device": "cpu",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "13.0",
+    "cudnn": 91900,
+    "gpu": null,
+    "numpy": "2.1.3",
+    "python": "3.13.16",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.16.1"
+  },
+  "instrumentation": {
+    "best_epoch": 2,
+    "hf_backup_repo": null,
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "/home/claude/angeloalsf/reclin-pt/codigo/testes/referencia/modelo_minusculo",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 14979,
+  "seed": 42,
+  "sklearn_report": {
+    "accuracy": 0.9193128578865174,
+    "associated_with": {
+      "f1-score": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.36555421595461235,
+      "precision": 0.34395582422374066,
+      "recall": 0.42376818055547466,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.1386748844375963,
+      "precision": 0.09054325955734406,
+      "recall": 0.29605263157894735,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9579877634262407,
+      "precision": 0.941324213113878,
+      "recall": 0.9752519100874765,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9018351673836166,
+      "precision": 0.8857865961850903,
+      "recall": 0.9193128578865174,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.0,
+    "negation_of": 0.1386748844375963,
+    "no_relation": 0.9579877634262407
+  },
+  "test_macro_f1": 0.36555421595461235,
+  "test_mcc": 0.04229072270683153,
+  "test_micro_f1": 0.9193128578865174,
+  "test_weighted_f1": 0.9018351673836166
+}

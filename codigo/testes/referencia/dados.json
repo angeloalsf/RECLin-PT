@@ -1,0 +1,414 @@
+{
+  "config_baselines": {
+    "baseline_bertimbau_seed42": {
+      "config": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_length": 128
+      },
+      "config_sha1": "ac01c52aa595",
+      "model": "neuralmind/bert-base-portuguese-cased",
+      "receita_config_sha1": "relation_extraction.append_test_eval_log",
+      "seed": 42
+    },
+    "baseline_bertimbau_seed43": {
+      "config": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_length": 128
+      },
+      "config_sha1": "6c0e457e0091",
+      "model": "neuralmind/bert-base-portuguese-cased",
+      "receita_config_sha1": "relation_extraction.append_test_eval_log",
+      "seed": 43
+    },
+    "baseline_biobertpt_seed42": {
+      "config": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_length": 128
+      },
+      "config_sha1": "ae69a0267d65",
+      "model": "pucpr/biobertpt-all",
+      "receita_config_sha1": "relation_extraction.append_test_eval_log",
+      "seed": 42
+    },
+    "baseline_biobertpt_seed43": {
+      "config": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_length": 128
+      },
+      "config_sha1": "9758b7e0605b",
+      "model": "pucpr/biobertpt-all",
+      "receita_config_sha1": "relation_extraction.append_test_eval_log",
+      "seed": 43
+    }
+  },
+  "ctx_chars": 128,
+  "espaco_restrito": {
+    "dev": {
+      "indices_sha256": "8411b4de7dcd42602f10ddd912f806014c11d3ec3e13c62b8c557e7624197551",
+      "janelas_sha256": "9a612480b5ceb529ca4b828c716978b80b624f015fcda081a4c4178567a47550",
+      "n_restrito": 774,
+      "resumo": {
+        "contagens_completo": {
+          "associated_with": 763,
+          "negation_of": 150,
+          "no_relation": 18151
+        },
+        "contagens_restrito": {
+          "associated_with": 5,
+          "negation_of": 142,
+          "no_relation": 627
+        },
+        "fracao": 0.0406,
+        "n_completo": 19064,
+        "n_restrito": 774,
+        "razao_no_relation_por_negation_of": 4.4155,
+        "teto_recall_associated_with": 0.00655307994757536,
+        "teto_recall_negation_of": 0.9466666666666667
+      }
+    },
+    "test": {
+      "indices_sha256": "500e1f61e880b366f0aad9293c25be986dbf3ea84370c745a7d68b4186a65455",
+      "janelas_sha256": "c0048d6937b162e629ceead8453bada83787733a88366ac1f0dd3950d0cec3be",
+      "n_restrito": 800,
+      "resumo": {
+        "contagens_completo": {
+          "associated_with": 996,
+          "negation_of": 152,
+          "no_relation": 18062
+        },
+        "contagens_restrito": {
+          "associated_with": 2,
+          "negation_of": 148,
+          "no_relation": 650
+        },
+        "fracao": 0.041645,
+        "n_completo": 19210,
+        "n_restrito": 800,
+        "razao_no_relation_por_negation_of": 4.3919,
+        "teto_recall_associated_with": 0.002008032128514056,
+        "teto_recall_negation_of": 0.9736842105263158
+      }
+    },
+    "train": {
+      "indices_sha256": "d4c2886d91ee3eed931c856b0939a693be70933a5c33f28e0547c8843331d336",
+      "janelas_sha256": "9664204c357ff9f754249c46e8e269b1ca57fddeb1a5735831901609d764b7fa",
+      "n_restrito": 6805,
+      "resumo": {
+        "contagens_completo": {
+          "associated_with": 7096,
+          "negation_of": 1255,
+          "no_relation": 144335
+        },
+        "contagens_restrito": {
+          "associated_with": 17,
+          "negation_of": 1209,
+          "no_relation": 5579
+        },
+        "fracao": 0.044569,
+        "n_completo": 152686,
+        "n_restrito": 6805,
+        "razao_no_relation_por_negation_of": 4.6146,
+        "teto_recall_associated_with": 0.002395715896279594,
+        "teto_recall_negation_of": 0.9633466135458167
+      }
+    }
+  },
+  "labels": [
+    "negation_of",
+    "associated_with",
+    "no_relation"
+  ],
+  "lexico": {
+    "congelado": {
+      "formas": {
+        "ausencia": 11,
+        "ausente": 12,
+        "ausentes": 5,
+        "eliminacao fecal": 4,
+        "evacuacao": 10,
+        "indolor": 3,
+        "nao": 128,
+        "nega": 353,
+        "s": 11,
+        "s/": 10,
+        "sem": 662
+      },
+      "lexico_sha1": "70c93fa807de",
+      "min_freq": 3
+    },
+    "contagem_formas_train": {
+      "abdomem": 1,
+      "algia": 1,
+      "atb": 1,
+      "ausencia": 11,
+      "ausente": 12,
+      "ausentes": 5,
+      "cancelada": 1,
+      "colelitiase": 1,
+      "cpp livres": 1,
+      "cx": 1,
+      "debito urinario": 1,
+      "diurese": 1,
+      "dm": 1,
+      "dores": 1,
+      "eliminacao fecal": 4,
+      "eliminacoes fisiologicas": 1,
+      "eliminacoes intestinais": 1,
+      "evacuacao": 10,
+      "evacuacoes": 1,
+      "evacucao": 2,
+      "exame": 1,
+      "excecao": 1,
+      "exceto": 2,
+      "fo": 1,
+      "grumos": 1,
+      "indolor": 3,
+      "livres": 1,
+      "nao": 128,
+      "nao especificada": 1,
+      "nao especificadas": 1,
+      "nao especificados": 1,
+      "nao foi realizado": 1,
+      "nefa": 1,
+      "nega": 353,
+      "nega queixas": 1,
+      "negativa": 2,
+      "negativo": 1,
+      "nunca": 2,
+      "onicomicose": 1,
+      "osteomielite": 1,
+      "pacte": 1,
+      "perda": 2,
+      "queixas": 1,
+      "ra": 2,
+      "rha": 1,
+      "rx": 1,
+      "s": 11,
+      "s/": 10,
+      "sem": 662,
+      "sem evidencia": 1,
+      "sp": 1
+    },
+    "por_min_freq": {
+      "1": [
+        "abdomem",
+        "algia",
+        "atb",
+        "ausencia",
+        "ausente",
+        "ausentes",
+        "cancelada",
+        "colelitiase",
+        "cpp livres",
+        "cx",
+        "debito urinario",
+        "diurese",
+        "dm",
+        "dores",
+        "eliminacao fecal",
+        "eliminacoes fisiologicas",
+        "eliminacoes intestinais",
+        "evacuacao",
+        "evacuacoes",
+        "evacucao",
+        "exame",
+        "excecao",
+        "exceto",
+        "fo",
+        "grumos",
+        "indolor",
+        "livres",
+        "nao",
+        "nao especificada",
+        "nao especificadas",
+        "nao especificados",
+        "nao foi realizado",
+        "nefa",
+        "nega",
+        "nega queixas",
+        "negativa",
+        "negativo",
+        "nunca",
+        "onicomicose",
+        "osteomielite",
+        "pacte",
+        "perda",
+        "queixas",
+        "ra",
+        "rha",
+        "rx",
+        "s",
+        "s/",
+        "sem",
+        "sem evidencia",
+        "sp"
+      ],
+      "10": [
+        "ausencia",
+        "ausente",
+        "evacuacao",
+        "nao",
+        "nega",
+        "s",
+        "s/",
+        "sem"
+      ],
+      "2": [
+        "ausencia",
+        "ausente",
+        "ausentes",
+        "eliminacao fecal",
+        "evacuacao",
+        "evacucao",
+        "exceto",
+        "indolor",
+        "nao",
+        "nega",
+        "negativa",
+        "nunca",
+        "perda",
+        "ra",
+        "s",
+        "s/",
+        "sem"
+      ],
+      "3": [
+        "ausencia",
+        "ausente",
+        "ausentes",
+        "eliminacao fecal",
+        "evacuacao",
+        "indolor",
+        "nao",
+        "nega",
+        "s",
+        "s/",
+        "sem"
+      ],
+      "5": [
+        "ausencia",
+        "ausente",
+        "ausentes",
+        "evacuacao",
+        "nao",
+        "nega",
+        "s",
+        "s/",
+        "sem"
+      ]
+    }
+  },
+  "manifesto_particoes": {
+    "generator": "src/make_splits.py",
+    "seed": 42,
+    "source": {
+      "path": "data/processed/dataset.jsonl",
+      "sha256": "397ef4243c4260da9d9d49d5b4e4567f5344593a7162a66f0f9fe105af8bfd6c"
+    },
+    "splits": {
+      "dev": {
+        "n_bytes": 558601,
+        "n_records": 100,
+        "n_relations": {
+          "associated_with": 832,
+          "negation_of": 155
+        },
+        "sha256": "a9ea327684165c5053f8f3db5468a27f71c1d9e30d2859e343b6d275839c8aeb"
+      },
+      "test": {
+        "n_bytes": 573003,
+        "n_records": 100,
+        "n_relations": {
+          "associated_with": 1098,
+          "negation_of": 152
+        },
+        "sha256": "86304d8d507c6707695e2b86c3533b763a96247f06326e5980b4567385231e62"
+      },
+      "train": {
+        "n_bytes": 4581357,
+        "n_records": 800,
+        "n_relations": {
+          "associated_with": 7922,
+          "negation_of": 1299
+        },
+        "sha256": "36014b2adc8308bce94aeecf066c38f69e1f53dda4517fa424527554b31a437a"
+      }
+    }
+  },
+  "max_gap": 25,
+  "particoes": {
+    "dev": {
+      "arquivo_sha256": "a9ea327684165c5053f8f3db5468a27f71c1d9e30d2859e343b6d275839c8aeb",
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "contagem_por_rotulo": {
+        "associated_with": 763,
+        "negation_of": 150,
+        "no_relation": 18151
+      },
+      "janelas_sha256": "1830ddfb7a8d17685b14e6ed874fb3d288d1a9bfdc8c9581cb69cc5281969029",
+      "n_candidatos": 19064,
+      "n_documentos": 100,
+      "y_true_confere_com": "results/baseline_biobertpt_seed42.dev_preds.json",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "test": {
+      "arquivo_sha256": "86304d8d507c6707695e2b86c3533b763a96247f06326e5980b4567385231e62",
+      "candidatos_sha256": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+      "contagem_por_rotulo": {
+        "associated_with": 996,
+        "negation_of": 152,
+        "no_relation": 18062
+      },
+      "janelas_sha256": "40335fce7d6d10a84bf34df23ced957f829f0a141b0464b6f26703984a8366da",
+      "n_candidatos": 19210,
+      "n_documentos": 100,
+      "y_true_confere_com": "results/baseline_biobertpt_seed42.preds.json",
+      "y_true_sha256": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
+    },
+    "train": {
+      "arquivo_sha256": "36014b2adc8308bce94aeecf066c38f69e1f53dda4517fa424527554b31a437a",
+      "candidatos_sha256": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3",
+      "contagem_por_rotulo": {
+        "associated_with": 7096,
+        "negation_of": 1255,
+        "no_relation": 144335
+      },
+      "janelas_sha256": "ab9afae6ef51834a063bffcb4d3a444be177946ec2308cb3b07a0360f39e4d93",
+      "n_candidatos": 152686,
+      "n_documentos": 800,
+      "y_true_sha256": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88"
+    }
+  },
+  "pesos_balanced": {
+    "espaco_completo": {
+      "associated_with": 7.17239759488914,
+      "negation_of": 40.55405046480744,
+      "no_relation": 0.3526194847634554
+    },
+    "espaco_restrito": {
+      "associated_with": 133.4313725490196,
+      "negation_of": 1.8762062310449408,
+      "no_relation": 0.40658421461432753
+    }
+  }
+}

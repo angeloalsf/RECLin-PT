@@ -1,0 +1,366 @@
+{
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "epochs": 10,
+    "espaco": "restrito: e1 no lexico induzido do train",
+    "lexicon_min_freq": 3,
+    "lexicon_sha1": "70c93fa807de",
+    "lr": 0.001,
+    "max_gap": 25,
+    "max_length": 128,
+    "remapeamento": "fora do espaco restrito -> no_relation",
+    "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "confusion_matrix": {
+    "labels": [
+      "negation_of",
+      "associated_with",
+      "no_relation"
+    ],
+    "matrix": [
+      [
+        148,
+        0,
+        4
+      ],
+      [
+        2,
+        0,
+        994
+      ],
+      [
+        650,
+        0,
+        17412
+      ]
+    ]
+  },
+  "dev_history": [
+    {
+      "dev_loss": 1.046456584563622,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 13.3,
+      "epoch": 1,
+      "train_loss": 1.0602451991812092
+    },
+    {
+      "dev_loss": 1.1794871321091285,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.1,
+      "epoch": 2,
+      "train_loss": 1.0019536692405415
+    },
+    {
+      "dev_loss": 1.1959239702958326,
+      "dev_macro_f1": 0.42304437784803306,
+      "dev_negation_of_f1": 0.30735930735930733,
+      "dev_restrito_macro_f1": 0.10334788937409024,
+      "dev_restrito_negation_of_f1": 0.31004366812227074,
+      "duration_s": 13.7,
+      "epoch": 3,
+      "train_loss": 1.002786402390382
+    },
+    {
+      "dev_loss": 1.205213455053476,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.4,
+      "epoch": 4,
+      "train_loss": 1.0023432357288966
+    },
+    {
+      "dev_loss": 1.206588483773745,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 13.7,
+      "epoch": 5,
+      "train_loss": 1.0420875727573289
+    },
+    {
+      "dev_loss": 1.2077171068925123,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 13.5,
+      "epoch": 6,
+      "train_loss": 1.019276913638427
+    },
+    {
+      "dev_loss": 1.2049426573973436,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.2,
+      "epoch": 7,
+      "train_loss": 1.017923082703742
+    },
+    {
+      "dev_loss": 1.2212633261313806,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 15.2,
+      "epoch": 8,
+      "train_loss": 0.9811372589842181
+    },
+    {
+      "dev_loss": 1.21793683217122,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.2,
+      "epoch": 9,
+      "train_loss": 1.0420815510170482
+    },
+    {
+      "dev_loss": 1.2161722550025353,
+      "dev_macro_f1": 0.32515562721124996,
+      "dev_negation_of_f1": 0.0,
+      "dev_restrito_macro_f1": 0.2983583154889365,
+      "dev_restrito_negation_of_f1": 0.0,
+      "duration_s": 14.0,
+      "epoch": 10,
+      "train_loss": 1.0430327497910117
+    }
+  ],
+  "device": "cpu",
+  "encoder": "biobertpt",
+  "environment": {
+    "cublas_workspace_config": ":4096:8",
+    "cuda": "13.0",
+    "cudnn": 91900,
+    "gpu": null,
+    "numpy": "2.1.3",
+    "python": "3.13.16",
+    "scikit_learn": "1.6.1",
+    "scipy": "1.16.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.16.1"
+  },
+  "environment_extra": {
+    "huggingface_hub": "1.29.0",
+    "lxml": "6.1.2",
+    "matplotlib": "3.10.0",
+    "pythonhashseed_no_ambiente": "0",
+    "pythonhashseed_valeu_no_processo": true,
+    "tokenizers": "0.23.2"
+  },
+  "instrumentation": {
+    "avisos_capturados": [
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'\n  prop = Group((name + Suppress(\"=\") + comma_separated(value)) | oneOf(_CONSTANTS))",
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'\n  parse = parser.parseString(pattern)",
+      "/home/claude/venv-legado/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'\n  parser.resetCache()"
+    ],
+    "best_epoch": 3,
+    "best_epoch_is_last": false,
+    "dev_macro_f1_recomputed": 0.42304437784803306,
+    "dev_negation_of_f1_recomputed": 0.30735930735930733,
+    "hf_backup_repo": null,
+    "restored_best_state": true,
+    "save_probs": true,
+    "save_split_preds": "dev+test",
+    "test_eval_log": true
+  },
+  "model": "/home/claude/angeloalsf/reclin-pt/codigo/testes/referencia/modelo_minusculo",
+  "n_candidates": {
+    "dev": 19064,
+    "test": 19210,
+    "train": 152686
+  },
+  "n_params": 14979,
+  "restricted_space": {
+    "class_weight": "balanced",
+    "lexico": {
+      "fonte": "negation_lexicon.induce_lexicon(train)",
+      "formas": {
+        "ausencia": 11,
+        "ausente": 12,
+        "ausentes": 5,
+        "eliminacao fecal": 4,
+        "evacuacao": 10,
+        "indolor": 3,
+        "nao": 128,
+        "nega": 353,
+        "s": 11,
+        "s/": 10,
+        "sem": 662
+      },
+      "max_gap": 25,
+      "min_freq": 3,
+      "n_formas": 11,
+      "sha1": "70c93fa807de"
+    },
+    "n_candidates_restrito": {
+      "dev": 774,
+      "test": 800,
+      "train": 6805
+    },
+    "pesos_classe_efetivos": {
+      "associated_with": 133.431373,
+      "negation_of": 1.876206,
+      "no_relation": 0.406584
+    },
+    "pesos_classe_espaco_completo_baselines": {
+      "associated_with": 7.17,
+      "negation_of": 40.55,
+      "no_relation": 0.3526
+    },
+    "por_split": {
+      "dev": {
+        "contagens_completo": {
+          "associated_with": 763,
+          "negation_of": 150,
+          "no_relation": 18151
+        },
+        "contagens_restrito": {
+          "associated_with": 5,
+          "negation_of": 142,
+          "no_relation": 627
+        },
+        "fracao": 0.0406,
+        "n_completo": 19064,
+        "n_restrito": 774,
+        "razao_no_relation_por_negation_of": 4.4155,
+        "teto_recall_associated_with": 0.00655307994757536,
+        "teto_recall_negation_of": 0.9466666666666667
+      },
+      "test": {
+        "contagens_completo": {
+          "associated_with": 996,
+          "negation_of": 152,
+          "no_relation": 18062
+        },
+        "contagens_restrito": {
+          "associated_with": 2,
+          "negation_of": 148,
+          "no_relation": 650
+        },
+        "fracao": 0.041645,
+        "n_completo": 19210,
+        "n_restrito": 800,
+        "razao_no_relation_por_negation_of": 4.3919,
+        "teto_recall_associated_with": 0.002008032128514056,
+        "teto_recall_negation_of": 0.9736842105263158
+      },
+      "train": {
+        "contagens_completo": {
+          "associated_with": 7096,
+          "negation_of": 1255,
+          "no_relation": 144335
+        },
+        "contagens_restrito": {
+          "associated_with": 17,
+          "negation_of": 1209,
+          "no_relation": 5579
+        },
+        "fracao": 0.044569,
+        "n_completo": 152686,
+        "n_restrito": 6805,
+        "razao_no_relation_por_negation_of": 4.6146,
+        "teto_recall_associated_with": 0.002395715896279594,
+        "teto_recall_negation_of": 0.9633466135458167
+      }
+    },
+    "remapeamento": {
+      "fora_do_espaco": "no_relation",
+      "probs_fora_do_espaco": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "y_true": "gold do espaco completo, nunca remapeado"
+    },
+    "ressalva_metricas": "associated_with fica quase todo fora do espaco restrito: F1 de associated_with, macro-F1, micro/weighted, MCC e o McNemar de significance.py NAO sao comparaveis aos dos baselines. A metrica comparavel e o F1 de negation_of.",
+    "test_restrito": {
+      "confusion_matrix": [
+        [
+          148,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          650,
+          0,
+          0
+        ]
+      ],
+      "f1_per_class": {
+        "associated_with": 0.0,
+        "negation_of": 0.31223628691983124,
+        "no_relation": 0.0
+      },
+      "macro_f1": 0.10407876230661041
+    },
+    "teto_recall_negation_of": {
+      "dev": 0.9466666666666667,
+      "test": 0.9736842105263158,
+      "train": 0.9633466135458167
+    }
+  },
+  "seed": 42,
+  "sklearn_report": {
+    "accuracy": 0.9141072358146799,
+    "associated_with": {
+      "f1-score": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 996.0
+    },
+    "macro avg": {
+      "f1-score": 0.4219130073613126,
+      "precision": 0.3769301104472207,
+      "recall": 0.6458990183908448,
+      "support": 19210.0
+    },
+    "negation_of": {
+      "f1-score": 0.31092436974789917,
+      "precision": 0.185,
+      "recall": 0.9736842105263158,
+      "support": 152.0
+    },
+    "no_relation": {
+      "f1-score": 0.9548146523360386,
+      "precision": 0.9457903313416621,
+      "recall": 0.9640128446462186,
+      "support": 18062.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9002146150283816,
+      "precision": 0.8907332100308746,
+      "recall": 0.9141072358146799,
+      "support": 19210.0
+    }
+  },
+  "test_f1_per_class": {
+    "associated_with": 0.0,
+    "negation_of": 0.31092436974789917,
+    "no_relation": 0.9548146523360386
+  },
+  "test_macro_f1": 0.4219130073613126,
+  "test_mcc": 0.1335473376126625,
+  "test_micro_f1": 0.9141072358146799,
+  "test_weighted_f1": 0.9002146150283816
+}
