@@ -15,6 +15,15 @@ Implementadas:
 * `regra_pura` — sem modelo: marca `negation_of` pelas pistas do léxico e pela
   distância até o alvo (regras R1 a R4). Inclui a calibração da regra no DEV.
 
-Previstas para etapas seguintes: `baseline`, `restrito`, `pair_aware` (com
-treino) e, no futuro, `two_stage`.
+Treinadas (etapa 6), sobre a infraestrutura de `reclin.treino`, cada uma
+descrita por uma `treino.montagem.Montagem`:
+
+* `baseline` — o classificador da tarefa: todos os candidatos, cabeça [CLS];
+* `restrito` — só os pares cujo e1 é pista do léxico congelado; época
+  escolhida no DEV remapeado ao conjunto completo;
+* `pair_aware` (pacote, com `cabeca`) — o restrito com a cabeça
+  `[h_cls ; h_[E1] ; h_[E2]] → MLP`.
+
+Prevista para o futuro: `two_stage`. Uma estratégia é um módulo ou um pacote
+e só importa o núcleo e `negacao/`.
 """

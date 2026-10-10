@@ -13,7 +13,8 @@ nova da mesma etapa substitui a anterior.
 | 2 | 1 | 09/10/2026 | `RECLin-PT-etapa-2-v1.zip` | Substituída pela etapa 3 (que a contém) | [etapa-2.md](etapa-2.md) |
 | 3 | 1 | 09/10/2026 | `RECLin-PT-etapa-3-v1.zip` | Substituída pela etapa 4 (que a contém) | [etapa-3.md](etapa-3.md) |
 | 4 | 1 | 09/10/2026 | `RECLin-PT-etapa-4-v1.zip` | Substituída pela etapa 5 (que a contém) | [etapa-4.md](etapa-4.md) |
-| 5 | 1 | 09/10/2026 | `RECLin-PT-etapa-5-v1.zip` | Atual | [etapa-5.md](etapa-5.md) |
+| 5 | 1 | 09/10/2026 | `RECLin-PT-etapa-5-v1.zip` | Substituída pela etapa 6 (que a contém) | [etapa-5.md](etapa-5.md) |
+| 6 | 1 | 10/10/2026 | `RECLin-PT-etapa-6-v1.zip` | Atual | [etapa-6.md](etapa-6.md) |
 
 ## O que nunca vai no pacote
 

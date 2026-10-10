@@ -4,7 +4,10 @@
     python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/<nome>
 
 Recarrega o `melhor_modelo/` da execução (a época escolhida pelo DEV), prevê o
-TEST e grava `predicoes_test.json`, as métricas do TEST em `metricas.json` e
+TEST com a mesma estratégia que a treinou (lida de `config.json`: baseline,
+restrito, Pair-Aware ou o classificador da etapa 5; no restrito e na
+Pair-Aware, a seleção dos pares sai do léxico gravado na execução, sem ler o
+TRAIN) e grava `predicoes_test.json` (no conjunto completo), as métricas do TEST em `metricas.json` e
 uma linha em `avaliacoes_test.jsonl` (trilha das avaliações do TEST, com o
 `eval_index_for_config`). Recusa uma execução cujo treino não terminou.
 
@@ -19,10 +22,26 @@ import logging
 import sys
 from pathlib import Path
 
+from reclin.estrategias import baseline, pair_aware, restrito
 from reclin.util import caminhos
+from reclin.util.io import ler_json
 from reclin.util.log import configurar
 
 log = logging.getLogger("reclin.scripts.avaliar_test")
+
+ESTRATEGIAS = {m.NOME: m for m in (baseline, restrito, pair_aware)}
+
+
+def montagem_da_execucao(pasta: Path):
+    """A montagem da estratégia que treinou a execução, a partir de config.json."""
+    from reclin.treino.montagem import CLASSIFICADOR
+    registro = ler_json(pasta / "config.json")["config"]
+    nome = registro.get("estrategia", CLASSIFICADOR.estrategia)
+    if nome == CLASSIFICADOR.estrategia:
+        return CLASSIFICADOR
+    if nome not in ESTRATEGIAS:
+        raise ValueError(f"estratégia {nome!r} desconhecida em {pasta / 'config.json'}")
+    return ESTRATEGIAS[nome].montagem_de_registro(registro)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -42,10 +61,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.threads:
         torch.set_num_threads(args.threads)
     try:
+        if not (args.execucao / "config.json").is_file():
+            raise classificador.ErroExecucao(f"{args.execucao} não é uma execução de treino (sem config.json)")
         resultado = classificador.avaliar_test(
             args.execucao, pasta_particoes=args.particoes, reavaliar=args.reavaliar,
+            montagem=montagem_da_execucao(args.execucao),
             dispositivo=None if args.dispositivo == "auto" else args.dispositivo)
-    except classificador.ErroExecucao as erro:
+    except (classificador.ErroExecucao, ValueError) as erro:
         log.error("%s", erro)
         return 1
     if resultado["trilha"]["eval_index_for_config"] > 1:

@@ -99,28 +99,45 @@ ou do legado); sem `--saida`, as execuções vão para `codigo/resultados/execuc
 algum diferir. Os scripts das estratégias usam o léxico congelado e recusam
 uma calibração que não corresponda a ele.
 
-Treino (o classificador da tarefa; o TEST fica para um comando separado):
+Estratégias treinadas (o TEST fica para um comando separado):
 
 ```bash
-# treino novo: cria codigo/resultados/execucoes/<nome>/ (lê só TRAIN e DEV)
-python codigo/scripts/treinar.py --nome classificador_biobertpt_seed42 --encoder biobertpt --seed 42 \
-    --checkpoint-a-cada 500
+# treino novo: cria codigo/resultados/execucoes/baseline_biobertpt_seed42/ (lê só TRAIN e DEV)
+python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --seed 42 --checkpoint-a-cada 500
 
 # se for interrompido: o MESMO comando com --retomar continua do último checkpoint
-python codigo/scripts/treinar.py --nome classificador_biobertpt_seed42 --encoder biobertpt --seed 42 \
-    --checkpoint-a-cada 500 --retomar
+python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --seed 42 --checkpoint-a-cada 500 --retomar
+
+# fine-tuning restrito e Pair-Aware (execuções restrito_biobertpt_seed42 e pairaware_biobertpt_seed42)
+python codigo/scripts/treinar.py --estrategia restrito --encoder biobertpt --seed 42
+python codigo/scripts/treinar.py --estrategia pair_aware --encoder biobertpt --seed 42
 
 # depois de concluído o treino: avaliação do TEST com o melhor modelo (uma vez)
-python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/classificador_biobertpt_seed42
+python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/baseline_biobertpt_seed42
 ```
 
-Configuração: os hiperparâmetros têm como padrão os de `reclin.config.Config`
-(os dos experimentos: `max_gap` 25, `ctx_chars` 128, `max_length` 128, 3
-épocas, lotes de 64, `lr` 2e-5, `weight_decay` 0,01, aquecimento de 10%,
-recorte do gradiente em 1,0, pesos `balanced`); cada um muda com a opção de
-mesmo nome (`--epochs`, `--batch-size`, `--lr`...). `--modelo PASTA` usa um
-checkpoint local no lugar do de `--encoder`. Para experimentar em CPU, o modelo
-minúsculo das referências serve:
+| Estratégia | Exemplos | Modelo | Época escolhida por | Padrões próprios |
+| --- | --- | --- | --- | --- |
+| `baseline` | todos os candidatos | encoder + cabeça [CLS] (`AutoModelForSequenceClassification`) | macro-F1 do DEV | os de `Config` (3 épocas) |
+| `restrito` | só os pares cujo e1 é pista do léxico congelado | o mesmo do baseline | macro-F1 do DEV **remapeado** ao conjunto completo | `ConfigRestrito`: 10 épocas; pesos `balanced` do TRAIN restrito |
+| `pair_aware` | os do restrito | encoder sem pooler + `[h_cls ; h_[E1] ; h_[E2]] → Linear → GELU → Dropout → Linear` | como o restrito | `ConfigPairAware`: a do restrito + `--mlp-hidden` e `--head-dropout` (padrão: os do encoder) |
+
+O restrito e a Pair-Aware gravam as predições no conjunto completo (fora do
+espaço restrito, `no_relation` com probabilidades `[0, 0, 1]`), com os índices
+do espaço (`restricted_indices`), as métricas do DEV e do TEST no conjunto
+completo e no subconjunto (`dev_restrito`, `test_restrito`) e o léxico usado
+em `config.json`. Só o F1 de `negation_of` delas é comparável com o do baseline.
+Os dois exigem as partições congeladas (o léxico é o da etapa 3); a avaliação
+do TEST refaz a seleção a partir do léxico gravado, sem ler o TRAIN.
+
+Configuração: os hiperparâmetros têm como padrão os da configuração da
+estratégia (os dos experimentos: `max_gap` 25, `ctx_chars` 128, `max_length`
+128, lotes de 64, `lr` 2e-5, `weight_decay` 0,01, aquecimento de 10%, recorte
+do gradiente em 1,0, pesos `balanced`); cada um muda com a opção de mesmo nome
+(`--epochs`, `--batch-size`, `--lr`...), e `treinar.py --estrategia X --help`
+lista os da estratégia. `--nome` muda o nome da execução. `--modelo PASTA`
+usa um checkpoint local no lugar do de `--encoder`. Para experimentar em CPU,
+o modelo minúsculo das referências serve:
 
 ```bash
 python codigo/scripts/treinar.py --nome teste --saida reproducao --modelo codigo/testes/referencia/modelo_minusculo \
@@ -139,8 +156,9 @@ Checkpoints, em `<execução>/checkpoints/` (fora do git):
 
 Um checkpoint é gravado no fim de cada época e, com `--checkpoint-a-cada N`,
 a cada N passos; a gravação é atômica (arquivo temporário renomeado). A
-retomada recusa uma configuração, um modelo ou partições diferentes dos
-gravados, e `treino.json` registra cada sessão (nova ou retomada, de onde
+retomada recusa outra estratégia, uma configuração, um modelo, um léxico ou
+partições diferentes dos gravados (o checkpoint de uma estratégia nunca é
+carregado por outra), e `treino.json` registra cada sessão (nova ou retomada, de onde
 partiu, até onde foi). Saídas de `treinar.py`: 0 concluído, 3 interrompido
 (retomável), 1 erro.
 
@@ -177,7 +195,7 @@ python -m pytest codigo -m "not lento"   # sem as 26 comparações e os lotes do
 | Pasta | O que verifica |
 | --- | --- |
 | `testes/unidade/` | O comportamento de cada módulo sobre exemplos pequenos, os scripts e a estrutura do pacote |
-| `testes/integracao/` | O treino de ponta a ponta em CPU com o modelo minúsculo: retomada exata, reprodutibilidade, separação entre treino e TEST, scripts |
+| `testes/integracao/` | O treino de ponta a ponta em CPU com o modelo minúsculo: retomada exata, reprodutibilidade, separação entre treino e TEST e entre estratégias, scripts |
 | `testes/equivalencia/` | O código novo contra as referências do legado: são os portões das etapas |
 | `testes/referencia/` | As referências e o script que as gera (ver o README da pasta) |
 
@@ -211,7 +229,7 @@ O pacote `reclin` tem três níveis, e um nível só importa os de cima:
 Os módulos de `reclin/` não configuram logging, não alteram `os.environ` e não
 mexem em `sys.path` ao serem importados; isso fica com os scripts.
 
-### O que já existe (etapas 1 a 5)
+### O que já existe (etapas 1 a 6)
 
 | Caminho | Responsabilidade |
 | --- | --- |
@@ -220,12 +238,15 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/config.py` | `Config`, a configuração base das estratégias treinadas, e `ENCODERS` |
 | `reclin/entrada.py` | Janela marcada de cada candidato (`[E1]`/`[/E1]`/`[E2]`/`[/E2]`, `ctx_chars` de contexto), exemplos alinhados com os candidatos e o DataLoader que tokeniza cada lote com gerador próprio |
 | `reclin/modelos.py` | Tokenizer com os marcadores, classificador de sequência de 3 rótulos, gravação atômica, recarga genérica e identidade (vocabulário, configuração) |
-| `reclin/treino/` | Reprodutibilidade (ambiente, sementes, geradores), checkpoints (estado de retomada e melhor modelo), o laço de treino com retomada exata e o classificador da tarefa (`treinar_execucao` e `avaliar_test`, separados) |
-| `reclin/execucao/` | O formato em disco das execuções: sidecar de predições (`predicoes`), diretório da execução (`diretorio`) e trilha das avaliações do TEST (`trilha`) |
+| `reclin/treino/` | Reprodutibilidade (ambiente, sementes, geradores), checkpoints (estado de retomada e melhor modelo), o laço de treino com retomada exata, a `Montagem` que descreve uma estratégia treinada e o orquestrador (`treinar_execucao` e `avaliar_test`, separados) |
+| `reclin/execucao/` | O formato em disco das execuções: sidecar de predições (`predicoes`), diretório da execução (`diretorio`), trilha das avaliações do TEST (`trilha`) e predições de um subconjunto levadas ao conjunto completo (`subconjunto`) |
 | `reclin/avaliacao/` | Métricas (`metricas`), McNemar e bootstrap pareado (`significancia`), as 26 comparações do TCC (`protocolo`) e a agregação entre sementes (`agregacao`) |
 | `reclin/negacao/lexico.py` | Especialização: normalização, indução do léxico de pistas no TRAIN, `e_pista`, `lexico_sha1`, cobertura e o léxico congelado com a guarda (`min_freq=3`, 11 formas, `70c93fa807de`) |
 | `reclin/estrategias/filtro_pistas.py` | Estratégia: filtro de pistas sobre as predições de outra execução, com a calibração de `min_freq` e da porta de gap no DEV |
 | `reclin/estrategias/regra_pura.py` | Estratégia: regra pura R1 a R4 (pista + distância, sem modelo), com a calibração da regra no DEV |
+| `reclin/estrategias/baseline.py` | Estratégia treinada: o classificador da tarefa (todos os candidatos, cabeça [CLS]) |
+| `reclin/estrategias/restrito.py` | Estratégia treinada: fine-tuning só nos pares cujo e1 é pista, com a época escolhida no DEV remapeado |
+| `reclin/estrategias/pair_aware/` | Estratégia treinada: o restrito com a cabeça Pair-Aware (`cabeca.py`) |
 | `reclin/util/` | JSON/JSONL e SHA-256 (`io`), logging configurado só por scripts (`log`), caminhos padrão (`caminhos`) |
 | `scripts/preparar_dados.py` | `conferir`, `manifesto` e `particionar` |
 | `scripts/avaliar.py` | Métricas de sidecars ou de uma execução |
@@ -234,7 +255,7 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `scripts/calibrar.py` | Calibração no DEV do filtro e da regra (`CALIBRACAO_filtro.json`) |
 | `scripts/filtro_pistas.py` | Execuções do filtro de pistas sobre execuções de base |
 | `scripts/regra_pura.py` | Execução da regra pura |
-| `scripts/treinar.py` | Treino (e retomada) do classificador da tarefa; não lê o TEST |
+| `scripts/treinar.py` | Treino (e retomada) de uma estratégia treinada (`--estrategia` baseline, restrito ou pair_aware); não lê o TEST |
 | `scripts/avaliar_test.py` | Avaliação do TEST de uma execução de treino concluída |
 | `dados/particoes/` | `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados) |
 | `testes/` | Testes de unidade, de integração e de equivalência com o legado, e as referências do legado |

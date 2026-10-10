@@ -17,6 +17,7 @@ está implementado:
 from __future__ import annotations
 
 import ast
+from pathlib import Path
 import subprocess
 import sys
 
@@ -117,7 +118,8 @@ def test_um_nivel_so_importa_os_de_cima(arquivo):
     partes = arquivo.relative_to(PACOTE).parts
     importados = _importacoes_reclin(arquivo)
     if partes[0] == "estrategias":
-        proprio = "reclin.estrategias." + arquivo.stem
+        # uma estratégia é um módulo (estrategias/x.py) ou um pacote (estrategias/x/)
+        proprio = "reclin.estrategias." + Path(partes[1]).stem
         outras = {n for n in importados if n.startswith("reclin.estrategias")
                   and not n.startswith(proprio)}
         assert not outras, f"uma estratégia não importa outra: {outras}"

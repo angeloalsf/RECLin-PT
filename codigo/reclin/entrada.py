@@ -76,6 +76,11 @@ class Exemplos:
     def __len__(self) -> int:
         return len(self.rotulos)
 
+    def subconjunto(self, indices: Sequence[int]) -> "Exemplos":
+        """Os exemplos nas posições `indices`, na ordem dada (a mesma janela e
+        o mesmo rótulo de cada candidato; só muda quais entram)."""
+        return Exemplos([self.textos[i] for i in indices], [self.rotulos[i] for i in indices])
+
 
 def exemplos(documentos: Iterable[Documento], *, max_gap: int = MAX_GAP,
              ctx_chars: int = CTX_CHARS) -> Exemplos:
