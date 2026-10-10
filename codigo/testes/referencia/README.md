@@ -10,7 +10,8 @@ o que ele produz com estes arquivos, e por isso rodam sem o legado. **Não edite
 | --- | --- | --- |
 | `dados.json` | Por partição: documentos, candidatos (`max_gap=25`), contagem por rótulo e SHA-256 dos candidatos, das janelas marcadas (`ctx_chars=128`) e do `y_true`, conferido contra os sidecars oficiais. Léxico de pistas por `min_freq` (1, 2, 3, 5, 10), léxico congelado (`min_freq=3`, `lexico_sha1`), índices do espaço restrito e pesos `balanced` dos dois espaços. MANIFEST das partições do legado e configuração registrada dos quatro baselines (`config` do `.json` e `config_sha1` da trilha `test_evals`, que também cobre `weight_decay`, `warmup_ratio` e `splits_dir`) | 1, 3, 5, 6 |
 | `modelo_minusculo/` | BERT aleatório (16 dimensões, 2 camadas) e tokenizer de vocabulário sintético, sem os marcadores. Entrada comum dos treinos de referência | 5, 6 |
-| `treino/` | Sidecars (`.json`, `.preds.json`, `.dev_preds.json`) do legado treinando o modelo minúsculo em CPU, sem retomada: baseline (2 épocas), fine-tuning restrito (10 épocas) e Pair-Aware (3 épocas), semente 42, `lr=1e-3` | 5, 6 |
+| `treino/` | Sidecars (`.json`, `.preds.json`, `.dev_preds.json`) do legado treinando o modelo minúsculo em CPU, sem retomada: baseline (2 épocas), fine-tuning restrito (10 épocas) e Pair-Aware (3 épocas), semente 42, `lr=1e-3`. E o baseline pequeno (`baseline_pequeno_seed42.*`): as primeiras 30/10/10 linhas de cada partição, 3 épocas, com o `.registro.json` do "driver" que observou o legado — loss de cada passo e de cada lote do DEV, hash dos parâmetros iniciais, dos parâmetros e do otimizador ao fim de cada época, lr e parâmetros da melhor época | 5, 6 |
+| `lotes.json` | SHA-256 de cada lote do DataLoader do legado (`input_ids`, `attention_mask`, rótulos) com o tokenizer minúsculo e os marcadores, nas partições completas e na ordem em que o treino os vê: TRAIN embaralhado (semente 42) nas épocas 1 e 2, DEV e TEST em ordem; `max_length=128`, lotes de 64 | 5 |
 | `resultados_legado/` | Cópia sem alteração de 74 arquivos de `results/` do legado, na mesma estrutura de pastas: os quatro baselines (`.json` com as métricas, `.preds.json` do TEST, `.dev_preds.json` do DEV, `.test_evals.jsonl`), os sidecars dos quatro filtros e da regra pura com `FASE2_test_summary.json` e a trilha da regra, a calibração do filtro que congelou o léxico (`CALIBRACAO_filtro.json`) e o seu relatório com a varredura completa (`CALIBRACAO_filtro.md`), as 26 comparações `significance_*.json`, `summary_by_seed.json`, as cinco execuções do fine-tuning restrito e a Pair-Aware (só DEV). Ficam de fora os `archive_*`, as comparações de DEV dos critérios de parada e os `filtro_dev/` | 2, 3, 4 |
 | `referencias.json` | Ambiente, comandos, SHA-256 de cada arquivo, checagem de determinismo e resultado dos dois testes de CPU do legado | — |
 | `gerar_referencias.py` | O gerador: a única ponte entre o código novo e o legado | — |
@@ -44,7 +45,7 @@ Só é preciso regerar se o legado ganhar uma referência nova. Num ambiente com
 git clone https://github.com/angeloalsf/RECLin-PT RECLin-PT-legado
 git -C RECLin-PT-legado checkout a5f055c
 python codigo/testes/referencia/gerar_referencias.py --legado RECLin-PT-legado
-# ou só uma parte: --partes dados | modelo | treino | testes | resultados
+# ou só uma parte: --partes dados | modelo | treino | testes | resultados | etapa5
 ```
 
 O script confere as partições do legado contra o MANIFEST dele e o `y_true`
@@ -64,3 +65,10 @@ determinístico. Os dois testes de CPU do legado regravam um arquivo dentro de
   referências foram geradas e também fica fora da comparação.
 - Os hashes de `dados.json` usam `json.dumps(..., ensure_ascii=False,
   separators=(",", ":"))` sobre as listas, na ordem de geração dos candidatos.
+- Os de `lotes.json` usam `json.dumps(..., separators=(",", ":"))` sobre
+  `[input_ids, attention_mask, rótulos]` de cada lote, como listas; o hash da
+  época é o mesmo sobre a lista dos hashes dos lotes.
+- Os hashes de parâmetros do `.registro.json` são o SHA-256 da sequência
+  (forma, dtype, bytes) de cada tensor, na ordem de `model.parameters()`; os do
+  otimizador, de `step`, `exp_avg` e `exp_avg_sq` de cada parâmetro, na mesma
+  ordem.

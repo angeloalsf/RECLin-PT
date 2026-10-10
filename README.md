@@ -50,7 +50,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 4 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação e as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 5 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV) e a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado), validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -85,11 +85,9 @@ source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e "codigo/[testes]" -c codigo/requirements.txt
 ```
 
-Até a etapa 2, o pacote depende só de numpy e scipy; o `-c` fixa as versões dos
-experimentos (detalhes e a exceção do Python 3.10 em
-[`codigo/README.md`](codigo/README.md)). As demais dependências de
-`codigo/requirements.txt` (torch, transformers...) passam a ser necessárias
-quando entrar o treino: `pip install -r codigo/requirements.txt`.
+O pacote depende de numpy, scipy, torch e transformers; o `-c` fixa as versões
+dos experimentos (detalhes, o tamanho do torch no Linux e a exceção do Python
+3.10 em [`codigo/README.md`](codigo/README.md)).
 
 **Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e precisa
 ser solicitado aos autores do corpus (Oliveira et al.). Os arquivos `.xml` vão
@@ -147,8 +145,16 @@ python codigo/scripts/regra_pura.py --calibracao $REF/CALIBRACAO_filtro.json \
     --saida reproducao/execucoes --conferir $REF
 ```
 
-Os comandos de treino e de geração dos artefatos do TCC entram nas etapas
-seguintes.
+O treino e a avaliação do TEST, em comandos separados (detalhes, checkpoints e
+retomada em [`codigo/README.md`](codigo/README.md)):
+
+```bash
+python codigo/scripts/treinar.py --nome classificador_biobertpt_seed42 --encoder biobertpt --seed 42
+python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/classificador_biobertpt_seed42
+```
+
+As estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware) e a
+geração dos artefatos do TCC entram nas etapas seguintes.
 
 ## Métricas e como interpretar
 

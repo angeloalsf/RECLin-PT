@@ -22,6 +22,7 @@
   },
   "arquivos_sha256": {
     "dados.json": "2a8a2bfd7c4f5eddaa3b2cdfc5ac2c0772087af6385c9c3a94a2e00bb76e8e98",
+    "lotes.json": "55cf77d83ce34db803efb63e26274b2c0a3b6a1ab3a2370baada7c06a94241ad",
     "modelo_minusculo/config.json": "02d186ab3424917a9382637467a8a47d48e8c14f140bba84e4d88370070ccb68",
     "modelo_minusculo/model.safetensors": "18512e0c05a65cbec5d350445948b6ca2491fb9d90cc81aadaa299de9c576981",
     "modelo_minusculo/tokenizer.json": "d357844717336f8d672f038e7be92b791066c476a19a1df02a92fc2a3e90f965",
@@ -103,12 +104,66 @@
     "treino/baseline_minusculo_seed42.dev_preds.json": "467873ca0b5cc62b83eee48ffe552b953693969fb65b931774760bd303609800",
     "treino/baseline_minusculo_seed42.json": "3d5d6b3a3e243c888948b7cabc276c968f2498b0c758afd958088760e779db2e",
     "treino/baseline_minusculo_seed42.preds.json": "332ec74259d79be954de99e4f42b291c3e2c9c676722031d2a40dc232732b0dc",
+    "treino/baseline_pequeno_seed42.dev_preds.json": "fbeed06b2deea05961b67f291111d09783f3d344e0a55c5558d91bbb849221b1",
+    "treino/baseline_pequeno_seed42.json": "a9724ed525598d83c72836ca861a85ad4d932c37c930b15fa21bef4ab449e3d8",
+    "treino/baseline_pequeno_seed42.preds.json": "3703ea51e4f3de738f1168dbee645ce81c8f44ef5ef4c641a1f8d3f5e83fbe1d",
+    "treino/baseline_pequeno_seed42.registro.json": "f4b5fc946150ed3d3a256e6875c379f976a6410d867a42d1720d558df3ec93c6",
     "treino/pairaware_minusculo_seed42.dev_preds.json": "92e651a0ab3329f77f4c72d19d59731349993bdb043e97e39b386ad862514f63",
     "treino/pairaware_minusculo_seed42.json": "55c4342dc99957bf5317bf458a762436edd309aafe7bcd73fced588aa5fdf88a",
     "treino/pairaware_minusculo_seed42.preds.json": "afd45de621f63b2964a4c2a8534569799b1e28e30eedb38cb645758da2c1219f",
     "treino/restrito_minusculo_seed42.dev_preds.json": "b51552245b0678e8acc464a30e283223354b002e5e765857156c493aed7ca230",
     "treino/restrito_minusculo_seed42.json": "c61678394367f3b8b434b327c2509377117ac0ec13bbc128360c6d383ba64755",
     "treino/restrito_minusculo_seed42.preds.json": "96145e184704b1a2d7cf1e7688f86195532183e4bbe798258db0120fb2240228"
+  },
+  "etapa5": {
+    "baseline_pequeno_seed42": {
+      "comando": [
+        "python",
+        "src/baseline_biobertpt.py (via driver instrumentado)",
+        "--splits-dir",
+        "<subconjunto>",
+        "--epochs",
+        "3",
+        "--batch-size",
+        "64",
+        "--max-gap",
+        "25",
+        "--max-length",
+        "128",
+        "--model",
+        "<modelo_minusculo>",
+        "--seed",
+        "42",
+        "--lr",
+        "1e-3",
+        "--out",
+        "<saida>/baseline_pequeno_seed42.json"
+      ],
+      "cwd": "legado/",
+      "deterministico_em_duas_rodadas": true,
+      "duracao_s": {
+        "a": 62.9,
+        "b": 56.8
+      },
+      "subconjunto": {
+        "dev": {
+          "primeiras_linhas": 10,
+          "sha256": "c8825a90e755539811ac1f30345e3f485613d51ece0beb67d39e7820865ec1a4"
+        },
+        "test": {
+          "primeiras_linhas": 10,
+          "sha256": "4969fc25a76061dc4fb90ed38a549a6dca4eb70f4ec04e0c603b8a4f3b706552"
+        },
+        "train": {
+          "primeiras_linhas": 30,
+          "sha256": "59d9c19872eb6ef8ffff44fe58d2717932116a5e504cf1eb8c18d70a83efc62c"
+        }
+      }
+    },
+    "lotes": {
+      "duracao_s": 160.0,
+      "tokenizer": "modelo_minusculo/ + marcadores"
+    }
   },
   "origem": {
     "commit": "a5f055c",

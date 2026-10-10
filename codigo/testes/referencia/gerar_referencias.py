@@ -35,6 +35,19 @@ treino/
     Cada treino roda duas vezes; as predições precisam sair idênticas, senão a
     referência não serve para teste de equivalência e o script falha.
 
+lotes.json
+    Os lotes do DataLoader do legado (`make_loader`) com o tokenizer
+    minúsculo e os marcadores, nas partições completas: SHA-256 de cada lote
+    (`input_ids`, `attention_mask`, rótulos) na ordem em que o treino os vê —
+    TRAIN embaralhado nas épocas 1 e 2, DEV e TEST em ordem.
+
+treino/baseline_pequeno_seed42.*
+    O baseline do legado sobre um subconjunto (as primeiras 30/10/10 linhas de
+    cada partição), 3 épocas, observado por um "driver" que só registra: loss
+    de cada passo e de cada lote do DEV, hash dos parâmetros iniciais, dos
+    parâmetros e do estado do otimizador ao fim de cada época, lr e os
+    parâmetros da melhor época (`.registro.json`), além dos sidecars de sempre.
+
 resultados_legado/
     Cópia sem alteração dos resultados do legado que a nova implementação
     precisa reproduzir (etapa 2): os quatro baselines (métricas, sidecars do
@@ -58,6 +71,7 @@ legado):
     git -C RECLin-PT-legado checkout a5f055c
     python codigo/testes/referencia/gerar_referencias.py --legado RECLin-PT-legado
     python codigo/testes/referencia/gerar_referencias.py --legado RECLin-PT-legado --partes dados
+    python codigo/testes/referencia/gerar_referencias.py --legado RECLin-PT-legado --partes etapa5
 """
 from __future__ import annotations
 
@@ -396,6 +410,169 @@ def rodar_testes_legado() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Parte F: entrada tokenizada e treino pequeno instrumentado (etapa 5)        #
+# --------------------------------------------------------------------------- #
+# Os dois "drivers" abaixo rodam num processo do legado (cwd = legado/, com
+# AMBIENTE_TREINO), importam o código dele e só OBSERVAM: nenhum altera o que o
+# legado calcula. Gravam JSON na pasta passada como último argumento.
+
+DRIVER_LOTES = r"""
+import hashlib, json, sys
+from pathlib import Path
+sys.path[:0] = ["src", "src/finetuning_restrito"]
+import _isolamento  # noqa: F401  (desvia os loggers do legado)
+from relation_extraction import MARKER_TOKENS, build_dataset, make_loader, read_jsonl
+from transformers import AutoTokenizer
+
+modelo, splits, saida = sys.argv[1:4]
+def h(obj):
+    return hashlib.sha256(json.dumps(obj, separators=(",", ":")).encode("utf-8")).hexdigest()
+tok = AutoTokenizer.from_pretrained(modelo)
+tok.add_special_tokens({"additional_special_tokens": MARKER_TOKENS})
+res = {"tokenizer": {"tamanho": len(tok), "ids_marcadores": tok.convert_tokens_to_ids(MARKER_TOKENS)},
+       "max_gap": 25, "ctx_chars": 128, "max_length": 128, "batch_size": 64, "seed": 42,
+       "particoes": {}}
+for nome in ("train", "dev", "test"):
+    textos, rotulos = build_dataset(list(read_jsonl(Path(splits) / f"{nome}.jsonl")), 25, 128)
+    loader = make_loader(tok, textos, rotulos, 128, 64, nome == "train", 42)
+    epocas = []
+    for _ in range(2 if nome == "train" else 1):
+        lotes, n_tokens, maior = [], 0, 0
+        for ids, attn, lab in loader:
+            lotes.append(h([ids.tolist(), attn.tolist(), lab.tolist()]))
+            n_tokens += int(attn.sum())
+            maior = max(maior, int(ids.shape[1]))
+        epocas.append({"n_lotes": len(lotes), "lotes_sha256": h(lotes), "primeiros_lotes": lotes[:3],
+                       "n_tokens_reais": n_tokens, "maior_comprimento": maior})
+    res["particoes"][nome] = {"n_exemplos": len(textos), "embaralhado": nome == "train",
+                              "epocas": epocas}
+    print(nome, len(textos), epocas[0]["n_lotes"], flush=True)
+Path(saida, "lotes.json").write_text(json.dumps(res, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                                    encoding="utf-8")
+"""
+
+DRIVER_TREINO = r"""
+import hashlib, json, sys
+from pathlib import Path
+sys.path[:0] = ["src", "src/finetuning_restrito"]
+import _isolamento  # noqa: F401  (desvia os loggers do legado)
+import torch
+import relation_extraction as core
+
+args_cli, saida = sys.argv[1:-1], Path(sys.argv[-1])
+REG = {"loss_treino": [], "loss_dev": [], "epocas": [], "parametros_iniciais": None,
+       "parametros_finais_melhor_epoca": None}
+OPT = {}
+
+def hash_tensores(tensores):
+    m = hashlib.sha256()
+    for t in tensores:
+        t = t.detach().cpu().contiguous()
+        m.update(str(tuple(t.shape)).encode()); m.update(str(t.dtype).encode())
+        m.update(t.numpy().tobytes())
+    return m.hexdigest()
+
+def hash_otimizador(opt):
+    tensores = []
+    for g in opt.param_groups:
+        for p in g["params"]:
+            st = opt.state.get(p, {})
+            tensores += [st[k] for k in ("step", "exp_avg", "exp_avg_sq") if k in st]
+    return hash_tensores(tensores)
+
+class CE(torch.nn.CrossEntropyLoss):
+    # Registra a loss de cada lote: com gradiente = passo de treino; sem = lote do DEV.
+    def forward(self, a, b):
+        r = super().forward(a, b)
+        (REG["loss_treino"] if torch.is_grad_enabled() else REG["loss_dev"]).append(r.item())
+        return r
+torch.nn.CrossEntropyLoss = CE
+
+class AdamW(torch.optim.AdamW):
+    def __init__(self, params, *a, **k):
+        params = list(params)
+        REG["parametros_iniciais"] = hash_tensores(params)
+        super().__init__(params, *a, **k)
+        OPT["o"] = self
+torch.optim.AdamW = AdamW
+
+_evaluate, _predict = core.evaluate, core.predict
+def evaluate(model, loader, device, loss_fn):
+    # chamado no fim de cada época, depois do último passo de treino
+    REG["epocas"].append({"parametros": hash_tensores(list(model.parameters())),
+                          "otimizador": hash_otimizador(OPT["o"]),
+                          "lr": [g["lr"] for g in OPT["o"].param_groups],
+                          "passos_ate_aqui": len(REG["loss_treino"])})
+    return _evaluate(model, loader, device, loss_fn)
+def predict(model, loader, device, **kw):
+    if REG["parametros_finais_melhor_epoca"] is None:   # primeira chamada: pesos restaurados
+        REG["parametros_finais_melhor_epoca"] = hash_tensores(list(model.parameters()))
+    return _predict(model, loader, device, **kw)
+core.evaluate, core.predict = evaluate, predict
+
+args = core.build_arg_parser(default_model=None).parse_args(args_cli)
+core.run(args)
+(saida / (Path(args.out).stem + ".registro.json")).write_text(
+    json.dumps(REG, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+"""
+
+# Subconjunto do treino pequeno: as primeiras linhas de cada partição, na ordem
+# do arquivo. O código novo monta o mesmo subconjunto (mesmos bytes).
+SUBCONJUNTO_PEQUENO = {"train": 30, "dev": 10, "test": 10}
+
+
+def rodar_driver(codigo: str, argumentos: list[str], log: Path) -> float:
+    script = log.with_suffix(".driver.py")
+    script.write_text(codigo, encoding="utf-8")
+    return rodar([sys.executable, str(script), *argumentos], log)
+
+
+def gerar_entrada_e_treino_pequeno(modelo: Path, destino_treino: Path) -> dict:
+    registro = {}
+    with tempfile.TemporaryDirectory(prefix="ref_etapa5_") as tmp:
+        tmp = Path(tmp)
+        # F1: lotes tokenizados pelo make_loader do legado, partições completas
+        print("  lotes tokenizados (partições completas)...", flush=True)
+        dur = rodar_driver(DRIVER_LOTES, [str(modelo), str(SPLITS), str(tmp)], tmp / "lotes.log")
+        shutil.copyfile(tmp / "lotes.json", AQUI / "lotes.json")
+        registro["lotes"] = {"tokenizer": "modelo_minusculo/ + marcadores", "duracao_s": dur}
+
+        # F2: baseline do legado sobre o subconjunto, instrumentado, duas rodadas
+        splits = tmp / "splits"
+        splits.mkdir()
+        subconjunto = {}
+        for nome, n in SUBCONJUNTO_PEQUENO.items():
+            linhas = (SPLITS / f"{nome}.jsonl").read_bytes().splitlines(keepends=True)[:n]
+            (splits / f"{nome}.jsonl").write_bytes(b"".join(linhas))
+            subconjunto[nome] = {"primeiras_linhas": n,
+                                 "sha256": sha256_arquivo(splits / f"{nome}.jsonl")}
+        nome = "baseline_pequeno_seed42"
+        hashes, duracoes = {}, {}
+        for rodada in ("a", "b"):
+            saida = tmp / rodada
+            saida.mkdir()
+            cli = ["--splits-dir", str(splits), "--epochs", "3", "--batch-size", "64",
+                   "--max-gap", "25", "--max-length", "128", "--model", str(modelo),
+                   "--seed", "42", "--lr", "1e-3", "--out", str(saida / f"{nome}.json")]
+            print(f"  treino {nome} (rodada {rodada})...", flush=True)
+            duracoes[rodada] = rodar_driver(DRIVER_TREINO, [*cli, str(saida)], saida / f"{nome}.log")
+            hashes[rodada] = {s: sha256_arquivo(saida / f"{nome}{s}")
+                              for s in (".preds.json", ".dev_preds.json", ".registro.json")}
+        if hashes["a"] != hashes["b"]:
+            raise SystemExit(f"{nome}: duas rodadas deram resultados diferentes {hashes}")
+        for s in (".json", ".preds.json", ".dev_preds.json", ".registro.json"):
+            shutil.copyfile(tmp / "a" / f"{nome}{s}", destino_treino / f"{nome}{s}")
+        registro[nome] = {
+            "comando": ["python", "src/baseline_biobertpt.py (via driver instrumentado)",
+                        "--splits-dir", "<subconjunto>", "--epochs", "3", "--batch-size", "64",
+                        "--max-gap", "25", "--max-length", "128", "--model", "<modelo_minusculo>",
+                        "--seed", "42", "--lr", "1e-3", "--out", f"<saida>/{nome}.json"],
+            "subconjunto": subconjunto, "cwd": "legado/",
+            "deterministico_em_duas_rodadas": True, "duracao_s": duracoes}
+    return registro
+
+
+# --------------------------------------------------------------------------- #
 def ambiente() -> dict:
     import importlib
     versoes = {}
@@ -414,8 +591,8 @@ def main() -> int:
     ap.add_argument("--legado", type=Path, default=None,
                     help="checkout do repositório original no commit a5f055c "
                          "(default: a pasta legado/ ao lado de codigo/, se existir)")
-    ap.add_argument("--partes", default="dados,modelo,treino,testes,resultados",
-                    help="subconjunto de: dados, modelo, treino, testes, resultados")
+    ap.add_argument("--partes", default="dados,modelo,treino,testes,resultados,etapa5",
+                    help="subconjunto de: dados, modelo, treino, testes, resultados, etapa5")
     ap.add_argument("--treinos", default=None,
                     help="na parte treino, so estes (separados por virgula)")
     args = ap.parse_args()
@@ -446,6 +623,9 @@ def main() -> int:
     if "resultados" in partes:
         print("Parte E: resultados do legado", flush=True)
         manifesto["resultados_legado"] = copiar_resultados(AQUI / "resultados_legado")
+    if "etapa5" in partes:
+        print("Parte F: entrada tokenizada e treino pequeno instrumentado", flush=True)
+        manifesto["etapa5"] = gerar_entrada_e_treino_pequeno(AQUI / "modelo_minusculo", AQUI / "treino")
     if "testes" in partes:
         print("Parte D: testes de CPU do legado", flush=True)
         manifesto["testes_cpu_legado"] = rodar_testes_legado()

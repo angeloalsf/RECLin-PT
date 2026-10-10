@@ -161,7 +161,8 @@ def chave_candidato(c: Candidato) -> list[str]:
 
 
 def conjunto_referencia(particao: str, documentos: Iterable[Documento], *,
-                        particao_sha256: str, max_gap: int = MAX_GAP) -> ConjuntoReferencia:
+                        particao_sha256: str, max_gap: int = MAX_GAP,
+                        conferir_tamanho: bool = True) -> ConjuntoReferencia:
     """Identidade do conjunto de referência de uma partição.
 
     `particao_sha256` é o hash do arquivo da partição (o do MANIFEST). Os outros
@@ -170,10 +171,12 @@ def conjunto_referencia(particao: str, documentos: Iterable[Documento], *,
     elemento a elemento, e podem ser pareadas.
 
     Com `max_gap == MAX_GAP`, confere o número de candidatos das três partições
-    congeladas e falha se ele divergir.
+    congeladas e falha se ele divergir. `conferir_tamanho=False` desliga essa
+    conferência para partições que não são as congeladas (um subconjunto usado
+    em testes, por exemplo); a identidade continua registrada pelos hashes.
     """
     cands = candidatos(documentos, max_gap=max_gap)
-    esperado = TAMANHOS_ESPERADOS.get(particao) if max_gap == MAX_GAP else None
+    esperado = TAMANHOS_ESPERADOS.get(particao) if max_gap == MAX_GAP and conferir_tamanho else None
     if esperado is not None and len(cands) != esperado:
         raise ValueError(f"partição {particao!r} com max_gap={max_gap} tem {len(cands)} "
                          f"candidatos; o conjunto de referência tem {esperado}")

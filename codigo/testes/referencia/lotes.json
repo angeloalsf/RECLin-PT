@@ -1,0 +1,80 @@
+{
+  "batch_size": 64,
+  "ctx_chars": 128,
+  "max_gap": 25,
+  "max_length": 128,
+  "particoes": {
+    "dev": {
+      "embaralhado": false,
+      "epocas": [
+        {
+          "lotes_sha256": "be4891fdd7b074c74984d7a91824920e67a7c6db23472691cf2cd6a3affc4b29",
+          "maior_comprimento": 128,
+          "n_lotes": 298,
+          "n_tokens_reais": 2431822,
+          "primeiros_lotes": [
+            "dfe9036693ded867cf126c934508cb558cb14e42bda543d2c6c539ce47758b1b",
+            "375e00b7906ba149c2aa7cc6b09be6003366e7a46cfded5d0aba9e25a3dd3ddb",
+            "087384270085ee4fa2e8af1670f1fab99013b27831af2fc7a7946d0b2c547a3a"
+          ]
+        }
+      ],
+      "n_exemplos": 19064
+    },
+    "test": {
+      "embaralhado": false,
+      "epocas": [
+        {
+          "lotes_sha256": "8e330198b429aeee113fe563a59b44e76e2560070918673f878c4a54680f770c",
+          "maior_comprimento": 128,
+          "n_lotes": 301,
+          "n_tokens_reais": 2453498,
+          "primeiros_lotes": [
+            "1f8830b335a3f9244d7861d23582fb7922cb61ce2bad5f1de1003f1b2a44ac04",
+            "1072c488869dfbf4d7f0c627c03c1ab700263d19d3be1a705102755e58cf1619",
+            "03cd38c2734cb59633f4082336d2a7e3f2d59aaea6be77c155abf9fcafb01ecf"
+          ]
+        }
+      ],
+      "n_exemplos": 19210
+    },
+    "train": {
+      "embaralhado": true,
+      "epocas": [
+        {
+          "lotes_sha256": "a574292e0f0e7e57bc7f39a25d792d0eab6e11409373a383dd8d8d6b419f731d",
+          "maior_comprimento": 128,
+          "n_lotes": 2386,
+          "n_tokens_reais": 19474854,
+          "primeiros_lotes": [
+            "547b757a9ab7a8365c642d9cdb9564575dfecbc4e1f1c0d6f87a5f1e6fc84c54",
+            "4432243cb4efac392ba2fe30826963722fe35aa70c6b2d72df4978abf4656851",
+            "47f0d37e747117457558f897a9b4b52fc744c02dfc4c0bfc57c76b0e1793d509"
+          ]
+        },
+        {
+          "lotes_sha256": "d27a6a1918d15bc38b5108d2944c6b52f78f5c2f7d484e9cdd8887c1c31e3ba3",
+          "maior_comprimento": 128,
+          "n_lotes": 2386,
+          "n_tokens_reais": 19474854,
+          "primeiros_lotes": [
+            "c20b70b908a4e066eb359a81fc954522f72ba22f75f2698f899c96f820734978",
+            "6059423d432739e7d1b36dcd6e14cbb8ddf4d6aec11493bd992928b6c7c97903",
+            "5f750cdf29ad729f68a42e7a79335ba5ce751add6f46f5d1d8aa828fc56981ed"
+          ]
+        }
+      ],
+      "n_exemplos": 152686
+    }
+  },
+  "seed": 42,
+  "tokenizer": {
+    "ids_marcadores": [
+      118,
+      119,
+      120,
+      121
+    ],
+    "tamanho": 122
+  }
+}

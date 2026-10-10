@@ -12,7 +12,8 @@ nova da mesma etapa substitui a anterior.
 | 1 | 2 | 09/10/2026 | `RECLin-PT-etapa-1-v2.zip` | Substituída pela etapa 2 (que a contém) | [etapa-1.md](etapa-1.md) |
 | 2 | 1 | 09/10/2026 | `RECLin-PT-etapa-2-v1.zip` | Substituída pela etapa 3 (que a contém) | [etapa-2.md](etapa-2.md) |
 | 3 | 1 | 09/10/2026 | `RECLin-PT-etapa-3-v1.zip` | Substituída pela etapa 4 (que a contém) | [etapa-3.md](etapa-3.md) |
-| 4 | 1 | 09/10/2026 | `RECLin-PT-etapa-4-v1.zip` | Atual | [etapa-4.md](etapa-4.md) |
+| 4 | 1 | 09/10/2026 | `RECLin-PT-etapa-4-v1.zip` | Substituída pela etapa 5 (que a contém) | [etapa-4.md](etapa-4.md) |
+| 5 | 1 | 09/10/2026 | `RECLin-PT-etapa-5-v1.zip` | Atual | [etapa-5.md](etapa-5.md) |
 
 ## O que nunca vai no pacote
 
@@ -21,8 +22,8 @@ nova da mesma etapa substitui a anterior.
 | Projeto legado | É só referência; o que dele os testes usam está em `codigo/testes/referencia/` (inclusive os 74 arquivos copiados em `resultados_legado/`) | Repositório original, commit `a5f055c` |
 | XML do SemClinBr e `dataset.jsonl` (`codigo/dados/brutos/`, `codigo/dados/processados/`) | Licença restrita do corpus | Autores do corpus; ver o README da raiz |
 | Ambientes virtuais, caches (`__pycache__`, `.pytest_cache`, `*.egg-info`) | Gerados na instalação | `pip install -e "codigo/[testes]"` |
-| Pesos de modelos e checkpoints | Centenas de MB; gerados pelo treino | Treino (etapas seguintes) ou Hugging Face Hub |
-| Dependências externas (Python, numpy, scipy, pytest e, nas etapas de treino, torch e transformers) | Instaladas pelo `pip` | `codigo/requirements.txt` e `codigo/pyproject.toml` |
+| Pesos de modelos e checkpoints (`checkpoints/`, `melhor_modelo/`) | Centenas de MB; gerados pelo treino | `scripts/treinar.py` ou Hugging Face Hub (a única exceção é o modelo minúsculo de 63 KB das referências) |
+| Dependências externas (Python, numpy, scipy, torch, transformers, pytest) | Instaladas pelo `pip` | `codigo/requirements.txt` e `codigo/pyproject.toml` |
 
 ## Como cada pacote é verificado antes da entrega
 

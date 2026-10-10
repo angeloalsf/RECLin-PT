@@ -1,12 +1,15 @@
-# Versões fixadas dos experimentos (as mesmas de legado/requirements.txt).
-# Instalação para reproduzir:
-#     pip install -r codigo/requirements.txt
-#     pip install -e "codigo/[testes]"
+# Versões fixadas dos experimentos (as mesmas de legado/requirements.txt; as de
+# tokenizers e safetensors são as do ambiente que gerou as referências de
+# testes/referencia/, registradas em referencias.json).
+# Instalação para reproduzir (ver codigo/README.md):
+#     pip install -e "codigo/[testes]" -c codigo/requirements.txt
 huggingface_hub==1.29.0
 lxml==6.1.2
 matplotlib==3.10.0
 numpy==2.1.3
+safetensors==0.8.0
 scikit-learn==1.6.1
 scipy==1.16.3
+tokenizers==0.23.2
 torch==2.11.0
 transformers==5.16.1
