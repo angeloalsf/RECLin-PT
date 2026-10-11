@@ -31,6 +31,9 @@ last_checkpoint/
 *.safetensors
 # Excecao: o modelo minusculo das referencias de validacao (~60 KB) e versionado.
 !codigo/testes/referencia/modelo_minusculo/*.safetensors
+# Pesos pre-treinados baixados num commit exato (scripts/pretreino.py baixar);
+# a revisao fica registrada no config.json de cada execucao.
+codigo/modelos_pretreinados/
 
 # --- Logs ---
 logs/

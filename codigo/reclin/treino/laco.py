@@ -123,10 +123,15 @@ def treinar(*, modelo: Any, tokenizer: Any, loader_treino: Any, loader_dev: Any,
             pontuar_dev: Callable[[list[int]], dict[str, float]], pasta_execucao: str | Path,
             identidade: dict[str, Any], retomar: bool = False,
             checkpoint_a_cada: int | None = None,
-            parar_apos_passo: int | None = None) -> ResultadoTreino:
+            parar_apos_passo: int | None = None,
+            campo_selecao: str = CAMPO_SELECAO) -> ResultadoTreino:
     """Treina `modelo` até `epocas` (ou até `parar_apos_passo`) gravando
     checkpoints em `pasta_execucao`. `pontuar_dev(preds)` devolve as métricas
-    do DEV da época, com `dev_macro_f1` (o critério de seleção) primeiro."""
+    do DEV da época, com `campo_selecao` (o critério de seleção; padrão
+    `dev_macro_f1`) primeiro. A melhor época é a de maior `campo_selecao`,
+    estritamente maior (no empate vence a primeira); o valor fica em
+    `melhor_f1` qualquer que seja o campo. Quem usa outro campo grava essa
+    escolha na identidade da execução, para que uma retomada não a troque."""
     if checkpoint_a_cada is not None and checkpoint_a_cada <= 0:
         raise ValueError(f"checkpoint_a_cada precisa ser positivo: {checkpoint_a_cada}")
     if parar_apos_passo is not None and parar_apos_passo <= 0:
@@ -157,8 +162,9 @@ def treinar(*, modelo: Any, tokenizer: Any, loader_treino: Any, loader_dev: Any,
             soma_retomada = estado["soma_loss_epoca"]
             gerador.set_state(estado["gerador_inicio_epoca"])
         rng_pendente = estado["rng"]
-        log.info("Retomando: época %d, passo %d de %d (passo global %d); melhor dev_macro_f1=%.4f",
-                 posicao["epoca"], posicao["passo_na_epoca"], n_passos, passo_global, melhor_f1)
+        log.info("Retomando: época %d, passo %d de %d (passo global %d); melhor %s=%.4f",
+                 posicao["epoca"], posicao["passo_na_epoca"], n_passos, passo_global, campo_selecao,
+                 melhor_f1)
     elif checkpoint.carregar_estado(pasta_execucao) is not None:
         raise checkpoint.ErroRetomada(f"já há checkpoint em {checkpoint.pasta_checkpoints(pasta_execucao)}: "
                                       "para continuar o treino, retome; para recomeçar, use outra pasta")
@@ -224,17 +230,17 @@ def treinar(*, modelo: Any, tokenizer: Any, loader_treino: Any, loader_dev: Any,
         train_loss = soma / max(1, n_passos)
         preds_dev, dev_loss = avaliar_loss(modelo, loader_dev, dispositivo, perda)
         pontos = pontuar_dev(preds_dev)
-        if CAMPO_SELECAO not in pontos:
-            raise ValueError(f"pontuar_dev precisa devolver {CAMPO_SELECAO}")
+        if campo_selecao not in pontos:
+            raise ValueError(f"pontuar_dev precisa devolver {campo_selecao}")
         historico.append({"epoch": epoca, "train_loss": train_loss, "dev_loss": dev_loss, **pontos,
                           "duration_s": round(time.time() - inicio, 1)})
         log.info("Época %d: train_loss=%.4f | dev_loss=%.4f | %s", epoca, train_loss, dev_loss,
                  " | ".join(f"{k}={v:.4f}" for k, v in pontos.items()))
-        if pontos[CAMPO_SELECAO] > melhor_f1:
-            melhor_f1 = pontos[CAMPO_SELECAO]
+        if pontos[campo_selecao] > melhor_f1:
+            melhor_f1 = pontos[campo_selecao]
             melhor_estado = {k: v.detach().cpu().clone() for k, v in modelo.state_dict().items()}
             checkpoint.salvar_melhor(pasta_execucao, modelo, tokenizer)
-            log.info("Época %d: nova melhor (%s=%.4f)", epoca, CAMPO_SELECAO, melhor_f1)
+            log.info("Época %d: nova melhor (%s=%.4f)", epoca, campo_selecao, melhor_f1)
         resultado.melhor_estado = melhor_estado
         gravar(epoca, n_passos, True, inicio_epoca, soma)
         if passo_global == parar_apos_passo and epoca < epocas:

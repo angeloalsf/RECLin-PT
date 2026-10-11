@@ -170,6 +170,66 @@ sistemas, versões ou entre CPU e GPU, não há garantia de igualdade bit a bit.
 Em GPU, o determinismo depende do cuBLAS/cuDNN (`CUBLAS_WORKSPACE_CONFIG` é
 definido pelos scripts) e não foi verificado nesta etapa.
 
+### Two-Stage, baseline calibrado e proveniência dos pesos (etapa 6.1)
+
+O protocolo da fase científica atual — **validação inicial, seed 42, só
+BioBERTpt** — está pré-registrado em
+[`docs/protocolo/fase-biobertpt-seed42.md`](docs/protocolo/fase-biobertpt-seed42.md)
+(critérios de seleção e parada de cada estratégia, limiares, sequência,
+comparações e interpretação). Nenhum comando abaixo foi rodado em GPU ainda;
+cada passo da fase científica depende de autorização.
+
+```bash
+# 0. pesos do BioBERTpt num commit exato (única etapa com acesso ao Hub), com PROVENIENCIA.json
+python codigo/scripts/pretreino.py baixar --revisao <SHA de 40 caracteres>
+PRE=codigo/modelos_pretreinados/biobertpt-all@<SHA>
+
+# 1. inicialização dos dois estágios: encoder igual ao arquivo de pesos, cabeça nova, marcadores
+python codigo/scripts/two_stage.py verificar-inicializacao --modelo $PRE
+
+# baseline com os mesmos pesos (conferidos antes da carga; commit e manifesto no config.json)
+python codigo/scripts/treinar.py --estrategia baseline --modelo $PRE
+
+# Two-Stage: cada estágio parte dos pesos ORIGINAIS (checkpoints ajustados são recusados)
+python codigo/scripts/two_stage.py treinar --estagio 1 --modelo $PRE       # twostage_e1_biobertpt_seed42
+python codigo/scripts/two_stage.py treinar --estagio 2 --modelo $PRE       # twostage_e2_biobertpt_seed42
+python codigo/scripts/two_stage.py compor-dev --estagio1 codigo/resultados/execucoes/twostage_e1_biobertpt_seed42 \
+    --estagio2 codigo/resultados/execucoes/twostage_e2_biobertpt_seed42      # τ escolhido no DEV e congelado
+
+# baseline calibrado: t escolhido no DEV sobre as probabilidades do baseline (sem GPU)
+python codigo/scripts/baseline_calibrado.py calibrar-dev --base codigo/resultados/execucoes/baseline_biobertpt_seed42
+
+# antes da comparação final: mesmo commit, mesmo manifesto, configuração do protocolo, nenhuma validação
+python codigo/scripts/pretreino.py conferir --execucoes codigo/resultados/execucoes/*_biobertpt_seed42
+
+# TEST, uma vez cada, só depois de tudo congelado no DEV
+python codigo/scripts/two_stage.py avaliar-test --execucao codigo/resultados/execucoes/twostage_biobertpt_seed42
+python codigo/scripts/baseline_calibrado.py aplicar-test --execucao codigo/resultados/execucoes/baseline_calibrado_biobertpt_seed42
+```
+
+| Estratégia | Exemplos | Modelo | Escolhido no DEV por | Épocas |
+| --- | --- | --- | --- | --- |
+| `two_stage`, estágio 1 | todos os pares; `relacao` (negation_of ou associated_with) × `no_relation` | encoder + cabeça [CLS] de 2 saídas, a partir dos pesos originais | maior AP de `relacao` | 3 (`ConfigEstagio1`) |
+| `two_stage`, estágio 2 | só os pares com relação anotada; `negation_of` × `associated_with` | idem, outra instância, também dos pesos originais | maior F1 de `negation_of` nesses pares | 10 (`ConfigEstagio2`) |
+| `two_stage`, composição | todos os pares: P(relacao), em 4 casas, ≥ τ → estágio 2; senão `no_relation` | os dois estágios | τ: F1 de `negation_of` do pipeline completo (fluxo real), grade 0,05–0,95 | — |
+| `baseline_calibrado` | as predições do baseline | — | t: P(negation_of) ≥ t → negation_of; senão argmax entre associated_with e no_relation | — |
+
+`limiar.json` (na composição e no calibrado) guarda a busca inteira e o
+limiar, vinculados aos hashes dos checkpoints ou das predições de origem, às
+configurações, à seed, à proveniência e à identidade do DEV; a aplicação ao
+TEST recalcula os vínculos e recusa qualquer divergência, e não há opção para
+informar o limiar.
+
+Validação técnica (passo 1V do protocolo): `--validacao-epocas N` em
+`treinar.py` e em `two_stage.py treinar` treina N épocas no lugar das do
+protocolo e marca a execução no `config.json` (nomes `*_validacao_<N>ep`); a
+composição e a calibração feitas sobre elas também ficam marcadas. Execuções
+de validação nunca têm o TEST avaliado e são recusadas por `avaliar_test.py`,
+`two_stage.py avaliar-test`, `baseline_calibrado.py aplicar-test`,
+`pretreino.py conferir --execucoes` e `comparar.py`. Recomendado: rodá-las com
+uma pasta de partições que tenha só `train.jsonl`, `dev.jsonl` e o
+`MANIFEST.json` congelado.
+
 Avaliação:
 
 ```bash
@@ -229,7 +289,7 @@ O pacote `reclin` tem três níveis, e um nível só importa os de cima:
 Os módulos de `reclin/` não configuram logging, não alteram `os.environ` e não
 mexem em `sys.path` ao serem importados; isso fica com os scripts.
 
-### O que já existe (etapas 1 a 6)
+### O que já existe (etapas 1 a 6.1)
 
 | Caminho | Responsabilidade |
 | --- | --- |
@@ -247,6 +307,11 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/estrategias/baseline.py` | Estratégia treinada: o classificador da tarefa (todos os candidatos, cabeça [CLS]) |
 | `reclin/estrategias/restrito.py` | Estratégia treinada: fine-tuning só nos pares cujo e1 é pista, com a época escolhida no DEV remapeado |
 | `reclin/estrategias/pair_aware/` | Estratégia treinada: o restrito com a cabeça Pair-Aware (`cabeca.py`) |
+| `reclin/estrategias/two_stage/` | Estratégia treinada (etapa 6.1): dois estágios binários independentes a partir dos pesos originais (`inicializacao`, `estagios`, `metricas`, `treino`) e a inferência conjunta com τ escolhido no DEV (`composicao`) |
+| `reclin/estrategias/baseline_calibrado.py` | Controle de calibração (etapa 6.1): limiar t sobre as probabilidades do baseline, escolhido no DEV |
+| `reclin/pretreino.py` | Proveniência dos pesos pré-treinados: download num commit exato, `PROVENIENCIA.json`, conferência antes da carga, checagem entre execuções |
+| `reclin/avaliacao/limiar.py` | A busca de limiar pré-registrada (τ e t), com desempates exatos, e o congelamento vinculado |
+| `reclin/execucao/validacao.py` | Marca, nome e recusa das execuções de validação técnica |
 | `reclin/util/` | JSON/JSONL e SHA-256 (`io`), logging configurado só por scripts (`log`), caminhos padrão (`caminhos`) |
 | `scripts/preparar_dados.py` | `conferir`, `manifesto` e `particionar` |
 | `scripts/avaliar.py` | Métricas de sidecars ou de uma execução |
@@ -256,10 +321,14 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `scripts/filtro_pistas.py` | Execuções do filtro de pistas sobre execuções de base |
 | `scripts/regra_pura.py` | Execução da regra pura |
 | `scripts/treinar.py` | Treino (e retomada) de uma estratégia treinada (`--estrategia` baseline, restrito ou pair_aware); não lê o TEST |
-| `scripts/avaliar_test.py` | Avaliação do TEST de uma execução de treino concluída |
+| `scripts/avaliar_test.py` | Avaliação do TEST de uma execução de treino concluída (recusa execuções de validação técnica) |
+| `scripts/two_stage.py` | `verificar-inicializacao`, `treinar --estagio {1,2}`, `compor-dev`, `avaliar-test` |
+| `scripts/baseline_calibrado.py` | `calibrar-dev` e `aplicar-test` |
+| `scripts/pretreino.py` | `baixar` (commit exato) e `conferir` (`--pasta` ou `--execucoes`) |
 | `dados/particoes/` | `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados) |
 | `testes/` | Testes de unidade, de integração e de equivalência com o legado, e as referências do legado |
 | `docs/entregas/` | Índice das entregas e, por etapa, o que foi entregue, como foi verificado e o que ficou pendente |
+| `docs/protocolo/` | Protocolo pré-registrado da fase científica atual (BioBERTpt, seed 42) |
 
 `dados/brutos/` (XML do SemClinBr) e `dados/processados/` (`dataset.jsonl`)
 ficam fora do git: o corpus tem licença restrita. As partições versionadas

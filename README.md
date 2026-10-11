@@ -39,7 +39,7 @@ do corpus **SemClinBr**, num espaço de **3 rótulos**: `negation_of`,
 Sobre essa base, o RECLin-PT reúne o conhecimento sobre como a negação aparece
 no corpus (o léxico de pistas) e compara **estratégias experimentais** para
 detectar `negation_of` — baseline, filtro de pistas, regra pura, fine-tuning
-restrito, Pair-Aware e, no futuro, Two-Stage — sob o mesmo protocolo. Nenhuma
+restrito, Pair-Aware e Two-Stage — sob o mesmo protocolo. Nenhuma
 delas define o projeto: a de melhor desempenho compõe o modelo entregue.
 
 ## Estado do repositório
@@ -50,7 +50,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -153,8 +153,22 @@ python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --see
 python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/baseline_biobertpt_seed42
 ```
 
-O protocolo dos experimentos em GPU e a geração dos artefatos do TCC entram
-nas etapas seguintes.
+Two-Stage, baseline calibrado e pesos com proveniência (etapa 6.1; comandos em
+[`codigo/README.md`](codigo/README.md)):
+
+```bash
+python codigo/scripts/pretreino.py baixar --revisao <SHA de 40 caracteres>   # pesos num commit exato
+python codigo/scripts/two_stage.py treinar --estagio 1 --modelo <pasta dos pesos>
+python codigo/scripts/two_stage.py treinar --estagio 2 --modelo <pasta dos pesos>
+python codigo/scripts/two_stage.py compor-dev --estagio1 <execução e1> --estagio2 <execução e2>
+python codigo/scripts/baseline_calibrado.py calibrar-dev --base <execução do baseline>
+```
+
+O protocolo da fase científica atual — validação inicial, seed 42, só
+BioBERTpt — está pré-registrado em
+[`codigo/docs/protocolo/fase-biobertpt-seed42.md`](codigo/docs/protocolo/fase-biobertpt-seed42.md).
+Os experimentos em GPU e a geração dos artefatos do TCC entram nas etapas
+seguintes, cada execução com autorização própria.
 
 ## Métricas e como interpretar
 

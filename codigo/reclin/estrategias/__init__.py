@@ -24,6 +24,17 @@ descrita por uma `treino.montagem.Montagem`:
 * `pair_aware` (pacote, com `cabeca`) — o restrito com a cabeça
   `[h_cls ; h_[E1] ; h_[E2]] → MLP`.
 
-Prevista para o futuro: `two_stage`. Uma estratégia é um módulo ou um pacote
-e só importa o núcleo e `negacao/`.
+Etapa 6.1:
+
+* `two_stage` (pacote) — dois classificadores binários independentes, cada um
+  com o seu fine-tuning a partir dos pesos originais do BioBERTpt: o estágio 1
+  detecta se há relação (todos os pares), o estágio 2 classifica o tipo
+  (`negation_of` × `associated_with`, só os pares com relação anotada); na
+  inferência, os pares com P(relacao) >= τ vão ao estágio 2, e τ é escolhido
+  no DEV pelo pipeline completo e congelado antes do TEST;
+* `baseline_calibrado` — o controle de calibração do Two-Stage: o limiar t de
+  P(negation_of) escolhido no DEV sobre as probabilidades do baseline, pela
+  mesma busca do τ (`avaliacao.limiar`).
+
+Uma estratégia é um módulo ou um pacote e só importa o núcleo e `negacao/`.
 """

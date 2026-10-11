@@ -38,6 +38,16 @@ testar a retomada).
 O TEST é avaliado por outro comando, depois de concluído o treino:
 `scripts/avaliar_test.py --execucao <saida>/<nome>`.
 
+Pesos com proveniência: se `--modelo` for uma pasta baixada por
+`scripts/pretreino.py baixar` (com `PROVENIENCIA.json`), os hashes de todos os
+arquivos são conferidos antes da carga, a carga é feita sem acesso à rede
+(`HF_HUB_OFFLINE=1`) e o commit e o hash do manifesto ficam no `config.json`.
+
+Validação técnica: `--validacao-epocas N` treina N épocas no lugar das do
+protocolo e marca a execução como validação técnica no `config.json` (nome
+padrão `<estratégia>_validacao_<N>ep`). Uma execução de validação nunca tem o
+TEST avaliado nem entra na fase científica. Não combine com `--epochs`.
+
 Saída 0 com o treino concluído; 3 com o treino interrompido (há checkpoint para
 retomar); 1 em erro de configuração ou de retomada.
 """
@@ -98,6 +108,9 @@ def montar_parser(estrategia: str = baseline.NOME) -> argparse.ArgumentParser:
                     help="grava também um checkpoint a cada N passos de treino")
     ap.add_argument("--parar-apos-passo", type=int, default=None, metavar="N",
                     help="interrompe depois do passo global N, com checkpoint (para testar a retomada)")
+    ap.add_argument("--validacao-epocas", type=int, default=None, metavar="N",
+                    help="execução de validação técnica com N épocas (marcada no config.json; "
+                         "nunca avalia o TEST)")
     ap.add_argument("--dispositivo", choices=("auto", "cpu", "cuda"), default="auto")
     ap.add_argument("--threads", type=int, default=None,
                     help="threads do torch em CPU (as referências usam 1)")
@@ -118,7 +131,23 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as erro:
         log.error("Configuração inválida: %s", erro)
         return 1
-    nome = args.nome or modulo.nome_execucao(config)
+    marca = None
+    if args.validacao_epocas is not None:
+        from reclin.execucao import validacao
+        if args.validacao_epocas <= 0:
+            log.error("--validacao-epocas precisa ser positivo: %s", args.validacao_epocas)
+            return 1
+        protocolo = classe().epochs
+        if config.epochs != protocolo:
+            log.error("--validacao-epocas não se combina com --epochs: a execução de validação usa "
+                      "--validacao-epocas e o protocolo (%d épocas) não muda", protocolo)
+            return 1
+        marca = validacao.bloco(args.validacao_epocas, protocolo)
+        config = dataclasses.replace(config, epochs=args.validacao_epocas)
+        padrao = modulo.nome_execucao(config).replace(f"_{config.encoder}_seed{config.seed}", "")
+        nome = args.nome or validacao.nome(padrao, args.validacao_epocas)
+    else:
+        nome = args.nome or modulo.nome_execucao(config)
     for opcao in ("checkpoint_a_cada", "parar_apos_passo", "threads"):
         valor = getattr(args, opcao)
         if valor is not None and valor <= 0:
@@ -127,6 +156,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.modelo is not None and not Path(args.modelo).is_dir():
         log.error("--modelo %s não é uma pasta com um checkpoint", args.modelo)
         return 1
+    from reclin import pretreino
+    if args.modelo is not None and pretreino.tem_manifesto(args.modelo):
+        pretreino.ativar_offline()
 
     import torch
     from reclin import particoes
@@ -147,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
         registro = classificador.treinar_execucao(
             args.saida, nome, config, modelo=args.modelo, pasta_particoes=args.particoes,
             retomar=args.retomar, checkpoint_a_cada=args.checkpoint_a_cada,
-            parar_apos_passo=args.parar_apos_passo, montagem=montagem,
+            parar_apos_passo=args.parar_apos_passo, montagem=montagem, marca_validacao=marca,
             dispositivo=None if args.dispositivo == "auto" else args.dispositivo)
     except (classificador.ErroExecucao, checkpoint.ErroRetomada, ValueError) as erro:
         log.error("%s", erro)
@@ -156,6 +188,10 @@ def main(argv: list[str] | None = None) -> int:
         log.info("Interrompido em %s: para continuar, rode o mesmo comando com --retomar",
                  registro["posicao"])
         return INTERROMPIDO
+    if marca is not None:
+        log.info("Melhor época: %s (dev_macro_f1=%.4f). Execução de validação técnica (%s): o TEST "
+                 "não é avaliado.", registro["melhor_epoca"], registro["melhor_dev_macro_f1"], marca["rotulo"])
+        return 0
     log.info("Melhor época: %s (dev_macro_f1=%.4f). Para avaliar o TEST: "
              "scripts/avaliar_test.py --execucao %s", registro["melhor_epoca"],
              registro["melhor_dev_macro_f1"], args.saida / nome)

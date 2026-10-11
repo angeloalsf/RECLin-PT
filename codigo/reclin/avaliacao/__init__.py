@@ -9,4 +9,7 @@ estratégias.
   com o relatório no formato das comparações do legado.
 * `protocolo` — as 26 comparações do TCC e a regra de semente do bootstrap.
 * `agregacao` — média e desvio-padrão populacional entre sementes.
+* `limiar` — a busca de limiar pré-registrada no DEV (grade, critério e
+  desempates exatos) e o congelamento vinculado do limiar escolhido; quem
+  chama fornece a regra (o τ do Two-Stage, o t do baseline calibrado).
 """

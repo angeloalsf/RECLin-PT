@@ -13,6 +13,8 @@ avaliação, as comparações e os relatórios só leem execuções.
   predições, inclusive nos resultados do legado.
 * `trilha` — a trilha das avaliações do TEST (`test_evals`), que conta
   quantas vezes cada configuração teve o TEST medido.
+* `validacao` — a marca das execuções de validação técnica, que nunca têm o
+  TEST avaliado nem entram nas comparações.
 
 Não calcula métricas (isso é de `avaliacao`) e não treina.
 """

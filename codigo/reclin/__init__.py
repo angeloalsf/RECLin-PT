@@ -3,8 +3,8 @@
 O pacote tem três níveis, e um nível só importa os de cima:
 
 * núcleo — a tarefa e a infraestrutura para resolvê-la e avaliá-la
-  (`tarefa`, `corpus`, `particoes`, `entrada`, `modelos`, `treino/`,
-  `execucao`, `avaliacao/`, `config`, `util/`);
+  (`tarefa`, `corpus`, `particoes`, `entrada`, `modelos`, `pretreino`,
+  `treino/`, `execucao`, `avaliacao/`, `config`, `util/`);
 * especialização — o conhecimento sobre como a negação aparece no corpus
   (`negacao/`);
 * estratégias — formas experimentais de combinar os dois para prever

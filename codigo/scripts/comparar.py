@@ -13,6 +13,11 @@ protocolo  roda as 26 comparações do TCC (`reclin.avaliacao.protocolo`) sobre
            byte a byte com o de mesmo nome em DIR e sai com código 1 se algum
            diferir ou faltar.
 
+Execuções de validação técnica (`execucao.validacao`) são recusadas nos dois
+comandos: uma predição dentro de uma pasta de execução marcada como validação
+não entra em comparação nenhuma. Sidecars soltos (como os do legado, usados na
+reprodução técnica) não têm marca e são aceitos.
+
 Exemplo (reproduz as 26 comparações do legado a partir das referências):
 
     python codigo/scripts/comparar.py protocolo \\
@@ -28,13 +33,15 @@ import time
 from pathlib import Path
 
 from reclin.avaliacao import protocolo, significancia
-from reclin.execucao import diretorio, predicoes
+from reclin.execucao import diretorio, predicoes, validacao
 from reclin.util.log import configurar
 
 log = logging.getLogger("reclin.scripts.comparar")
 
 
 def cmd_par(args) -> int:
+    for caminho in (args.a, args.b):
+        validacao.recusar_sidecar(caminho, "comparações")
     a, b = predicoes.ler(args.a), predicoes.ler(args.b)
     seed = args.seed if args.seed is not None else protocolo.semente_bootstrap(a["seed"], b["seed"])
     relatorio = significancia.comparar(a, b, seed=seed, alvo=args.alvo, n_boot=args.n_boot)
@@ -56,8 +63,11 @@ def cmd_protocolo(args) -> int:
     problemas = 0
     for i, c in enumerate(comparacoes, 1):
         t0 = time.time()
-        a = predicoes.ler(diretorio.caminho_predicoes(args.resultados, c.a, "test"))
-        b = predicoes.ler(diretorio.caminho_predicoes(args.resultados, c.b, "test"))
+        caminho_a = diretorio.caminho_predicoes(args.resultados, c.a, "test")
+        caminho_b = diretorio.caminho_predicoes(args.resultados, c.b, "test")
+        for caminho in (caminho_a, caminho_b):
+            validacao.recusar_sidecar(caminho, "comparações")
+        a, b = predicoes.ler(caminho_a), predicoes.ler(caminho_b)
         relatorio = significancia.comparar(a, b, seed=c.seed, n_boot=args.n_boot)
         destino = args.saida / c.arquivo
         significancia.gravar_relatorio(destino, relatorio)
@@ -99,7 +109,11 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     configurar()
-    return {"par": cmd_par, "protocolo": cmd_protocolo}[args.comando](args)
+    try:
+        return {"par": cmd_par, "protocolo": cmd_protocolo}[args.comando](args)
+    except validacao.ExecucaoDeValidacao as erro:
+        log.error("%s", erro)
+        return 1
 
 
 if __name__ == "__main__":

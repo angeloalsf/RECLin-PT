@@ -1,5 +1,10 @@
 # Entregas
 
+**A partir da etapa 6.1, não há mais pacotes ZIP:** as alterações são feitas
+direto na pasta de trabalho do projeto e revisadas e versionadas pelo autor. A
+nota de cada etapa lista os arquivos criados e modificados. A descrição abaixo
+vale para as entregas das etapas 1 a 6.
+
 Cada etapa da reconstrução é entregue como um ZIP com o **projeto completo**
 até aquele ponto: extraído numa pasta limpa, ele tem tudo o que é preciso para
 instalar, executar e testar o que já foi implementado. Não é preciso combinar
@@ -14,7 +19,8 @@ nova da mesma etapa substitui a anterior.
 | 3 | 1 | 09/10/2026 | `RECLin-PT-etapa-3-v1.zip` | Substituída pela etapa 4 (que a contém) | [etapa-3.md](etapa-3.md) |
 | 4 | 1 | 09/10/2026 | `RECLin-PT-etapa-4-v1.zip` | Substituída pela etapa 5 (que a contém) | [etapa-4.md](etapa-4.md) |
 | 5 | 1 | 09/10/2026 | `RECLin-PT-etapa-5-v1.zip` | Substituída pela etapa 6 (que a contém) | [etapa-5.md](etapa-5.md) |
-| 6 | 1 | 10/10/2026 | `RECLin-PT-etapa-6-v1.zip` | Atual | [etapa-6.md](etapa-6.md) |
+| 6 | 1 | 10/10/2026 | `RECLin-PT-etapa-6-v1.zip` | Base da etapa 6.1 | [etapa-6.md](etapa-6.md) |
+| 6.1 | 1 | 11/10/2026 | — (sem pacote: alterações feitas direto na pasta de trabalho) | Atual | [etapa-6.1.md](etapa-6.1.md) |
 
 ## O que nunca vai no pacote
 
@@ -23,7 +29,7 @@ nova da mesma etapa substitui a anterior.
 | Projeto legado | É só referência; o que dele os testes usam está em `codigo/testes/referencia/` (inclusive os 74 arquivos copiados em `resultados_legado/`) | Repositório original, commit `a5f055c` |
 | XML do SemClinBr e `dataset.jsonl` (`codigo/dados/brutos/`, `codigo/dados/processados/`) | Licença restrita do corpus | Autores do corpus; ver o README da raiz |
 | Ambientes virtuais, caches (`__pycache__`, `.pytest_cache`, `*.egg-info`) | Gerados na instalação | `pip install -e "codigo/[testes]"` |
-| Pesos de modelos e checkpoints (`checkpoints/`, `melhor_modelo/`) | Centenas de MB; gerados pelo treino | `scripts/treinar.py` ou Hugging Face Hub (a única exceção é o modelo minúsculo de 63 KB das referências) |
+| Pesos de modelos e checkpoints (`checkpoints/`, `melhor_modelo/`, `codigo/modelos_pretreinados/`) | Centenas de MB; gerados pelo treino | `scripts/treinar.py` ou Hugging Face Hub (a única exceção é o modelo minúsculo de 63 KB das referências) |
 | Dependências externas (Python, numpy, scipy, torch, transformers, pytest) | Instaladas pelo `pip` | `codigo/requirements.txt` e `codigo/pyproject.toml` |
 
 ## Como cada pacote é verificado antes da entrega

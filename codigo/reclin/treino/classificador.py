@@ -49,10 +49,10 @@ from typing import Any
 import torch
 from transformers import get_linear_schedule_with_warmup
 
-from reclin import entrada, modelos, particoes, tarefa
+from reclin import entrada, modelos, particoes, pretreino, tarefa
 from reclin.avaliacao import metricas
 from reclin.config import Config
-from reclin.execucao import diretorio, predicoes, subconjunto, trilha
+from reclin.execucao import diretorio, predicoes, subconjunto, trilha, validacao
 from reclin.treino import checkpoint, laco, reprodutibilidade
 from reclin.treino.montagem import CLASSIFICADOR, Montagem
 from reclin.util import caminhos
@@ -89,10 +89,21 @@ def _conferir_particoes(pasta: Path, nomes: tuple[str, ...]) -> dict[str, str]:
     return {nome: splits[nome]["sha256"] for nome in nomes}
 
 
+def particoes_congeladas(pasta_particoes: str | Path) -> bool:
+    """A pasta é a das partições congeladas, ou uma cópia delas com o mesmo
+    MANIFEST byte a byte (por exemplo, uma pasta só com TRAIN, DEV e o
+    MANIFEST, para uma operação que não pode ler o TEST). Nas duas, o tamanho
+    dos conjuntos de referência é conferido."""
+    pasta = Path(pasta_particoes)
+    if pasta.resolve() == caminhos.PARTICOES.resolve():
+        return True
+    proprio, congelado = pasta / particoes.ARQUIVO_MANIFESTO, caminhos.PARTICOES / particoes.ARQUIVO_MANIFESTO
+    return proprio.is_file() and congelado.is_file() and proprio.read_bytes() == congelado.read_bytes()
+
+
 def _conjunto(nome: str, docs: list, sha: str, config: Config, pasta_particoes: Path):
-    congeladas = Path(pasta_particoes).resolve() == caminhos.PARTICOES.resolve()
     return tarefa.conjunto_referencia(nome, docs, particao_sha256=sha, max_gap=config.max_gap,
-                                      conferir_tamanho=congeladas)
+                                      conferir_tamanho=particoes_congeladas(pasta_particoes))
 
 
 def config_de_registro(registro: dict[str, Any], classe: type = Config) -> Config:
@@ -133,10 +144,17 @@ def _pontuador(y_completo: list[int], indices: list[int] | None, y_sub: list[int
 def treinar_execucao(raiz: str | Path, nome: str, config: Config, *, modelo: str | Path | None = None,
                      pasta_particoes: str | Path = caminhos.PARTICOES, retomar: bool = False,
                      checkpoint_a_cada: int | None = None, parar_apos_passo: int | None = None,
-                     dispositivo: str | None = None, montagem: Montagem = CLASSIFICADOR) -> dict[str, Any]:
+                     dispositivo: str | None = None, montagem: Montagem = CLASSIFICADOR,
+                     marca_validacao: dict[str, Any] | None = None) -> dict[str, Any]:
     """Treina (ou retoma) a execução `<raiz>/<nome>` da estratégia descrita
     por `montagem` e devolve o conteúdo de `treino.json`. `modelo` substitui o
-    checkpoint de `config.encoder` (um caminho local, por exemplo)."""
+    checkpoint de `config.encoder` (um caminho local, por exemplo).
+
+    Se `modelo` for uma pasta com `PROVENIENCIA.json` (`reclin.pretreino`), os
+    hashes de todos os arquivos são conferidos antes da carga e o commit e o
+    hash do manifesto entram no `config.json` (`proveniencia_pesos`). Sem o
+    manifesto, nada muda. `marca_validacao` (`execucao.validacao.bloco`) marca
+    uma execução de validação técnica; sem ela, nada muda."""
     if not isinstance(config, montagem.classe_config):
         raise ErroExecucao(f"a estratégia {montagem.estrategia} usa {montagem.classe_config.__name__}, "
                            f"não {type(config).__name__}")
@@ -144,8 +162,16 @@ def treinar_execucao(raiz: str | Path, nome: str, config: Config, *, modelo: str
     pasta = Path(raiz) / nome
     modelo_id = str(modelo) if modelo is not None else config.modelo
     shas = _conferir_particoes(pasta_particoes, PARTICOES_TREINO)
+    try:
+        proveniencia = pretreino.registro_de(modelo)
+    except pretreino.ErroProveniencia as erro:
+        raise ErroExecucao(str(erro)) from erro
     registro = {"estrategia": montagem.estrategia, "config": config.como_dict(), "modelo": modelo_id,
                 "particoes": shas, "estrategia_config": montagem.registro}
+    if proveniencia is not None:
+        registro["proveniencia_pesos"] = proveniencia
+    if marca_validacao is not None:
+        registro[validacao.CHAVE] = dict(marca_validacao)
 
     if retomar:
         if not (pasta / diretorio.CONFIG).is_file():
@@ -292,6 +318,10 @@ def avaliar_test(pasta: str | Path, *, pasta_particoes: str | Path = caminhos.PA
         raise ErroExecucao(f"{pasta} não é uma execução de treino (sem {ARQUIVO_TREINO})")
     treino = ler_json(pasta / ARQUIVO_TREINO)
     registro = diretorio.ler_config(pasta)["config"]
+    if validacao.da_config(registro):
+        raise ErroExecucao(f"{pasta.name} é uma execução de validação técnica "
+                           f"({validacao.da_config(registro).get('rotulo')}): o TEST não é avaliado "
+                           "em execuções de validação")
     if registro.get("estrategia") != montagem.estrategia or \
             registro.get("estrategia_config") != montagem.registro:
         raise ErroExecucao(f"a execução {pasta.name} é da estratégia {registro.get('estrategia')!r} "
