@@ -227,6 +227,7 @@ def cmd_avaliar(args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    for fluxo in (sys.stdout, sys.stderr): getattr(fluxo, "reconfigure", lambda **_: None)(errors="replace")  # "τ" no --help sob cp1252
     previo = argparse.ArgumentParser(add_help=False)
     previo.add_argument("--estagio", type=int, choices=two_stage.ESTAGIOS, default=1)
     estagio = previo.parse_known_args(argv)[0].estagio

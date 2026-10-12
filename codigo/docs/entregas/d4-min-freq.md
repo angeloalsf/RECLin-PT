@@ -167,6 +167,13 @@ Modificados: `reclin/negacao/lexico.py`, `reclin/estrategias/restrito.py`,
 `docs/entregas/README.md`, `codigo/README.md`, `codigo/Makefile`,
 `notebooks/reclin.ipynb`, `testes/unidade/test_negacao.py`,
 `testes/equivalencia/{test_lexico_legado,test_estrategias_legado,test_estrategias_treinadas_legado}.py`,
-`testes/integracao/test_estrategias_treinadas.py`.
+`testes/integracao/test_estrategias_treinadas.py`, `scripts/two_stage.py` (uma linha: saída do `--help` tolerante a caracteres fora do cp1252, autorizada à parte, fora do escopo da D4).
 
 Removidos: nenhum.
+
+## Suíte completa no ambiente do usuário (Windows, Python 3.10.22, numpy 2.1.3, scipy 1.15.3)
+
+`python -m pytest -q`: 791 passaram, 12 pularam, 11 falharam. Passaram, entre outros, os testes de integração do restrito e da Pair-Aware com o léxico da D4 (774 pares no TEST) e `test_protocolo_fase.py`. As 11 falhas não dependem da D4:
+
+* **10 em `testes/equivalencia/test_comparacoes_legado.py`** (reprodução byte a byte da significância). Causa verificada: `scipy.stats.binomtest(830, 2588, 0.5)` dá `8.144785133063341e-76` com scipy 1.15.3, contra `8.144785133064401e-76` gravado pelo legado (scipy 1.16.3, ver `etapa-2.md`). A diferença está na 12ª casa significativa do `p_value`. Os scipy 1.16 em diante exigem Python 3.11 ou superior, então não há correção neste ambiente. **Decisão do usuário:** não criar um ambiente novo só para essa reprodução. Os testes permanecem, sem alteração, e a falha fica registrada como limitação conhecida do ambiente. Não implica erro do código nem dos dados v2.
+* **1 em `test_pacote.py::test_scripts_respondem_a_ajuda[two_stage.py]`**: `UnicodeEncodeError` ao imprimir "τ" sob cp1252. Corrigido com uma linha em `scripts/two_stage.py`. Reexecução no Windows pendente (verificado apenas com `PYTHONIOENCODING=cp1252` em Linux).

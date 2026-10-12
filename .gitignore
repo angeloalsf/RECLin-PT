@@ -10,6 +10,7 @@ __pycache__/
 .venv/
 venv/
 env/
+_env_setup
 ENV/
 
 # --- Dados: corpus restrito e derivados diretos ---
