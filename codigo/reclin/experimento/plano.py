@@ -171,6 +171,12 @@ def _execucoes(raiz_local: str | Path, raiz_drive: str | Path | None) -> list[di
     return achadas
 
 
+def execucoes(raiz_local: str | Path, raiz_drive: str | Path | None = None) -> list[dict[str, Any]]:
+    """Todas as execuções com `experimento.json` válido (local e Drive), cada uma
+    com `onde`, `nome`, `run_id`, `config_id`, `tentativa`, `estado`, `alias_oficial`."""
+    return _execucoes(raiz_local, raiz_drive)
+
+
 def compativeis(chave: Mapping[str, Any], raiz_local: str | Path, raiz_drive: str | Path | None = None
                 ) -> list[dict[str, Any]]:
     """As execuções (local e Drive) da mesma configuração, da tentativa mais

@@ -9,7 +9,7 @@ contém notebook de treino.
 
 | Necessidade | Módulo (`reclin/experimento/`) | Observação |
 |---|---|---|
-| Obter o código de um SHA exato, sem Git | `codigo_colab.py` | só biblioteca padrão; baixado sozinho pela 1ª célula |
+| Obter o código: clone da branch (`clonar_codigo`) ou tarball de um SHA (`preparar_codigo`) | `codigo_colab.py` | só biblioteca padrão; baixado sozinho pela 2ª célula do notebook do baseline |
 | Achar a raiz do código, chamar scripts | `raiz.py` | `localizar_codigo`, `ativar`, `rodar_script` |
 | Drive / Secrets do Colab | `colab.py` | imports de `google.colab` só quando chamados |
 | Credenciais | `segredos.py` | GitHub e Hugging Face separados; valor nunca impresso |
@@ -17,6 +17,7 @@ contém notebook de treino.
 | Identificadores | `ids.py` | `config_id` e `run_id` |
 | Chave, nomes oficiais, plano | `plano.py` | `chave_da_execucao`, `NOMES_OFICIAIS`, `planejar`, `preparar` |
 | Identidade da infraestrutura | `identidade.py` | só proveniência; fora da identidade v1 |
+| Operações dos notebooks de estratégia | `operacoes.py` | `executar(operacao, contexto)`; usado por `reclin_baseline.ipynb` (etapa 8.3) |
 | Proveniência por execução | `proveniencia.py` | arquivo `experimento.json` na pasta da execução |
 | Disco local ⇄ Drive | `persistencia.py` | cópia atômica com verificação SHA-256 |
 | Hugging Face (privado) | `publicacao_hf.py` | plano por padrão; envia só com confirmação |
@@ -26,44 +27,24 @@ Nenhum módulo executa operação científica ao ser importado ou ao abrir um
 notebook. Treino, calibração, download de pesos/corpus e TEST continuam
 exclusivamente nos scripts existentes, chamados por decisão explícita.
 
-## 2. Primeira célula dos notebooks (`CELULA_INICIAL`)
+## 2. Obter o código nos notebooks
 
-O notebook ainda não tem o código; por isso a célula baixa **apenas**
-`codigo_colab.py` na revisão fixada e usa esse módulo para trazer o resto.
-`SHA` é o commit completo (40 caracteres) que o autor escolheu; branch ou tag
-são recusados.
+O notebook ainda não tem o código; por isso a célula baixa **apenas** `codigo_colab.py` (API de conteúdo do GitHub,
+`ref=<branch>`) e usa esse módulo para trazer o resto. Há dois caminhos, ambos gravando `REVISAO.json`:
 
-```python
-REPOSITORIO = "angeloalsf/RECLin-PT"
-SHA = "<40 caracteres hexadecimais do commit>"
-
-import json, urllib.request, pathlib, sys
-from google.colab import userdata   # token opcional: só se o repositório for privado
-try:
-    _t = userdata.get("GITHUB_TOKEN")
-except Exception:
-    _t = None
-_h = {"Accept": "application/vnd.github.raw", "User-Agent": "reclin-colab"}
-if _t:
-    _h["Authorization"] = f"Bearer {_t}"
-_u = f"https://api.github.com/repos/{REPOSITORIO}/contents/codigo/reclin/experimento/codigo_colab.py?ref={SHA}"
-_dest = pathlib.Path("/content/_bootstrap"); _dest.mkdir(exist_ok=True)
-(_dest / "codigo_colab.py").write_bytes(urllib.request.urlopen(urllib.request.Request(_u, headers=_h)).read())
-sys.path.insert(0, str(_dest))
-import codigo_colab
-info = codigo_colab.preparar_codigo(REPOSITORIO, SHA, token=_t, arquivo_bootstrap=_dest / "codigo_colab.py")
-del _t, _h
-sys.path.insert(0, str(info["codigo"]))
-from reclin.experimento import raiz, colab
-CODIGO = raiz.ativar(info["codigo"])
-colab.montar_drive()
-```
-
-`preparar_codigo` baixa o tarball do SHA, confere o prefixo do SHA servido,
-extrai em pasta temporária (recusa `..`, caminhos absolutos, links) e só então
-renomeia; reaproveita extração anterior do mesmo SHA; e exige que o
-`codigo_colab.py` baixado seja idêntico ao da árvore extraída. Grava
-`REVISAO.json` (repositório, SHA, SHA-256 do tarball, lista de arquivos).
+* **`clonar_codigo(repositorio, branch, destino, token=None)`** — usado por `reclin_baseline.ipynb` (etapa 8.3.2):
+  clone raso da **branch** `BRANCH_CODIGO`; o commit clonado (HEAD) é registrado em `REVISAO.json`
+  (`origem: "git"`) e, por `proveniencia.codigo_do_ambiente`, em `experimento.json` (`codigo.revisao`) de cada
+  execução. Um clone existente é reaproveitado **sem atualizar** (o código não muda no meio da sessão), desde que
+  seja do mesmo repositório e da mesma branch e não tenha arquivos rastreados alterados; tag é recusada. O token
+  (opcional, só para repositório privado) vai por `GIT_ASKPASS` (script 700, apagado ao sair) e existe só no ambiente
+  do subprocesso. Como a branch se move, a reprodutibilidade vem da **identidade do código** (`vincular_config`
+  grava a identidade global em `config.json`/`experimento.json`): a retomada a confere e recusa execução incompatível.
+* **`preparar_codigo(repositorio, sha, token=None, arquivo_bootstrap=None)`** — tarball de um SHA exato (40 hex;
+  branch ou tag recusados): confere o prefixo do SHA servido, extrai em pasta temporária (recusa `..`, caminhos
+  absolutos, links), renomeia só no fim, reaproveita extração anterior do mesmo SHA e exige que o `codigo_colab.py`
+  baixado seja idêntico ao da árvore extraída. `REVISAO.json` traz repositório, SHA, SHA-256 do tarball e arquivos.
+  Continua disponível para notebooks que queiram código fixo por commit.
 
 ## 3. Secrets
 
@@ -72,10 +53,11 @@ notebook" apenas nos notebooks que precisam. Nunca envie o valor no chat.
 
 | Secret | Quando | Escopo mínimo |
 |---|---|---|
-| `GITHUB_TOKEN` | só se o repositório for privado (baixar código) | token fine-grained, **somente este repositório**, *Contents: Read-only* |
+| `GITHUB_TOKEN` | só se o repositório for privado (clonar o código) | token fine-grained, **somente este repositório**, *Contents: Read-only* |
+| `GITHUB_TOKEN_ESCRITA` | só para salvar resultados no GitHub (célula 8b do notebook do baseline) | token fine-grained, **somente este repositório**, *Contents: Read and write*; nunca o mesmo `GITHUB_TOKEN` de leitura |
 | `HF_TOKEN` | só para `publicar` (`--executar`) | token fine-grained, **somente o repositório de artefatos**, com escrita |
 
-- Os dois são independentes; cada operação pede só o que precisa
+- Os três são independentes; cada operação pede só o que precisa
   (`segredos.OPERACOES`). Treinar, retomar, sincronizar com o Drive e planejar
   publicação não exigem nenhum.
 - O valor é guardado numa `Credencial` que não se imprime; mensagens, logs,
@@ -83,10 +65,16 @@ notebook" apenas nos notebooks que precisam. Nunca envie o valor no chat.
   recusam textos com padrão de token (`ghp_`, `github_pat_`, `hf_`…).
 - Nada é publicado automaticamente: `publicar` sem `--executar` só mostra o
   plano.
+- `segredos.obter` lê o Secret do Colab (`google.colab.userdata`); se não puder
+  (por exemplo, num subprocesso, onde o `userdata` não funciona), vale a variável
+  de ambiente de mesmo nome. O notebook do baseline exporta o `HF_TOKEN` por
+  `apresentacao.segredo_no_ambiente` **só durante** a publicação (célula 8c) e o
+  remove ao terminar; o `GITHUB_TOKEN_ESCRITA` não passa por `os.environ`: vai ao
+  Git por `GIT_ASKPASS` (ver `reclin/experimento/versionamento.py`).
 
 ## 4. Como os notebooks usam a infraestrutura
 
-1. **Preparar**: `CELULA_INICIAL`; depois `scripts/experimento.py ambiente`
+1. **Preparar**: obter o código (seção 2); depois `scripts/experimento.py ambiente`
    (plano de instalação em modo `minimo`, relatório de GPU/versões; instala só
    com `--instalar`; T4 é a referência, L4/A100 geram aviso e ficam registrados).
 2. **Antes de treinar** (lógica única, a mesma para todas as estratégias):

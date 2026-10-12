@@ -107,15 +107,8 @@ def cmd_retomada(args) -> int:
 
 
 def cmd_sincronizar(args) -> int:
-    resumo = persistencia.sincronizar(args.raiz_local / args.nome, args.raiz_drive,
-                                      incluir_ultimo=not args.sem_ultimo, progresso=print)
-    if (args.raiz_local / args.nome / proveniencia.ARQUIVO).is_file():
-        # registra a sincronização e espelha de novo, para o experimento.json do Drive já trazê-la
-        # (o manifesto da segunda passada é mais novo; por isso o hash dele não é gravado no registro)
-        proveniencia.registrar_local_drive(args.raiz_local / args.nome,
-                                           {k: v for k, v in resumo.items() if k != "manifesto_sha256"})
-        persistencia.sincronizar(args.raiz_local / args.nome, args.raiz_drive, incluir_ultimo=not args.sem_ultimo)
-    _imprimir(resumo)
+    _imprimir(persistencia.sincronizar_e_registrar(args.raiz_local / args.nome, args.raiz_drive,
+                                                   incluir_ultimo=not args.sem_ultimo, progresso=print))
     return 0
 
 

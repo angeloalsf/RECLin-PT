@@ -175,6 +175,20 @@ def sincronizar(origem: str | Path, raiz_drive: str | Path, *, incluir_ultimo: b
             "manifesto_sha256": _sha(destino / MANIFESTO)}
 
 
+def sincronizar_e_registrar(origem: str | Path, raiz_drive: str | Path, *, incluir_ultimo: bool = True,
+                            progresso: Callable[[str], None] | None = None) -> dict[str, Any]:
+    """`sincronizar` e, se a execução tem `experimento.json`, registra a
+    sincronização nele e espelha de novo, para que o registro do Drive já a
+    traga (o manifesto da segunda passada é mais novo; por isso o hash dele não
+    é gravado no registro). É o que o comando `sincronizar` e os notebooks usam."""
+    origem = Path(origem)
+    resumo = sincronizar(origem, raiz_drive, incluir_ultimo=incluir_ultimo, progresso=progresso)
+    if (origem / proveniencia.ARQUIVO).is_file():
+        proveniencia.registrar_local_drive(origem, {k: v for k, v in resumo.items() if k != "manifesto_sha256"})
+        sincronizar(origem, raiz_drive, incluir_ultimo=incluir_ultimo)
+    return resumo
+
+
 def verificar_espelho(pasta: str | Path) -> list[str]:
     """Problemas do espelho (vazio se todos os arquivos do manifesto existem e conferem)."""
     pasta = Path(pasta)

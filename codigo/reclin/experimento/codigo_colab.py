@@ -1,4 +1,13 @@
-"""Obtenção do código por tarball de uma revisão exata do GitHub (sem Git).
+"""Obtenção do código: clone de uma branch (notebook atual) ou tarball de um SHA exato (sem Git).
+
+Duas formas, ambas só com a biblioteca padrão:
+
+* `clonar_codigo` — clone raso de uma **branch** (`git clone --depth 1 --branch`), gravando o commit clonado
+  (HEAD) em `REVISAO.json` (`origem: "git"`). É o que o notebook do baseline usa: o código pode mudar entre sessões
+  e quem garante a coerência é a identidade do código, conferida na retomada (`identidade_codigo`). O token, se
+  houver (repositório privado), vai ao Git só por `GIT_ASKPASS` (script temporário, 700, apagado em `finally`) no
+  ambiente do subprocesso: nunca em URL, argv, `.git/config` ou `os.environ` da sessão;
+* `preparar_codigo` — tarball de um SHA completo (descrito abaixo), mantido para quem precisa de uma revisão fixa.
 
 Este módulo usa **só a biblioteca padrão** e não importa nada de `reclin`: a
 primeira célula de um notebook baixa este único arquivo na revisão desejada
@@ -28,23 +37,26 @@ código: repositório, SHA, SHA-256 do tarball, número de arquivos e a lista
 """
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
 import re
 import shutil
+import subprocess
 import tarfile
 import tempfile
 import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Iterator
 
 API = "https://api.github.com"
 ARQUIVO_REVISAO = "REVISAO.json"
 PADRAO_SHA = re.compile(r"^[0-9a-f]{40}$")
 PADRAO_REPOSITORIO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+PADRAO_BRANCH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
 LIMITE_TARBALL = 512 * 1024 * 1024        # recusa um tarball maior que isto
 LIMITE_REDIRECIONAMENTOS = 3
 FORMATO = 1
@@ -248,3 +260,94 @@ def preparar_codigo(repositorio: str, sha: str, *, token: str | None = None,
             raise ErroCodigoColab("o arquivo usado para baixar o código difere do mesmo arquivo na revisão "
                                   "extraída: use o SHA completo de uma revisão que contenha este módulo")
     return {**revisao, "raiz": str(pasta), "codigo": str(codigo)}
+
+
+# --------------------------------------------------------------------------- #
+# Clone de uma branch                                                         #
+# --------------------------------------------------------------------------- #
+def validar_branch(branch: str) -> str:
+    if not isinstance(branch, str) or not PADRAO_BRANCH.fullmatch(branch) or ".." in branch \
+            or branch.endswith(("/", ".lock")):
+        raise ErroCodigoColab(f"branch {branch!r} inválida")
+    return branch
+
+
+@contextlib.contextmanager
+def askpass(token: str) -> Iterator[dict[str, str]]:
+    """Ambiente do Git com `GIT_ASKPASS`: um script temporário (700) que lê o token da variável
+    `RECLIN_GIT_TOKEN` do **subprocesso**. O token não é gravado no script nem em `os.environ`; a pasta é
+    apagada ao sair (também em erro)."""
+    pasta = Path(tempfile.mkdtemp(prefix="reclin-askpass-"))
+    try:
+        os.chmod(pasta, 0o700)
+        script = pasta / "askpass.sh"
+        script.write_text('#!/bin/sh\ncase "$1" in\n  *sername*) printf "%s" "x-access-token" ;;\n'
+                          '  *) printf "%s" "$RECLIN_GIT_TOKEN" ;;\nesac\n', encoding="utf-8")
+        os.chmod(script, 0o700)
+        yield {"GIT_ASKPASS": str(script), "RECLIN_GIT_TOKEN": token}
+    finally:
+        shutil.rmtree(pasta, ignore_errors=True)
+
+
+def _git(argumentos: list[str], cwd: Path | None, env_extra: dict[str, str], token: str | None) -> str:
+    r = subprocess.run(["git", "-c", "credential.helper=", *argumentos], cwd=cwd, check=False,
+                       env={**os.environ, **env_extra, "GIT_TERMINAL_PROMPT": "0"}, capture_output=True, text=True,
+                       encoding="utf-8", errors="replace", timeout=900)
+    saida = _limpar(((r.stdout or "") + (r.stderr or "")).strip(), token)
+    if r.returncode != 0:
+        raise ErroCodigoColab(f"git {argumentos[0]} falhou ({r.returncode})" + (f": {saida.splitlines()[-1]}" if saida else "")
+                              + ". Se o repositório for privado, confira o Secret GITHUB_TOKEN")
+    return saida
+
+
+def clonar_codigo(repositorio: str, branch: str, destino: str | Path = "/content/RECLin-PT", *,
+                  token: str | None = None, subpasta: str = "codigo",
+                  git: Callable[[list[str], "Path | None", "dict[str, str]", "str | None"], str] = _git) -> dict[str, Any]:
+    """Garante um clone raso de `repositorio` na `branch` em `destino` e devolve o registro de revisão
+    (`sha` = HEAD clonado) mais `raiz`, `codigo` e `reaproveitado`.
+
+    Um clone já existente é reaproveitado **sem** atualizar (o código não muda no meio da sessão), desde que
+    aponte para o mesmo repositório e a mesma branch e não tenha arquivos rastreados alterados. Grava
+    `REVISAO.json` na raiz do clone (`origem: "git"`)."""
+    validar_repositorio(repositorio)
+    validar_branch(branch)
+    url = f"https://github.com/{repositorio}.git"
+    destino = Path(destino)
+    with contextlib.ExitStack() as pilha:
+        env = pilha.enter_context(askpass(token)) if token else {}
+
+        def rodar(*argumentos: str, cwd: Path | None = None) -> str:
+            return git(list(argumentos), cwd, env, token)
+
+        reaproveitado = (destino / ".git").is_dir()
+        if reaproveitado:
+            if rodar("remote", "get-url", "origin", cwd=destino) != url:
+                raise ErroCodigoColab(f"{destino} é um clone de outro repositório: remova a pasta ou corrija REPOSITORIO")
+            if rodar("rev-parse", "--abbrev-ref", "HEAD", cwd=destino) != branch:
+                raise ErroCodigoColab(f"{destino} está em outra branch: remova a pasta ou corrija BRANCH_CODIGO")
+            if rodar("status", "--porcelain", "--untracked-files=no", cwd=destino):
+                raise ErroCodigoColab(f"{destino} tem arquivos alterados: o código não é o da branch. Remova a pasta")
+        else:
+            if destino.exists() and any(destino.iterdir()):
+                raise ErroCodigoColab(f"{destino} existe, não é um clone e não está vazio: remova-o antes")
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            rodar("clone", "--depth", "1", "--branch", branch, url, str(destino))
+            if rodar("rev-parse", "--abbrev-ref", "HEAD", cwd=destino) != branch:
+                raise ErroCodigoColab(f"{branch!r} não é uma branch (é tag ou outra referência): informe uma branch")
+        sha = rodar("rev-parse", "HEAD", cwd=destino)
+    if not PADRAO_SHA.fullmatch(sha):
+        raise ErroCodigoColab("não consegui ler o commit clonado (HEAD)")
+    anterior = ler_revisao(destino)
+    if not (anterior and anterior.get("origem") == "git" and anterior.get("sha") == sha
+            and anterior.get("branch") == branch and anterior.get("repositorio") == repositorio):
+        revisao = {"formato": FORMATO, "origem": "git", "repositorio": repositorio, "branch": branch, "sha": sha,
+                   "tarball_sha256": None, "clonado_em": _agora()}
+        (destino / ARQUIVO_REVISAO).write_text(json.dumps(revisao, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                                               encoding="utf-8")
+    else:
+        revisao = anterior
+    codigo = destino / subpasta
+    if not (codigo / "pyproject.toml").is_file() or not (codigo / "reclin" / "__init__.py").is_file():
+        raise ErroCodigoColab(f"{codigo} não parece o diretório `codigo/` do RECLin-PT "
+                              "(sem pyproject.toml ou reclin/__init__.py) na branch informada")
+    return {**revisao, "raiz": str(destino), "codigo": str(codigo), "reaproveitado": reaproveitado}

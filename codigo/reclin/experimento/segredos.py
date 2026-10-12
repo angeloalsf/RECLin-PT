@@ -1,10 +1,13 @@
 """Credenciais: separadas por finalidade, pedidas só para a operação que as usa.
 
-Dois Secrets, com finalidades distintas (nunca um serve ao outro):
+Três Secrets, com finalidades distintas (nunca um serve ao outro):
 
 * `GITHUB_TOKEN` — só para **baixar o código** de um repositório privado;
   precisa apenas de leitura de conteúdo (token de granularidade fina, só este
   repositório, `Contents: Read-only`). Repositório público não precisa dele;
+* `GITHUB_TOKEN_ESCRITA` — só para **salvar resultados** no GitHub (commit e
+  push do clone de versionamento); token de granularidade fina, só este
+  repositório, `Contents: Read and write`. Nunca é o `GITHUB_TOKEN` de leitura;
 * `HF_TOKEN` — Hugging Face. Para **publicar** artefatos exige escrita (token
   de granularidade fina, só o repositório de artefatos, escrita). Para baixar
   pesos de um repositório público (`pucpr/biobertpt-all`) não é necessário.
@@ -22,7 +25,10 @@ Garantias:
   conhecida — é o que `proveniencia` chama antes de gravar.
 
 Fora do Colab, a credencial pode vir da variável de ambiente de mesmo nome
-(para uso local); dentro dele, vem dos Secrets.
+(para uso local). Dentro dele, vem dos Secrets; se o Secret não puder ser lido
+(por exemplo, num subprocesso, onde `google.colab.userdata` não funciona), vale
+a variável de ambiente de mesmo nome, se o chamador a tiver exportado só para
+aquela operação.
 """
 from __future__ import annotations
 
@@ -35,6 +41,7 @@ from typing import Any, Iterable
 from reclin.experimento import colab
 
 GITHUB = "GITHUB_TOKEN"
+GITHUB_ESCRITA = "GITHUB_TOKEN_ESCRITA"
 HUGGING_FACE = "HF_TOKEN"
 
 PADROES_TOKEN = (re.compile(r"\bghp_[A-Za-z0-9]{20,}"), re.compile(r"\bgho_[A-Za-z0-9]{20,}"),
@@ -52,6 +59,8 @@ class Segredo:
 CATALOGO = {
     GITHUB: Segredo(GITHUB, "baixar o código de um repositório privado do GitHub",
                     "token de granularidade fina, só este repositório, Contents: Read-only"),
+    GITHUB_ESCRITA: Segredo(GITHUB_ESCRITA, "salvar os resultados da execução no GitHub (commit e push)",
+                            "token de granularidade fina, só este repositório, Contents: Read and write"),
     HUGGING_FACE: Segredo(HUGGING_FACE, "publicar artefatos no repositório privado do Hugging Face",
                           "token de granularidade fina, só o repositório de artefatos, com escrita"),
 }
@@ -66,6 +75,7 @@ OPERACOES: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
     "consultar_dev": ((), ()),
     "planejar_publicacao": ((), ()),             # só lista arquivos; não fala com o Hub
     "publicar_hf": ((HUGGING_FACE,), ()),
+    "salvar_github": ((GITHUB_ESCRITA,), ()),
 }
 
 
@@ -103,10 +113,14 @@ def obter(nome: str, *, obrigatorio: bool = False, ambiente: dict[str, str] | No
     de ambiente). `obrigatorio=True` falha com instrução de configuração."""
     if nome not in CATALOGO:
         raise ErroSegredo(f"Secret {nome!r} desconhecido; os previstos são {sorted(CATALOGO)}")
+    env = os.environ if ambiente is None else ambiente
     if colab.em_colab():
         valor, motivo = colab.ler_secret(nome)
+        if not valor and env.get(nome):
+            # num subprocesso o userdata não funciona: vale a variável exportada pelo chamador
+            valor, motivo = env.get(nome), "variável de ambiente"
     else:
-        valor = (os.environ if ambiente is None else ambiente).get(nome) or None
+        valor = env.get(nome) or None
         motivo = "variável de ambiente" if valor else f"variável de ambiente {nome} ausente (fora do Colab)"
     if valor:
         return Credencial(nome, valor, motivo)

@@ -83,8 +83,9 @@ def ler(pasta: str | Path) -> dict[str, Any]:
 
 
 def codigo_do_ambiente(codigo: str | Path) -> dict[str, Any]:
-    """O bloco `codigo` do registro: revisão exata quando o código veio do
-    tarball (`REVISAO.json` na pasta acima de `codigo/`), senão origem `local`
+    """O bloco `codigo` do registro: revisão exata quando o código veio de um
+    clone (`origem: "git"`, o commit clonado) ou do tarball (`REVISAO.json` na
+    pasta acima de `codigo/`), senão origem `local`
     com revisão desconhecida (None) — a revisão nunca é adivinhada. Inclui a
     identidade própria da infraestrutura (`identidade`), só informativa."""
     from reclin.experimento import codigo_colab, identidade  # noqa: PLC0415
@@ -92,6 +93,9 @@ def codigo_do_ambiente(codigo: str | Path) -> dict[str, Any]:
     infra = identidade.calcular(codigo)
     infra = {k: infra[k] for k in ("componente", "algoritmo", "identidade", "n_arquivos")}   # sem a lista de arquivos
     revisao = codigo_colab.ler_revisao(Path(codigo).resolve().parent)
+    if revisao and revisao.get("origem") == "git":
+        return {"origem": "git", "repositorio": revisao["repositorio"], "branch": revisao.get("branch"),
+                "revisao": revisao["sha"], "tarball_sha256": None, "infraestrutura": infra}
     if revisao:
         return {"origem": "tarball", "repositorio": revisao["repositorio"], "revisao": revisao["sha"],
                 "tarball_sha256": revisao["tarball_sha256"], "infraestrutura": infra}

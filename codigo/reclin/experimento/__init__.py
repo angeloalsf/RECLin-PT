@@ -4,8 +4,8 @@ Orquestra o que os notebooks de estratégia têm em comum, sem reimplementar
 nenhum algoritmo científico (treino, avaliação e composição continuam nos
 módulos e scripts do projeto):
 
-* `codigo_colab` — obtém o código por tarball de uma revisão exata (SHA de 40
-  caracteres) do GitHub, sem Git; só biblioteca padrão, para poder ser baixado
+* `codigo_colab` — obtém o código por clone de uma branch ou por tarball de uma revisão exata (SHA de 40
+  caracteres) do GitHub; só biblioteca padrão, para poder ser baixado
   e usado antes de o resto do pacote existir;
 * `raiz` — localiza a pasta `codigo/` e a ativa para o processo e os
   subprocessos;

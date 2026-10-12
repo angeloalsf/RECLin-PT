@@ -18,8 +18,10 @@ import os
 import re
 import subprocess
 import sys
+import threading
+import time
 from pathlib import Path
-from typing import Mapping
+from typing import Callable, Mapping
 
 VARIAVEL = "RECLIN_CODIGO"
 NOME_PROJETO = re.compile(r'^\s*name\s*=\s*["\']reclin["\']\s*$', re.M)
@@ -90,10 +92,17 @@ def ambiente_para_subprocessos(codigo: str | Path, base: Mapping[str, str] | Non
 
 
 def rodar_script(codigo: str | Path, script: str, *argumentos: str, ambiente: Mapping[str, str] | None = None,
-                 verificar: bool = True) -> int:
-    """Roda `codigo/scripts/<script>` com o interpretador atual, herdando a saída
-    (aparece na célula do notebook), e devolve o código de saída. É como os
-    notebooks chamam os scripts reais, sem reimplementar nada.
+                 verificar: bool = True, log: str | Path | None = None,
+                 periodico: tuple[float, Callable[[], None]] | None = None) -> int:
+    """Roda `codigo/scripts/<script>` com o interpretador atual e devolve o código
+    de saída. É como os notebooks chamam os scripts reais, sem reimplementar nada.
+
+    Sem `log` nem `periodico`, a saída é herdada (aparece na célula). Com `log`,
+    a saída (stdout e stderr juntos) continua aparecendo na célula e é também
+    acrescentada ao arquivo, linha a linha, depois de passar por
+    `segredos.limpar`. Com `periodico=(segundos, funcao)`, `funcao` é chamada a
+    cada `segundos` enquanto o script roda (por exemplo, para espelhar a
+    execução no Drive); um erro nela é impresso e não interrompe o script.
 
     As credenciais nunca vão como argumento: quem precisa delas (publicação) as
     lê dos Secrets dentro do próprio script. `verificar=True` levanta
@@ -103,7 +112,58 @@ def rodar_script(codigo: str | Path, script: str, *argumentos: str, ambiente: Ma
     if not arquivo.is_file():
         raise ErroRaiz(f"script inexistente: {arquivo}")
     env = ambiente_para_subprocessos(codigo, ambiente)
-    resultado = subprocess.run([sys.executable, str(arquivo), *argumentos], env=env)
-    if verificar and resultado.returncode != 0:
-        raise ErroRaiz(f"{script} {' '.join(argumentos)} terminou com código {resultado.returncode}")
-    return resultado.returncode
+    comando = [sys.executable, str(arquivo), *argumentos]
+    if log is None and periodico is None:
+        resultado = subprocess.run(comando, env=env)
+        codigo_saida = resultado.returncode
+    else:
+        codigo_saida = _rodar_com_log(comando, env, Path(log) if log is not None else None, periodico)
+    if verificar and codigo_saida != 0:
+        raise ErroRaiz(f"{script} {' '.join(argumentos)} terminou com código {codigo_saida}")
+    return codigo_saida
+
+
+def _rodar_com_log(comando: list[str], env: Mapping[str, str], log: Path | None,
+                   periodico: tuple[float, Callable[[], None]] | None) -> int:
+    from reclin.experimento import segredos  # noqa: PLC0415
+
+    arquivo = None
+    if log is not None:
+        log.parent.mkdir(parents=True, exist_ok=True)
+        arquivo = open(log, "a", encoding="utf-8")                      # noqa: SIM115 — fechado no finally
+    ambiente_filho = {**env, "PYTHONUNBUFFERED": "1"}           # sem isto a saída em pipe só aparece em blocos
+    processo = subprocess.Popen(comando, env=ambiente_filho, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True, encoding="utf-8", errors="replace", bufsize=1)
+
+    def copiar() -> None:
+        for linha in processo.stdout:                                  # type: ignore[union-attr]
+            linha = segredos.limpar(linha)
+            sys.stdout.write(linha)
+            sys.stdout.flush()
+            if arquivo is not None:
+                arquivo.write(linha)
+                arquivo.flush()
+
+    leitor = threading.Thread(target=copiar, daemon=True)
+    leitor.start()
+    try:
+        proximo = time.monotonic() + periodico[0] if periodico else None
+        while True:
+            try:
+                processo.wait(timeout=1.0)
+                break
+            except subprocess.TimeoutExpired:
+                if periodico and time.monotonic() >= proximo:
+                    try:
+                        periodico[1]()
+                    except Exception as erro:  # noqa: BLE001 — o espelhamento não pode derrubar o treino
+                        print(segredos.limpar(f"[aviso] tarefa periódica falhou: {type(erro).__name__}: {erro}"))
+                    proximo = time.monotonic() + periodico[0]
+    except BaseException:
+        processo.terminate()
+        raise
+    finally:
+        leitor.join(timeout=10)
+        if arquivo is not None:
+            arquivo.close()
+    return processo.returncode
