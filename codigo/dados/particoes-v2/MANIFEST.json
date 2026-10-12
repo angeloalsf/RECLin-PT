@@ -1,0 +1,177 @@
+{
+  "anomalias": {
+    "arquivo": "ANOMALIAS.json",
+    "arquivo_sha256": "1d9780a5cb4aeed8d86b15130793edcb9f90f61bc6efc8497affb3edd0f3a094",
+    "n": 26,
+    "por_particao": {
+      "dev": 1,
+      "test": 5,
+      "train": 20
+    },
+    "por_tipo": {
+      "atributo_com_palavras_duplicadas": 22,
+      "atributo_divergente_do_trecho": 3,
+      "offset_invalido": 1
+    },
+    "tratamento": "mantidas no dataset como estão (nenhuma descartada ou corrigida)"
+  },
+  "conjuntos_referencia": {
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "max_gap": 25,
+      "n_candidatos": 19064,
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "test": {
+      "candidatos_sha256": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+      "max_gap": 25,
+      "n_candidatos": 19210,
+      "y_true_sha256": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
+    },
+    "train": {
+      "candidatos_sha256": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3",
+      "max_gap": 25,
+      "n_candidatos": 152686,
+      "y_true_sha256": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88"
+    }
+  },
+  "contagens": {
+    "dev": {
+      "candidatos": 19064,
+      "documentos": 100,
+      "documentos_transformados": 36,
+      "entidades": 4513,
+      "relacoes": 987
+    },
+    "test": {
+      "candidatos": 19210,
+      "documentos": 100,
+      "documentos_transformados": 39,
+      "entidades": 4540,
+      "relacoes": 1250
+    },
+    "train": {
+      "candidatos": 152686,
+      "documentos": 800,
+      "documentos_transformados": 346,
+      "entidades": 36455,
+      "relacoes": 9221
+    }
+  },
+  "conversor": {
+    "modulo": "reclin/corpus",
+    "regra": "C1 (v2-texto-fonte): sistema de offsets decidido por documento, na posição, com todas as anotações; nos documentos 'bruto' (CRLF conta 2) cada CRLF do <TEXT> bruto vira dois espaços; nos demais ('sem_crlf', 'lf', 'indistinguivel') o texto é o do legado (texto do parser XML com cada quebra trocada por um espaço); offsets, entidades e relações copiados da fonte sem alteração; anotações defeituosas da fonte mantidas e registradas",
+    "representacao_intermediaria": {
+      "path": "dados/processados/semclinbr-intermediario-v2.jsonl",
+      "sha256": "556eb457b7796db9a86839d557cbefac84e747589572c0ee328a3a4a72b4b479"
+    },
+    "sistemas": {
+      "bruto": 421,
+      "indistinguivel": 6,
+      "lf": 101,
+      "sem_crlf": 472
+    },
+    "versao_parser": "semclinbr-xml-2"
+  },
+  "derivada_de": {
+    "invariantes": {
+      "dev": {
+        "candidatos_mesmas_chaves_e_ordem": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "documentos_com_texto_diferente": 36,
+        "entidades_identicas": true,
+        "invariantes_dos_pares_violados": 0,
+        "mesmos_documentos_mesma_ordem": true,
+        "relacoes_identicas": true,
+        "texto_diferente_so_nos_transformados": true,
+        "texto_v1_igual_ao_legado_da_fonte": true,
+        "texto_v2_igual_a_regra_aplicada_a_fonte": true,
+        "y_true_identico": true
+      },
+      "test": {
+        "candidatos_mesmas_chaves_e_ordem": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "documentos_com_texto_diferente": 39,
+        "entidades_identicas": true,
+        "invariantes_dos_pares_violados": 0,
+        "mesmos_documentos_mesma_ordem": true,
+        "relacoes_identicas": true,
+        "texto_diferente_so_nos_transformados": true,
+        "texto_v1_igual_ao_legado_da_fonte": true,
+        "texto_v2_igual_a_regra_aplicada_a_fonte": true,
+        "y_true_identico": true
+      },
+      "train": {
+        "candidatos_mesmas_chaves_e_ordem": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "documentos_com_texto_diferente": 346,
+        "entidades_identicas": true,
+        "invariantes_dos_pares_violados": 0,
+        "mesmos_documentos_mesma_ordem": true,
+        "relacoes_identicas": true,
+        "texto_diferente_so_nos_transformados": true,
+        "texto_v1_igual_ao_legado_da_fonte": true,
+        "texto_v2_igual_a_regra_aplicada_a_fonte": true,
+        "y_true_identico": true
+      }
+    },
+    "manifest_sha256": "a73f291a18a1b72e1e84e1841b6e0b46a30dd2b4ddc194ee4f8ae9f0896f8ae1",
+    "particoes_sha256": {
+      "dev": "a9ea327684165c5053f8f3db5468a27f71c1d9e30d2859e343b6d275839c8aeb",
+      "test": "86304d8d507c6707695e2b86c3533b763a96247f06326e5980b4567385231e62",
+      "train": "36014b2adc8308bce94aeecf066c38f69e1f53dda4517fa424527554b31a437a"
+    },
+    "pasta": "dados/particoes"
+  },
+  "fonte_xml": {
+    "conjunto_sha256": "ed8aae01ef807c02dd12f68d57c54b081241c996e39a708eda94b348c79d8c25",
+    "descricao_regra_conjunto": "SHA-256 (UTF-8) de uma linha '<nome do arquivo>\\t<sha256 do arquivo>\\n' por XML, em ordem numérica do identificador",
+    "inventario": "FONTE.json",
+    "inventario_sha256": "15a7e029b087ccf1e38f7db39d033b3e41da1aa377285a3c267a81bc5d8aca60",
+    "n_arquivos": 1000,
+    "origem_declarada": "declarada, não verificada: corpus SemClinBr (Oliveira et al.), de acesso restrito, segundo o README do projeto; nome da pasta local: SemClinBr-xml-public-v1",
+    "pasta": "SemClinBr-xml-public-v1",
+    "regra_conjunto": "sha256-lista-v1"
+  },
+  "generator": "reclin/particoes.py",
+  "geracao": {
+    "data": "2026-10-11",
+    "implementacao": "cpython",
+    "python": "3.10.12"
+  },
+  "seed": 42,
+  "source": {
+    "path": "dados/processados/dataset-v2-texto-fonte.jsonl",
+    "sha256": "9dcbfd105ae12c45e159c8997b987e33e18c6a25fb41e44eb0f219c2a0e5b2c6"
+  },
+  "splits": {
+    "dev": {
+      "n_bytes": 559246,
+      "n_records": 100,
+      "n_relations": {
+        "associated_with": 832,
+        "negation_of": 155
+      },
+      "sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c"
+    },
+    "test": {
+      "n_bytes": 573666,
+      "n_records": 100,
+      "n_relations": {
+        "associated_with": 1098,
+        "negation_of": 152
+      },
+      "sha256": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666"
+    },
+    "train": {
+      "n_bytes": 4587327,
+      "n_records": 800,
+      "n_relations": {
+        "associated_with": 7922,
+        "negation_of": 1299
+      },
+      "sha256": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+    }
+  },
+  "versao": "v2-texto-fonte"
+}

@@ -49,13 +49,13 @@ from typing import Any
 import torch
 from transformers import get_linear_schedule_with_warmup
 
-from reclin import entrada, modelos, particoes, pretreino, tarefa
+from reclin import entrada, modelos, particoes, pretreino, tarefa, versao_dados
 from reclin.avaliacao import metricas
 from reclin.config import Config
 from reclin.execucao import diretorio, predicoes, subconjunto, trilha, validacao
 from reclin.treino import checkpoint, laco, reprodutibilidade
 from reclin.treino.montagem import CLASSIFICADOR, Montagem
-from reclin.util import caminhos
+from reclin.util import caminhos, identidade_codigo
 from reclin.util.io import gravar_json, ler_json
 
 log = logging.getLogger(__name__)
@@ -89,16 +89,23 @@ def _conferir_particoes(pasta: Path, nomes: tuple[str, ...]) -> dict[str, str]:
     return {nome: splits[nome]["sha256"] for nome in nomes}
 
 
+def _conferir_codigo(pasta: Path, operacao: str) -> None:
+    try:
+        diretorio.conferir_codigo(pasta, operacao)
+    except identidade_codigo.ErroCodigo as erro:
+        raise ErroExecucao(str(erro)) from erro
+
+
 def particoes_congeladas(pasta_particoes: str | Path) -> bool:
-    """A pasta é a das partições congeladas, ou uma cópia delas com o mesmo
-    MANIFEST byte a byte (por exemplo, uma pasta só com TRAIN, DEV e o
-    MANIFEST, para uma operação que não pode ler o TEST). Nas duas, o tamanho
-    dos conjuntos de referência é conferido."""
+    """A pasta é a de uma versão congelada das partições (`versao_dados`: v1
+    ou v2), ou uma cópia dela com o mesmo MANIFEST byte a byte (por exemplo,
+    uma pasta só com TRAIN, DEV e o MANIFEST, para uma operação que não pode
+    ler o TEST). Nas duas, o tamanho dos conjuntos de referência é conferido
+    (as duas versões têm os mesmos `TAMANHOS_ESPERADOS`)."""
     pasta = Path(pasta_particoes)
     if pasta.resolve() == caminhos.PARTICOES.resolve():
         return True
-    proprio, congelado = pasta / particoes.ARQUIVO_MANIFESTO, caminhos.PARTICOES / particoes.ARQUIVO_MANIFESTO
-    return proprio.is_file() and congelado.is_file() and proprio.read_bytes() == congelado.read_bytes()
+    return versao_dados.congelada(pasta)
 
 
 def _conjunto(nome: str, docs: list, sha: str, config: Config, pasta_particoes: Path):
@@ -184,6 +191,7 @@ def treinar_execucao(raiz: str | Path, nome: str, config: Config, *, modelo: str
         anterior = ler_json(pasta / ARQUIVO_TREINO) if (pasta / ARQUIVO_TREINO).is_file() else {}
         if anterior.get("concluido"):
             raise ErroExecucao(f"o treino de {pasta} já foi concluído: não há o que retomar")
+        _conferir_codigo(pasta, "a retomada do treino")
     else:
         if (pasta / diretorio.CONFIG).exists():
             raise ErroExecucao(f"a execução {pasta} já existe: para continuar, use retomar; "
@@ -191,7 +199,8 @@ def treinar_execucao(raiz: str | Path, nome: str, config: Config, *, modelo: str
         diretorio.criar(raiz, nome, estrategia=montagem.estrategia, config=registro)
         anterior = {}
 
-    sessao = {"tipo": "retomada" if retomar else "nova", "inicio": _agora()}
+    sessao = {"tipo": "retomada" if retomar else "nova", "inicio": _agora(),
+              "codigo": identidade_codigo.atual()["identidade"]}
     with reprodutibilidade.coletar_avisos() as avisos:
         # Mesma ordem do legado: sementes → dados → tokenizer → modelo → loaders.
         reprodutibilidade.fixar_sementes(config.seed)
@@ -334,6 +343,11 @@ def avaliar_test(pasta: str | Path, *, pasta_particoes: str | Path = caminhos.PA
     if (pasta / diretorio.arquivo_predicoes("test")).exists() and not reavaliar:
         raise ErroExecucao("o TEST desta execução já foi avaliado; uma nova avaliação exige reavaliar "
                            "e fica registrada na trilha como reavaliação")
+    _conferir_codigo(pasta, "a avaliação do TEST")
+    try:
+        versao_dados.exigir_mesma_versao(diretorio.ler_config(pasta), pasta_particoes, "a avaliação do TEST")
+    except versao_dados.ErroVersaoDados as erro:
+        raise ErroExecucao(str(erro)) from erro
     config = config_de_registro(registro["config"], montagem.classe_config)
     modelo_id = registro["modelo"]
     sha = _conferir_particoes(pasta_particoes, ("test",))["test"]

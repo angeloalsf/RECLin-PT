@@ -39,7 +39,7 @@ transformers = pytest.importorskip("transformers")
 from reclin import entrada, modelos, particoes  # noqa: E402
 from reclin.config import Config  # noqa: E402
 from reclin.treino import classificador, laco, reprodutibilidade  # noqa: E402
-from reclin.util.caminhos import CODIGO, PARTICOES  # noqa: E402
+from reclin.util.caminhos import CODIGO, PARTICOES_V1 as PARTICOES  # noqa: E402  (o legado é a v1 dos dados)
 from reclin.util.io import ler_json, sha256_json  # noqa: E402
 
 REFERENCIA = CODIGO / "testes" / "referencia"
@@ -289,7 +289,7 @@ def test_baseline_minusculo_completo(tmp_path):
     r = subprocess.run(cmd, env=env, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-3000:]
     r = subprocess.run([sys.executable, str(CODIGO / "scripts" / "avaliar_test.py"), "--execucao",
-                        str(tmp_path / "m"), "--dispositivo", "cpu", "--threads", "1"],
+                        str(tmp_path / "m"), "--particoes", str(PARTICOES), "--dispositivo", "cpu", "--threads", "1"],
                        env=env, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-3000:]
     conferir_com_o_legado(tmp_path / "m", ler_json(tmp_path / "m" / "treino.json"), "baseline_minusculo_seed42")

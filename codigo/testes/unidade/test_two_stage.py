@@ -21,7 +21,8 @@ from reclin.util.io import sha256_json
 
 @pytest.fixture(scope="module")
 def completos():
-    return {p: entrada.exemplos(particoes.ler_particao(caminhos.PARTICOES, p)) for p in ("train", "dev")}
+    # as janelas de referência (`referencia_dados`, do legado) são as da v1 dos dados
+    return {p: entrada.exemplos(particoes.ler_particao(caminhos.PARTICOES_V1, p)) for p in ("train", "dev")}
 
 
 def test_configuracoes_e_nomes():

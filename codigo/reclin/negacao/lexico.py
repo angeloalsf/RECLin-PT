@@ -27,18 +27,28 @@ COBERTURA
 `cobertura` é a fração dos pares candidatos `negation_of` de uma partição cujo
 `e1` é pista. Como o filtro de pistas e o fine-tuning restrito só predizem
 `negation_of` onde `e1` é pista, ela é o teto de recall dessas estratégias na
-classe-alvo. Com o léxico congelado, no DEV: 142 / 150 = 0,9467.
+classe-alvo. Com o léxico do legado (`CONGELADO_LEGADO`), no DEV: 142 / 150 =
+0,9467 (o número citado no TCC atual).
 
 LÉXICO CONGELADO
 ----------------
-`CONGELADO` registra o léxico que todas as estratégias usam para serem
-comparáveis: `min_freq=3`, escolhido pela calibração do filtro no DEV dos
-baselines do legado (`results/CALIBRACAO_filtro.json`), 11 formas,
-`lexico_sha1` `70c93fa807de`. `carregar_congelado` induz o léxico do TRAIN com
-esses parâmetros e falha se o resultado não for exatamente esse — se as
-partições, a enumeração de candidatos ou a normalização mudarem, nenhum
-resultado anterior seria comparável. Quando o filtro for recalibrado sobre os
-baselines novos (etapa 8), é este registro que muda, com a nova origem.
+`CONGELADO` registra o léxico que as estratégias da fase usam para serem
+comparáveis: `min_freq=10`, escolhido pela pendência D4 com o procedimento
+pré-registrado em `docs/protocolo/d4-min-freq.md` — validação cruzada em 5
+partes **só no TRAIN da v2**, sem modelos, predições, resultados históricos,
+DEV ou TEST (resultado e proveniência em
+`docs/entregas/d4/selecao_min_freq.json`) —, 8 formas, `lexico_sha1`
+`8af0716633e9`. `carregar_congelado` induz o léxico do TRAIN com esses
+parâmetros e falha se o resultado não for exatamente esse — se as partições,
+a enumeração de candidatos ou a normalização mudarem, nenhum resultado
+anterior seria comparável.
+
+`CONGELADO_LEGADO` é o registro anterior (`min_freq=3`, 11 formas,
+`70c93fa807de`), escolhido pela calibração do filtro no DEV dos baselines do
+legado (`results/CALIBRACAO_filtro.json`). Fica só para a reprodução técnica
+do legado (testes de equivalência e o modo de reprodução de `filtro_pistas.py`,
+`regra_pura.py` e `calibrar.py`); nunca é o léxico de um experimento novo.
+`registro_do_lexico` devolve o registro de um léxico pelo `lexico_sha1`.
 
 Origem no legado: `normalize_surface`, `count_cue_forms`, `induce_lexicon` e
 `is_cue` de `src/negation_lexicon.py`; `lexico_sha1` e a guarda de
@@ -61,8 +71,18 @@ log = logging.getLogger(__name__)
 
 _ESPACOS = re.compile(r"\s+")
 
-# O léxico que as estratégias usam (ver o docstring do módulo).
+# O léxico que as estratégias da fase usam (ver o docstring do módulo).
 CONGELADO: dict[str, Any] = {
+    "min_freq": 10,
+    "max_gap": MAX_GAP,
+    "n_formas": 8,
+    "lexico_sha1": "8af0716633e9",
+    "origem": "pendência D4: validação cruzada em 5 partes só no TRAIN da v2 (v2-texto-fonte), pré-registrada "
+              "em docs/protocolo/d4-min-freq.md; resultado em docs/entregas/d4/selecao_min_freq.json",
+}
+
+# O registro anterior, da calibração do legado: só para a reprodução técnica.
+CONGELADO_LEGADO: dict[str, Any] = {
     "min_freq": 3,
     "max_gap": MAX_GAP,
     "n_formas": 11,
@@ -139,3 +159,11 @@ def carregar_congelado(documentos_train: Iterable[Documento],
             "As partições, os candidatos ou a normalização mudaram, e os resultados "
             "deixariam de ser comparáveis.")
     return lexico
+
+
+def registro_do_lexico(lexico: Mapping[str, int]) -> Mapping[str, Any]:
+    """O registro (`CONGELADO_LEGADO` se o `lexico_sha1` for o do legado; senão
+    `CONGELADO`) que descreve um léxico nas configurações gravadas."""
+    if lexico_sha1(lexico) == CONGELADO_LEGADO["lexico_sha1"]:
+        return CONGELADO_LEGADO
+    return CONGELADO

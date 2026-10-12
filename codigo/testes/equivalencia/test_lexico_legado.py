@@ -30,7 +30,7 @@ EXECUCOES_COM_LEXICO = ([f"finetuning_restrito/restrito_biobertpt_seed{s}" for s
 
 @pytest.fixture(scope="module")
 def congelado(documentos):
-    return lexico.carregar_congelado(documentos["train"])
+    return lexico.carregar_congelado(documentos["train"], lexico.CONGELADO_LEGADO)
 
 
 def test_contagem_das_formas_no_train(documentos, referencia_dados):
@@ -51,15 +51,15 @@ def test_as_11_formas_congeladas(congelado, referencia_dados):
     assert congelado == FORMAS_CONGELADAS == ref["formas"]
     assert list(congelado) == list(FORMAS_CONGELADAS)        # ordem: frequência, depois forma
     assert lexico.lexico_sha1(congelado) == ref["lexico_sha1"] == "70c93fa807de"
-    assert ref["min_freq"] == lexico.CONGELADO["min_freq"] == 3
+    assert ref["min_freq"] == lexico.CONGELADO_LEGADO["min_freq"] == 3
     assert sum(congelado.values()) == 1209
 
 
 def test_registro_confere_com_a_calibracao_do_legado(legado):
     calibracao = legado("CALIBRACAO_filtro.json")
-    assert calibracao["min_freq"] == lexico.CONGELADO["min_freq"]
-    assert calibracao["lexicon_size"] == lexico.CONGELADO["n_formas"]
-    assert calibracao["combined_gap"] == lexico.CONGELADO["max_gap"] == tarefa.MAX_GAP
+    assert calibracao["min_freq"] == lexico.CONGELADO_LEGADO["min_freq"]
+    assert calibracao["lexicon_size"] == lexico.CONGELADO_LEGADO["n_formas"]
+    assert calibracao["combined_gap"] == lexico.CONGELADO_LEGADO["max_gap"] == tarefa.MAX_GAP
 
 
 @pytest.mark.parametrize("execucao", EXECUCOES_COM_LEXICO)
@@ -69,8 +69,8 @@ def test_mesmo_lexico_das_execucoes_do_legado(execucao, congelado, legado):
     assert gravado["formas"] == congelado
     assert gravado["sha1"] == lexico.lexico_sha1(congelado)
     assert gravado["n_formas"] == len(congelado)
-    assert gravado["min_freq"] == lexico.CONGELADO["min_freq"]
-    assert gravado["max_gap"] == lexico.CONGELADO["max_gap"]
+    assert gravado["min_freq"] == lexico.CONGELADO_LEGADO["min_freq"]
+    assert gravado["max_gap"] == lexico.CONGELADO_LEGADO["max_gap"]
     assert registro["config"]["lexicon_sha1"] == lexico.lexico_sha1(congelado)
 
 
@@ -120,15 +120,15 @@ def test_dev_ou_test_mudariam_o_lexico(acrescimo, documentos):
     lex = lexico.induzir(docs, min_freq=3)
     assert len(lex) != 11 and lexico.lexico_sha1(lex) != "70c93fa807de"
     with pytest.raises(ValueError):
-        lexico.carregar_congelado(docs)
+        lexico.carregar_congelado(docs, lexico.CONGELADO_LEGADO)
 
 
 def test_mudar_dev_e_test_nao_altera_o_lexico(documentos):
     """A indução recebe só os documentos do TRAIN: esvaziar o DEV e o TEST não
     muda nada."""
-    original = lexico.carregar_congelado(documentos["train"])
+    original = lexico.carregar_congelado(documentos["train"], lexico.CONGELADO_LEGADO)
     sem_dev_test = dict(documentos, dev=[], test=[])
-    assert lexico.carregar_congelado(sem_dev_test["train"]) == original
+    assert lexico.carregar_congelado(sem_dev_test["train"], lexico.CONGELADO_LEGADO) == original
 
 
 def test_lexico_independe_da_ordem_dos_documentos(documentos):

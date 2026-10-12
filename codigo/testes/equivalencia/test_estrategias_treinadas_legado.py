@@ -40,7 +40,7 @@ from reclin.execucao import subconjunto  # noqa: E402
 from reclin.negacao import lexico as modulo_lexico  # noqa: E402
 from reclin.tarefa import LABELS  # noqa: E402
 from reclin.treino import classificador, laco  # noqa: E402
-from reclin.util.caminhos import CODIGO, PARTICOES  # noqa: E402
+from reclin.util.caminhos import CODIGO, PARTICOES_V1 as PARTICOES  # noqa: E402  (o legado é a v1 dos dados)
 from reclin.util.io import ler_json, sha256_json  # noqa: E402
 
 REFERENCIA = CODIGO / "testes" / "referencia"
@@ -59,7 +59,7 @@ EXATO = pytest.mark.skipif(
 
 @pytest.fixture(scope="module")
 def lexico(documentos):
-    return modulo_lexico.carregar_congelado(documentos["train"])
+    return modulo_lexico.carregar_congelado(documentos["train"], modulo_lexico.CONGELADO_LEGADO)
 
 
 @pytest.fixture(scope="module")
@@ -185,7 +185,8 @@ def conferir_restrito(pasta, treino, ref, config_ref_extra=()):
 @pytest.mark.lento
 def test_restrito_minusculo(tmp_path, lexico, uma_thread):
     """10 épocas no espaço restrito das partições completas (cerca de 2,5 min)."""
-    config = restrito.ConfigRestrito(lr=1e-3, seed=42)
+    # a referência do legado tem 10 épocas: fixadas aqui, independentes do teto da fase atual (D5)
+    config = restrito.ConfigRestrito(epochs=10, lr=1e-3, seed=42)
     treino = treinar_e_avaliar(tmp_path, "r", config, restrito.montagem(config, lexico=lexico))
     ref = ler_json(TREINO / "restrito_minusculo_seed42.json")
     conferir_restrito(tmp_path / "r", treino, ref)

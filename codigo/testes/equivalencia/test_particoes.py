@@ -24,7 +24,7 @@ def test_arquivos_iguais_aos_do_legado(manifesto, referencia_dados):
     legado = referencia_dados["manifesto_particoes"]
     for nome in particoes.PARTICOES:
         assert manifesto["splits"][nome]["sha256"] == legado["splits"][nome]["sha256"]
-    assert particoes.conferir_particoes(caminhos.PARTICOES) == []
+    assert particoes.conferir_particoes(caminhos.PARTICOES_V1) == []
 
 
 def test_manifesto_regerado_igual_ao_antigo(manifesto, referencia_dados):
@@ -39,7 +39,7 @@ def test_manifesto_regerado_igual_ao_antigo(manifesto, referencia_dados):
 
 
 def test_manifesto_e_o_que_o_codigo_novo_calcula(manifesto):
-    recalculado = particoes.calcular_manifesto(caminhos.PARTICOES, seed=manifesto["seed"],
+    recalculado = particoes.calcular_manifesto(caminhos.PARTICOES_V1, seed=manifesto["seed"],
                                                origem=manifesto["source"])
     assert recalculado == manifesto
 

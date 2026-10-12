@@ -26,6 +26,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from reclin.util import identidade_codigo
 from reclin.util.io import ler_jsonl
 
 
@@ -53,6 +54,7 @@ def registrar(caminho: str | Path, *, execucao: str, model: str, seed: int | Non
         "test_macro_f1": round(float(macro_f1), 6),
         "test_negation_of_f1": round(float(negation_of_f1), 6),
     }
+    linha["codigo"] = identidade_codigo.atual()["identidade"]
     if extra:
         linha.update(extra)
     caminho.parent.mkdir(parents=True, exist_ok=True)

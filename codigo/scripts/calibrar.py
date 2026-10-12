@@ -97,7 +97,8 @@ def main(argv: list[str] | None = None) -> int:
     min_freq = cal_lex["min_freq"]
     lex = lexico.induzir(train, min_freq=min_freq)
     sha = lexico.lexico_sha1(lex)
-    congelado = (min_freq == lexico.CONGELADO["min_freq"] and sha == lexico.CONGELADO["lexico_sha1"])
+    congelado = (min_freq == lexico.CONGELADO_LEGADO["min_freq"]          # reprodução: o registro do legado
+                 and sha == lexico.CONGELADO_LEGADO["lexico_sha1"])
     log.info("Escolhido min_freq=%d: %d formas, lexico_sha1=%s (%s)", min_freq, len(lex), sha,
              "é o léxico congelado" if congelado else "DIFERENTE do léxico congelado")
 

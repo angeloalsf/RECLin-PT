@@ -20,14 +20,19 @@ nova da mesma etapa substitui a anterior.
 | 4 | 1 | 09/10/2026 | `RECLin-PT-etapa-4-v1.zip` | Substituída pela etapa 5 (que a contém) | [etapa-4.md](etapa-4.md) |
 | 5 | 1 | 09/10/2026 | `RECLin-PT-etapa-5-v1.zip` | Substituída pela etapa 6 (que a contém) | [etapa-5.md](etapa-5.md) |
 | 6 | 1 | 10/10/2026 | `RECLin-PT-etapa-6-v1.zip` | Base da etapa 6.1 | [etapa-6.md](etapa-6.md) |
-| 6.1 | 1 | 11/10/2026 | — (sem pacote: alterações feitas direto na pasta de trabalho) | Atual | [etapa-6.1.md](etapa-6.1.md) |
+| 6.1 | 1 | 11/10/2026 | — (sem pacote: alterações feitas direto na pasta de trabalho) | Base da etapa 7 | [etapa-6.1.md](etapa-6.1.md) |
+| 7 | 1 | 11/10/2026 | — (sem pacote: alterações feitas direto na pasta de trabalho) | Parcialmente concluída; pendências tratadas na nota seguinte | [etapa-7.md](etapa-7.md) |
+| 7 (pendências) | 1 | 11/10/2026 | — (sem pacote) | Saneamento antes da etapa 8 | [etapa-7-pendencias.md](etapa-7-pendencias.md) |
+| 7 (D9) | 1 | 11/10/2026 | — (sem pacote; nenhum dado alterado) | Investigação do D9: causa identificada; a correção C1 foi aplicada na entrega seguinte | [d9-alinhamento.md](d9-alinhamento.md) |
+| Dados v2 (C1) e UMLS | 1 | 11/10/2026 | — (sem pacote; v1 preservada) | Dados reconstruídos dos XML (`v2-texto-fonte`, a versão da fase), integração das versões, auditoria da UMLS e proposta para a D4 | [reconstrucao-v2.md](reconstrucao-v2.md) |
+| D4 (`min_freq`) | 1 | 11/10/2026 | — (sem pacote) | Atual: `min_freq=10` escolhido só com o TRAIN da v2 (pré-registro `docs/protocolo/d4-min-freq.md`), com limitações a confirmar; etapa 8 não iniciada | [d4-min-freq.md](d4-min-freq.md) |
 
 ## O que nunca vai no pacote
 
 | Item | Por quê | Onde obter |
 | --- | --- | --- |
 | Projeto legado | É só referência; o que dele os testes usam está em `codigo/testes/referencia/` (inclusive os 74 arquivos copiados em `resultados_legado/`) | Repositório original, commit `a5f055c` |
-| XML do SemClinBr e `dataset.jsonl` (`codigo/dados/brutos/`, `codigo/dados/processados/`) | Licença restrita do corpus | Autores do corpus; ver o README da raiz |
+| XML do SemClinBr e `dataset.jsonl` (`codigo/dados/brutos/`, `codigo/SemClinBr-xml-public-v1/`, `codigo/dados/processados/`) | Licença restrita do corpus | Autores do corpus; ver o README da raiz |
 | Ambientes virtuais, caches (`__pycache__`, `.pytest_cache`, `*.egg-info`) | Gerados na instalação | `pip install -e "codigo/[testes]"` |
 | Pesos de modelos e checkpoints (`checkpoints/`, `melhor_modelo/`, `codigo/modelos_pretreinados/`) | Centenas de MB; gerados pelo treino | `scripts/treinar.py` ou Hugging Face Hub (a única exceção é o modelo minúsculo de 63 KB das referências) |
 | Dependências externas (Python, numpy, scipy, torch, transformers, pytest) | Instaladas pelo `pip` | `codigo/requirements.txt` e `codigo/pyproject.toml` |

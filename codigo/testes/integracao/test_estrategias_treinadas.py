@@ -229,7 +229,9 @@ def test_comandos_de_ponta_a_ponta(pelos_comandos):
         assert (raiz / nome / "predicoes_test.json").is_file()
         assert len(predicoes.ler(raiz / nome / "predicoes_test.json")["y_true"]) == 19210
     restr = predicoes.ler(raiz / "restrito_biobertpt_seed42/predicoes_test.json")
-    assert restr["n_restrito"] == 800                       # o espaço restrito do TEST (dados.json)
+    # o espaço restrito do TEST com o léxico da fase (D4: min_freq=10, 8 formas): pares cujo e1 é pista,
+    # contagem estrutural (sem rótulos); com o léxico do legado eram 800 (dados.json)
+    assert restr["n_restrito"] == 774
 
 
 def test_avaliacao_e_comparacao_das_etapas_anteriores(pelos_comandos, tmp_path):

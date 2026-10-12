@@ -1,6 +1,14 @@
 # Protocolo pré-registrado — fase BioBERTpt, seed 42 (validação inicial)
 
 Registrado na etapa 6.1 (11/10/2026), **antes de qualquer treino científico**.
+Alterações aprovadas depois do registro, antes de qualquer treino: D5 (teto
+de 2 épocas do restrito e da Pair-Aware, seção 3) e D6 (identidade do código
+de cada execução, seção 2), de 11/10/2026; e D9 (versão dos dados da fase:
+`v2-texto-fonte`, reconstruída dos XML com a regra C1, seção 1), autorizada
+pelo autor em 11/10/2026 e registrada na nota
+`docs/entregas/reconstrucao-v2.md`; e D4 (léxico da fase: `min_freq=10`,
+seção 1), selecionado em 11/10/2026 pelo procedimento pré-registrado em
+`docs/protocolo/d4-min-freq.md` e registrado em `docs/entregas/d4-min-freq.md`.
 Fixa o escopo, a revisão dos pesos, os critérios de seleção e de parada de
 cada estratégia, os limiares escolhidos no DEV, a sequência de execução, as
 comparações e a forma de interpretar os resultados da fase científica (etapa
@@ -20,8 +28,9 @@ este registro mude, a suíte falha.
 | Semente | só a 42. A semente continua parâmetro do código; rodar três sementes (42, 43, 44) é uma possível fase posterior, fora do escopo atual |
 | Sistemas comparados | baseline padrão, baseline calibrado, filtro léxico sobre o baseline novo, restrito, Pair-Aware e Two-Stage |
 | Origem dos resultados | **só o código novo**, com as configurações registradas. Nenhum resultado do legado entra nos experimentos ou nas comparações; os históricos ficam preservados como documentação e como referência da reprodução técnica da etapa 7. Execução ausente roda na fase científica, com autorização específica; nunca é substituída por um resultado do legado |
+| Dados | a versão **`v2-texto-fonte`** (`codigo/dados/particoes-v2/`, MANIFEST `18264860…3b70`), reconstruída dos XML do SemClinBr com a regra C1 do D9: os mesmos documentos por partição, entidades, relações, candidatos e `y_true` da v1, com o texto alinhado aos offsets. A v1 (`codigo/dados/particoes/`) fica só para a regressão técnica e o histórico. Cada execução identifica a versão pelo SHA-256 das partições (`config.json`: `particoes`, `conjuntos`, `versoes_dados`); `reclin.versao_dados` recusa combinar versões numa execução, numa derivada ou numa tabela, e o inventário só aceita como científica a v2 |
 | Reaproveitamento | só de execuções **do código novo** concluídas e compatíveis (mesmo `config.json`, mesmas partições, seed 42) |
-| Léxico | o congelado: `min_freq=3`, 11 formas, `lexico_sha1` `70c93fa807de`, induzido só do TRAIN. Não é recalibrado nesta fase. O `min_freq=3` vem da calibração histórica (etapa 3); é um parâmetro fixo, não um resultado usado na comparação |
+| Léxico | o congelado: `min_freq=10`, 8 formas, `lexico_sha1` `8af0716633e9`, induzido só do TRAIN da v2. O `min_freq` foi escolhido na pendência D4 por validação cruzada só no TRAIN da v2, sem modelos, predições, resultados históricos, DEV ou TEST, pelo procedimento pré-registrado em `docs/protocolo/d4-min-freq.md` (resultado e proveniência em `docs/entregas/d4/selecao_min_freq.json`). Não é recalibrado nesta fase. Vale para o filtro, o restrito e a Pair-Aware. O registro anterior (`min_freq=3`, 11 formas, `70c93fa807de`, da calibração do legado) fica só para a reprodução técnica (`CONGELADO_LEGADO`) |
 | Modelo final | a regra de escolha fica fora do escopo e será definida numa etapa posterior. O TEST não influencia nenhuma escolha |
 
 ## 2. Revisão exata dos pesos (proveniência)
@@ -43,6 +52,16 @@ este registro mude, a suíte falha.
    técnica, a configuração do protocolo (seção 3), a mesma semente, o mesmo
    commit e o mesmo hash de manifesto.
 
+5. **Identidade do código (D6).** Cada execução grava no `config.json`
+   (`codigo`) a identidade do código que a criou (`reclin/util/identidade_codigo.py`:
+   SHA-256 do manifesto dos arquivos de código que podem mudar o que uma
+   execução grava, sem Git); as sessões do treino e as linhas da trilha do TEST
+   também a gravam. Retomar, avaliar o TEST ou derivar uma execução com outra
+   versão do código é recusado; o inventário dos relatórios só aceita como
+   científicas as execuções com a identidade de referência (por padrão, a do
+   código atual), nunca mistura identidades e trata as execuções sem a
+   identidade (anteriores à D6) como fora da fase.
+
 Limitação aceita: a ligação entre os arquivos locais e o commit depende do
 `snapshot_download(revision=<SHA>)` no momento do download.
 
@@ -53,7 +72,7 @@ Limitação aceita: a ligação entre os arquivos locais e o commit depende do
 | Baseline padrão | maior macro-F1 do DEV; empate → a primeira época | teto fixo de 3 épocas, sem parada antecipada | época |
 | Baseline calibrado | sem treino: o limiar t sobre as probabilidades do DEV do baseline padrão (seção 4) | — | t |
 | Filtro léxico | sem checkpoint: pós-processa o baseline padrão | — | nada (léxico congelado) |
-| Restrito | maior macro-F1 do DEV **remapeado** ao conjunto completo (fora do espaço → `no_relation`); empate → a primeira época | teto fixo de 10 épocas, sem parada antecipada | época |
+| Restrito | maior macro-F1 do DEV **remapeado** ao conjunto completo (fora do espaço → `no_relation`); empate → a primeira época | teto fixo de 2 épocas (D5), sem parada antecipada | época |
 | Pair-Aware | igual ao restrito | igual ao restrito | época |
 | Two-Stage, estágio 1 | maior AP da classe `relacao` no DEV completo; empate → a primeira | teto fixo de 3 épocas | época |
 | Two-Stage, estágio 2 | maior F1 de `negation_of` nos pares do DEV com relação anotada (argmax); empate → a primeira | teto fixo de 10 épocas | época |
@@ -62,6 +81,16 @@ Limitação aceita: a ligação entre os arquivos locais e o commit depende do
 - A seleção do restrito e da Pair-Aware é a implementada e validada na etapa
   6 (a mesma métrica do baseline). Ela difere da métrica primária (F1 de
   `negation_of`); a diferença fica registrada.
+- **Teto do restrito e da Pair-Aware (D5, 11/10/2026): 2 épocas.** Decisão da
+  fase experimental atual, adotada para padronizar o orçamento de treinamento
+  dessas estratégias com o Two-Stage. Não se afirma que o teto seja ótimo nem
+  que melhore o desempenho; ele substitui o teto anterior de 10 épocas, que
+  vinha da configuração da frente no legado. As 2 épocas rodam sempre (sem
+  parada antecipada) e a escolhida é a de maior macro-F1 do DEV remapeado
+  (empate → a primeira). Divergência registrada para o autor: na redação da
+  decisão, o limite do Two-Stage é dado como 2; os tetos registrados do
+  Two-Stage são 3 (estágio 1) e 10 (estágio 2), e 2 épocas é o do estágio 2 na
+  rodada de validação técnica (seção 5). O Two-Stage não foi alterado.
 - No Two-Stage, cada estágio é escolhido pela sua própria métrica. **Isso não
   garante a melhor combinação para o pipeline completo.** Não há otimização
   conjunta de épocas no DEV; o único parâmetro do pipeline escolhido no DEV é
@@ -139,11 +168,11 @@ medidas.
 | 1 | `two_stage.py verificar-inicializacao` com os pesos reais | minutos |
 | 1V | rodada de validação técnica (seção 5); revisão do relatório antes do passo 2 | ~1,7 h |
 | 2 | `baseline_biobertpt_seed42` | ~2,4 h |
-| 3 | calibração de t (`baseline_calibrado_biobertpt_seed42`) e filtro no DEV | minutos, sem GPU |
-| 4 | `restrito_biobertpt_seed42` e `pairaware_biobertpt_seed42` | ~0,5 h cada |
+| 3 | calibração de t (`baseline_calibrado_biobertpt_seed42`) e filtro no DEV (`filtro_pistas.py --base-execucao … --particao dev`, léxico congelado da D4, sem arquivo de calibração) | minutos, sem GPU |
+| 4 | `restrito_biobertpt_seed42` e `pairaware_biobertpt_seed42` (2 épocas, D5) | ~0,1 h cada |
 | 5 | estágios 1 e 2; `compor-dev` (τ congelado) | ~2,9 h |
 | 6 | `pretreino.py conferir --execucoes` e conferência de que tudo está congelado | minutos |
-| 7 | TEST, uma vez cada: baseline padrão, baseline calibrado, filtro, restrito, Pair-Aware, Two-Stage | minutos |
+| 7 | TEST, uma vez cada: baseline padrão, baseline calibrado, filtro (`filtro_pistas.py --base-execucao … --particao test`, com trilha), restrito, Pair-Aware, Two-Stage | minutos |
 | 8 | comparações (seção 7) | minutos |
 
 ## 7. Comparações e interpretação
@@ -185,6 +214,9 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
   nesta fase. O TCC não é alterado agora.
 - **C13 — modelo final (etapa 10):** a regra de escolha será definida numa
   etapa posterior.
+- **D4 — `min_freq`:** resolvida pelo procedimento pré-registrado
+  (`docs/protocolo/d4-min-freq.md`): `min_freq=10` (linha "Léxico"). As
+  limitações declaradas do critério estão em `docs/entregas/d4-min-freq.md`.
 
 ## 9. Registro verificável
 
@@ -195,8 +227,18 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
   "encoder": "biobertpt",
   "modelo": "pucpr/biobertpt-all",
   "seed": 42,
+  "dados": {
+    "versao": "v2-texto-fonte",
+    "pasta": "dados/particoes-v2",
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "regra": "C1 (D9)"
+  },
   "parada_antecipada": false,
   "portao_de_pesquisa": false,
+  "identidade_codigo": {
+    "algoritmo": "sha256-manifesto-v1",
+    "registro": "config.json -> codigo"
+  },
   "desempate_de_epocas": "primeira época (máximo estrito)",
   "estrategias": {
     "baseline": {
@@ -204,13 +246,13 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
       "campo_selecao": "dev_macro_f1"
     },
     "restrito": {
-      "epocas": 10,
+      "epocas": 2,
       "campo_selecao": "dev_macro_f1",
       "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
       "remapeamento": "fora do espaco restrito -> no_relation"
     },
     "pair_aware": {
-      "epocas": 10,
+      "epocas": 2,
       "campo_selecao": "dev_macro_f1",
       "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
       "remapeamento": "fora do espaco restrito -> no_relation"
@@ -225,9 +267,9 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
     },
     "filtro_pistas": {
       "lexico": {
-        "min_freq": 3,
-        "n_formas": 11,
-        "lexico_sha1": "70c93fa807de"
+        "min_freq": 10,
+        "n_formas": 8,
+        "lexico_sha1": "8af0716633e9"
       }
     },
     "baseline_calibrado": {

@@ -37,6 +37,7 @@ from reclin.avaliacao import limiar as busca_limiar
 from reclin.avaliacao import metricas
 from reclin.execucao import diretorio, predicoes, trilha, validacao
 from reclin.tarefa import ASSOC, NEG, NOREL
+from reclin.util import identidade_codigo
 from reclin.util.io import ler_json, sha256_arquivo
 
 NOME = "baseline_calibrado"
@@ -72,6 +73,13 @@ def _hash(obj: Any) -> str:
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 
+def _conferir_codigo(pasta: Path, operacao: str) -> None:
+    try:
+        diretorio.conferir_codigo(pasta, operacao)
+    except identidade_codigo.ErroCodigo as erro:
+        raise ErroCalibracao(str(erro)) from erro
+
+
 def ler_base(pasta: str | Path) -> dict[str, Any]:
     """A execução de base (baseline do código novo, treino concluído)."""
     pasta = Path(pasta)
@@ -85,6 +93,7 @@ def ler_base(pasta: str | Path) -> dict[str, Any]:
     treino = ler_json(pasta / "treino.json")
     if not treino.get("concluido"):
         raise ErroCalibracao(f"o treino de {pasta.name} não terminou")
+    _conferir_codigo(pasta, "o uso como base do baseline calibrado")
     dev = pasta / diretorio.arquivo_predicoes("dev")
     if not dev.is_file():
         raise ErroCalibracao(f"{pasta.name} não tem {dev.name}")
@@ -152,6 +161,7 @@ def aplicar_test(pasta: str | Path, *, base: str | Path | None = None, reavaliar
     registro = diretorio.ler_config(pasta)["config"]
     if registro.get("estrategia") != NOME:
         raise ErroCalibracao(f"{pasta.name} é da estratégia {registro.get('estrategia')!r}, não {NOME!r}")
+    _conferir_codigo(pasta, "a aplicação do limiar ao TEST")
     info = ler_base(base or registro["base"]["pasta"])
     validacao.recusar_execucao(info["pasta"], "aplicação do limiar ao TEST")
     try:

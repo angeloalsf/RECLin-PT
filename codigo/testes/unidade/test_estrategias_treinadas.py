@@ -42,7 +42,7 @@ def campos(classe):
 
 def test_configuracoes_diferem_so_no_que_declaram():
     base, rest, pa = campos(Config), campos(restrito.ConfigRestrito), campos(pair_aware.ConfigPairAware)
-    assert {k for k in base if base[k] != rest[k]} == {"epochs"} and rest["epochs"] == 10
+    assert {k for k in base if base[k] != rest[k]} == {"epochs"} and rest["epochs"] == 2     # D5
     # a Pair-Aware difere do restrito só nos campos da cabeça
     assert {k: v for k, v in pa.items() if k not in rest} == {"mlp_hidden": None, "head_dropout": None}
     assert all(pa[k] == rest[k] for k in rest)

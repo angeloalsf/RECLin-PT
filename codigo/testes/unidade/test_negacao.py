@@ -92,8 +92,21 @@ def test_carregar_congelado_confere_o_registro():
 
 
 def test_registro_congelado():
-    assert lexico.CONGELADO["min_freq"] == 3 and lexico.CONGELADO["max_gap"] == 25
-    assert lexico.CONGELADO["n_formas"] == 11 and lexico.CONGELADO["lexico_sha1"] == "70c93fa807de"
+    """O da fase (D4, `docs/entregas/d4/selecao_min_freq.json`) e o do legado,
+    preservado para a reprodução técnica."""
+    assert lexico.CONGELADO["min_freq"] == 10 and lexico.CONGELADO["max_gap"] == 25
+    assert lexico.CONGELADO["n_formas"] == 8 and lexico.CONGELADO["lexico_sha1"] == "8af0716633e9"
+    assert "D4" in lexico.CONGELADO["origem"]
+    assert lexico.CONGELADO_LEGADO["min_freq"] == 3 and lexico.CONGELADO_LEGADO["max_gap"] == 25
+    assert lexico.CONGELADO_LEGADO["n_formas"] == 11 and lexico.CONGELADO_LEGADO["lexico_sha1"] == "70c93fa807de"
+
+
+def test_registro_do_lexico():
+    lex = lexico.induzir(DOCS, min_freq=1)
+    assert lexico.registro_do_lexico(lex) is lexico.CONGELADO
+    assert lexico.registro_do_lexico({"ausencia": 11, "ausente": 12, "eliminacao fecal": 4, "evacuacao": 10,
+                                      "indolor": 3, "nao": 128, "nega": 353, "s": 11, "s/": 10, "sem": 662,
+                                      "ausentes": 5}) is lexico.CONGELADO_LEGADO
 
 
 def test_resultado_deterministico():

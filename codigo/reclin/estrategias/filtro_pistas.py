@@ -67,22 +67,27 @@ def nome_execucao(nome_base: str) -> str:
 
 def montar_predicoes(base: Mapping[str, Any], candidatos: Sequence[Candidato],
                      lexico: Collection[str], *, base_preds: str, min_freq: int,
-                     max_gap: int = MAX_GAP) -> dict[str, Any]:
+                     max_gap: int = MAX_GAP, base_sha256: str | None = None) -> dict[str, Any]:
     """Sidecar do filtro aplicado às predições `base` (um sidecar), no formato
     do legado: `model` = `filtro(<model da base> s<seed>)`, a mesma semente, o
     mesmo `y_true`, e os extras `base_preds` (de onde vieram as predições) e
-    `postproc` (os parâmetros do filtro)."""
+    `postproc` (os parâmetros do filtro). Com `base_sha256` (o modo da fase
+    atual de `scripts/filtro_pistas.py`), o SHA-256 do sidecar da base também
+    entra nos extras, para o inventário conferir a origem; sem ele, o sidecar é
+    o do legado, byte a byte."""
     sidecar.validar(dict(base))
     if list(base["y_true"]) != y_true(candidatos):
         raise ValueError(f"{base_preds} não pertence a este conjunto de candidatos "
                          "(y_true diferente)")
+    extra = {"base_preds": base_preds,
+             "postproc": {"kind": "cue_filter", "min_freq": min_freq,
+                          "lexicon_size": len(lexico), "max_gap": max_gap,
+                          "demote_to": "no_relation", "calibrated_on": "dev"}}
+    if base_sha256 is not None:
+        extra["base_sha256"] = base_sha256
     return sidecar.montar(
         model=f"filtro({base['model']} s{base['seed']})", seed=base["seed"],
-        y_true=base["y_true"], y_pred=filtrar(candidatos, base["y_pred"], lexico),
-        extra={"base_preds": base_preds,
-               "postproc": {"kind": "cue_filter", "min_freq": min_freq,
-                            "lexicon_size": len(lexico), "max_gap": max_gap,
-                            "demote_to": "no_relation", "calibrated_on": "dev"}})
+        y_true=base["y_true"], y_pred=filtrar(candidatos, base["y_pred"], lexico), extra=extra)
 
 
 # --------------------------------------------------------------------------- #

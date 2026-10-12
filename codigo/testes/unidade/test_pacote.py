@@ -31,6 +31,8 @@ OBRIGATORIOS_CODIGO = (
     "README.md", "pyproject.toml", "requirements.txt",
     "dados/particoes/train.jsonl", "dados/particoes/dev.jsonl", "dados/particoes/test.jsonl",
     "dados/particoes/MANIFEST.json",
+    "dados/particoes-v2/train.jsonl", "dados/particoes-v2/dev.jsonl", "dados/particoes-v2/test.jsonl",
+    "dados/particoes-v2/MANIFEST.json", "dados/particoes-v2/FONTE.json", "dados/particoes-v2/ANOMALIAS.json",
     "docs/entregas/README.md",
     "testes/referencia/README.md", "testes/referencia/dados.json",
     "testes/referencia/referencias.json",
@@ -84,7 +86,8 @@ def test_todos_os_modulos_importam_sem_efeito_colateral(tmp_path):
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     modulos = set(r.stdout.split())
-    assert {"reclin.tarefa", "reclin.particoes", "reclin.config",
+    assert {"reclin.tarefa", "reclin.particoes", "reclin.config", "reclin.versao_dados",
+            "reclin.corpus.semclinbr", "reclin.corpus.conversao", "reclin.corpus.geracao",
             "reclin.util.io", "reclin.util.log", "reclin.util.caminhos"} <= modulos
     assert list(tmp_path.iterdir()) == [], "o import criou arquivos"
     assert sorted(p.name for p in caminhos.CODIGO.iterdir()) == antes

@@ -39,7 +39,7 @@ from typing import Any, Mapping, Sequence
 
 from reclin.config import Config
 from reclin.estrategias.pair_aware.cabeca import ARQUITETURA, PairAwareClassifier, contar_marcadores_ausentes
-from reclin.negacao.lexico import CONGELADO, e_pista, lexico_sha1
+from reclin.negacao.lexico import e_pista, lexico_sha1, registro_do_lexico
 from reclin.tarefa import ID2LABEL, LABEL2ID, LABELS
 from reclin.treino.montagem import Montagem
 
@@ -49,7 +49,7 @@ ESPACO = "restrito: e1 no lexico induzido do train"
 
 @dataclass(frozen=True)
 class ConfigPairAware(Config):
-    epochs: int = 10
+    epochs: int = 2                     # teto da fase atual (D5), o mesmo do restrito
     mlp_hidden: int | None = None       # None = hidden_size do encoder
     head_dropout: float | None = None   # None = hidden_dropout_prob do encoder
 
@@ -89,7 +89,8 @@ def montagem(config: ConfigPairAware, *, lexico: Mapping[str, int]) -> Montagem:
         classe_modelo=PairAwareClassifier,
         selecionar=lambda candidatos: selecionar(candidatos, lexico),
         registro={"espaco": ESPACO,
-                  "lexico": {"min_freq": CONGELADO["min_freq"], "max_gap": CONGELADO["max_gap"],
+                  "lexico": {"min_freq": registro_do_lexico(lexico)["min_freq"],
+                             "max_gap": registro_do_lexico(lexico)["max_gap"],
                              "n_formas": len(lexico), "lexico_sha1": lexico_sha1(lexico), "formas": lexico},
                   "cabeca": {"arquitetura": ARQUITETURA, "fallback_marcador_ausente": "h_cls",
                              "lr_cabeca": "a mesma do encoder"},

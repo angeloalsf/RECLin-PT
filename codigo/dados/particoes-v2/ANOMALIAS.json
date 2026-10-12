@@ -1,0 +1,246 @@
+{
+  "anomalias": [
+    {
+      "anotacao": "3616",
+      "doc_id": "8965",
+      "end": 615,
+      "particao": "test",
+      "relacoes_que_a_usam": "não inspecionado (TEST)",
+      "start": 575,
+      "tipo": "atributo_divergente_do_trecho"
+    },
+    {
+      "anotacao": "3619",
+      "doc_id": "8965",
+      "end": 679,
+      "particao": "test",
+      "relacoes_que_a_usam": "não inspecionado (TEST)",
+      "start": 663,
+      "tipo": "atributo_divergente_do_trecho"
+    },
+    {
+      "anotacao": "30600",
+      "doc_id": "9617",
+      "end": 392,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 385,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "32030",
+      "doc_id": "9643",
+      "end": 448,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 436,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "32034",
+      "doc_id": "9643",
+      "end": 606,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 594,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "32043",
+      "doc_id": "9643",
+      "end": 908,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 885,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "34577",
+      "doc_id": "9694",
+      "end": 502,
+      "particao": "test",
+      "relacoes_que_a_usam": "não inspecionado (TEST)",
+      "start": 492,
+      "tipo": "atributo_divergente_do_trecho"
+    },
+    {
+      "anotacao": "35077",
+      "doc_id": "9706",
+      "end": 47,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 36,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "39461",
+      "doc_id": "9808",
+      "end": 132,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": -1,
+      "tipo": "offset_invalido"
+    },
+    {
+      "anotacao": "40687",
+      "doc_id": "9835",
+      "end": 432,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 416,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "40753",
+      "doc_id": "9837",
+      "end": 383,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 367,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "40884",
+      "doc_id": "9840",
+      "end": 282,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 266,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "40888",
+      "doc_id": "9840",
+      "end": 501,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 484,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41083",
+      "doc_id": "9843",
+      "end": 791,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 775,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41125",
+      "doc_id": "9844",
+      "end": 670,
+      "particao": "test",
+      "relacoes_que_a_usam": "não inspecionado (TEST)",
+      "start": 648,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41156",
+      "doc_id": "9845",
+      "end": 116,
+      "particao": "dev",
+      "relacoes_que_a_usam": 0,
+      "start": 99,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41276",
+      "doc_id": "9847",
+      "end": 571,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 559,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41314",
+      "doc_id": "9848",
+      "end": 559,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 547,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41329",
+      "doc_id": "9848",
+      "end": 1097,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 1080,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41354",
+      "doc_id": "9849",
+      "end": 406,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 389,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41355",
+      "doc_id": "9849",
+      "end": 439,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 423,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41376",
+      "doc_id": "9850",
+      "end": 113,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 96,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41381",
+      "doc_id": "9850",
+      "end": 252,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 236,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41409",
+      "doc_id": "9851",
+      "end": 41,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 21,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41574",
+      "doc_id": "9854",
+      "end": 756,
+      "particao": "train",
+      "relacoes_que_a_usam": 0,
+      "start": 740,
+      "tipo": "atributo_com_palavras_duplicadas"
+    },
+    {
+      "anotacao": "41748",
+      "doc_id": "9858",
+      "end": 67,
+      "particao": "test",
+      "relacoes_que_a_usam": "não inspecionado (TEST)",
+      "start": 50,
+      "tipo": "atributo_com_palavras_duplicadas"
+    }
+  ],
+  "descricao": "anotações da fonte cujo trecho, na posição dos offsets e na convenção do próprio documento, não confere com o atributo text; mantidas no dataset sem alteração",
+  "tipos": {
+    "atributo_com_palavras_duplicadas": "atributo com palavras repetidas em sequência; o trecho nos offsets é o texto sem a repetição",
+    "atributo_divergente_do_trecho": "atributo diferente do trecho (trecho descontínuo ou palavra omitida)",
+    "offset_dentro_de_crlf": "offset entre o \\r e o \\n de uma quebra de linha",
+    "offset_invalido": "offset fora do texto (start negativo, end antes de start ou além do fim)"
+  },
+  "versao": "v2-texto-fonte"
+}

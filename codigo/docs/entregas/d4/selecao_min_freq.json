@@ -1,0 +1,441 @@
+{
+  "atribuicao_sha256": "055b83f30bdc2821d849f8da7d882a29966416cce4e4212f2156e64746039c89",
+  "candidatos": [
+    1,
+    2,
+    3,
+    5,
+    10
+  ],
+  "com_negation_of_por_parte": [
+    107,
+    107,
+    107,
+    106,
+    106
+  ],
+  "desempate": "maior min_freq",
+  "documentos_por_parte": [
+    161,
+    161,
+    160,
+    159,
+    159
+  ],
+  "estratificacao": "presença de negation_of no documento",
+  "lexico_final": {
+    "formas": {
+      "ausencia": 11,
+      "ausente": 12,
+      "evacuacao": 10,
+      "nao": 128,
+      "nega": 353,
+      "s": 11,
+      "s/": 10,
+      "sem": 662
+    },
+    "lexico_sha1": "8af0716633e9",
+    "max_gap": 25,
+    "min_freq": 10,
+    "n_formas": 8
+  },
+  "max_gap": 25,
+  "metrica": "F1 = 2VP/(2VP+FP+FN), contagens somadas nas partes",
+  "min_freq_escolhido": 10,
+  "n_documentos": 800,
+  "n_partes": 5,
+  "ordem_por_f1": [
+    10,
+    5,
+    3,
+    2,
+    1
+  ],
+  "proveniencia": {
+    "codigo_sha256": {
+      "reclin/negacao/lexico.py": "634235b6bdb9e6fac295c2522a24315163a5fbd8ab09dafb45a4534ded228535",
+      "reclin/negacao/selecao_min_freq.py": "2283e0fd466c2bde409e025b8ab2bc2a849deb4d5c0ced78d83b80d4b2a883ea",
+      "reclin/tarefa.py": "0e3669e0908a46aaec0958cf55b28fe660ab6ec104abe5413d6cd7941859c483",
+      "scripts/selecionar_min_freq.py": "30df14b9390a09ae666c6ef3e798302a9a1914aa86e583033aa1db146ef4bf88"
+    },
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "modelos_ou_predicoes_usados": false,
+    "particoes_presentes_na_pasta": [
+      "train.jsonl"
+    ],
+    "pendencia": "D4",
+    "pre_registro": "docs/protocolo/d4-min-freq.md",
+    "pre_registro_sha256": "933ed702a4a98ffde57b0d2ac0f2b08695158692fa81b54ee373cdc872d0d927",
+    "python": "3.10.12",
+    "train_sha256": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034",
+    "versao_dados": "v2-texto-fonte"
+  },
+  "resultados": {
+    "1": {
+      "partes": [
+        {
+          "cobertura": 0.9649122807017544,
+          "f1": 0.2414928649835346,
+          "f1_fracao": "220/911",
+          "fn": 8,
+          "fp": 1374,
+          "lexico_sha1": "ee29dc81cc83",
+          "n_formas": 43,
+          "parte": 0,
+          "precisao": 0.13801756587202008,
+          "vp": 220
+        },
+        {
+          "cobertura": 0.9698275862068966,
+          "f1": 0.2158273381294964,
+          "f1_fracao": "30/139",
+          "fn": 7,
+          "fp": 1628,
+          "lexico_sha1": "31ba914f0cef",
+          "n_formas": 44,
+          "parte": 1,
+          "precisao": 0.12142471667566108,
+          "vp": 225
+        },
+        {
+          "cobertura": 0.9670781893004116,
+          "f1": 0.2101028162717926,
+          "f1_fracao": "470/2237",
+          "fn": 8,
+          "fp": 1759,
+          "lexico_sha1": "b5a0db6d498e",
+          "n_formas": 44,
+          "parte": 2,
+          "precisao": 0.11785356068204614,
+          "vp": 235
+        },
+        {
+          "cobertura": 0.9784172661870504,
+          "f1": 0.2513863216266174,
+          "f1_fracao": "136/541",
+          "fn": 6,
+          "fp": 1614,
+          "lexico_sha1": "9c02681c13f4",
+          "n_formas": 45,
+          "parte": 3,
+          "precisao": 0.14422057264050903,
+          "vp": 272
+        },
+        {
+          "cobertura": 0.9744525547445255,
+          "f1": 0.23881932021466906,
+          "f1_fracao": "267/1118",
+          "fn": 7,
+          "fp": 1695,
+          "lexico_sha1": "382b48b32813",
+          "n_formas": 44,
+          "parte": 4,
+          "precisao": 0.13608562691131498,
+          "vp": 267
+        }
+      ],
+      "total": {
+        "cobertura": 0.9713147410358566,
+        "f1": 0.2312215477996965,
+        "f1_fracao": "1219/5272",
+        "fn": 36,
+        "fp": 8070,
+        "precisao": 0.1312304876735924,
+        "vp": 1219
+      }
+    },
+    "10": {
+      "partes": [
+        {
+          "cobertura": 0.9385964912280702,
+          "f1": 0.33700787401574805,
+          "f1_fracao": "214/635",
+          "fn": 14,
+          "fp": 828,
+          "lexico_sha1": "3a0644524ebf",
+          "n_formas": 6,
+          "parte": 0,
+          "precisao": 0.2053742802303263,
+          "vp": 214
+        },
+        {
+          "cobertura": 0.875,
+          "f1": 0.3271555197421434,
+          "f1_fracao": "406/1241",
+          "fn": 29,
+          "fp": 806,
+          "lexico_sha1": "4be1d2566c7b",
+          "n_formas": 4,
+          "parte": 1,
+          "precisao": 0.20118929633300298,
+          "vp": 203
+        },
+        {
+          "cobertura": 0.9135802469135802,
+          "f1": 0.31422505307855625,
+          "f1_fracao": "148/471",
+          "fn": 21,
+          "fp": 948,
+          "lexico_sha1": "ad06e9d93421",
+          "n_formas": 5,
+          "parte": 2,
+          "precisao": 0.18974358974358974,
+          "vp": 222
+        },
+        {
+          "cobertura": 0.9244604316546763,
+          "f1": 0.3346354166666667,
+          "f1_fracao": "257/768",
+          "fn": 21,
+          "fp": 1001,
+          "lexico_sha1": "1103caa39838",
+          "n_formas": 4,
+          "parte": 3,
+          "precisao": 0.20429252782193957,
+          "vp": 257
+        },
+        {
+          "cobertura": 0.9233576642335767,
+          "f1": 0.3129251700680272,
+          "f1_fracao": "46/147",
+          "fn": 21,
+          "fp": 1090,
+          "lexico_sha1": "9a43e0d244bc",
+          "n_formas": 4,
+          "parte": 4,
+          "precisao": 0.18838421444527179,
+          "vp": 253
+        }
+      ],
+      "total": {
+        "cobertura": 0.9155378486055777,
+        "f1": 0.32471386180584993,
+        "f1_fracao": "766/2359",
+        "fn": 106,
+        "fp": 4673,
+        "precisao": 0.19735486087255238,
+        "vp": 1149
+      }
+    },
+    "2": {
+      "partes": [
+        {
+          "cobertura": 0.9605263157894737,
+          "f1": 0.2864617396991498,
+          "f1_fracao": "438/1529",
+          "fn": 9,
+          "fp": 1082,
+          "lexico_sha1": "1de1bcacbaa2",
+          "n_formas": 16,
+          "parte": 0,
+          "precisao": 0.16833205226748654,
+          "vp": 219
+        },
+        {
+          "cobertura": 0.9568965517241379,
+          "f1": 0.3004059539918809,
+          "f1_fracao": "222/739",
+          "fn": 10,
+          "fp": 1024,
+          "lexico_sha1": "2cea09817a2a",
+          "n_formas": 14,
+          "parte": 1,
+          "precisao": 0.1781701444622793,
+          "vp": 222
+        },
+        {
+          "cobertura": 0.9506172839506173,
+          "f1": 0.29596412556053814,
+          "f1_fracao": "66/223",
+          "fn": 12,
+          "fp": 1087,
+          "lexico_sha1": "3ad6caafd198",
+          "n_formas": 13,
+          "parte": 2,
+          "precisao": 0.17526555386949924,
+          "vp": 231
+        },
+        {
+          "cobertura": 0.9748201438848921,
+          "f1": 0.29666119321291734,
+          "f1_fracao": "542/1827",
+          "fn": 7,
+          "fp": 1278,
+          "lexico_sha1": "a756e8853d9b",
+          "n_formas": 16,
+          "parte": 3,
+          "precisao": 0.17495158166559072,
+          "vp": 271
+        },
+        {
+          "cobertura": 0.9635036496350365,
+          "f1": 0.2907488986784141,
+          "f1_fracao": "66/227",
+          "fn": 10,
+          "fp": 1278,
+          "lexico_sha1": "48d75905a299",
+          "n_formas": 14,
+          "parte": 4,
+          "precisao": 0.17120622568093385,
+          "vp": 264
+        }
+      ],
+      "total": {
+        "cobertura": 0.9617529880478087,
+        "f1": 0.2939958592132505,
+        "f1_fracao": "142/483",
+        "fn": 48,
+        "fp": 5749,
+        "precisao": 0.17351926394479586,
+        "vp": 1207
+      }
+    },
+    "3": {
+      "partes": [
+        {
+          "cobertura": 0.9605263157894737,
+          "f1": 0.30144528561596695,
+          "f1_fracao": "438/1453",
+          "fn": 9,
+          "fp": 1006,
+          "lexico_sha1": "ba4e3832dc9c",
+          "n_formas": 11,
+          "parte": 0,
+          "precisao": 0.17877551020408164,
+          "vp": 219
+        },
+        {
+          "cobertura": 0.9396551724137931,
+          "f1": 0.3094393186657204,
+          "f1_fracao": "436/1409",
+          "fn": 14,
+          "fp": 959,
+          "lexico_sha1": "adae3f3ad86c",
+          "n_formas": 9,
+          "parte": 1,
+          "precisao": 0.18521665250637212,
+          "vp": 218
+        },
+        {
+          "cobertura": 0.9506172839506173,
+          "f1": 0.29634381013470174,
+          "f1_fracao": "462/1559",
+          "fn": 12,
+          "fp": 1085,
+          "lexico_sha1": "1cb6007c0783",
+          "n_formas": 10,
+          "parte": 2,
+          "precisao": 0.17553191489361702,
+          "vp": 231
+        },
+        {
+          "cobertura": 0.9748201438848921,
+          "f1": 0.3090079817559863,
+          "f1_fracao": "271/877",
+          "fn": 7,
+          "fp": 1205,
+          "lexico_sha1": "522669b4794f",
+          "n_formas": 11,
+          "parte": 3,
+          "precisao": 0.18360433604336043,
+          "vp": 271
+        },
+        {
+          "cobertura": 0.9635036496350365,
+          "f1": 0.30051223676721683,
+          "f1_fracao": "528/1757",
+          "fn": 10,
+          "fp": 1219,
+          "lexico_sha1": "3dce2b5e435c",
+          "n_formas": 11,
+          "parte": 4,
+          "precisao": 0.17801753202966958,
+          "vp": 264
+        }
+      ],
+      "total": {
+        "cobertura": 0.9585657370517928,
+        "f1": 0.3033282904689864,
+        "f1_fracao": "401/1322",
+        "fn": 52,
+        "fp": 5474,
+        "precisao": 0.1801707353601917,
+        "vp": 1203
+      }
+    },
+    "5": {
+      "partes": [
+        {
+          "cobertura": 0.956140350877193,
+          "f1": 0.3161711385061639,
+          "f1_fracao": "436/1379",
+          "fn": 10,
+          "fp": 933,
+          "lexico_sha1": "9e6efbcc2e34",
+          "n_formas": 9,
+          "parte": 0,
+          "precisao": 0.1894005212858384,
+          "vp": 218
+        },
+        {
+          "cobertura": 0.9353448275862069,
+          "f1": 0.30867709815078237,
+          "f1_fracao": "217/703",
+          "fn": 15,
+          "fp": 957,
+          "lexico_sha1": "33f42d212825",
+          "n_formas": 8,
+          "parte": 1,
+          "precisao": 0.1848381601362862,
+          "vp": 217
+        },
+        {
+          "cobertura": 0.9465020576131687,
+          "f1": 0.29620090148100453,
+          "f1_fracao": "460/1553",
+          "fn": 13,
+          "fp": 1080,
+          "lexico_sha1": "f1a0045c1340",
+          "n_formas": 8,
+          "parte": 2,
+          "precisao": 0.17557251908396945,
+          "vp": 230
+        },
+        {
+          "cobertura": 0.9712230215827338,
+          "f1": 0.3227734608487747,
+          "f1_fracao": "540/1673",
+          "fn": 8,
+          "fp": 1125,
+          "lexico_sha1": "b11ae59bef33",
+          "n_formas": 9,
+          "parte": 3,
+          "precisao": 0.1935483870967742,
+          "vp": 270
+        },
+        {
+          "cobertura": 0.9562043795620438,
+          "f1": 0.3095097460129947,
+          "f1_fracao": "524/1693",
+          "fn": 12,
+          "fp": 1157,
+          "lexico_sha1": "ecf73f5dcac3",
+          "n_formas": 8,
+          "parte": 4,
+          "precisao": 0.1846370683579986,
+          "vp": 262
+        }
+      ],
+      "total": {
+        "cobertura": 0.9537848605577689,
+        "f1": 0.3107476635514019,
+        "f1_fracao": "133/428",
+        "fn": 58,
+        "fp": 5252,
+        "precisao": 0.18561017211970848,
+        "vp": 1197
+      }
+    }
+  },
+  "semente": 42
+}

@@ -1,6 +1,6 @@
 """Portão da etapa 1: o conjunto de referência do código novo é o do legado.
 
-Sobre as partições versionadas em `codigo/dados/particoes/`, com `max_gap=25`:
+Sobre as partições versionadas em `codigo/dados/particoes/` (v1), com `max_gap=25`:
 mesmo número de documentos e de candidatos (152.686 / 19.064 / 19.210), mesma
 contagem por rótulo e a mesma sequência de candidatos e de rótulos, elemento a
 elemento. O `y_true` de referência do DEV e do TEST foi conferido, na geração,

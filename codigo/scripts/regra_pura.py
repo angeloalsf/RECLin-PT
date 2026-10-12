@@ -10,8 +10,9 @@ partição pedida (DEV e TEST, por padrão). Não depende de nenhuma outra
 execução nem de outra estratégia.
 
 Nada é escolhido aqui: a regra (`rule`), o limiar (`rule_gap`) e `min_freq`
-vêm da calibração no DEV (`calibrar.py`), e o léxico é o congelado da etapa 3
-(`reclin.negacao.lexico.CONGELADO`) — o script falha se a calibração não
+vêm da calibração no DEV (`calibrar.py`), e o léxico é o congelado do legado
+(`reclin.negacao.lexico.CONGELADO_LEGADO`, reprodução técnica; o léxico da
+fase é outro desde a D4) — o script falha se a calibração não
 corresponder a ele. Aplicar a regra ao TEST só gera predições; avaliá-las é
 outro passo (`avaliar.py`).
 
@@ -38,12 +39,13 @@ log = logging.getLogger("reclin.scripts.regra_pura")
 
 
 def carregar_lexico(train, calibracao: dict) -> dict[str, int]:
-    """O léxico congelado, conferido contra a calibração."""
-    if calibracao["min_freq"] != lexico.CONGELADO["min_freq"]:
+    """O léxico do legado (`CONGELADO_LEGADO`), conferido contra a calibração:
+    o modo de reprodução reproduz o legado, nunca o léxico da fase."""
+    if calibracao["min_freq"] != lexico.CONGELADO_LEGADO["min_freq"]:
         raise ValueError(f"a calibração escolheu min_freq={calibracao['min_freq']}, e o léxico "
-                         f"congelado tem min_freq={lexico.CONGELADO['min_freq']}: uma recalibração "
-                         "precisa atualizar o registro CONGELADO")
-    lex = lexico.carregar_congelado(train)
+                         f"congelado do legado tem min_freq={lexico.CONGELADO_LEGADO['min_freq']}: uma "
+                         "recalibração precisa atualizar o registro CONGELADO_LEGADO")
+    lex = lexico.carregar_congelado(train, lexico.CONGELADO_LEGADO)
     if len(lex) != calibracao["lexicon_size"]:
         raise ValueError(f"o léxico tem {len(lex)} formas e a calibração registra "
                          f"{calibracao['lexicon_size']}")

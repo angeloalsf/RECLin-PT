@@ -15,8 +15,10 @@ particionar  divide `dados/processados/dataset.jsonl` e grava partições e
              MANIFEST. As partições são versionadas e congeladas: o comando
              recusa sobrescrevê-las sem `--sobrescrever`.
 
-A conversão do XML do SemClinBr em `dataset.jsonl` entra aqui como subcomando
-`corpus` quando `reclin/corpus.py` for implementado.
+Versões dos dados (`reclin.versao_dados`): o padrão de `--pasta` é a versão da
+fase (v2, `dados/particoes-v2/`); `--pasta codigo/dados/particoes` confere a
+v1. A v2 é gerada a partir dos XML por `scripts/reconstruir_dados.py` (com a
+proveniência no MANIFEST): `manifesto` e `particionar` recusam a pasta dela.
 """
 from __future__ import annotations
 
@@ -25,7 +27,7 @@ import logging
 import sys
 from pathlib import Path
 
-from reclin import particoes
+from reclin import particoes, versao_dados
 from reclin.util import caminhos
 from reclin.util.io import ler_jsonl, sha256_arquivo
 from reclin.util.log import configurar
@@ -54,10 +56,23 @@ def cmd_conferir(args) -> int:
     for nome, entrada in particoes.ler_manifesto(args.pasta)["splits"].items():
         log.info("%-5s confere | %d documentos | sha256=%s", nome, entrada["n_records"],
                  entrada["sha256"])
+    descricao = versao_dados.descrever(args.pasta)
+    log.info("versão dos dados: %s%s", descricao["versao"] or "fora do registro",
+             " (a da fase)" if descricao["da_fase"] else "")
     return 0
 
 
+def _gerada_dos_xml(pasta: Path) -> bool:
+    arquivo = pasta / particoes.ARQUIVO_MANIFESTO
+    return (arquivo.is_file() and "versao" in particoes.ler_manifesto(pasta)) or \
+        pasta.resolve() == caminhos.PARTICOES_V2.resolve()
+
+
 def cmd_manifesto(args) -> int:
+    if _gerada_dos_xml(args.pasta):
+        log.error("%s é uma versão gerada dos XML (MANIFEST com a proveniência): use "
+                  "scripts/reconstruir_dados.py, não este comando", args.pasta)
+        return 2
     faltando = [n for n in particoes.PARTICOES
                 if not particoes.arquivo_particao(args.pasta, n).exists()]
     if faltando:
@@ -75,6 +90,9 @@ def cmd_manifesto(args) -> int:
 
 
 def cmd_particionar(args) -> int:
+    if _gerada_dos_xml(args.pasta):
+        log.error("%s é a pasta da v2 (gerada dos XML por scripts/reconstruir_dados.py gerar)", args.pasta)
+        return 2
     existentes = [n for n in particoes.PARTICOES
                   if particoes.arquivo_particao(args.pasta, n).exists()]
     if existentes and not args.sobrescrever:
@@ -100,7 +118,7 @@ def cmd_particionar(args) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--pasta", type=Path, default=caminhos.PARTICOES,
-                    help="pasta das partições (default: codigo/dados/particoes)")
+                    help="pasta das partições (default: a versão da fase, codigo/dados/particoes-v2)")
     ap.add_argument("--dataset", type=Path, default=caminhos.DATASET,
                     help="dataset.jsonl de origem (default: codigo/dados/processados/dataset.jsonl)")
     ap.add_argument("--seed", type=int, default=particoes.SEED)

@@ -51,22 +51,39 @@ instalação só de CPU, instale antes o torch do índice do PyTorch
 não verificado aqui, porque este ambiente não acessa esse índice).
 O treino em GPU usa o mesmo comando, numa máquina com CUDA.
 
-As demais dependências de `requirements.txt` (lxml, matplotlib,
-scikit-learn) entram com as análises e os relatórios das etapas seguintes.
+As demais dependências de `requirements.txt` não são exigidas pelo pacote. O
+matplotlib é opcional: com ele, `gerar_tcc.py` também grava as figuras; sem
+ele, as figuras ficam registradas como pendentes (etapa 7). O lxml não é
+usado pelo código novo até aqui, e o scikit-learn só em conferências opcionais
+dos testes.
 
 ## Uso
 
 Dados:
 
 ```bash
-python codigo/scripts/preparar_dados.py conferir      # partições x MANIFEST (saída 1 se divergirem)
-python codigo/scripts/preparar_dados.py manifesto     # recalcula o MANIFEST sem tocar nas partições
-python codigo/scripts/preparar_dados.py particionar   # regera as partições a partir do dataset (exige --sobrescrever se já existirem)
+python codigo/scripts/preparar_dados.py conferir      # partições da fase (v2) x MANIFEST (saída 1 se divergirem)
+python codigo/scripts/preparar_dados.py --pasta codigo/dados/particoes conferir   # a v1 (regressão)
+python codigo/scripts/preparar_dados.py manifesto     # recalcula o MANIFEST da v1 sem tocar nas partições
+python codigo/scripts/preparar_dados.py particionar   # regera a v1 a partir do dataset do legado (exige --sobrescrever se já existirem)
 ```
 
-`particionar` lê `codigo/dados/processados/dataset.jsonl`, que só existe com o
-corpus SemClinBr (a conversão do XML entra numa etapa seguinte). Os dois
-primeiros comandos funcionam sem o corpus.
+Há duas versões congeladas das partições (`reclin/versao_dados.py`):
+`dados/particoes/` (`v1-conversao-legado`, a do legado, só para a regressão
+técnica) e `dados/particoes-v2/` (`v2-texto-fonte`, **a da fase**: os mesmos
+documentos, entidades, relações, candidatos e `y_true`, com o texto alinhado
+aos offsets — D9, regra C1). A v2 é gerada e conferida a partir dos XML do
+SemClinBr, que só são lidos:
+
+```bash
+python codigo/scripts/reconstruir_dados.py inventario            # proveniência e hashes dos XML
+python codigo/scripts/reconstruir_dados.py gerar --data AAAA-MM-DD   # dados/particoes-v2 (recusa sobrescrever)
+python codigo/scripts/reconstruir_dados.py conferir              # regera e compara byte a byte
+python codigo/scripts/reconstruir_dados.py auditar|comparar --saida x.json   # offsets x anotações; v1 x v2
+```
+
+Os comandos de dados da v1 funcionam sem o corpus; os de `reconstruir_dados.py`
+precisam dos XML (`codigo/SemClinBr-xml-public-v1/` ou `--xml`).
 
 Léxico de pistas de negação (especialização):
 
@@ -75,7 +92,18 @@ python codigo/scripts/analisar.py lexico                 # léxico congelado: 11
 python codigo/scripts/analisar.py lexico --min-freq 2    # outro limiar, sem a guarda do congelado
 ```
 
-Estratégias sem GPU (calibração no DEV, filtro de pistas e regra pura):
+Filtro de pistas na fase atual (modo da fase: léxico congelado, sem arquivo
+de calibração; o TEST só depois do TEST do baseline, uma vez, com trilha):
+
+```bash
+BASE=codigo/resultados/execucoes/baseline_biobertpt_seed42
+python codigo/scripts/filtro_pistas.py --base-execucao $BASE --particao dev
+python codigo/scripts/filtro_pistas.py --base-execucao $BASE --particao test
+```
+
+Reprodução técnica do legado (calibração no DEV, filtro de pistas e regra pura
+sobre as referências; as execuções gravadas assim trazem o arquivo de
+calibração e são recusadas pelo inventário dos experimentos atuais):
 
 ```bash
 REF=codigo/testes/referencia/resultados_legado
@@ -119,7 +147,7 @@ python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/bas
 | Estratégia | Exemplos | Modelo | Época escolhida por | Padrões próprios |
 | --- | --- | --- | --- | --- |
 | `baseline` | todos os candidatos | encoder + cabeça [CLS] (`AutoModelForSequenceClassification`) | macro-F1 do DEV | os de `Config` (3 épocas) |
-| `restrito` | só os pares cujo e1 é pista do léxico congelado | o mesmo do baseline | macro-F1 do DEV **remapeado** ao conjunto completo | `ConfigRestrito`: 10 épocas; pesos `balanced` do TRAIN restrito |
+| `restrito` | só os pares cujo e1 é pista do léxico congelado | o mesmo do baseline | macro-F1 do DEV **remapeado** ao conjunto completo | `ConfigRestrito`: 2 épocas (teto da fase atual, D5); pesos `balanced` do TRAIN restrito |
 | `pair_aware` | os do restrito | encoder sem pooler + `[h_cls ; h_[E1] ; h_[E2]] → Linear → GELU → Dropout → Linear` | como o restrito | `ConfigPairAware`: a do restrito + `--mlp-hidden` e `--head-dropout` (padrão: os do encoder) |
 
 O restrito e a Pair-Aware gravam as predições no conjunto completo (fora do
@@ -230,6 +258,34 @@ de validação nunca têm o TEST avaliado e são recusadas por `avaliar_test.py`
 uma pasta de partições que tenha só `train.jsonl`, `dev.jsonl` e o
 `MANIFEST.json` congelado.
 
+### Análises, relatórios e pontos de entrada (etapa 7)
+
+Análises do corpus, tabelas, curvas, valores citados no TCC e o relatório da
+fase, gerados **só** a partir das partições congeladas e de execuções do
+código novo verificadas por `reclin.execucao.inventario` (que recusa as
+referências do legado e os arquivos no formato antigo). O que ainda não foi
+executado aparece como *pendente*. Detalhes em
+[`docs/reproducao.md`](docs/reproducao.md).
+
+```bash
+python codigo/scripts/analisar.py corpus | max-gap | alinhamento | marcadores | falsos-positivos --execucao NOME
+python codigo/scripts/gerar_tcc.py inventario          # o que existe e a proveniência de cada execução
+python codigo/scripts/gerar_tcc.py tudo                # -> codigo/resultados/relatorios/cientifica/
+python codigo/scripts/conferir_tcc.py                  # texto do TCC x valores (pendente sem a pasta tcc/)
+make -C codigo help                                    # os mesmos comandos pelo Makefile
+```
+
+Cada execução grava a identidade do código que a criou (D6:
+`reclin/util/identidade_codigo.py`, SHA-256 do manifesto dos arquivos de código,
+sem Git); retomar, avaliar o TEST ou derivar com outra versão do código é
+recusado, e o inventário só aceita como científicas as execuções da versão de
+referência. Detalhes em [`docs/reproducao.md`](docs/reproducao.md).
+
+O notebook único `codigo/notebooks/reclin.ipynb` chama os mesmos scripts,
+parametrizado para a fase (BioBERTpt, seed 42); os passos da fase científica
+só rodam com a autorização explícita de cada um (`AUTORIZADO[...]`), e no
+`Makefile` com `AUTORIZADO=1`.
+
 Avaliação:
 
 ```bash
@@ -255,8 +311,8 @@ python -m pytest codigo -m "not lento"   # sem as 26 comparações e os lotes do
 | Pasta | O que verifica |
 | --- | --- |
 | `testes/unidade/` | O comportamento de cada módulo sobre exemplos pequenos, os scripts e a estrutura do pacote |
-| `testes/integracao/` | O treino de ponta a ponta em CPU com o modelo minúsculo: retomada exata, reprodutibilidade, separação entre treino e TEST e entre estratégias, scripts |
-| `testes/equivalencia/` | O código novo contra as referências do legado: são os portões das etapas |
+| `testes/integracao/` | O treino de ponta a ponta em CPU com o modelo minúsculo: retomada exata, reprodutibilidade, separação entre treino e TEST e entre estratégias, scripts. Desde a etapa 7, também com um BERT sintético criado no próprio teste (sem artefatos do legado): critérios de seleção do restrito e da Pair-Aware e os relatórios de ponta a ponta |
+| `testes/equivalencia/` | O código novo contra as referências do legado: são os portões das etapas 1 a 6 (reprodução técnica). Marcados `referencia_legado` (`-m referencia_legado` / `-m "not referencia_legado"`), com contagem própria no resumo do pytest: demonstram compatibilidade técnica, não desempenho científico dos modelos atuais |
 | `testes/referencia/` | As referências e o script que as gera (ver o README da pasta) |
 
 Nenhum teste depende de recurso externo: todos rodam com os arquivos
@@ -295,13 +351,15 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | --- | --- |
 | `reclin/tarefa.py` | Rótulos, enumeração dos pares candidatos (`iter_candidate_pairs`) e identidade do conjunto de referência (152.686 / 19.064 / 19.210 pares) |
 | `reclin/particoes.py` | Partição 80/10/10 por documento e o MANIFEST que a congela |
+| `reclin/corpus/` | XML do SemClinBr → representação intermediária (`semclinbr`) → dataset com a regra C1 (`conversao`), inventário dos XML (`fonte`), auditoria das entidades contra as anotações de origem (`auditoria`), invariantes entre versões (`comparacao`) e a geração da v2 (`geracao`) |
+| `reclin/versao_dados.py` | Registro das versões dos dados (v1, v2), a versão da fase e as guardas contra combinar versões |
 | `reclin/config.py` | `Config`, a configuração base das estratégias treinadas, e `ENCODERS` |
 | `reclin/entrada.py` | Janela marcada de cada candidato (`[E1]`/`[/E1]`/`[E2]`/`[/E2]`, `ctx_chars` de contexto), exemplos alinhados com os candidatos e o DataLoader que tokeniza cada lote com gerador próprio |
 | `reclin/modelos.py` | Tokenizer com os marcadores, classificador de sequência de 3 rótulos, gravação atômica, recarga genérica e identidade (vocabulário, configuração) |
 | `reclin/treino/` | Reprodutibilidade (ambiente, sementes, geradores), checkpoints (estado de retomada e melhor modelo), o laço de treino com retomada exata, a `Montagem` que descreve uma estratégia treinada e o orquestrador (`treinar_execucao` e `avaliar_test`, separados) |
 | `reclin/execucao/` | O formato em disco das execuções: sidecar de predições (`predicoes`), diretório da execução (`diretorio`), trilha das avaliações do TEST (`trilha`) e predições de um subconjunto levadas ao conjunto completo (`subconjunto`) |
 | `reclin/avaliacao/` | Métricas (`metricas`), McNemar e bootstrap pareado (`significancia`), as 26 comparações do TCC (`protocolo`) e a agregação entre sementes (`agregacao`) |
-| `reclin/negacao/lexico.py` | Especialização: normalização, indução do léxico de pistas no TRAIN, `e_pista`, `lexico_sha1`, cobertura e o léxico congelado com a guarda (`min_freq=3`, 11 formas, `70c93fa807de`) |
+| `reclin/negacao/lexico.py` | Especialização: normalização, indução do léxico de pistas no TRAIN, `e_pista`, `lexico_sha1`, cobertura e o léxico congelado com a guarda (da fase, D4: `min_freq=10`, 8 formas, `8af0716633e9`; do legado, só para a reprodução: `min_freq=3`, 11 formas, `70c93fa807de`) |
 | `reclin/estrategias/filtro_pistas.py` | Estratégia: filtro de pistas sobre as predições de outra execução, com a calibração de `min_freq` e da porta de gap no DEV |
 | `reclin/estrategias/regra_pura.py` | Estratégia: regra pura R1 a R4 (pista + distância, sem modelo), com a calibração da regra no DEV |
 | `reclin/estrategias/baseline.py` | Estratégia treinada: o classificador da tarefa (todos os candidatos, cabeça [CLS]) |
@@ -314,6 +372,7 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/execucao/validacao.py` | Marca, nome e recusa das execuções de validação técnica |
 | `reclin/util/` | JSON/JSONL e SHA-256 (`io`), logging configurado só por scripts (`log`), caminhos padrão (`caminhos`) |
 | `scripts/preparar_dados.py` | `conferir`, `manifesto` e `particionar` |
+| `scripts/reconstruir_dados.py` | `inventario`, `gerar`, `conferir`, `auditar` e `comparar` (dados v2 a partir dos XML) |
 | `scripts/avaliar.py` | Métricas de sidecars ou de uma execução |
 | `scripts/comparar.py` | Uma comparação (`par`) ou as 26 do TCC (`protocolo`) |
 | `scripts/analisar.py` | `lexico`: o léxico de pistas, seu hash e a cobertura por partição |
@@ -325,13 +384,15 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `scripts/two_stage.py` | `verificar-inicializacao`, `treinar --estagio {1,2}`, `compor-dev`, `avaliar-test` |
 | `scripts/baseline_calibrado.py` | `calibrar-dev` e `aplicar-test` |
 | `scripts/pretreino.py` | `baixar` (commit exato) e `conferir` (`--pasta` ou `--execucoes`) |
-| `dados/particoes/` | `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados) |
+| `dados/particoes/` | v1: `train/dev/test.jsonl` congelados e `MANIFEST.json` (versionados; regressão técnica) |
+| `dados/particoes-v2/` | v2 (fase): partições, `MANIFEST.json` com a proveniência, `FONTE.json` (inventário dos XML e conversão por documento) e `ANOMALIAS.json` (versionados) |
 | `testes/` | Testes de unidade, de integração e de equivalência com o legado, e as referências do legado |
 | `docs/entregas/` | Índice das entregas e, por etapa, o que foi entregue, como foi verificado e o que ficou pendente |
 | `docs/protocolo/` | Protocolo pré-registrado da fase científica atual (BioBERTpt, seed 42) |
 
-`dados/brutos/` (XML do SemClinBr) e `dados/processados/` (`dataset.jsonl`)
-ficam fora do git: o corpus tem licença restrita. As partições versionadas
+`dados/brutos/` e `SemClinBr-xml-public-v1/` (XML do SemClinBr) e
+`dados/processados/` (datasets e representação intermediária) ficam fora do
+git: o corpus tem licença restrita. As partições versionadas
 contêm o texto das notas, como no repositório original.
 
 ### Formato de uma execução

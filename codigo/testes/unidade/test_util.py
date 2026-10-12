@@ -62,6 +62,8 @@ def test_configurar_log_nao_duplica_handlers(tmp_path):
 
 def test_caminhos():
     assert (caminhos.CODIGO / "reclin" / "__init__.py").exists()
-    assert caminhos.PARTICOES == caminhos.CODIGO / "dados" / "particoes"
+    assert caminhos.PARTICOES_V1 == caminhos.CODIGO / "dados" / "particoes"
+    assert caminhos.PARTICOES_V2 == caminhos.CODIGO / "dados" / "particoes-v2"
+    assert caminhos.PARTICOES == caminhos.PARTICOES_V2          # a versão dos dados da fase
     assert caminhos.relativo_ao_codigo(caminhos.DATASET) == "dados/processados/dataset.jsonl"
 

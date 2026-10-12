@@ -33,7 +33,7 @@ from reclin import particoes, tarefa
 from reclin.estrategias import filtro_pistas, regra_pura
 from reclin.execucao import predicoes
 from reclin.negacao import lexico
-from reclin.util.caminhos import CODIGO, PARTICOES
+from reclin.util.caminhos import CODIGO, PARTICOES_V1 as PARTICOES   # o legado é a v1 dos dados
 
 RESULTADOS_LEGADO = CODIGO / "testes" / "referencia" / "resultados_legado"
 SCRIPTS = CODIGO / "scripts"
@@ -94,8 +94,8 @@ def test_calibracao_nao_le_o_test(sem_test):
 def test_calibracao_escolhe_o_lexico_congelado(calibracao):
     lex = calibracao["detalhes"]["lexico"]
     assert lex["congelado"] is True
-    assert lex["min_freq"] == lexico.CONGELADO["min_freq"]
-    assert lex["lexico_sha1"] == lexico.CONGELADO["lexico_sha1"]
+    assert lex["min_freq"] == lexico.CONGELADO_LEGADO["min_freq"]
+    assert lex["lexico_sha1"] == lexico.CONGELADO_LEGADO["lexico_sha1"]
 
 
 def _virgula(x: float) -> str:
@@ -195,7 +195,7 @@ def test_script_da_regra_byte_a_byte(execucoes):
 
 @pytest.mark.parametrize("base", BASES)
 def test_modulo_do_filtro_byte_a_byte(base, particoes_lidas, tmp_path):
-    lex = lexico.carregar_congelado(particoes_lidas["train"])
+    lex = lexico.carregar_congelado(particoes_lidas["train"], lexico.CONGELADO_LEGADO)
     p = filtro_pistas.montar_predicoes(
         predicoes.ler(RESULTADOS_LEGADO / f"{base}.preds.json"),
         tarefa.candidatos(particoes_lidas["test"]), lex,
@@ -206,7 +206,7 @@ def test_modulo_do_filtro_byte_a_byte(base, particoes_lidas, tmp_path):
 
 
 def test_modulo_da_regra_byte_a_byte(particoes_lidas, tmp_path):
-    lex = lexico.carregar_congelado(particoes_lidas["train"])
+    lex = lexico.carregar_congelado(particoes_lidas["train"], lexico.CONGELADO_LEGADO)
     p = regra_pura.montar_predicoes(tarefa.candidatos(particoes_lidas["test"]), lex,
                                     regra="R3", max_target_gap=1, min_freq=3)
     predicoes.gravar(tmp_path / "r.json", p)

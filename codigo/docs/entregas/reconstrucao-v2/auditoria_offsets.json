@@ -1,0 +1,410 @@
+{
+  "versoes": {
+    "v1": {
+      "dev": {
+        "etapa7": {
+          "fracao_exata": 0.6580988256148903,
+          "negation_of_afetados": {
+            "afetados": 58,
+            "fracao": 0.38666666666666666,
+            "pares": 150
+          },
+          "perfil_da_deriva": {
+            "monotona": 21,
+            "nao_monotona": 15,
+            "sem_deriva": 64
+          },
+          "status": {
+            "ausente": 75,
+            "deslocado": 1435,
+            "equivalente": 33,
+            "exato": 2970
+          }
+        },
+        "origem": {
+          "entidades": {
+            "alinhada": 3003,
+            "anomalia_da_fonte": 1,
+            "desalinhada": 1509,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.6654110347883891,
+          "n_documentos": 100,
+          "n_entidades": 4513,
+          "n_nao_alinhadas_listadas": 0,
+          "nao_alinhadas": null,
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 377,
+            "com_argumento_nao_alinhado": 377,
+            "documentos_com_relacoes_identicas_a_fonte": 100,
+            "relacoes": 987
+          },
+          "relacoes_nao_alinhadas_por_tipo": {
+            "associated_with": 319,
+            "negation_of": 58
+          },
+          "sistemas": {
+            "bruto": 36,
+            "indistinguivel": 2,
+            "lf": 10,
+            "sem_crlf": 52
+          }
+        }
+      },
+      "manifest_sha256": "a73f291a18a1b72e1e84e1841b6e0b46a30dd2b4ddc194ee4f8ae9f0896f8ae1",
+      "pasta": "dados/particoes",
+      "test": {
+        "origem": {
+          "entidades": {
+            "alinhada": 2990,
+            "anomalia_da_fonte": 5,
+            "desalinhada": 1545,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.6585903083700441,
+          "n_documentos": 100,
+          "n_entidades": 4540,
+          "n_nao_alinhadas_listadas": 0,
+          "nao_alinhadas": null,
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 507,
+            "com_argumento_nao_alinhado": 507,
+            "documentos_com_relacoes_identicas_a_fonte": 100,
+            "relacoes": 1250
+          },
+          "sistemas": {
+            "bruto": 39,
+            "lf": 6,
+            "sem_crlf": 55
+          }
+        }
+      },
+      "train": {
+        "etapa7": {
+          "fracao_exata": 0.5891921547112879,
+          "negation_of_afetados": {
+            "afetados": 672,
+            "fracao": 0.5354581673306773,
+            "pares": 1255
+          },
+          "perfil_da_deriva": {
+            "monotona": 223,
+            "nao_monotona": 124,
+            "sem_deriva": 453
+          },
+          "status": {
+            "ausente": 608,
+            "deslocado": 13899,
+            "equivalente": 469,
+            "exato": 21479
+          }
+        },
+        "origem": {
+          "entidades": {
+            "alinhada": 21948,
+            "anomalia_da_fonte": 20,
+            "desalinhada": 14487,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.6020573309559731,
+          "n_documentos": 800,
+          "n_entidades": 36455,
+          "n_nao_alinhadas_listadas": 0,
+          "nao_alinhadas": null,
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 4302,
+            "com_argumento_nao_alinhado": 4302,
+            "documentos_com_relacoes_identicas_a_fonte": 800,
+            "relacoes": 9221
+          },
+          "relacoes_nao_alinhadas_por_tipo": {
+            "associated_with": 3594,
+            "negation_of": 708
+          },
+          "sistemas": {
+            "bruto": 346,
+            "indistinguivel": 4,
+            "lf": 85,
+            "sem_crlf": 365
+          }
+        }
+      }
+    },
+    "v2": {
+      "dev": {
+        "etapa7": {
+          "fracao_exata": 0.9756259694216707,
+          "negation_of_afetados": {
+            "afetados": 0,
+            "fracao": 0.0,
+            "pares": 150
+          },
+          "perfil_da_deriva": {
+            "monotona": 0,
+            "nao_monotona": 0,
+            "sem_deriva": 100
+          },
+          "status": {
+            "ausente": 1,
+            "deslocado": 0,
+            "equivalente": 109,
+            "exato": 4403
+          }
+        },
+        "origem": {
+          "entidades": {
+            "alinhada": 4512,
+            "anomalia_da_fonte": 1,
+            "desalinhada": 0,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.9997784179038334,
+          "n_documentos": 100,
+          "n_entidades": 4513,
+          "n_nao_alinhadas_listadas": 1,
+          "nao_alinhadas": [
+            {
+              "doc_id": "9845",
+              "estado": "anomalia_da_fonte",
+              "id": "41156"
+            }
+          ],
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 0,
+            "com_argumento_nao_alinhado": 0,
+            "documentos_com_relacoes_identicas_a_fonte": 100,
+            "relacoes": 987
+          },
+          "relacoes_nao_alinhadas_por_tipo": {},
+          "sistemas": {
+            "bruto": 36,
+            "indistinguivel": 2,
+            "lf": 10,
+            "sem_crlf": 52
+          }
+        }
+      },
+      "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+      "pasta": "dados/particoes-v2",
+      "test": {
+        "origem": {
+          "entidades": {
+            "alinhada": 4535,
+            "anomalia_da_fonte": 5,
+            "desalinhada": 0,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.998898678414097,
+          "n_documentos": 100,
+          "n_entidades": 4540,
+          "n_nao_alinhadas_listadas": 5,
+          "nao_alinhadas": [
+            {
+              "doc_id": "8965",
+              "estado": "anomalia_da_fonte",
+              "id": "3616"
+            },
+            {
+              "doc_id": "8965",
+              "estado": "anomalia_da_fonte",
+              "id": "3619"
+            },
+            {
+              "doc_id": "9694",
+              "estado": "anomalia_da_fonte",
+              "id": "34577"
+            },
+            {
+              "doc_id": "9844",
+              "estado": "anomalia_da_fonte",
+              "id": "41125"
+            },
+            {
+              "doc_id": "9858",
+              "estado": "anomalia_da_fonte",
+              "id": "41748"
+            }
+          ],
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 0,
+            "com_argumento_nao_alinhado": 0,
+            "documentos_com_relacoes_identicas_a_fonte": 100,
+            "relacoes": 1250
+          },
+          "sistemas": {
+            "bruto": 39,
+            "lf": 6,
+            "sem_crlf": 55
+          }
+        }
+      },
+      "train": {
+        "etapa7": {
+          "fracao_exata": 0.9701824166780962,
+          "negation_of_afetados": {
+            "afetados": 0,
+            "fracao": 0.0,
+            "pares": 1255
+          },
+          "perfil_da_deriva": {
+            "monotona": 1,
+            "nao_monotona": 0,
+            "sem_deriva": 799
+          },
+          "status": {
+            "ausente": 19,
+            "deslocado": 1,
+            "equivalente": 1067,
+            "exato": 35368
+          }
+        },
+        "origem": {
+          "entidades": {
+            "alinhada": 36435,
+            "anomalia_da_fonte": 20,
+            "desalinhada": 0,
+            "identidade_divergente": 0,
+            "nao_verificavel": 0
+          },
+          "fracao_alinhada": 0.9994513784117405,
+          "n_documentos": 800,
+          "n_entidades": 36455,
+          "n_nao_alinhadas_listadas": 20,
+          "nao_alinhadas": [
+            {
+              "doc_id": "9617",
+              "estado": "anomalia_da_fonte",
+              "id": "30600"
+            },
+            {
+              "doc_id": "9643",
+              "estado": "anomalia_da_fonte",
+              "id": "32030"
+            },
+            {
+              "doc_id": "9643",
+              "estado": "anomalia_da_fonte",
+              "id": "32034"
+            },
+            {
+              "doc_id": "9643",
+              "estado": "anomalia_da_fonte",
+              "id": "32043"
+            },
+            {
+              "doc_id": "9706",
+              "estado": "anomalia_da_fonte",
+              "id": "35077"
+            },
+            {
+              "doc_id": "9808",
+              "estado": "anomalia_da_fonte",
+              "id": "39461"
+            },
+            {
+              "doc_id": "9835",
+              "estado": "anomalia_da_fonte",
+              "id": "40687"
+            },
+            {
+              "doc_id": "9837",
+              "estado": "anomalia_da_fonte",
+              "id": "40753"
+            },
+            {
+              "doc_id": "9840",
+              "estado": "anomalia_da_fonte",
+              "id": "40884"
+            },
+            {
+              "doc_id": "9840",
+              "estado": "anomalia_da_fonte",
+              "id": "40888"
+            },
+            {
+              "doc_id": "9843",
+              "estado": "anomalia_da_fonte",
+              "id": "41083"
+            },
+            {
+              "doc_id": "9847",
+              "estado": "anomalia_da_fonte",
+              "id": "41276"
+            },
+            {
+              "doc_id": "9848",
+              "estado": "anomalia_da_fonte",
+              "id": "41314"
+            },
+            {
+              "doc_id": "9848",
+              "estado": "anomalia_da_fonte",
+              "id": "41329"
+            },
+            {
+              "doc_id": "9849",
+              "estado": "anomalia_da_fonte",
+              "id": "41354"
+            },
+            {
+              "doc_id": "9849",
+              "estado": "anomalia_da_fonte",
+              "id": "41355"
+            },
+            {
+              "doc_id": "9850",
+              "estado": "anomalia_da_fonte",
+              "id": "41376"
+            },
+            {
+              "doc_id": "9850",
+              "estado": "anomalia_da_fonte",
+              "id": "41381"
+            },
+            {
+              "doc_id": "9851",
+              "estado": "anomalia_da_fonte",
+              "id": "41409"
+            },
+            {
+              "doc_id": "9854",
+              "estado": "anomalia_da_fonte",
+              "id": "41574"
+            }
+          ],
+          "relacoes": {
+            "argumento_inexistente": 0,
+            "com_argumento_anomalo": 0,
+            "com_argumento_desalinhado": 0,
+            "com_argumento_nao_alinhado": 0,
+            "documentos_com_relacoes_identicas_a_fonte": 800,
+            "relacoes": 9221
+          },
+          "relacoes_nao_alinhadas_por_tipo": {},
+          "sistemas": {
+            "bruto": 346,
+            "indistinguivel": 4,
+            "lf": 85,
+            "sem_crlf": 365
+          }
+        }
+      }
+    }
+  },
+  "xml_conjunto_sha256": "ed8aae01ef807c02dd12f68d57c54b081241c996e39a708eda94b348c79d8c25"
+}

@@ -6,7 +6,12 @@ O que muda em relação ao baseline (e só isto):
    léxico congelado (`negacao.lexico`, `min_freq=3`, induzido do TRAIN),
    na ordem do conjunto completo. A janela de cada um é, byte a byte, a que o
    baseline vê para o mesmo par.
-2. `epochs` padrão 10 (`ConfigRestrito`): cada época tem ~107 passos, não 2.386.
+2. `epochs` padrão 2 (`ConfigRestrito`): o teto da fase atual (decisão D5 de
+   11/10/2026, que padroniza o orçamento de treino destas estratégias com o
+   Two-Stage; ver o protocolo da fase, seção 3). Sem parada antecipada: as 2
+   épocas rodam, e a escolhida é a de maior macro-F1 do DEV remapeado. Cada
+   época tem ~107 passos, não 2.386. O legado usava 10 épocas (as referências
+   de equivalência fixam esse valor explicitamente).
 3. Os pesos `balanced` são recalculados no TRAIN restrito (a mesma fórmula do
    baseline aplicada ao espaço em que se treina).
 4. A melhor época é escolhida pelo macro-F1 do DEV **remapeado** ao conjunto
@@ -31,7 +36,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from reclin.config import Config
-from reclin.negacao.lexico import CONGELADO, e_pista, lexico_sha1
+from reclin.negacao.lexico import e_pista, lexico_sha1, registro_do_lexico
 from reclin.treino.montagem import Montagem
 
 NOME = "restrito"
@@ -40,7 +45,7 @@ ESPACO = "restrito: e1 no lexico induzido do train"
 
 @dataclass(frozen=True)
 class ConfigRestrito(Config):
-    epochs: int = 10
+    epochs: int = 2
 
 
 def nome_execucao(config: Config) -> str:
@@ -53,7 +58,8 @@ def selecionar(candidatos: Sequence[dict], lexico: Mapping[str, int]) -> list[in
 
 
 def registro_lexico(lexico: Mapping[str, int]) -> dict[str, Any]:
-    return {"min_freq": CONGELADO["min_freq"], "max_gap": CONGELADO["max_gap"], "n_formas": len(lexico),
+    registro = registro_do_lexico(lexico)
+    return {"min_freq": registro["min_freq"], "max_gap": registro["max_gap"], "n_formas": len(lexico),
             "lexico_sha1": lexico_sha1(lexico), "formas": dict(lexico)}
 
 

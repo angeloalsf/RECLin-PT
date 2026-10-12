@@ -28,15 +28,20 @@ def referencia_dados() -> dict:
     return ler_json(REFERENCIA / "dados.json")
 
 
+# As fixtures `documentos`, `manifesto` e `subconjunto` são da versão v1 dos
+# dados (`codigo/dados/particoes/`, `versao_dados.V1`): a dos testes de
+# equivalência com o legado e dos números registrados nas etapas 1 a 7. A
+# versão da fase (v2, `caminhos.PARTICOES`) tem testes próprios
+# (`unidade/test_versao_dados.py`, `unidade/test_dados_v2.py`).
 @pytest.fixture(scope="session")
 def documentos() -> dict:
-    """As partições congeladas versionadas em `codigo/dados/particoes/`."""
-    return particoes.ler_particoes(caminhos.PARTICOES)
+    """As partições congeladas da v1, versionadas em `codigo/dados/particoes/`."""
+    return particoes.ler_particoes(caminhos.PARTICOES_V1)
 
 
 @pytest.fixture(scope="session")
 def manifesto() -> dict:
-    return particoes.ler_manifesto(caminhos.PARTICOES)
+    return particoes.ler_manifesto(caminhos.PARTICOES_V1)
 
 
 @pytest.fixture(scope="session")
@@ -58,13 +63,13 @@ MODELO_MINUSCULO = REFERENCIA / "modelo_minusculo"
 @pytest.fixture(scope="session")
 def subconjunto(tmp_path_factory):
     """Fábrica de pastas de partições pequenas: as primeiras `n` linhas de cada
-    partição congelada (os mesmos bytes), com um MANIFEST próprio. Com
+    partição congelada da v1 (os mesmos bytes), com um MANIFEST próprio. Com
     `sem_test=True`, o arquivo do TEST é apagado depois de calculado o
     MANIFEST (para provar que uma operação não o lê)."""
     def criar(train: int, dev: int, test: int, *, sem_test: bool = False) -> Path:
         pasta = tmp_path_factory.mktemp(f"particoes_{train}_{dev}_{test}")
         for nome, n in (("train", train), ("dev", dev), ("test", test)):
-            linhas = (caminhos.PARTICOES / f"{nome}.jsonl").read_bytes().splitlines(keepends=True)[:n]
+            linhas = (caminhos.PARTICOES_V1 / f"{nome}.jsonl").read_bytes().splitlines(keepends=True)[:n]
             (pasta / f"{nome}.jsonl").write_bytes(b"".join(linhas))
         particoes.gravar_manifesto(pasta, particoes.calcular_manifesto(
             pasta, seed=42, origem={"path": "subconjunto das partições congeladas", "sha256": None}))

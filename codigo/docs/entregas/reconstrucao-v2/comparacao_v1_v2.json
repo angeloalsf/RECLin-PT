@@ -1,0 +1,337 @@
+{
+  "conjuntos_referencia": {
+    "dev": {
+      "v1": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "a9ea327684165c5053f8f3db5468a27f71c1d9e30d2859e343b6d275839c8aeb",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "v2": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      }
+    },
+    "test": {
+      "v1": {
+        "candidatos_sha256": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+        "max_gap": 25,
+        "n_candidatos": 19210,
+        "particao": "test",
+        "particao_sha256": "86304d8d507c6707695e2b86c3533b763a96247f06326e5980b4567385231e62",
+        "y_true_sha256": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
+      },
+      "v2": {
+        "candidatos_sha256": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+        "max_gap": 25,
+        "n_candidatos": 19210,
+        "particao": "test",
+        "particao_sha256": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666",
+        "y_true_sha256": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
+      }
+    },
+    "train": {
+      "v1": {
+        "candidatos_sha256": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3",
+        "max_gap": 25,
+        "n_candidatos": 152686,
+        "particao": "train",
+        "particao_sha256": "36014b2adc8308bce94aeecf066c38f69e1f53dda4517fa424527554b31a437a",
+        "y_true_sha256": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88"
+      },
+      "v2": {
+        "candidatos_sha256": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3",
+        "max_gap": 25,
+        "n_candidatos": 152686,
+        "particao": "train",
+        "particao_sha256": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034",
+        "y_true_sha256": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88"
+      }
+    }
+  },
+  "lexico": {
+    "v1": {
+      "confere_com_o_congelado": true,
+      "lexico_sha1": "70c93fa807de",
+      "n_formas": 11
+    },
+    "v2": {
+      "confere_com_o_congelado": true,
+      "lexico_sha1": "70c93fa807de",
+      "n_formas": 11
+    }
+  },
+  "particoes": {
+    "dev": {
+      "candidatos": {
+        "antes": 19064,
+        "candidatos_sha256": {
+          "antes": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+          "depois": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31"
+        },
+        "depois": 19064,
+        "invariantes_dos_pares": [],
+        "mesmas_chaves_e_ordem": true,
+        "rotulos": {
+          "antes": {
+            "associated_with": 763,
+            "negation_of": 150,
+            "no_relation": 18151
+          },
+          "depois": {
+            "associated_with": 763,
+            "negation_of": 150,
+            "no_relation": 18151
+          }
+        },
+        "y_true_identico": true,
+        "y_true_sha256": {
+          "antes": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019",
+          "depois": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+        }
+      },
+      "documentos": {
+        "antes": 100,
+        "depois": 100,
+        "mesmos_e_mesma_ordem": true
+      },
+      "documentos_com_entidades_diferentes": [],
+      "documentos_com_relacoes_diferentes": [],
+      "entidades_identicas": true,
+      "janelas": {
+        "janelas_diferentes_nos_transformados": 7912,
+        "janelas_iguais_fora_dos_transformados": true,
+        "pares": 19064,
+        "pares_em_documentos_transformados": 7920,
+        "trecho_marcado_diverge_do_atributo": {
+          "antes": 7814,
+          "depois": 4
+        }
+      },
+      "marcadores": {
+        "v1": {
+          "invalida": {
+            "associated_with": 8,
+            "negation_of": 1,
+            "no_relation": 151
+          },
+          "ok": {
+            "associated_with": 755,
+            "negation_of": 149,
+            "no_relation": 18000
+          }
+        },
+        "v2": {
+          "ok": {
+            "associated_with": 763,
+            "negation_of": 150,
+            "no_relation": 18151
+          }
+        }
+      },
+      "n_entidades": {
+        "antes": 4513,
+        "depois": 4513
+      },
+      "n_relacoes": {
+        "antes": 987,
+        "depois": 987
+      },
+      "relacoes_identicas": true,
+      "sistemas": {
+        "bruto": 36,
+        "indistinguivel": 2,
+        "lf": 10,
+        "sem_crlf": 52
+      },
+      "texto": {
+        "antes_igual_ao_legado_da_fonte": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "depois_igual_a_regra_aplicada_a_fonte": true,
+        "documentos_com_texto_diferente": 36,
+        "igual_aos_transformados_previstos": true,
+        "outras_chaves_iguais": true,
+        "sem_quebra_de_linha": true,
+        "transformados_previstos": 36
+      }
+    },
+    "test": {
+      "candidatos": {
+        "antes": 19210,
+        "candidatos_sha256": {
+          "antes": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+          "depois": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95"
+        },
+        "depois": 19210,
+        "invariantes_dos_pares": [],
+        "mesmas_chaves_e_ordem": true,
+        "y_true_identico": true,
+        "y_true_sha256": {
+          "antes": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e",
+          "depois": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
+        }
+      },
+      "documentos": {
+        "antes": 100,
+        "depois": 100,
+        "mesmos_e_mesma_ordem": true
+      },
+      "documentos_com_entidades_diferentes": [],
+      "documentos_com_relacoes_diferentes": [],
+      "entidades_identicas": true,
+      "janelas": {
+        "janelas_diferentes_nos_transformados": 7974,
+        "janelas_iguais_fora_dos_transformados": true,
+        "pares": 19210,
+        "pares_em_documentos_transformados": 7976,
+        "trecho_marcado_diverge_do_atributo": {
+          "antes": 7886,
+          "depois": 48
+        }
+      },
+      "n_entidades": {
+        "antes": 4540,
+        "depois": 4540
+      },
+      "n_relacoes": {
+        "antes": 1250,
+        "depois": 1250
+      },
+      "relacoes_identicas": true,
+      "sistemas": {
+        "bruto": 39,
+        "lf": 6,
+        "sem_crlf": 55
+      },
+      "texto": {
+        "antes_igual_ao_legado_da_fonte": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "depois_igual_a_regra_aplicada_a_fonte": true,
+        "documentos_com_texto_diferente": 39,
+        "igual_aos_transformados_previstos": true,
+        "outras_chaves_iguais": true,
+        "sem_quebra_de_linha": true,
+        "transformados_previstos": 39
+      }
+    },
+    "train": {
+      "candidatos": {
+        "antes": 152686,
+        "candidatos_sha256": {
+          "antes": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3",
+          "depois": "961795073a93e72a94d4c01c2d7f26a1e2ebf984212feb5ad461db87d88ec1e3"
+        },
+        "depois": 152686,
+        "invariantes_dos_pares": [],
+        "mesmas_chaves_e_ordem": true,
+        "rotulos": {
+          "antes": {
+            "associated_with": 7096,
+            "negation_of": 1255,
+            "no_relation": 144335
+          },
+          "depois": {
+            "associated_with": 7096,
+            "negation_of": 1255,
+            "no_relation": 144335
+          }
+        },
+        "y_true_identico": true,
+        "y_true_sha256": {
+          "antes": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88",
+          "depois": "1976681ad9483e6e6991245ba2c3c152a8eefa04447e2ca88021dec676564a88"
+        }
+      },
+      "documentos": {
+        "antes": 800,
+        "depois": 800,
+        "mesmos_e_mesma_ordem": true
+      },
+      "documentos_com_entidades_diferentes": [],
+      "documentos_com_relacoes_diferentes": [],
+      "entidades_identicas": true,
+      "janelas": {
+        "janelas_diferentes_nos_transformados": 73266,
+        "janelas_iguais_fora_dos_transformados": true,
+        "pares": 152686,
+        "pares_em_documentos_transformados": 73684,
+        "trecho_marcado_diverge_do_atributo": {
+          "antes": 72212,
+          "depois": 148
+        }
+      },
+      "marcadores": {
+        "v1": {
+          "entrelacados": {
+            "associated_with": 0,
+            "negation_of": 0,
+            "no_relation": 2
+          },
+          "invalida": {
+            "associated_with": 63,
+            "negation_of": 21,
+            "no_relation": 1366
+          },
+          "ok": {
+            "associated_with": 7033,
+            "negation_of": 1234,
+            "no_relation": 142967
+          }
+        },
+        "v2": {
+          "entrelacados": {
+            "associated_with": 0,
+            "negation_of": 0,
+            "no_relation": 2
+          },
+          "invalida": {
+            "associated_with": 0,
+            "negation_of": 0,
+            "no_relation": 16
+          },
+          "ok": {
+            "associated_with": 7096,
+            "negation_of": 1255,
+            "no_relation": 144317
+          }
+        }
+      },
+      "n_entidades": {
+        "antes": 36455,
+        "depois": 36455
+      },
+      "n_relacoes": {
+        "antes": 9221,
+        "depois": 9221
+      },
+      "relacoes_identicas": true,
+      "sistemas": {
+        "bruto": 346,
+        "indistinguivel": 4,
+        "lf": 85,
+        "sem_crlf": 365
+      },
+      "texto": {
+        "antes_igual_ao_legado_da_fonte": true,
+        "comprimento_igual_ao_bruto_nos_transformados": true,
+        "depois_igual_a_regra_aplicada_a_fonte": true,
+        "documentos_com_texto_diferente": 346,
+        "igual_aos_transformados_previstos": true,
+        "outras_chaves_iguais": true,
+        "sem_quebra_de_linha": true,
+        "transformados_previstos": 346
+      }
+    }
+  },
+  "sobreposicao_de_documentos_v2": {
+    "devxtest": 0,
+    "devxtrain": 0,
+    "testxtrain": 0
+  }
+}

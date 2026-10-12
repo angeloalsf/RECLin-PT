@@ -46,7 +46,7 @@ import logging
 from pathlib import Path
 from typing import Any, Mapping
 
-from reclin import entrada, modelos, particoes, pretreino, tarefa
+from reclin import entrada, modelos, particoes, pretreino, tarefa, versao_dados
 from reclin.avaliacao import limiar as busca_limiar
 from reclin.avaliacao import metricas
 from reclin.estrategias.two_stage import (CASAS_ROTEAMENTO, CONFIGS, ESTRATEGIA_ESTAGIO, NEG_E2, NOME,
@@ -55,7 +55,7 @@ from reclin.execucao import diretorio, predicoes, trilha, validacao
 from reclin.tarefa import ASSOC, NEG, NOREL
 from reclin.treino import checkpoint, laco, reprodutibilidade
 from reclin.treino.classificador import ErroExecucao, particoes_congeladas
-from reclin.util import caminhos
+from reclin.util import caminhos, identidade_codigo
 from reclin.util.io import ler_json
 
 log = logging.getLogger(__name__)
@@ -71,6 +71,13 @@ def _hash(obj: Any) -> str:
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 
+def _conferir_codigo(pasta: Path, operacao: str) -> None:
+    try:
+        diretorio.conferir_codigo(pasta, operacao)
+    except identidade_codigo.ErroCodigo as erro:
+        raise ErroExecucao(str(erro)) from erro
+
+
 def ler_estagio(pasta: str | Path, estagio: int) -> dict[str, Any]:
     """Uma execução de estágio concluída, com o hash do seu `melhor_modelo/`."""
     pasta = Path(pasta)
@@ -84,6 +91,7 @@ def ler_estagio(pasta: str | Path, estagio: int) -> dict[str, Any]:
     treino = ler_json(pasta / "treino.json")
     if not treino.get("concluido"):
         raise ErroExecucao(f"o treino de {pasta.name} não terminou")
+    _conferir_codigo(pasta, f"o uso como estágio {estagio} do Two-Stage")
     melhor = checkpoint.pasta_checkpoints(pasta) / checkpoint.MELHOR
     if not checkpoint.tem_melhor(pasta):
         raise ErroExecucao(f"{pasta.name} não tem {checkpoint.MELHOR}/")
@@ -263,6 +271,11 @@ def avaliar_test(pasta: str | Path, *, estagio1: str | Path | None = None, estag
     registro = diretorio.ler_config(pasta)["config"]
     if registro.get("estrategia") != NOME:
         raise ErroExecucao(f"{pasta.name} é da estratégia {registro.get('estrategia')!r}, não {NOME!r}")
+    _conferir_codigo(pasta, "a avaliação do TEST")
+    try:
+        versao_dados.exigir_mesma_versao(diretorio.ler_config(pasta), pasta_particoes, "a avaliação do TEST")
+    except versao_dados.ErroVersaoDados as erro:
+        raise ErroExecucao(str(erro)) from erro
     e1 = ler_estagio(estagio1 or registro["estagios"]["1"]["pasta"], 1)
     e2 = ler_estagio(estagio2 or registro["estagios"]["2"]["pasta"], 2)
     if conferir_par(e1, e2):

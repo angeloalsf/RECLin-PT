@@ -49,7 +49,7 @@ from reclin.estrategias.two_stage import metricas as metricas_estagio
 from reclin.execucao import diretorio, predicoes, validacao
 from reclin.treino import checkpoint, laco, reprodutibilidade
 from reclin.treino.classificador import ErroExecucao
-from reclin.util import caminhos
+from reclin.util import caminhos, identidade_codigo
 from reclin.util.io import gravar_json, ler_json
 
 log = logging.getLogger(__name__)
@@ -135,6 +135,10 @@ def treinar_estagio(raiz: str | Path, nome: str, estagio: int, config: Config, *
         anterior = ler_json(pasta / ARQUIVO_TREINO) if (pasta / ARQUIVO_TREINO).is_file() else {}
         if anterior.get("concluido"):
             raise ErroExecucao(f"o treino de {pasta} já foi concluído: não há o que retomar")
+        try:
+            diretorio.conferir_codigo(pasta, "a retomada do treino")
+        except identidade_codigo.ErroCodigo as erro:
+            raise ErroExecucao(str(erro)) from erro
     else:
         if (pasta / diretorio.CONFIG).exists():
             raise ErroExecucao(f"a execução {pasta} já existe: para continuar, use retomar; "
@@ -142,7 +146,8 @@ def treinar_estagio(raiz: str | Path, nome: str, estagio: int, config: Config, *
         diretorio.criar(raiz, nome, estrategia=estrategia, config=registro)
         anterior = {}
 
-    sessao = {"tipo": "retomada" if retomar else "nova", "inicio": _agora()}
+    sessao = {"tipo": "retomada" if retomar else "nova", "inicio": _agora(),
+              "codigo": identidade_codigo.atual()["identidade"]}
     with reprodutibilidade.coletar_avisos() as avisos:
         # Mesma ordem do baseline: sementes → dados → tokenizer → modelo → loaders.
         reprodutibilidade.fixar_sementes(config.seed)

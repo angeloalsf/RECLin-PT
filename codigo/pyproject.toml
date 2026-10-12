@@ -25,4 +25,7 @@ include = ["reclin*"]
 [tool.pytest.ini_options]
 testpaths = ["testes"]
 addopts = "-p no:cacheprovider --import-mode=importlib"
-markers = ["lento: testes de mais de um minuto (as 26 comparações do legado e os lotes do TRAIN); pule com -m \"not lento\""]
+markers = [
+    "lento: testes de mais de um minuto (as 26 comparações do legado e os lotes do TRAIN); pule com -m \"not lento\"",
+    "referencia_legado: testes de testes/equivalencia/ contra as referências do legado (compatibilidade técnica, não desempenho científico)",
+]

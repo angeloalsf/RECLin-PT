@@ -50,7 +50,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Etapa 7: análises, relatórios, inventário de proveniência, `Makefile` e notebook único, sem nenhum dado ou resultado do legado (ver a nota da etapa). Antes da etapa 8: dados reconstruídos dos XML (versão `v2-texto-fonte`, correção do desalinhamento de offsets do D9), agora a versão da fase; a etapa 8 não foi iniciada. Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -91,14 +91,16 @@ dos experimentos (detalhes, o tamanho do torch no Linux e a exceção do Python
 
 **Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e precisa
 ser solicitado aos autores do corpus (Oliveira et al.). Os arquivos `.xml` vão
-em `codigo/dados/brutos/`, que está no `.gitignore` — dados clínicos nunca
-devem ser versionados.
+em `codigo/SemClinBr-xml-public-v1/` (ou `codigo/dados/brutos/`, com `--xml`),
+pastas que estão no `.gitignore` — dados clínicos nunca devem ser versionados.
 
 Você **não precisa do corpus** para reproduzir os experimentos: as partições
-derivadas (`codigo/dados/particoes/*.jsonl`) são versionadas, junto de
-`codigo/dados/particoes/MANIFEST.json` — o SHA-256 de cada partição, para
-conferir que são os mesmos arquivos que produziram os resultados. O corpus só é
-necessário para regerar o `dataset.jsonl` e as partições.
+derivadas são versionadas — as da fase em `codigo/dados/particoes-v2/`
+(`v2-texto-fonte`) e as do legado em `codigo/dados/particoes/` (v1, só para a
+regressão técnica) —, cada uma com o `MANIFEST.json` com o SHA-256 de cada
+partição, para conferir que são os mesmos arquivos que produziram os
+resultados. O corpus só é necessário para regerar as partições
+(`codigo/scripts/reconstruir_dados.py`).
 
 **Hardware e tempo (etapas de treino).** O treino do legado foi validado em
 **GPU NVIDIA T4** (Google Colab, ~16 GB VRAM): cada época levou ≈48 min, cada
@@ -167,8 +169,18 @@ python codigo/scripts/baseline_calibrado.py calibrar-dev --base <execução do b
 O protocolo da fase científica atual — validação inicial, seed 42, só
 BioBERTpt — está pré-registrado em
 [`codigo/docs/protocolo/fase-biobertpt-seed42.md`](codigo/docs/protocolo/fase-biobertpt-seed42.md).
-Os experimentos em GPU e a geração dos artefatos do TCC entram nas etapas
-seguintes, cada execução com autorização própria.
+Os experimentos em GPU entram na etapa seguinte, cada execução com
+autorização própria.
+
+Análises e relatórios (etapa 7), só a partir das partições congeladas e de
+execuções do código novo com proveniência verificada (detalhes em
+[`codigo/docs/reproducao.md`](codigo/docs/reproducao.md)):
+
+```bash
+python codigo/scripts/gerar_tcc.py inventario     # execuções encontradas e a proveniência de cada uma
+python codigo/scripts/gerar_tcc.py tudo           # tabelas, curvas, valores e relatório (pendências marcadas)
+make -C codigo help                               # os mesmos comandos pelo Makefile
+```
 
 ## Métricas e como interpretar
 
@@ -191,8 +203,9 @@ seguintes, cada execução com autorização própria.
 
 - **Partição em nível de documento** (não de relação): evita vazamento de
   vocabulário do mesmo prontuário entre train/test. Estratificada pela presença
-  de `negation_of`. Semente fixa 42, e o resultado registrado em
-  `codigo/dados/particoes/MANIFEST.json`.
+  de `negation_of`. Semente fixa 42, e o resultado registrado no
+  `MANIFEST.json` de cada versão dos dados (`codigo/dados/particoes-v2/` na
+  fase; a atribuição dos documentos é a mesma da v1).
 - **Candidatos negativos gerados, não anotados**: o SemClinBr só anota relações
   positivas; os pares `no_relation` são gerados como pares **ordenados** dentro
   de uma janela `max_gap`. A direção importa para `negation_of`.
@@ -244,7 +257,7 @@ O **código** e a **documentação** deste repositório são MIT — veja
 > **Os dados têm licença separada.** O corpus **SemClinBr não é distribuído
 > aqui**, possui licença própria e restrita, e deve ser obtido separadamente
 > junto aos autores do corpus. A licença MIT deste repositório **não se estende a
-> ele**. As partições versionadas em `codigo/dados/particoes/` contêm o texto
+> ele**. As partições versionadas em `codigo/dados/particoes/` e `codigo/dados/particoes-v2/` contêm o texto
 > das notas, como no repositório original.
 
 Para citar este trabalho, use os metadados de [`CITATION.cff`](CITATION.cff).
