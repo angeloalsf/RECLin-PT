@@ -10,6 +10,14 @@ arquivos de código e de configuração que podem mudar o que uma execução gra
   análises e os relatórios (`reclin/analises/`, `reclin/relatorios/`,
   `reclin/execucao/inventario.py`, `reclin/util/formatacao.py`,
   `scripts/analisar.py`, `scripts/gerar_tcc.py`, `scripts/conferir_tcc.py`);
+* excluídos também, por não pertencerem a nenhum componente de treino: a
+  infraestrutura compartilhada de execução (`reclin/experimento/` e
+  `scripts/experimento.py`). Ela só obtém o código, confere o ambiente,
+  copia execuções e registra proveniência em `experimento.json`; não grava
+  nada do que esta identidade protege (`config.json`, `treino.json`, `checkpoints/`,
+  predições, métricas) e nenhum componente a importa. Tem identidade própria
+  (`reclin.experimento.identidade`), registrada, mas que nunca bloqueia
+  uma retomada: ver `docs/arquitetura/identidade-por-componente.md`, seção 11;
 * nunca entram: testes, documentação, notebooks, `Makefile`, partições,
   resultados, relatórios gerados, checkpoints, pesos, caches (`__pycache__`,
   `*.pyc`) e arquivos temporários.
@@ -40,9 +48,10 @@ from reclin.util import caminhos
 
 ALGORITMO = "sha256-manifesto-v1"
 PADROES = ("reclin/**/*.py", "scripts/*.py", "pyproject.toml")
-EXCLUIDOS_PREFIXOS = ("reclin/analises/", "reclin/relatorios/")
+EXCLUIDOS_PREFIXOS = ("reclin/analises/", "reclin/relatorios/", "reclin/experimento/")
 EXCLUIDOS = frozenset({"reclin/execucao/inventario.py", "reclin/util/formatacao.py",
-                       "scripts/analisar.py", "scripts/gerar_tcc.py", "scripts/conferir_tcc.py"})
+                       "scripts/analisar.py", "scripts/gerar_tcc.py", "scripts/conferir_tcc.py",
+                       "scripts/experimento.py"})
 
 
 class ErroCodigo(ValueError):

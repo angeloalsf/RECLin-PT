@@ -26,6 +26,9 @@ nova da mesma etapa substitui a anterior.
 | 7 (D9) | 1 | 11/10/2026 | — (sem pacote; nenhum dado alterado) | Investigação do D9: causa identificada; a correção C1 foi aplicada na entrega seguinte | [d9-alinhamento.md](d9-alinhamento.md) |
 | Dados v2 (C1) e UMLS | 1 | 11/10/2026 | — (sem pacote; v1 preservada) | Dados reconstruídos dos XML (`v2-texto-fonte`, a versão da fase), integração das versões, auditoria da UMLS e proposta para a D4 | [reconstrucao-v2.md](reconstrucao-v2.md) |
 | D4 (`min_freq`) | 1 | 11/10/2026 | — (sem pacote) | Atual: `min_freq=10` escolhido só com o TRAIN da v2 (pré-registro `docs/protocolo/d4-min-freq.md`), com limitações a confirmar; etapa 8 não iniciada | [d4-min-freq.md](d4-min-freq.md) |
+| 8.1 (decisões e emenda) | 1 | 12/10/2026 | — (sem pacote; documental, nenhum código alterado) | Decisões de arquitetura da etapa 8 e rascunho da emenda de protocolo (não em vigor); implementação não iniciada | [etapa-8.1.md](etapa-8.1.md) |
+| 8.2 (especificações, encerrada) | 1 | 12/10/2026 | — (sem pacote; documental, nenhum código alterado) | Identidade por componente, matriz de compatibilidade do Two-Stage, observações do legado (HF/Drive) e revisão do rascunho da emenda E1 (inativa); decisões finais do autor aplicadas; implementação não iniciada | [etapa-8.2.md](etapa-8.2.md) |
+| 8.2 (infraestrutura Colab) | 1 | 12/10/2026 | — (sem pacote; arquivos na pasta de trabalho) | Módulos `reclin/experimento/`, `scripts/experimento.py`, testes e documentação; infraestrutura fora da identidade v1; validação mínima executada (51 testes de infraestrutura passaram; suíte completa não executada) | [etapa-8.2-infraestrutura.md](etapa-8.2-infraestrutura.md) |
 
 ## O que nunca vai no pacote
 
