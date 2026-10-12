@@ -271,10 +271,11 @@ def conferir_particoes(ctx: operacoes.Contexto, *, sha_codigo: str = "") -> dict
             f"o código clonado (commit {sha_codigo[:12] or '?'}…) não contém as partições da fase em "
             f"dados/particoes-v2/ (faltam: {', '.join(faltam)}). Use, em BRANCH_CODIGO (célula 1), uma branch cujo "
             "commit as inclua e rode de novo desde a célula 2. As partições não são geradas aqui: são versionadas e congeladas.")
-    codigo = raiz.rodar_script(ctx.codigo, "preparar_dados.py", "conferir", "--pasta", str(pasta), verificar=False)
+    codigo = raiz.rodar_script(ctx.codigo, "preparar_dados.py", "--pasta", str(pasta), "conferir", verificar=False)   # --pasta vem ANTES do subcomando
     if codigo != 0:
-        raise ErroOperacao("as partições não conferem com o MANIFEST (veja a saída acima): o código clonado traz "
-                           "partições alteradas ou de outra versão. Use uma branch com as partições congeladas.")
+        raise ErroOperacao(f"a conferência das partições terminou com código {codigo} (a saída do script pode não aparecer "
+                           "na célula; rode `!python codigo/scripts/preparar_dados.py --pasta codigo/dados/particoes-v2 conferir` "
+                           "dentro do repositório para ver): as partições do código clonado podem estar alteradas ou ser de outra versão.")
     manifesto = ler_json(pasta / "MANIFEST.json")
     if manifesto.get("versao") != operacoes._versao_da_fase():
         raise ErroOperacao(f"as partições são da versão {manifesto.get('versao')!r}; a fase usa "
