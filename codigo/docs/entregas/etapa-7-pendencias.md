@@ -75,6 +75,8 @@ referências do legado e resultados existentes não foram alterados.
   mas os tetos registrados do Two-Stage são 3 (estágio 1) e 10 (estágio 2); 2
   épocas é o do estágio 2 na rodada de validação técnica. Apliquei 2, como
   decidido, e registrei a divergência no protocolo para a sua confirmação.
+  **Resolvida em 12/10/2026 (etapa 8.4):** o autor confirmou 3 e 10 para o Two-Stage; o texto do
+  protocolo (seção 3) foi corrigido para bater com o código (critério A18).
 
 ## C. Integridade dos dados
 

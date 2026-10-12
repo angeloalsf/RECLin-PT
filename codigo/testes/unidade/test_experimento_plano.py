@@ -102,7 +102,8 @@ def test_nomes_oficiais_constam_do_protocolo():
     texto = (caminhos.CODIGO / "docs" / "protocolo" / "fase-biobertpt-seed42.md").read_text("utf-8")
     for nome in plano.NOMES_OFICIAIS:
         assert nome in texto, nome
-    assert set(plano.NOMES_OFICIAIS.values()) == {"baseline", "baseline_calibrado", "restrito", "pair_aware"}
+    assert set(plano.NOMES_OFICIAIS.values()) == {"baseline", "baseline_calibrado", "restrito", "pair_aware",
+                                                  "two_stage_e1", "two_stage_e2"}
 
 
 def test_alias_so_para_nome_oficial_da_estrategia_certa():

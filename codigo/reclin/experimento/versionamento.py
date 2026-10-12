@@ -35,6 +35,16 @@ from reclin.experimento import codigo_colab, proveniencia, publicacao_hf, segred
 from reclin.util.io import ler_json, sha256_arquivo
 
 ARQUIVOS_DA_EXECUCAO = ("config.json", "treino.json", "experimento.json", "predicoes_dev.json", "metricas.json")
+# Perfis de salvamento: só os arquivos que a pasta já tem; nada é criado para ser versionado.
+#  * execucao   — baseline e demais execuções com `experimento.json` (o padrão);
+#  * estagio    — um estágio do Two-Stage: configuração e histórico do treino por época;
+#  * composicao — a composição do Two-Stage: τ congelado, tabela da busca (dentro de `limiar.json`),
+#                 métricas do DEV do pipeline e as predições/probabilidades do DEV.
+PERFIS: dict[str, tuple[str, ...]] = {
+    "execucao": ARQUIVOS_DA_EXECUCAO,
+    "estagio": ("config.json", "treino.json"),
+    "composicao": ("limiar.json", "metricas.json", "predicoes_dev.json"),
+}
 BASE_DESTINO = "codigo/resultados/execucoes"
 BRANCHES_RECUSADAS = ("main", "master")
 LIMITE_DE_TEXTO = 200
@@ -83,6 +93,32 @@ def sem_texto_clinico(predicoes: dict[str, Any]) -> list[str]:
     return motivos
 
 
+def _textos_longos(valor: Any, caminho: str = "") -> list[str]:
+    """Strings com mais de `LIMITE_DE_TEXTO` caracteres em qualquer nível (texto clínico não cabe nestes arquivos)."""
+    achados: list[str] = []
+    if isinstance(valor, str):
+        if len(valor) > LIMITE_DE_TEXTO:
+            achados.append(f"{caminho or '(raiz)'}: texto de {len(valor)} caracteres")
+    elif isinstance(valor, dict):
+        for k, v in valor.items():
+            achados += _textos_longos(v, f"{caminho}.{k}" if caminho else str(k))
+    elif isinstance(valor, (list, tuple)):
+        for i, v in enumerate(valor):
+            achados += _textos_longos(v, f"{caminho}[{i}]")
+    return achados
+
+
+def _predicoes_da_composicao_sem_texto(conteudo: dict[str, Any]) -> list[str]:
+    """Como `sem_texto_clinico`, aceitando só `estagios` (os nomes das duas pastas) como lista de nomes."""
+    resto = dict(conteudo)
+    motivos = []
+    nomes = resto.pop("estagios", [])
+    if not isinstance(nomes, list) or not all(isinstance(n, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.@-]{0,127}", n)
+                                              for n in nomes):
+        motivos.append("estagios: não é uma lista de nomes de pasta")
+    return motivos + sem_texto_clinico(resto) + _textos_longos(resto)
+
+
 def _motivo_de_exclusao(relativo: str) -> str:
     if re.search(r"(^|/)checkpoints(/|$)|\.(pt|pth|bin|safetensors|ckpt)$", relativo):
         return "pesos/checkpoints: nunca versionados"
@@ -95,8 +131,11 @@ def _motivo_de_exclusao(relativo: str) -> str:
     return "fora da lista de resultados versionáveis"
 
 
-def plano_de_salvamento(pasta: str | Path) -> dict[str, Any]:
+def plano_de_salvamento(pasta: str | Path, perfil: str = "execucao") -> dict[str, Any]:
     """O que seria versionado e por que algo impede (`problemas`). Não escreve nada."""
+    if perfil not in PERFIS:
+        raise ErroVersionamento(f"perfil de salvamento desconhecido: {perfil!r}. Opções: {list(PERFIS)}")
+    lista = PERFIS[perfil]
     pasta = Path(pasta)
     problemas: list[str] = []
     arquivos: dict[str, dict[str, Any]] = {}
@@ -104,13 +143,14 @@ def plano_de_salvamento(pasta: str | Path) -> dict[str, Any]:
     if not pasta.is_dir():
         return {"nome": pasta.name, "pasta": str(pasta), "arquivos": {}, "excluidos": [], "registro": None,
                 "problemas": [f"a pasta {pasta} não existe"]}
-    try:
-        registro = proveniencia.ler(pasta)
-    except proveniencia.ErroProveniencia as erro:
-        problemas.append(f"experimento.json inválido: {erro}")
+    if perfil != "composicao":
+        try:
+            registro = proveniencia.ler(pasta)
+        except proveniencia.ErroProveniencia as erro:
+            problemas.append(f"experimento.json inválido: {erro}")
     if registro is not None and registro.get("estado") != "concluida":
         problemas.append(f"a execução está {registro.get('estado')!r}: só se salva execução concluída")
-    for relativo in ARQUIVOS_DA_EXECUCAO:
+    for relativo in lista:
         arquivo = pasta / relativo
         if not arquivo.is_file():
             problemas.append(f"falta {relativo}")
@@ -124,8 +164,18 @@ def plano_de_salvamento(pasta: str | Path) -> dict[str, Any]:
         achados = segredos.contem_segredo(conteudo)
         if achados:
             problemas.append(f"{relativo} parece conter segredo ({'; '.join(achados)})")
+        if perfil != "execucao":
+            problemas += [f"{relativo} contém texto? {m}" for m in _textos_longos(conteudo)
+                          if not (relativo == "predicoes_dev.json")]
         if relativo == "treino.json" and not conteudo.get("concluido"):
             problemas.append("treino.json diz que o treino não foi concluído")
+        if perfil == "estagio" and relativo == "config.json" and "validacao" in ((conteudo.get("config") or {})):
+            problemas.append("config.json é de uma execução de validação técnica: não é resultado da fase")
+        if perfil == "composicao" and relativo == "limiar.json":
+            if "validacao" in conteudo:
+                problemas.append("limiar.json é de uma composição de validação técnica: não é resultado da fase")
+            if "limiar" not in conteudo or "tabela" not in conteudo:
+                problemas.append("limiar.json sem 'limiar' ou 'tabela': τ não está congelado")
         if relativo == "metricas.json":
             if "test" in conteudo:
                 problemas.append("metricas.json tem a chave 'test': resultados do TEST não são versionados por aqui "
@@ -133,7 +183,11 @@ def plano_de_salvamento(pasta: str | Path) -> dict[str, Any]:
             if "dev" not in conteudo:
                 problemas.append("metricas.json não tem a chave 'dev'")
         if relativo == "predicoes_dev.json":
-            problemas += [f"predicoes_dev.json contém texto? {m}" for m in sem_texto_clinico(conteudo)]
+            motivos = (_predicoes_da_composicao_sem_texto(conteudo) if perfil == "composicao"
+                       else sem_texto_clinico(conteudo))
+            problemas += [f"predicoes_dev.json contém texto? {m}" for m in motivos]
+    if perfil == "composicao" and (pasta / "predicoes_test.json").exists():
+        problemas.append("há artefatos do TEST nesta composição: não é versionada por aqui")
     excluidos = [{"arquivo": a.relative_to(pasta).as_posix(), "motivo": _motivo_de_exclusao(a.relative_to(pasta).as_posix())}
                  for a in sorted(pasta.rglob("*")) if a.is_file() and a.relative_to(pasta).as_posix() not in arquivos]
     return {"nome": pasta.name, "pasta": str(pasta), "arquivos": arquivos, "excluidos": excluidos,
@@ -158,10 +212,10 @@ def _validar_identidade(nome: str, email: str) -> None:
 
 
 def conferir(pasta: str | Path, *, repositorio: str, branch: str, sha_codigo: str,
-             imprimir: Callable[[str], None] = print) -> dict[str, Any]:
+             imprimir: Callable[[str], None] = print, perfil: str = "execucao") -> dict[str, Any]:
     """Mostra o que seria enviado ao GitHub e o que NUNCA vai. Não usa o Git nem a rede."""
     _validar_destino(repositorio, branch)
-    p = plano_de_salvamento(pasta)
+    p = plano_de_salvamento(pasta, perfil)
     nome = p["nome"]
     imprimir(f"\n=== Salvar no GitHub — {nome} ===")
     imprimir(f"Repositório: {repositorio} | branch: {branch} (criada a partir do SHA {sha_codigo[:12]}… se não existir)")
@@ -266,14 +320,15 @@ def _copiar(pasta: Path, destino: Path, arquivos: dict[str, dict[str, Any]], imp
 
 def salvar(pasta: str | Path, *, repositorio: str, branch: str, sha_codigo: str, clone: str | Path,
            nome_git: str, email_git: str, credencial: segredos.Credencial, confirmacao: str | None = None,
-           executor: Executor = executor_padrao, imprimir: Callable[[str], None] = print) -> dict[str, Any]:
+           executor: Executor = executor_padrao, imprimir: Callable[[str], None] = print,
+           perfil: str = "execucao") -> dict[str, Any]:
     """Copia os resultados para o clone de trabalho, faz `add -f`, commit, `pull --rebase --autostash` e push."""
     _validar_destino(repositorio, branch)
     _validar_identidade(nome_git, email_git)
     if not re.fullmatch(r"[0-9a-f]{40}", sha_codigo):
         raise ErroVersionamento("SHA do código deve ter 40 caracteres hexadecimais")
     pasta, clone = Path(pasta), Path(clone)
-    p = plano_de_salvamento(pasta)
+    p = plano_de_salvamento(pasta, perfil)
     if p["problemas"]:
         raise ErroVersionamento("nada foi salvo:\n - " + "\n - ".join(p["problemas"]))
     nome = p["nome"]
@@ -302,7 +357,8 @@ def salvar(pasta: str | Path, *, repositorio: str, branch: str, sha_codigo: str,
             raise ErroVersionamento("arquivos proibidos preparados: " + ", ".join(proibidos))
         novo_commit = bool(preparados)
         if novo_commit:
-            mensagem = (f"Resultados de {nome} (DEV)\n\nrun_id: {registro['run_id']}\nconfig_id: {registro['config_id']}\n"
+            ident = (f"run_id: {registro['run_id']}\nconfig_id: {registro['config_id']}\n" if registro else "")
+            mensagem = (f"Resultados de {nome} (DEV)\n\n{ident}"
                         f"código: {sha_codigo}\nSomente DEV: sem TEST, pesos nem checkpoints.")
             s.git("commit", "-m", mensagem, cwd=clone)
         else:

@@ -14,6 +14,10 @@ Estrutura no repositório (um por fase, privado), um prefixo por execução:
         checkpoints/ultimo.json
         checkpoints/melhor_modelo/…   pesos e tokenizer da melhor época
 
+Prefixo alternativo (`prefixo=`): o Two-Stage publica cada estágio na sua pasta do mesmo repositório
+(`etapa1/` e `etapa2/`). O envio é sempre um commit só de adições, restritas ao próprio prefixo (verificado
+antes do envio), e um prefixo já existente é recusado: publicar uma etapa nunca apaga nem sobrescreve a outra.
+
 Padrões (todos alteráveis por argumento explícito):
 
 * `checkpoints/ultimo.pt` **não** é publicado (estado de retomada, grande e sem
@@ -42,6 +46,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import time
 from pathlib import Path
 from typing import Any, Mapping
@@ -72,6 +77,14 @@ def prefixo_da_execucao(nome: str) -> str:
     return f"{PASTA_RUNS}/{ids.validar_nome(nome)}"
 
 
+def validar_prefixo(prefixo: str) -> str:
+    """Prefixo alternativo seguro (uma ou duas partes, sem `..`)."""
+    if not isinstance(prefixo, str) or ".." in prefixo or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9_.@-]{0,63}(/[A-Za-z0-9][A-Za-z0-9_.@-]{0,127})?", prefixo):
+        raise ErroPublicacao(f"prefixo inválido: {prefixo!r}")
+    return prefixo
+
+
 def selecionar_arquivos(pasta: str | Path, *, incluir_ultimo: bool = False, incluir_test: bool = False
                         ) -> tuple[list[str], list[dict[str, str]]]:
     """(arquivos a publicar, excluídos com o motivo). Ordem: a de cópia da persistência."""
@@ -87,11 +100,11 @@ def selecionar_arquivos(pasta: str | Path, *, incluir_ultimo: bool = False, incl
 
 
 def montar_manifesto(pasta: str | Path, arquivos: list[str], *, repositorio: str,
-                     excluidos: list[dict[str, str]] | None = None) -> dict[str, Any]:
+                     excluidos: list[dict[str, str]] | None = None, prefixo: str | None = None) -> dict[str, Any]:
     pasta = Path(pasta)
     registro = proveniencia.ler(pasta)
     detalhes = {r: {"sha256": sha256_arquivo(pasta / r), "tamanho": (pasta / r).stat().st_size} for r in arquivos}
-    return {"formato": FORMATO, "repositorio": repositorio, "prefixo": prefixo_da_execucao(pasta.name),
+    return {"formato": FORMATO, "repositorio": repositorio, "prefixo": prefixo or prefixo_da_execucao(pasta.name),
             "nome": pasta.name, "run_id": registro["run_id"], "config_id": registro["config_id"],
             "alias_oficial": registro.get("alias_oficial"), "estrategia": registro["estrategia"],
             "seed": registro["seed"], "codigo": registro["codigo"], "pesos_pretreinados": registro["pesos_pretreinados"],
@@ -101,10 +114,12 @@ def montar_manifesto(pasta: str | Path, arquivos: list[str], *, repositorio: str
 
 
 def planejar(pasta: str | Path, repositorio: str, *, incluir_ultimo: bool = False, incluir_test: bool = False,
-             permitir_nao_concluida: bool = False) -> dict[str, Any]:
+             permitir_nao_concluida: bool = False, prefixo: str | None = None) -> dict[str, Any]:
     """Dry-run: o que seria publicado, onde, e o que impede. Só lê arquivos locais."""
     pasta = Path(pasta)
     problemas: list[str] = []
+    if prefixo is not None:
+        validar_prefixo(prefixo)
     if "/" not in repositorio or repositorio.count("/") != 1:
         problemas.append(f"repositório {repositorio!r}: use o formato usuario/nome")
     problemas += proveniencia.conferir(pasta)
@@ -123,10 +138,10 @@ def planejar(pasta: str | Path, repositorio: str, *, incluir_ultimo: bool = Fals
         problemas.append("sem checkpoints/melhor_modelo/: nada de pesos para publicar")
     manifesto = None
     if registro and not problemas:
-        manifesto = montar_manifesto(pasta, arquivos, repositorio=repositorio, excluidos=excluidos)
+        manifesto = montar_manifesto(pasta, arquivos, repositorio=repositorio, excluidos=excluidos, prefixo=prefixo)
         problemas += [f"manifesto: {m}" for m in segredos.contem_segredo(manifesto)]
     tamanhos = {r: (pasta / r).stat().st_size for r in arquivos}
-    return {"executado": False, "repositorio": repositorio, "prefixo": prefixo_da_execucao(pasta.name),
+    return {"executado": False, "repositorio": repositorio, "prefixo": prefixo or prefixo_da_execucao(pasta.name),
             "n_arquivos": len(arquivos), "bytes": sum(tamanhos.values()), "arquivos": tamanhos,
             "excluidos": excluidos, "problemas": problemas, "pode_publicar": not problemas, "manifesto": manifesto,
             "requer": "HF_TOKEN com escrita (segredos.OPERACOES['publicar_hf'])"}
@@ -186,11 +201,11 @@ def _verificar_remoto(hf, api, repositorio: str, commit: str, prefixo: str, mani
 
 def publicar(pasta: str | Path, repositorio: str, *, credencial: segredos.Credencial | None = None,
              confirmar: bool = False, incluir_ultimo: bool = False, incluir_test: bool = False,
-             permitir_nao_concluida: bool = False) -> dict[str, Any]:
+             permitir_nao_concluida: bool = False, prefixo: str | None = None) -> dict[str, Any]:
     """Publica a execução. Sem `confirmar=True` devolve o plano (nada sai da máquina)."""
     pasta = Path(pasta)
     plano = planejar(pasta, repositorio, incluir_ultimo=incluir_ultimo, incluir_test=incluir_test,
-                     permitir_nao_concluida=permitir_nao_concluida)
+                     permitir_nao_concluida=permitir_nao_concluida, prefixo=prefixo)
     if not confirmar:
         return plano
     if plano["problemas"]:
@@ -214,6 +229,9 @@ def publicar(pasta: str | Path, repositorio: str, *, credencial: segredos.Creden
         corpo = (json.dumps(manifesto, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
         operacoes.append(hf.CommitOperationAdd(path_in_repo=f"{prefixo}/{MANIFESTO_PUBLICACAO}",
                                                path_or_fileobj=io.BytesIO(corpo)))
+        fora = [o.path_in_repo for o in operacoes if not o.path_in_repo.startswith(prefixo + "/")]
+        if fora or any(not isinstance(o, hf.CommitOperationAdd) for o in operacoes):
+            raise ErroPublicacao(f"o envio tocaria fora de {prefixo}/ ({fora[:3]}): recusado")
         info = api.create_commit(repositorio, operacoes, commit_message=f"{manifesto['run_id']}: artefatos de {pasta.name}",
                                  repo_type="model", token=token)
         commit = info.oid
@@ -224,7 +242,7 @@ def publicar(pasta: str | Path, repositorio: str, *, credencial: segredos.Creden
         raise
     except Exception as erro:  # noqa: BLE001
         raise ErroPublicacao(segredos.limpar(f"falha ao publicar ({type(erro).__name__}): {erro}", credencial)) from None
-    referencia = {"destino": "hf", "repositorio": repositorio, "prefixo": prefixo, "commit": commit,
+    referencia = {"destino": "hf", "repositorio": repositorio, "prefixo": prefixo, "nome": pasta.name, "commit": commit,
                   "manifesto_sha256": _sha_bytes(corpo), "n_arquivos": len(manifesto["arquivos"]),
                   "bytes": plano["bytes"], "publicado_em": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
                   "incluiu_ultimo": incluir_ultimo, "incluiu_test": incluir_test, **verificacao}
@@ -237,7 +255,7 @@ def publicar(pasta: str | Path, repositorio: str, *, credencial: segredos.Creden
 
 def plano_recuperacao(referencia: Mapping[str, Any], raiz_local: str | Path) -> dict[str, Any]:
     """Dry-run: o que `recuperar` baixaria (a partir da referência gravada em `experimento.json`)."""
-    nome = Path(referencia["prefixo"]).name
+    nome = referencia.get("nome") or Path(referencia["prefixo"]).name
     return {"executado": False, "repositorio": referencia["repositorio"], "prefixo": referencia["prefixo"],
             "revisao": referencia["commit"], "destino": str(Path(raiz_local) / ids.validar_nome(nome)),
             "arquivos_esperados": referencia.get("n_arquivos"), "bytes_esperados": referencia.get("bytes")}

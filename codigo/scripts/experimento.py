@@ -8,7 +8,7 @@
     python codigo/scripts/experimento.py retomada NOME [--raiz-local DIR] [--raiz-drive DIR]
     python codigo/scripts/experimento.py sincronizar NOME [--raiz-local DIR] [--raiz-drive DIR] [--sem-ultimo]
     python codigo/scripts/experimento.py restaurar NOME [--raiz-local DIR] [--raiz-drive DIR] [--substituir]
-    python codigo/scripts/experimento.py publicar NOME --repositorio USUARIO/REPO [--executar] [--incluir-ultimo] [--incluir-test]
+    python codigo/scripts/experimento.py publicar NOME --repositorio USUARIO/REPO [--prefixo PREFIXO] [--executar] [--incluir-ultimo] [--incluir-test]
     python codigo/scripts/experimento.py recuperar NOME --raiz-local DIR [--executar]
 
 Nenhum comando treina, avalia, calibra nem acessa o TEST. Os que mudam algo
@@ -122,7 +122,8 @@ def cmd_publicar(args) -> int:
     pasta = args.raiz_local / args.nome
     credencial = segredos.para_operacao("publicar_hf")[segredos.HUGGING_FACE] if args.executar else None
     resultado = publicacao_hf.publicar(pasta, args.repositorio, credencial=credencial, confirmar=args.executar,
-                                       incluir_ultimo=args.incluir_ultimo, incluir_test=args.incluir_test)
+                                       incluir_ultimo=args.incluir_ultimo, incluir_test=args.incluir_test,
+                                       prefixo=args.prefixo)
     resultado.pop("manifesto", None)
     _imprimir(resultado)
     return 0 if resultado.get("pode_publicar", True) else 1
@@ -188,6 +189,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("nome")
     p.add_argument("--repositorio", required=True, help="usuario/repositorio (privado)")
     _raizes(p, drive=False)
+    p.add_argument("--prefixo", default=None, help="pasta no repositório (padrão: runs/NOME); o Two-Stage usa etapa1/etapa2")
     p.add_argument("--executar", action="store_true", help="envia de fato; sem isto é só o plano")
     p.add_argument("--incluir-ultimo", action="store_true", help="inclui checkpoints/ultimo.pt (não é o padrão)")
     p.add_argument("--incluir-test", action="store_true", help="inclui artefatos do TEST (não é o padrão)")

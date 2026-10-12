@@ -2,7 +2,9 @@
 
 Registrado na etapa 6.1 (11/10/2026), **antes de qualquer treino científico**.
 Alterações aprovadas depois do registro, antes de qualquer treino: D5 (teto
-de 2 épocas do restrito e da Pair-Aware, seção 3) e D6 (identidade do código
+de 2 épocas do restrito e da Pair-Aware, seção 3), a correção do texto sobre as
+épocas do Two-Stage (3 e 10, seção 3) e os nomes das pastas do Two-Stage
+(seção 6), ambas de 12/10/2026, e D6 (identidade do código
 de cada execução, seção 2), de 11/10/2026; e D9 (versão dos dados da fase:
 `v2-texto-fonte`, reconstruída dos XML com a regra C1, seção 1), autorizada
 pelo autor em 11/10/2026 e registrada na nota
@@ -81,16 +83,17 @@ Limitação aceita: a ligação entre os arquivos locais e o commit depende do
 - A seleção do restrito e da Pair-Aware é a implementada e validada na etapa
   6 (a mesma métrica do baseline). Ela difere da métrica primária (F1 de
   `negation_of`); a diferença fica registrada.
-- **Teto do restrito e da Pair-Aware (D5, 11/10/2026): 2 épocas.** Decisão da
-  fase experimental atual, adotada para padronizar o orçamento de treinamento
-  dessas estratégias com o Two-Stage. Não se afirma que o teto seja ótimo nem
-  que melhore o desempenho; ele substitui o teto anterior de 10 épocas, que
-  vinha da configuração da frente no legado. As 2 épocas rodam sempre (sem
-  parada antecipada) e a escolhida é a de maior macro-F1 do DEV remapeado
-  (empate → a primeira). Divergência registrada para o autor: na redação da
-  decisão, o limite do Two-Stage é dado como 2; os tetos registrados do
-  Two-Stage são 3 (estágio 1) e 10 (estágio 2), e 2 épocas é o do estágio 2 na
-  rodada de validação técnica (seção 5). O Two-Stage não foi alterado.
+- **Teto do restrito e da Pair-Aware (D5, 11/10/2026): 2 épocas.** Decisão
+  da fase experimental atual, do autor, para o orçamento de treinamento dessas
+  duas estratégias. Não se afirma que o teto seja ótimo nem que melhore o
+  desempenho; ele substitui o teto anterior de 10 épocas, que vinha da
+  configuração da frente no legado. As 2 épocas rodam sempre (sem parada
+  antecipada) e a escolhida é a de maior macro-F1 do DEV remapeado (empate → a
+  primeira). **A D5 não se aplica ao Two-Stage:** os tetos do Two-Stage são 3
+  (estágio 1) e 10 (estágio 2), como na tabela acima e no código. A redação
+  anterior, que dava 2 épocas ao Two-Stage, foi corrigida pelo autor em
+  12/10/2026 (critério A18: protocolo × código); 2 épocas é só o do estágio 2
+  na rodada de validação técnica (seção 5).
 - No Two-Stage, cada estágio é escolhido pela sua própria métrica. **Isso não
   garante a melhor combinação para o pipeline completo.** Não há otimização
   conjunta de épocas no DEV; o único parâmetro do pipeline escolhido no DEV é
@@ -170,7 +173,7 @@ medidas.
 | 2 | `baseline_biobertpt_seed42` | ~2,4 h |
 | 3 | calibração de t (`baseline_calibrado_biobertpt_seed42`) e filtro no DEV (`filtro_pistas.py --base-execucao … --particao dev`, léxico congelado da D4, sem arquivo de calibração) | minutos, sem GPU |
 | 4 | `restrito_biobertpt_seed42` e `pairaware_biobertpt_seed42` (2 épocas, D5) | ~0,1 h cada |
-| 5 | estágios 1 e 2; `compor-dev` (τ congelado) | ~2,9 h |
+| 5 | estágios 1 e 2 (pastas `twostage_e1_biobertpt_seed42` e `twostage_e2_biobertpt_seed42`; se o nome estiver ocupado, a pasta usa o `run_id`); `compor-dev` (pasta `twostage_biobertpt_seed42`, τ congelado) | ~2,9 h |
 | 6 | `pretreino.py conferir --execucoes` e conferência de que tudo está congelado | minutos |
 | 7 | TEST, uma vez cada: baseline padrão, baseline calibrado, filtro (`filtro_pistas.py --base-execucao … --particao test`, com trilha), restrito, Pair-Aware, Two-Stage | minutos |
 | 8 | comparações (seção 7) | minutos |

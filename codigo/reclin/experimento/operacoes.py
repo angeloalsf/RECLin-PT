@@ -64,9 +64,10 @@ OP_SINCRONIZAR = "12. Sincronizar a execução com o Drive"
 OP_RESTAURAR = "13. Restaurar a execução do Drive"
 OP_INSTALAR = "14. Instalar dependências que faltam (pip)"
 OP_PUBLICAR = "15. Publicar no Hugging Face (envia)"
+OP_COMPOR = "16. Compor os estágios e escolher τ no DEV (Two-Stage; não lê o TEST)"
 SEM_ESTRATEGIA = (OP_AMBIENTE, OP_GPU, OP_INSTALAR)       # não precisam da classe de configuração
 OPERACOES = (OP_AMBIENTE, OP_GPU, OP_LISTAR, OP_NOVO, OP_RETOMAR, OP_NOVA, OP_DEV, OP_ESTADO, OP_TEST,
-             OP_PUBLICACAO, OP_PESOS, OP_SINCRONIZAR, OP_RESTAURAR, OP_INSTALAR, OP_PUBLICAR)
+             OP_PUBLICACAO, OP_PESOS, OP_SINCRONIZAR, OP_RESTAURAR, OP_INSTALAR, OP_PUBLICAR, OP_COMPOR)
 
 
 class ErroOperacao(RuntimeError):
@@ -79,11 +80,13 @@ class ErroOperacao(RuntimeError):
 @dataclass(frozen=True)
 class Especificacao:
     """O que muda de uma estratégia para outra: o nome, o script de treino e a
-    classe de configuração (`reclin.config.Config` e suas subclasses)."""
+    classe de configuração (`reclin.config.Config` e suas subclasses). `estagio` só existe nas estratégias
+    de estágios (Two-Stage): o script é então chamado como `<script> treinar --estagio N ...`, sem `--estrategia`."""
     estrategia: str
     script: str
     config_cls: type
     estrategia_config: Mapping[str, Any] | None = None
+    estagio: int | None = None
 
     def config_protocolo(self) -> Any:
         """A configuração do protocolo: os padrões da classe, com o encoder e a semente da fase."""
@@ -126,6 +129,9 @@ class Contexto:
     confirmacao: str = ""
     autorizacao_test: str = ""
     modo_ambiente: str = "minimo"
+    estagio1: str = ""                 # Two-Stage: nome (pasta) do estágio 1 concluído, para a composição
+    estagio2: str = ""                 # Two-Stage: nome (pasta) do estágio 2 concluído, para a composição
+    prefixo_hf: str = ""               # pasta no repositório do HF (vazio: runs/<nome>; estágio: etapa1/etapa2)
 
 
 # --------------------------------------------------------------------------- #
@@ -241,8 +247,12 @@ def ids_estrategia(run_id: str) -> str:
 def argumentos_de_treino(ctx: Contexto, config: Any, nome: str, *, retomar: bool) -> list[str]:
     """Os argumentos reais de `scripts/treinar.py`: todos os campos da configuração, explícitos
     (o script cria uma opção por campo), mais os de caminho e de checkpoint."""
-    argumentos = ["--estrategia", ctx.espec.estrategia, "--nome", nome, "--saida", str(ctx.raiz_local),
-                  "--particoes", str(ctx.pasta_particoes), "--modelo", str(ctx.pasta_pesos)]
+    if ctx.espec.estagio is None:
+        argumentos = ["--estrategia", ctx.espec.estrategia]
+    else:                                  # `two_stage.py treinar --estagio N` (o subcomando vem primeiro)
+        argumentos = ["treinar", "--estagio", str(int(ctx.espec.estagio))]
+    argumentos += ["--nome", nome, "--saida", str(ctx.raiz_local),
+                   "--particoes", str(ctx.pasta_particoes), "--modelo", str(ctx.pasta_pesos)]
     for campo in ctx.espec.campos:
         argumentos += ["--" + campo.replace("_", "-"), str(getattr(config, campo))]
     argumentos += ["--checkpoint-a-cada", str(int(ctx.checkpoint_a_cada))]
@@ -480,6 +490,53 @@ def _executar_treino(ctx: Contexto, pasta: Path, config: Any, *, retomar: bool) 
     return resultado
 
 
+def compor_dev(ctx: Contexto) -> dict[str, Any]:
+    """Two-Stage: com os dois estágios concluídos (`ctx.estagio1`, `ctx.estagio2`), roda
+    `two_stage.py compor-dev`, que escolhe τ no DEV pelo fluxo real e o congela em `limiar.json`, e espelha a
+    composição no Drive. **Não lê o TEST** (nem existe aqui comando que o leia)."""
+    drive = _exigir_drive(ctx)
+    pastas = {}
+    for numero, nome in ((1, ctx.estagio1), (2, ctx.estagio2)):
+        if not nome:
+            raise ErroOperacao(f"informe o nome do estágio {numero} concluído (ESTAGIO{numero})")
+        pasta = ctx.raiz_local / nome
+        if not (pasta / proveniencia.ARQUIVO).is_file():
+            raise ErroOperacao(f"o estágio {numero} ({nome}) não está no disco local: restaure-o do Drive antes")
+        registro = proveniencia.ler(pasta)
+        esperado = f"two_stage_e{numero}"
+        if registro["estrategia"] != esperado:
+            raise ErroOperacao(f"{nome} é da estratégia {registro['estrategia']!r}, não de {esperado!r}")
+        derivado = proveniencia.derivar_estado(pasta)["estado"]
+        if derivado != "concluida":
+            raise ErroOperacao(f"o estágio {numero} ({nome}) não está concluído (os arquivos evidenciam {derivado!r})")
+        pastas[numero] = pasta
+    nome_composicao = f"twostage_{ENCODER_DA_FASE}_seed{SEMENTE_DA_FASE}"
+    destino = ctx.raiz_local / nome_composicao
+    if (destino / "config.json").exists():
+        raise ErroOperacao(f"a composição {nome_composicao} já existe: o τ dela já foi escolhido e congelado; "
+                           "nada é sobrescrito")
+    _exigir_gpu(ctx)
+    argumentos = ["compor-dev", "--estagio1", str(pastas[1]), "--estagio2", str(pastas[2]), "--nome", nome_composicao,
+                  "--saida", str(ctx.raiz_local), "--particoes", str(ctx.pasta_particoes)]
+    _titulo("Compondo os estágios no DEV")
+    print("scripts/two_stage.py", " ".join(argumentos))
+    saida = raiz.rodar_script(ctx.codigo, "two_stage.py", *argumentos, verificar=False,
+                              log=ctx.raiz_local.parent / "logs-composicao" / f"{nome_composicao}-{_agora()}.log")
+    if saida != 0:
+        raise ErroOperacao(f"a composição terminou com código {saida}; veja a saída acima. Nada foi espelhado.")
+    espelho = persistencia.sincronizar(destino, drive, incluir_ultimo=False)
+    resultado: dict[str, Any] = {"nome": nome_composicao, "estagio1": ctx.estagio1, "estagio2": ctx.estagio2,
+                                 "espelho_no_drive": {k: v for k, v in espelho.items() if k != "manifesto_sha256"}}
+    limiar = ler_json(destino / "limiar.json")
+    resultado["tau"] = limiar.get("limiar")
+    dev = (ler_json(destino / "metricas.json").get("dev") or {})
+    resultado["dev"] = {k: dev[k] for k in ("macro_f1", "micro_f1", "weighted_f1", "mcc", "f1_per_class") if k in dev}
+    _titulo("Resultado (DEV, fluxo real)")
+    _imprimir(resultado)
+    print("\nτ ficou congelado em limiar.json. O TEST não foi lido; a avaliação dele é etapa separada, uma única vez.")
+    return resultado
+
+
 def _preparar_treino(ctx: Contexto, modo: str) -> tuple[Any, dict[str, Any], dict[str, Any]]:
     espec = ctx.espec
     _exigir_drive(ctx)
@@ -568,9 +625,17 @@ def metricas_dev(ctx: Contexto) -> dict[str, Any]:
     if (pasta / "treino.json").is_file():
         treino = ler_json(pasta / "treino.json")
         historico = treino.get("dev_history") or []
-        _tabela(historico, ["epoch", "train_loss", "dev_loss", "dev_macro_f1", "dev_negation_of_f1", "duration_s"])
-        print(f"\nconcluído: {treino.get('concluido')} | posição: {treino.get('posicao')} | "
-              f"melhor época (DEV, macro-F1): {treino.get('melhor_epoca')} ({treino.get('melhor_dev_macro_f1')})")
+        if ctx.espec.estagio is None:
+            _tabela(historico, ["epoch", "train_loss", "dev_loss", "dev_macro_f1", "dev_negation_of_f1", "duration_s"])
+            print(f"\nconcluído: {treino.get('concluido')} | posição: {treino.get('posicao')} | "
+                  f"melhor época (DEV, macro-F1): {treino.get('melhor_epoca')} ({treino.get('melhor_dev_macro_f1')})")
+        else:                              # estágio: as métricas do histórico são as do próprio estágio
+            colunas = ["epoch", "train_loss", "dev_loss"] + sorted(
+                {k for h in historico for k, v in h.items() if isinstance(v, (int, float))}
+                - {"epoch", "train_loss", "dev_loss"})
+            _tabela(historico, colunas)
+            print(f"\nconcluído: {treino.get('concluido')} | posição: {treino.get('posicao')} | melhor época (DEV, "
+                  f"{treino.get('campo_selecao')}): {treino.get('melhor_epoca')} ({treino.get('melhor_valor_selecao')})")
         resultado.update({"historico": historico, "melhor_epoca": treino.get("melhor_epoca"),
                           "concluido": treino.get("concluido")})
     else:
@@ -714,6 +779,18 @@ def frase_de_publicacao(nome: str, repositorio: str) -> str:
     return f"PUBLICAR {nome} EM {repositorio}"
 
 
+def _prefixo_hf(ctx: Contexto, pasta: Path | None = None) -> str | None:
+    """O prefixo da publicação: `runs/<nome>` (None) ou, num estágio do Two-Stage, `etapa1`/`etapa2`."""
+    n = ctx.espec.estagio
+    if n is None:
+        return ctx.prefixo_hf or None
+    if ctx.prefixo_hf and ctx.prefixo_hf != f"etapa{n}":
+        raise ErroOperacao(f"o estágio {n} só se publica em etapa{n}/ (recebi {ctx.prefixo_hf!r})")
+    if pasta is not None and proveniencia.ler(pasta)["estrategia"] != ctx.espec.estrategia:
+        raise ErroOperacao(f"{pasta.name} não é uma execução de {ctx.espec.estrategia}")
+    return f"etapa{n}"
+
+
 def preparar_publicacao(ctx: Contexto) -> dict[str, Any]:
     if not ctx.repositorio_hf:
         raise ErroOperacao("informe REPOSITORIO_HF (usuario/nome do repositório privado de artefatos) na célula de "
@@ -721,7 +798,7 @@ def preparar_publicacao(ctx: Contexto) -> dict[str, Any]:
     nome, pasta, onde = _resolver_execucao(ctx)
     if onde != "local":
         raise ErroOperacao(f"{nome} só existe no Drive: restaure-a (operação 13) antes de planejar a publicação")
-    p = publicacao_hf.planejar(pasta, ctx.repositorio_hf)
+    p = publicacao_hf.planejar(pasta, ctx.repositorio_hf, prefixo=_prefixo_hf(ctx, pasta))
     _titulo(f"Plano de publicação — {nome}")
     print(f"Destino: https://huggingface.co/{ctx.repositorio_hf}/tree/main/{p['prefixo']} (repositório privado)")
     print(f"{p['n_arquivos']} arquivos, {p['bytes'] / 1e6:.1f} MB. Nada foi enviado.")
@@ -746,8 +823,10 @@ def publicar(ctx: Contexto) -> dict[str, Any]:
                            f"CONFIRMACAO = {esperado!r}")
     if onde != "local":
         raise ErroOperacao(f"{nome} só existe no Drive: restaure-a antes de publicar")
+    prefixo = _prefixo_hf(ctx, pasta)
+    extra = ["--prefixo", prefixo] if prefixo else []
     codigo = raiz.rodar_script(ctx.codigo, "experimento.py", "publicar", nome, "--repositorio", ctx.repositorio_hf,
-                               "--raiz-local", str(ctx.raiz_local), "--executar", verificar=False)
+                               *extra, "--raiz-local", str(ctx.raiz_local), "--executar", verificar=False)
     if codigo != 0:
         raise ErroOperacao(f"a publicação terminou com código {codigo}; veja a saída acima (o Secret HF_TOKEN, com "
                            "escrita, precisa estar configurado e liberado para este notebook)")
@@ -762,6 +841,7 @@ _DESPACHO: dict[str, Callable[[Contexto], Any]] = {
     OP_RETOMAR: retomar_treino, OP_NOVA: treinar_nova_execucao, OP_DEV: metricas_dev, OP_ESTADO: estado_e_logs,
     OP_TEST: preparar_test, OP_PUBLICACAO: preparar_publicacao, OP_PESOS: obter_pesos,
     OP_SINCRONIZAR: sincronizar, OP_RESTAURAR: restaurar, OP_INSTALAR: instalar_dependencias, OP_PUBLICAR: publicar,
+    OP_COMPOR: compor_dev,
 }
 
 

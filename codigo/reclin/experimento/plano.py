@@ -37,8 +37,10 @@ NOMES_OFICIAIS: dict[str, str] = {
     "baseline_calibrado_biobertpt_seed42": "baseline_calibrado",
     "restrito_biobertpt_seed42": "restrito",
     "pairaware_biobertpt_seed42": "pair_aware",
+    "twostage_e1_biobertpt_seed42": "two_stage_e1",
+    "twostage_e2_biobertpt_seed42": "two_stage_e2",
 }
-PADRAO_OFICIAL = re.compile(r"^[a-z_]+?_(?P<encoder>[a-z]+)_seed(?P<seed>[0-9]+)$")
+PADRAO_OFICIAL = re.compile(r"^[a-z0-9_]+?_(?P<encoder>[a-z]+)_seed(?P<seed>[0-9]+)$")
 ESCOPO_CODIGO = "global-v1"
 PARTICOES_DA_CHAVE = ("train", "dev")          # o que um treino usa; o TEST não entra na chave
 ACOES = ("retomar", "iniciar_planejada", "ja_concluida", "nova_execucao")
