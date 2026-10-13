@@ -314,7 +314,6 @@ def _preparar_clone(s: _Sessao, *, url: str, clone: Path, branch: str, sha_codig
     if remoto_existe:
         s.git("fetch", "--depth", "1", "origin", f"+refs/heads/{branch}:refs/remotes/origin/{branch}", cwd=clone)
         s.git("checkout", "-B", branch, f"refs/remotes/origin/{branch}", cwd=clone)
-        s.git("branch", f"--set-upstream-to=origin/{branch}", branch, cwd=clone)
     else:
         s.git("fetch", "--depth", "1", "origin", sha_codigo, cwd=clone)
         s.git("checkout", "-B", branch, "FETCH_HEAD", cwd=clone)

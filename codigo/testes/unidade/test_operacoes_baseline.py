@@ -548,6 +548,20 @@ def test_salvar_segue_a_ordem_e_nao_deixa_o_token_em_lugar_nenhum(tmp_path, monk
     assert not list(clone.rglob("*.pt")) and not list(clone.rglob("*_test*"))
 
 
+def test_branch_ja_existente_no_remoto_nao_usa_set_upstream(tmp_path, monkeypatch):
+    """`clone --depth 1` é de um branch só: `branch --set-upstream-to=origin/<branch>` falha ("is not a branch").
+    O upstream vem do `push -u`; o `pull` já nomeia o branch."""
+    ctx = _ctx_com_chave(tmp_path, monkeypatch)
+    pasta, clone = _concluida(ctx), tmp_path / "clone"
+    git = GitFalso(remoto=True)
+    _salvar(pasta, clone, git)
+    verbos = [c[0][0] for c in git.chamadas]
+    assert verbos == ["ls-remote", "clone", "fetch", "checkout", "add", "diff", "commit", "pull", "push", "rev-parse"]
+    assert not any("--set-upstream-to" in " ".join(c[0]) for c in git.chamadas)
+    push = next(c[0] for c in git.chamadas if c[0][0] == "push")
+    assert push == ["push", "-u", "origin", BRANCH]
+
+
 def test_reexecutar_sem_mudanca_nao_cria_commit(tmp_path, monkeypatch):
     ctx = _ctx_com_chave(tmp_path, monkeypatch)
     pasta, clone = _concluida(ctx), tmp_path / "clone"
