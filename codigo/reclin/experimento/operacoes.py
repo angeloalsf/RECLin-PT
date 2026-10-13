@@ -246,15 +246,20 @@ def ids_estrategia(run_id: str) -> str:
 
 def argumentos_de_treino(ctx: Contexto, config: Any, nome: str, *, retomar: bool) -> list[str]:
     """Os argumentos reais de `scripts/treinar.py`: todos os campos da configuração, explícitos
-    (o script cria uma opção por campo), mais os de caminho e de checkpoint."""
+    (o script cria uma opção por campo), mais os de caminho e de checkpoint. Um campo `None` cujo padrão
+    também é `None` (opcional, como os da cabeça da Pair-Aware) fica de fora: o script o assume `None`."""
     if ctx.espec.estagio is None:
         argumentos = ["--estrategia", ctx.espec.estrategia]
     else:                                  # `two_stage.py treinar --estagio N` (o subcomando vem primeiro)
         argumentos = ["treinar", "--estagio", str(int(ctx.espec.estagio))]
     argumentos += ["--nome", nome, "--saida", str(ctx.raiz_local),
                    "--particoes", str(ctx.pasta_particoes), "--modelo", str(ctx.pasta_pesos)]
+    padrao = ctx.espec.config_cls()
     for campo in ctx.espec.campos:
-        argumentos += ["--" + campo.replace("_", "-"), str(getattr(config, campo))]
+        valor = getattr(config, campo)
+        if valor is None and getattr(padrao, campo) is None:
+            continue                       # campo opcional no padrão (ex.: `mlp_hidden`): o script já assume None
+        argumentos += ["--" + campo.replace("_", "-"), str(valor)]
     argumentos += ["--checkpoint-a-cada", str(int(ctx.checkpoint_a_cada))]
     if retomar:
         argumentos.append("--retomar")
