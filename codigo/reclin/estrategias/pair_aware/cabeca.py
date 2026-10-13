@@ -7,14 +7,19 @@ explicitamente o estado oculto da última camada em três posições,
 
     h_cls = H[0]        h_e1 = H[pos([E1])]        h_e2 = H[pos([E2])]
 
-concatena os três e classifica com uma MLP pequena:
+concatena os três e classifica com uma **camada linear única, sem MLP de
+fusão** (a mesma forma da cabeça dos baselines, dropout + linear, só que sobre
+a representação do par):
 
-    [h_cls ; h_e1 ; h_e2]  (3d)  ->  Linear(3d, m)  ->  GELU  ->  Dropout(p)
-                                 ->  Linear(m, 3)
+    [h_cls ; h_e1 ; h_e2]  (3d)  ->  Dropout(p)  ->  Linear(3d, 3)
 
 É a variante "entity start" de Baldini Soares et al. (2019), com o `[CLS]`
-mantido na concatenação. `m` é, por padrão, o `hidden_size` do encoder e `p`,
-o `hidden_dropout_prob` (o dropout do classificador dos baselines).
+mantido na concatenação. `p` é, por padrão, o `hidden_dropout_prob` do encoder
+(o dropout do classificador dos baselines).
+
+Histórico: até o formato 1 a cabeça tinha uma MLP (`Linear(3d, m) -> GELU ->
+Dropout -> Linear(m, 3)`). Ela foi removida; o formato 2 não carrega pesos do
+formato 1 (`from_pretrained` recusa).
 
 Posição dos marcadores: `[E1]` e `[E2]` são tokens especiais atômicos; a
 posição de cada um é a primeira ocorrência do id em `input_ids`, só entre as
@@ -34,7 +39,8 @@ embeddings — a ordem do legado.
 (encoder no formato HF + cabeça em safetensors + JSON de configuração): é o
 que `modelos.salvar` e `modelos.recarregar` usam, sem conhecer a cabeça.
 
-Origem no legado: `src/pair_aware/model.py`, sem mudança de comportamento.
+Origem no legado: `src/pair_aware/model.py` (com MLP, formato 1); a versão atual
+troca a MLP pela camada linear e não é equivalente ao legado.
 """
 from __future__ import annotations
 
@@ -45,11 +51,10 @@ from typing import Sequence
 import torch
 from torch import nn
 
-FORMATO = 1
+FORMATO = 2
 CONFIG_FILE = "pair_aware_config.json"
 HEAD_FILE = "pair_aware_head.safetensors"
-ARQUITETURA = ("concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Linear(3d, m) "
-               "-> GELU -> Dropout(p) -> Linear(m, C)")
+ARQUITETURA = "concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Dropout(p) -> Linear(3d, C) (sem MLP)"
 
 
 def _carregar_encoder(nome_ou_pasta: str, add_pooling_layer: bool = False):
@@ -98,26 +103,23 @@ def posicoes_dos_marcadores(input_ids: torch.Tensor, attention_mask: torch.Tenso
 
 
 class PairAwareClassifier(nn.Module):
-    """Encoder HF + cabeca [h_cls ; h_e1 ; h_e2] -> MLP -> C classes."""
+    """Encoder HF + cabeca linear sobre [h_cls ; h_e1 ; h_e2] -> C classes (sem MLP)."""
 
     def __init__(self, encoder: nn.Module, *, e1_token_id: int, e2_token_id: int,
-                 num_labels: int = 3, mlp_hidden: int | None = None,
+                 num_labels: int = 3,
                  dropout: float | None = None, id2label: dict | None = None,
                  label2id: dict | None = None, tem_pooler: bool = False):
         super().__init__()
         self.encoder = encoder
         cfg = encoder.config
         d = int(cfg.hidden_size)
-        m = int(mlp_hidden) if mlp_hidden else d
         p = float(dropout) if dropout is not None else float(
             getattr(cfg, "classifier_dropout", None) or getattr(cfg, "hidden_dropout_prob", 0.1))
         self.e1_token_id, self.e2_token_id = int(e1_token_id), int(e2_token_id)
         self.num_labels = int(num_labels)
         self.head = nn.Sequential(
-            nn.Linear(3 * d, m),
-            nn.GELU(),
             nn.Dropout(p),
-            nn.Linear(m, self.num_labels),
+            nn.Linear(3 * d, self.num_labels),
         )
         # Mesma inicializacao das cabecas do `transformers` (BertForSequence-
         # Classification): normal(0, initializer_range), vies zero. Consome o RNG
@@ -130,7 +132,7 @@ class PairAwareClassifier(nn.Module):
                 nn.init.zeros_(mod.bias)
         self.pair_aware_config = {
             "formato": FORMATO, "arquitetura": ARQUITETURA,
-            "hidden_size": d, "mlp_hidden": m, "dropout": p,
+            "hidden_size": d, "dropout": p,
             "num_labels": self.num_labels,
             "e1_token_id": self.e1_token_id, "e2_token_id": self.e2_token_id,
             "fallback_marcador_ausente": "posicao 0 (h_cls)",
@@ -146,7 +148,7 @@ class PairAwareClassifier(nn.Module):
     # ------------------------------------------------------------------ #
     @classmethod
     def from_encoder_pretrained(cls, nome_ou_pasta: str, *, tokenizer, num_labels: int = 3,
-                                mlp_hidden: int | None = None, dropout: float | None = None,
+                                dropout: float | None = None,
                                 id2label: dict | None = None, label2id: dict | None = None):
         """Encoder pre-treinado (Hub ou pasta) + cabeca nova.
 
@@ -157,7 +159,7 @@ class PairAwareClassifier(nn.Module):
         encoder.resize_token_embeddings(len(tokenizer))
         e1, e2 = ids_dos_marcadores(tokenizer)
         return cls(encoder, e1_token_id=e1, e2_token_id=e2, num_labels=num_labels,
-                   mlp_hidden=mlp_hidden, dropout=dropout, id2label=id2label,
+                   dropout=dropout, id2label=id2label,
                    label2id=label2id, tem_pooler=tem_pooler)
 
     @classmethod
@@ -171,8 +173,7 @@ class PairAwareClassifier(nn.Module):
         encoder, tem_pooler = _carregar_encoder(str(pasta),
                                                 add_pooling_layer=cfg.get("tem_pooler", False))
         modelo = cls(encoder, e1_token_id=cfg["e1_token_id"], e2_token_id=cfg["e2_token_id"],
-                     num_labels=cfg["num_labels"], mlp_hidden=cfg["mlp_hidden"],
-                     dropout=cfg["dropout"],
+                     num_labels=cfg["num_labels"], dropout=cfg["dropout"],
                      id2label={int(k): v for k, v in cfg.get("id2label", {}).items()},
                      label2id=cfg.get("label2id"), tem_pooler=tem_pooler)
         modelo.head.load_state_dict(load_file(str(pasta / HEAD_FILE)))

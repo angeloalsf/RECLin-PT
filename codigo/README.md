@@ -136,7 +136,7 @@ python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --see
 # se for interrompido: o MESMO comando com --retomar continua do último checkpoint
 python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --seed 42 --checkpoint-a-cada 500 --retomar
 
-# fine-tuning restrito e Pair-Aware (execuções restrito_biobertpt_seed42 e pairaware_biobertpt_seed42)
+# fine-tuning restrito e Pair-Aware (execuções restrito_biobertpt_seed42 e pairaware_biobertpt_seed42; a Pair-Aware usa todos os pares, sem léxico)
 python codigo/scripts/treinar.py --estrategia restrito --encoder biobertpt --seed 42
 python codigo/scripts/treinar.py --estrategia pair_aware --encoder biobertpt --seed 42
 
@@ -148,14 +148,15 @@ python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/bas
 | --- | --- | --- | --- | --- |
 | `baseline` | todos os candidatos | encoder + cabeça [CLS] (`AutoModelForSequenceClassification`) | macro-F1 do DEV | os de `Config` (3 épocas) |
 | `restrito` | só os pares cujo e1 é pista do léxico congelado | o mesmo do baseline | macro-F1 do DEV **remapeado** ao conjunto completo | `ConfigRestrito`: 2 épocas (teto da fase atual, D5); pesos `balanced` do TRAIN restrito |
-| `pair_aware` | os do restrito | encoder sem pooler + `[h_cls ; h_[E1] ; h_[E2]] → Linear → GELU → Dropout → Linear` | como o restrito | `ConfigPairAware`: a do restrito + `--mlp-hidden` e `--head-dropout` (padrão: os do encoder) |
+| `pair_aware` | todos os candidatos (sem filtro lexical e sem uso do léxico; D10) | encoder sem pooler + `[h_cls ; h_[E1] ; h_[E2]] → Dropout → Linear` (sem MLP) | macro-F1 do DEV completo | `ConfigPairAware`: a de `Config` (3 épocas, lote 64) + `--head-dropout` (padrão: o do encoder) |
 
-O restrito e a Pair-Aware gravam as predições no conjunto completo (fora do
+O restrito grava as predições no conjunto completo (fora do
 espaço restrito, `no_relation` com probabilidades `[0, 0, 1]`), com os índices
 do espaço (`restricted_indices`), as métricas do DEV e do TEST no conjunto
 completo e no subconjunto (`dev_restrito`, `test_restrito`) e o léxico usado
-em `config.json`. Só o F1 de `negation_of` delas é comparável com o do baseline.
-Os dois exigem as partições congeladas (o léxico é o da etapa 3); a avaliação
+em `config.json`. Só o F1 de `negation_of` dele é comparável com o do baseline. A
+Pair-Aware (D10) pontua todos os pares e é comparável em todas as métricas.
+O restrito exige as partições congeladas (o léxico é o da etapa 3); a avaliação
 do TEST refaz a seleção a partir do léxico gravado, sem ler o TRAIN.
 
 Configuração: os hiperparâmetros têm como padrão os da configuração da
@@ -364,7 +365,7 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/estrategias/regra_pura.py` | Estratégia: regra pura R1 a R4 (pista + distância, sem modelo), com a calibração da regra no DEV |
 | `reclin/estrategias/baseline.py` | Estratégia treinada: o classificador da tarefa (todos os candidatos, cabeça [CLS]) |
 | `reclin/estrategias/restrito.py` | Estratégia treinada: fine-tuning só nos pares cujo e1 é pista, com a época escolhida no DEV remapeado |
-| `reclin/estrategias/pair_aware/` | Estratégia treinada: o restrito com a cabeça Pair-Aware (`cabeca.py`) |
+| `reclin/estrategias/pair_aware/` | Estratégia treinada: o baseline (todos os pares, sem léxico) com a cabeça Pair-Aware linear (`cabeca.py`) |
 | `reclin/estrategias/two_stage/` | Estratégia treinada (etapa 6.1): dois estágios binários independentes a partir dos pesos originais (`inicializacao`, `estagios`, `metricas`, `treino`) e a inferência conjunta com τ escolhido no DEV (`composicao`) |
 | `reclin/estrategias/baseline_calibrado.py` | Controle de calibração (etapa 6.1): limiar t sobre as probabilidades do baseline, escolhido no DEV |
 | `reclin/pretreino.py` | Proveniência dos pesos pré-treinados: download num commit exato, `PROVENIENCIA.json`, conferência antes da carga, checagem entre execuções |

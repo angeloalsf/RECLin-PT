@@ -3,7 +3,7 @@
 O que muda em relação ao baseline (e só isto):
 
 1. Os exemplos de TRAIN, DEV e TEST são só os candidatos cujo e1 é pista do
-   léxico congelado (`negacao.lexico`, `min_freq=3`, induzido do TRAIN),
+   léxico congelado (`negacao.lexico`, `min_freq=10`, induzido do TRAIN),
    na ordem do conjunto completo. A janela de cada um é, byte a byte, a que o
    baseline vê para o mesmo par.
 2. `epochs` padrão 2 (`ConfigRestrito`): o teto da fase atual (decisão D5 de

@@ -8,8 +8,8 @@
 
 Estratégias (`reclin.estrategias`): `baseline` (todos os candidatos, cabeça
 [CLS]), `restrito` (só os pares cujo e1 é pista do léxico congelado; época
-escolhida no DEV remapeado) e `pair_aware` (o restrito com a cabeça
-[h_cls ; h_E1 ; h_E2]). O nome padrão da execução é o do legado:
+escolhida no DEV remapeado) e `pair_aware` (todos os candidatos, sem filtro nem
+léxico, com a cabeça linear [h_cls ; h_E1 ; h_E2], sem MLP). O nome padrão da execução é o do legado:
 `baseline_<encoder>_seed<N>`, `restrito_<encoder>_seed<N>`,
 `pairaware_<encoder>_seed<N>`.
 
@@ -167,9 +167,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.threads:
         torch.set_num_threads(args.threads)
     try:
-        if modulo is baseline:
-            montagem = baseline.montagem(config)
-        else:     # restrito e Pair-Aware: o léxico congelado, induzido do TRAIN
+        if modulo in (baseline, pair_aware):    # todos os candidatos; sem léxico
+            montagem = modulo.montagem(config)
+        else:     # restrito: o léxico congelado, induzido do TRAIN
             divergencias = particoes.conferir_particoes(args.particoes, ("train",))
             if divergencias:
                 raise classificador.ErroExecucao("partições não conferem com o MANIFEST: "

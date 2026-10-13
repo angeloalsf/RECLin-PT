@@ -1,4 +1,5 @@
-"""Portão da etapa 6: baseline, restrito e Pair-Aware iguais aos do legado.
+"""Portão da etapa 6: baseline e restrito iguais aos do legado (a Pair-Aware do legado, restrita e com
+MLP, deixou de ser reproduzida: ver a D10 do protocolo; suas referências ficam preservadas como histórico).
 
 Referências (todas geradas pelo código do legado; nenhuma foi alterada):
 
@@ -87,8 +88,9 @@ def test_indices_e_janelas_do_restrito(nome, espaco, referencia_dados):
 
 
 @pytest.mark.parametrize("nome", ["train", "dev", "test"])
-def test_pair_aware_seleciona_os_mesmos_pares(nome, espaco, lexico):
-    assert pair_aware.selecionar(espaco[nome]["cands"], lexico) == espaco[nome]["indices"]
+def test_legado_pair_aware_selecionava_os_mesmos_pares_do_restrito(nome, espaco, lexico):
+    """O espaço da Pair-Aware do legado era o do restrito (hoje só o restrito o usa)."""
+    assert restrito.selecionar(espaco[nome]["cands"], lexico) == espaco[nome]["indices"]
 
 
 def test_pesos_balanced_do_restrito(espaco, referencia_dados):
@@ -193,11 +195,14 @@ def test_restrito_minusculo(tmp_path, lexico, uma_thread):
     conferir_sidecars_byte_a_byte(tmp_path / "r", "restrito_minusculo_seed42")
 
 
+@pytest.mark.skip(reason="D10 (13/10/2026): a Pair-Aware deixou de ser restrita ao léxico e com MLP; a referência do "
+                         "legado (testes/referencia/treino/pairaware_minusculo_seed42.*) é histórica e não é mais "
+                         "reproduzida por este código")
 @EXATO
-def test_pair_aware_minusculo(tmp_path, lexico, uma_thread):
-    """3 épocas no espaço restrito das partições completas (cerca de 1 min)."""
+def test_pair_aware_minusculo_do_legado_nao_e_mais_reproduzido(tmp_path, lexico, uma_thread):
+    """Histórico: 3 épocas no espaço restrito, com a cabeça MLP. Mantido só como documentação da referência."""
     config = pair_aware.ConfigPairAware(epochs=3, lr=1e-3, seed=42)
-    treino = treinar_e_avaliar(tmp_path, "p", config, pair_aware.montagem(config, lexico=lexico))
+    treino = treinar_e_avaliar(tmp_path, "p", config, pair_aware.montagem(config))
     ref = ler_json(TREINO / "pairaware_minusculo_seed42.json")
     metricas = conferir_restrito(tmp_path / "p", treino, ref)
     conferir_sidecars_byte_a_byte(tmp_path / "p", "pairaware_minusculo_seed42")

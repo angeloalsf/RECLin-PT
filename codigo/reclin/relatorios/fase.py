@@ -22,7 +22,7 @@ ROTULO_NATUREZA = {
     "fora_da_fase": "execução fora da fase (técnica) — não é resultado do TCC",
 }
 
-# só o F1 de negation_of é comparável com o baseline no restrito e na Pair-Aware
+# só o F1 de negation_of é comparável com o baseline no restrito (a Pair-Aware atual avalia o DEV/TEST completo)
 COMPLETA, SO_NEG = "completa", "so_f1_negation_of"
 
 
@@ -45,7 +45,7 @@ def sistemas(encoder: str | None = None, seed: int | None = None) -> tuple[Siste
         Sistema("baseline_calibrado", "Baseline calibrado", f"baseline_calibrado_{sufixo}", nota_dev=otimista),
         Sistema("filtro", "Filtro léxico", f"filtro_{sufixo}"),
         Sistema("restrito", "Restrito", f"restrito_{sufixo}", SO_NEG),
-        Sistema("pair_aware", "Pair-Aware", f"pairaware_{sufixo}", SO_NEG),
+        Sistema("pair_aware", "Pair-Aware", f"pairaware_{sufixo}"),
         Sistema("two_stage", "Two-Stage", f"twostage_{sufixo}", nota_dev=otimista),
     )
 

@@ -3,8 +3,9 @@ retomada, separação entre estratégias, sidecars no conjunto completo, TEST
 separado do treino e os comandos.
 
 Partições pequenas (as primeiras 30/10/10 linhas: 20/28/60 pares restritos)
-com o léxico congelado das partições completas; 3 épocas, lotes de 4 (5
-passos por época no espaço restrito), `max_length` 64, `lr` 1e-3. Os testes
+com o léxico congelado das partições completas; 3 épocas, `max_length` 64,
+`lr` 1e-3; lotes de 4 no restrito (5 passos por época no espaço restrito) e de
+256 na Pair-Aware, que treina em todos os pares (sem léxico; 21 passos por época). Os testes
 dos comandos usam as partições completas, com 1 época.
 """
 from __future__ import annotations
@@ -30,9 +31,10 @@ from reclin.util.caminhos import CODIGO, PARTICOES  # noqa: E402
 MODELO_MINUSCULO = CODIGO / "testes" / "referencia" / "modelo_minusculo"
 SCRIPTS = CODIGO / "scripts"
 PEQUENA = {"epochs": 3, "batch_size": 4, "max_length": 64, "lr": 1e-3, "seed": 42}
-CONFIGS = {"restrito": restrito.ConfigRestrito(**PEQUENA), "pair_aware": pair_aware.ConfigPairAware(**PEQUENA)}
+CONFIGS = {"restrito": restrito.ConfigRestrito(**PEQUENA),
+           "pair_aware": pair_aware.ConfigPairAware(**{**PEQUENA, "batch_size": 256})}
 MODULOS = {"restrito": restrito, "pair_aware": pair_aware}
-PASSOS = 5
+PASSOS = {"restrito": 5, "pair_aware": 21}
 
 
 @pytest.fixture(scope="module")
@@ -45,16 +47,23 @@ def pequenas(subconjunto):
     return subconjunto(30, 10, 10)
 
 
+def _montagem(qual, config, lexico):
+    """O restrito usa o léxico congelado; a Pair-Aware (D10) não usa léxico nenhum."""
+    if qual == "restrito":
+        return restrito.montagem(config, lexico=lexico)
+    return pair_aware.montagem(config)
+
+
 def treinar(raiz, nome, qual, pasta_particoes, lexico, config=None, **kw):
     config = config or CONFIGS[qual]
     return classificador.treinar_execucao(raiz, nome, config, modelo=MODELO_MINUSCULO,
                                           pasta_particoes=pasta_particoes,
-                                          montagem=MODULOS[qual].montagem(config, lexico=lexico), **kw)
+                                          montagem=_montagem(qual, config, lexico), **kw)
 
 
 def avaliar(pasta, qual, pasta_particoes, lexico, **kw):
     return classificador.avaliar_test(pasta, pasta_particoes=pasta_particoes,
-                                      montagem=MODULOS[qual].montagem(CONFIGS[qual], lexico=lexico), **kw)
+                                      montagem=_montagem(qual, CONFIGS[qual], lexico), **kw)
 
 
 @pytest.fixture(scope="module")
@@ -62,7 +71,7 @@ def continuas(tmp_path_factory, pequenas, lexico):
     raiz = tmp_path_factory.mktemp("continuas")
     for qual in MODULOS:
         registro = treinar(raiz, qual, qual, pequenas, lexico)
-        assert registro["concluido"] and registro["passos"]["por_epoca"] == PASSOS
+        assert registro["concluido"] and registro["passos"]["por_epoca"] == PASSOS[qual]
         avaliar(raiz / qual, qual, pequenas, lexico)
     return raiz
 
@@ -87,8 +96,9 @@ def iguais(a, b) -> bool:
 # Retomada                                                                    #
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("qual", ["restrito", "pair_aware"])
-@pytest.mark.parametrize("parar", [PASSOS + 2, PASSOS])
-def test_interrompida_e_retomada_igual_a_continua(qual, parar, tmp_path, pequenas, lexico, continuas):
+@pytest.mark.parametrize("depois", [2, 0])
+def test_interrompida_e_retomada_igual_a_continua(qual, depois, tmp_path, pequenas, lexico, continuas):
+    parar = PASSOS[qual] + depois
     assert not treinar(tmp_path, "r", qual, pequenas, lexico, parar_apos_passo=parar)["concluido"]
     assert treinar(tmp_path, "r", qual, pequenas, lexico, retomar=True)["concluido"]
     a, b = checkpoint.carregar_estado(continuas / qual), checkpoint.carregar_estado(tmp_path / "r")
@@ -106,8 +116,8 @@ def test_interrompida_e_retomada_igual_a_continua(qual, parar, tmp_path, pequena
 # --------------------------------------------------------------------------- #
 # O que cada estratégia grava                                                 #
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("qual", ["restrito", "pair_aware"])
-def test_sidecars_no_conjunto_completo_com_os_indices(qual, pequenas, lexico, continuas):
+def test_sidecars_no_conjunto_completo_com_os_indices(pequenas, lexico, continuas):
+    qual = "restrito"
     pasta = continuas / qual
     for particao, extras in (("dev", ["best_dev_macro_f1_history", "dev_macro_f1_recomputed",
                                       "dev_negation_of_f1_recomputed"]), ("test", [])):
@@ -125,7 +135,27 @@ def test_sidecars_no_conjunto_completo_com_os_indices(qual, pequenas, lexico, co
         assert list(s) == esperadas
 
 
-@pytest.mark.parametrize("qual", ["restrito", "pair_aware"])
+def test_pair_aware_pontua_todos_os_pares_sem_indices_nem_lexico(pequenas, continuas):
+    pasta = continuas / "pair_aware"
+    for particao in ("dev", "test"):
+        s = predicoes.ler(pasta / f"predicoes_{particao}.json")
+        cands = tarefa.candidatos(particoes.ler_particao(pequenas, particao))
+        assert s["y_true"] == tarefa.y_true(cands) and len(s["y_pred"]) == len(cands)
+        assert "restricted_indices" not in s and "n_restrito" not in s       # nenhum filtro, nenhum remapeamento
+        assert len(set(s["y_pred"])) > 1                                      # não é só no_relation por construção
+    treino = json.loads((pasta / "treino.json").read_text("utf-8"))
+    assert set(treino["dev_history"][0]) == {"epoch", "train_loss", "dev_loss", "dev_macro_f1",
+                                             "dev_negation_of_f1", "duration_s"}
+    assert "subconjunto" not in treino and treino["n_candidatos"]["train"] == 5310
+    config = diretorio.ler_config(pasta)
+    assert config["estrategia"] == "pair_aware" and "lexico_sha1" not in json.dumps(config["config"]["estrategia_config"])
+    assert set(json.loads((pasta / "metricas.json").read_text("utf-8"))) == {"dev", "test"}
+    assert set(treino["descricao"]["marcadores_ausentes"]) == {"train", "dev"}
+    assert set(treino["descricao_test"]["marcadores_ausentes"]) == {"test"}
+    assert "mlp_hidden" not in treino["descricao"]["cabeca"] and treino["descricao"]["cabeca"]["formato"] == 2
+
+
+@pytest.mark.parametrize("qual", ["restrito"])
 def test_historico_e_registros(qual, continuas):
     treino = json.loads((continuas / qual / "treino.json").read_text("utf-8"))
     assert set(treino["dev_history"][0]) == {"epoch", "train_loss", "dev_loss", "dev_macro_f1",
@@ -137,10 +167,6 @@ def test_historico_e_registros(qual, continuas):
         modulo_lexico.CONGELADO["lexico_sha1"]
     metricas = json.loads((continuas / qual / "metricas.json").read_text("utf-8"))
     assert set(metricas) == {"dev", "dev_restrito", "test", "test_restrito"}
-    if qual == "pair_aware":
-        assert set(treino["descricao"]["marcadores_ausentes"]) == {"train", "dev"}
-        assert set(treino["descricao_test"]["marcadores_ausentes"]) == {"test"}
-        assert treino["descricao"]["cabeca"]["mlp_hidden"] == 16
 
 
 def test_baseline_e_o_classificador_da_etapa_5(tmp_path, pequenas):
@@ -183,7 +209,7 @@ def test_config_de_outra_estrategia_e_recusada(tmp_path, pequenas, lexico):
 def test_avaliar_test_com_a_montagem_de_outra_estrategia(continuas, pequenas, lexico):
     with pytest.raises(classificador.ErroExecucao, match="é da estratégia 'restrito'"):
         classificador.avaliar_test(continuas / "restrito", pasta_particoes=pequenas, reavaliar=True,
-                                   montagem=pair_aware.montagem(CONFIGS["pair_aware"], lexico=lexico))
+                                   montagem=pair_aware.montagem(CONFIGS["pair_aware"]))
     with pytest.raises(classificador.ErroExecucao, match="é da estratégia 'pair_aware'"):
         classificador.avaliar_test(continuas / "pair_aware", pasta_particoes=pequenas, reavaliar=True)
 
@@ -245,7 +271,6 @@ def test_avaliacao_e_comparacao_das_etapas_anteriores(pelos_comandos, tmp_path):
 
 
 @pytest.mark.parametrize("argumentos,mensagem", [
-    (["--estrategia", "pair_aware", "--mlp-hidden", "0"], "mlp_hidden precisa ser positivo"),
     (["--estrategia", "pair_aware", "--head-dropout", "1.5"], "head_dropout"),
     (["--estrategia", "restrito", "--lr", "0"], "lr precisa ser positivo"),
 ])
@@ -255,7 +280,7 @@ def test_treinar_recusa_configuracao_invalida(argumentos, mensagem, tmp_path):
 
 
 def test_restrito_recusa_particoes_com_outro_lexico(tmp_path, pequenas):
-    """O restrito e a Pair-Aware usam o léxico congelado: um TRAIN que induz
+    """O restrito usa o léxico congelado: um TRAIN que induz
     outro léxico é recusado, em vez de treinar num espaço diferente."""
     r = rodar("treinar.py", "--estrategia", "restrito", "--saida", tmp_path, "--particoes", pequenas,
               "--modelo", MODELO_MINUSCULO)
@@ -263,8 +288,10 @@ def test_restrito_recusa_particoes_com_outro_lexico(tmp_path, pequenas):
 
 
 def test_opcoes_da_cabeca_so_na_pair_aware(tmp_path):
-    r = rodar("treinar.py", "--estrategia", "baseline", "--saida", tmp_path, "--mlp-hidden", "8")
-    assert r.returncode == 2 and "--mlp-hidden" in r.stderr
+    r = rodar("treinar.py", "--estrategia", "baseline", "--saida", tmp_path, "--head-dropout", "0.2")
+    assert r.returncode == 2 and "--head-dropout" in r.stderr
+    r = rodar("treinar.py", "--estrategia", "pair_aware", "--saida", tmp_path, "--mlp-hidden", "8")
+    assert r.returncode == 2 and "--mlp-hidden" in r.stderr           # a MLP foi removida
     r = rodar("treinar.py", "--estrategia", "x")
     assert r.returncode == 2 and "invalid choice" in r.stderr
 

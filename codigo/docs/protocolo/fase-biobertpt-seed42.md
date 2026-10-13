@@ -2,7 +2,7 @@
 
 Registrado na etapa 6.1 (11/10/2026), **antes de qualquer treino científico**.
 Alterações aprovadas depois do registro, antes de qualquer treino: D5 (teto
-de 2 épocas do restrito e da Pair-Aware, seção 3), a correção do texto sobre as
+de 2 épocas do restrito e, até a D10, da Pair-Aware, seção 3), a correção do texto sobre as
 épocas do Two-Stage (3 e 10, seção 3) e os nomes das pastas do Two-Stage
 (seção 6), ambas de 12/10/2026, e D6 (identidade do código
 de cada execução, seção 2), de 11/10/2026; e D9 (versão dos dados da fase:
@@ -10,7 +10,9 @@ de cada execução, seção 2), de 11/10/2026; e D9 (versão dos dados da fase:
 pelo autor em 11/10/2026 e registrada na nota
 `docs/entregas/reconstrucao-v2.md`; e D4 (léxico da fase: `min_freq=10`,
 seção 1), selecionado em 11/10/2026 pelo procedimento pré-registrado em
-`docs/protocolo/d4-min-freq.md` e registrado em `docs/entregas/d4-min-freq.md`.
+`docs/protocolo/d4-min-freq.md` e registrado em `docs/entregas/d4-min-freq.md`;
+e D10 (substituição da Pair-Aware, seção 3), autorizada pelo autor em
+13/10/2026, antes de qualquer treino científico dela.
 Fixa o escopo, a revisão dos pesos, os critérios de seleção e de parada de
 cada estratégia, os limiares escolhidos no DEV, a sequência de execução, as
 comparações e a forma de interpretar os resultados da fase científica (etapa
@@ -75,17 +77,30 @@ Limitação aceita: a ligação entre os arquivos locais e o commit depende do
 | Baseline calibrado | sem treino: o limiar t sobre as probabilidades do DEV do baseline padrão (seção 4) | — | t |
 | Filtro léxico | sem checkpoint: pós-processa o baseline padrão | — | nada (léxico congelado) |
 | Restrito | maior macro-F1 do DEV **remapeado** ao conjunto completo (fora do espaço → `no_relation`); empate → a primeira época | teto fixo de 2 épocas (D5), sem parada antecipada | época |
-| Pair-Aware | igual ao restrito | igual ao restrito | época |
+| Pair-Aware (D10) | maior macro-F1 do DEV **completo** (todos os pares candidatos, sem remapeamento); empate → a primeira época | teto fixo de 3 épocas (como o baseline), sem parada antecipada | época |
 | Two-Stage, estágio 1 | maior AP da classe `relacao` no DEV completo; empate → a primeira | teto fixo de 3 épocas | época |
 | Two-Stage, estágio 2 | maior F1 de `negation_of` nos pares do DEV com relação anotada (argmax); empate → a primeira | teto fixo de 10 épocas | época |
 | Two-Stage, composição | τ (seção 4) | — | τ |
 
-- A seleção do restrito e da Pair-Aware é a implementada e validada na etapa
-  6 (a mesma métrica do baseline). Ela difere da métrica primária (F1 de
-  `negation_of`); a diferença fica registrada.
-- **Teto do restrito e da Pair-Aware (D5, 11/10/2026): 2 épocas.** Decisão
-  da fase experimental atual, do autor, para o orçamento de treinamento dessas
-  duas estratégias. Não se afirma que o teto seja ótimo nem que melhore o
+- A seleção do restrito, da Pair-Aware e do baseline é a implementada e validada na
+  etapa 6 (macro-F1 do DEV; no restrito, do DEV remapeado). Ela difere da métrica
+  primária (F1 de `negation_of`); a diferença fica registrada.
+- **Pair-Aware (D10, 13/10/2026): substituição da configuração.** Por decisão do
+  autor, a Pair-Aware deixa de ser o restrito com cabeça MLP e passa a ser: BioBERTpt,
+  seed 42, **3 épocas, `batch_size` 64**, cabeça **linear** sobre
+  `[h_cls ; h_[E1] ; h_[E2]]` (**sem MLP**), **sem filtro lexical** (todos os pares
+  candidatos elegíveis), **sem uso do léxico** (nem como feature, indicador ou atributo) e
+  avaliada no **DEV completo**. Não foi treinada em fase científica nem teve resultado
+  publicado antes da mudança. A configuração anterior (restrita ao léxico, MLP, 2 épocas
+  da D5) fica só como histórico: as referências do legado em `testes/referencia/` e
+  `resultados_legado/` são preservadas e não são mais reproduzidas pelo código. Com o
+  universo completo, **todas** as métricas da Pair-Aware são comparáveis com as do
+  baseline e do Two-Stage (a restrição de «só o F1 de `negation_of`» vale agora só ao
+  restrito).
+- **Teto do restrito (D5, 11/10/2026): 2 épocas** (a D5 deixou de se aplicar à
+  Pair-Aware com a D10). Decisão
+  da fase experimental atual, do autor, para o orçamento de treinamento dessa
+  estratégia. Não se afirma que o teto seja ótimo nem que melhore o
   desempenho; ele substitui o teto anterior de 10 épocas, que vinha da
   configuração da frente no legado. As 2 épocas rodam sempre (sem parada
   antecipada) e a escolhida é a de maior macro-F1 do DEV remapeado (empate → a
@@ -172,7 +187,7 @@ medidas.
 | 1V | rodada de validação técnica (seção 5); revisão do relatório antes do passo 2 | ~1,7 h |
 | 2 | `baseline_biobertpt_seed42` | ~2,4 h |
 | 3 | calibração de t (`baseline_calibrado_biobertpt_seed42`) e filtro no DEV (`filtro_pistas.py --base-execucao … --particao dev`, léxico congelado da D4, sem arquivo de calibração) | minutos, sem GPU |
-| 4 | `restrito_biobertpt_seed42` e `pairaware_biobertpt_seed42` (2 épocas, D5) | ~0,1 h cada |
+| 4 | `restrito_biobertpt_seed42` (2 épocas, D5) e `pairaware_biobertpt_seed42` (3 épocas, todos os pares, D10) | ~0,1 h (restrito); a Pair-Aware, de duração próxima à do baseline (não medida) |
 | 5 | estágios 1 e 2 (pastas `twostage_e1_biobertpt_seed42` e `twostage_e2_biobertpt_seed42`; se o nome estiver ocupado, a pasta usa o `run_id`); `compor-dev` (pasta `twostage_biobertpt_seed42`, τ congelado) | ~2,9 h |
 | 6 | `pretreino.py conferir --execucoes` e conferência de que tudo está congelado | minutos |
 | 7 | TEST, uma vez cada: baseline padrão, baseline calibrado, filtro (`filtro_pistas.py --base-execucao … --particao test`, com trilha), restrito, Pair-Aware, Two-Stage | minutos |
@@ -188,7 +203,7 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
 | Two-Stage × baseline padrão | principal |
 | Two-Stage × baseline calibrado | principal (controle de calibração) |
 | Baseline calibrado × baseline padrão | exploratória (efeito da calibração sozinha) |
-| Two-Stage × filtro; × restrito; × Pair-Aware | exploratórias (com restrito e Pair-Aware, só o F1 de `negation_of` é comparável) |
+| Two-Stage × filtro; × restrito; × Pair-Aware | exploratórias (com o restrito, só o F1 de `negation_of` é comparável; com a Pair-Aware, todas) |
 
 - Estatística: `significancia.comparar` — bootstrap pareado do F1 de
   `negation_of` (10.000 reamostras, IC95% por percentis, semente 42 pela regra
@@ -255,10 +270,11 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
       "remapeamento": "fora do espaco restrito -> no_relation"
     },
     "pair_aware": {
-      "epocas": 2,
+      "epocas": 3,
       "campo_selecao": "dev_macro_f1",
-      "selecao_melhor_epoca": "dev_macro_f1 remapeado ao espaco completo",
-      "remapeamento": "fora do espaco restrito -> no_relation"
+      "selecao_melhor_epoca": "dev_macro_f1 no DEV completo",
+      "filtro_lexical": "desativado",
+      "mlp": false
     },
     "two_stage_e1": {
       "epocas": 3,

@@ -1,7 +1,7 @@
 """Predições sobre um subconjunto dos candidatos, levadas de volta ao conjunto completo.
 
 Uma estratégia pode treinar, escolher a época e prever só sobre parte dos
-candidatos de uma partição (o fine-tuning restrito e a Pair-Aware usam os
+candidatos de uma partição (o fine-tuning restrito usa os
 pares cujo e1 é pista). Para que as predições sejam comparáveis com as de
 qualquer outra execução, elas voltam ao conjunto completo, na mesma ordem e
 com o mesmo `y_true`:

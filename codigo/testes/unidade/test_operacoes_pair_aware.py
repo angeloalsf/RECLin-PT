@@ -1,4 +1,5 @@
-"""Notebook `reclin_pair_aware.ipynb` e o ajuste de `operacoes.argumentos_de_treino` para campos opcionais.
+"""Notebook `reclin_pair_aware.ipynb` (Pair-Aware da D10: todos os pares, sem MLP, sem léxico) e o ajuste de
+`operacoes.argumentos_de_treino` para campos opcionais.
 
 Estáticos ou com diretórios temporários: nada de rede, GPU, pesos, corpus, treino, TEST nem Git. Escritos junto
 do notebook e **não executados** pelo autor da etapa (a suíte só roda por autorização)."""
@@ -41,12 +42,20 @@ def test_notebook_valido_compila_sem_saidas_e_com_ids_unicos():
                                 for linha in "".join(c["source"]).splitlines()))
 
 
-def test_notebook_usa_a_pair_aware_com_as_epocas_do_protocolo():
+def test_notebook_usa_a_pair_aware_do_protocolo_sem_lexico_nem_mlp():
     c5a, c7 = _celulas()["c5a"], _celulas()["c7"]
     assert "pair_aware.NOME" in c5a and "pair_aware.ConfigPairAware" in c5a and "script='treinar.py'" in c5a
-    assert "carregar_congelado" in c5a and "ler_particao(pasta, 'train')" in c5a
-    assert "'epochs': 2" in c7 and "'mlp_hidden': None" in c7 and "'head_dropout': None" in c7
+    assert "lexico" not in c5a.replace("sem léxico", "") and "carregar_congelado" not in c5a
+    assert "'epochs': 3" in c7 and "'batch_size': 64" in c7 and "'head_dropout': None" in c7
+    assert "mlp_hidden" not in _codigo() and "NOVA_EXECUCAO = False" in c7
     assert "reclin-pt-pairaware-" in _celulas()["c6"]
+
+
+def test_notebook_tem_metricas_por_classe_e_comparacao_no_dev():
+    celulas = _celulas()
+    assert "comparacao_dev" in celulas["c8b"] and "comparacao_dev" in celulas["c8c"]
+    assert "predicoes_dev.json" in celulas["c8b"] and "matriz_confusao" in celulas["c8b"]
+    assert "'test'" not in celulas["c8c"] and "predicoes_test" not in celulas["c8c"]
 
 
 def test_notebook_nao_avalia_nem_le_o_test_e_nao_expoe_segredos():
@@ -66,10 +75,9 @@ def test_argumentos_omitem_campos_opcionais_none_e_levam_os_demais(tmp_path):
                        pasta_pesos=Path("/p"), pasta_particoes=Path("/d"))
     args = ops.argumentos_de_treino(ctx, ops.config_da_operacao(espec, {}), "n", retomar=False)
     assert args[:2] == ["--estrategia", "pair_aware"]
-    assert "--mlp-hidden" not in args and "--head-dropout" not in args and "None" not in args
-    assert args[args.index("--epochs") + 1] == "2"
-    outros = ops.argumentos_de_treino(ctx, ops.config_da_operacao(espec, {"mlp_hidden": 256, "head_dropout": 0.2}),
-                                      "n", retomar=False)
-    assert outros[outros.index("--mlp-hidden") + 1] == "256" and outros[outros.index("--head-dropout") + 1] == "0.2"
+    assert "--head-dropout" not in args and "--mlp-hidden" not in args and "None" not in args
+    assert args[args.index("--epochs") + 1] == "3" and args[args.index("--batch-size") + 1] == "64"
+    outros = ops.argumentos_de_treino(ctx, ops.config_da_operacao(espec, {"head_dropout": 0.2}), "n", retomar=False)
+    assert outros[outros.index("--head-dropout") + 1] == "0.2"
     assert espec.alias_oficial == "pairaware_biobertpt_seed42"
     assert espec.config_protocolo().encoder == "biobertpt" and espec.config_protocolo().seed == 42

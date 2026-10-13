@@ -21,8 +21,8 @@ descrita por uma `treino.montagem.Montagem`:
 * `baseline` — o classificador da tarefa: todos os candidatos, cabeça [CLS];
 * `restrito` — só os pares cujo e1 é pista do léxico congelado; época
   escolhida no DEV remapeado ao conjunto completo;
-* `pair_aware` (pacote, com `cabeca`) — o restrito com a cabeça
-  `[h_cls ; h_[E1] ; h_[E2]] → MLP`.
+* `pair_aware` (pacote, com `cabeca`) — todos os candidatos, sem filtro nem
+  léxico, com a cabeça linear `[h_cls ; h_[E1] ; h_[E2]] → Linear` (sem MLP).
 
 Etapa 6.1:
 

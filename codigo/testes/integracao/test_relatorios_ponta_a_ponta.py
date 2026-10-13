@@ -77,7 +77,7 @@ def raiz(tmp_path_factory, part, modelo_sintetico):
                                   (pair_aware, pair_aware.ConfigPairAware, "pair_aware")):
         c = classe(**PEQ)
         classificador.treinar_execucao(raiz, SIS[chave].execucao, c, modelo=pre, pasta_particoes=sem_test,
-                                       montagem=modulo.montagem(c, lexico=lex))
+                                       montagem=modulo.montagem(c, lexico=lex) if modulo is restrito else modulo.montagem(c))
     for estagio in (1, 2):
         treino.treinar_estagio(raiz, two_stage.nome_execucao(estagio, two_stage.CONFIGS[estagio]()), estagio,
                                two_stage.CONFIGS[estagio](**PEQ), modelo=pre, pasta_particoes=sem_test)

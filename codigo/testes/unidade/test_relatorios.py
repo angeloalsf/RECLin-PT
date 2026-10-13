@@ -56,7 +56,7 @@ def test_nomes_das_execucoes_sao_os_das_estrategias():
     assert nomes["pair_aware"] == pair_aware.nome_execucao(c)
     assert nomes["two_stage"] == two_stage.nome_composicao(c)
     assert dict(fase.treinadas())["Two-Stage, estágio 1"] == two_stage.nome_execucao(1, c)
-    assert [s.chave for s in fase.sistemas() if s.comparabilidade == fase.SO_NEG] == ["restrito", "pair_aware"]
+    assert [s.chave for s in fase.sistemas() if s.comparabilidade == fase.SO_NEG] == ["restrito"]
 
 
 def test_sistemas_da_validacao_sao_os_do_protocolo():

@@ -150,7 +150,7 @@ Tabelas geradas: `resultados_test`, `diagnostico_dev`, `comparacoes_test`,
 - Um sistema sem execução, sem a partição avaliada ou só com execução de outra
   natureza aparece como `pendente`, com o motivo; uma execução com problemas
   de proveniência interrompe a geração.
-- No restrito e na Pair-Aware, macro-F1, MCC e McNemar aparecem como `n/c`
+- No restrito, macro-F1, MCC e McNemar aparecem como `n/c`
   (não comparáveis com o baseline); só o F1 de `negation_of` se compara.
 - Os números do DEV do baseline calibrado e do Two-Stage são marcados como
   otimistas (o limiar foi escolhido nesse DEV).

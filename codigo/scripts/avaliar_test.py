@@ -5,8 +5,7 @@
 
 Recarrega o `melhor_modelo/` da execução (a época escolhida pelo DEV), prevê o
 TEST com a mesma estratégia que a treinou (lida de `config.json`: baseline,
-restrito, Pair-Aware ou o classificador da etapa 5; no restrito e na
-Pair-Aware, a seleção dos pares sai do léxico gravado na execução, sem ler o
+restrito, Pair-Aware ou o classificador da etapa 5; no restrito, a seleção dos pares sai do léxico gravado na execução, sem ler o
 TRAIN) e grava `predicoes_test.json` (no conjunto completo), as métricas do TEST em `metricas.json` e
 uma linha em `avaliacoes_test.jsonl` (trilha das avaliações do TEST, com o
 `eval_index_for_config`). Recusa uma execução cujo treino não terminou.

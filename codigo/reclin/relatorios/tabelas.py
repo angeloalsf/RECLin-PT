@@ -132,7 +132,7 @@ def resultados(inventario: inv.Inventario, particao: str, *, natureza: str = "ci
             sidecar = ex.predicoes(particao)
             m = metricas.avaliar(sidecar["y_true"], sidecar["y_pred"])
         linhas.append(_linha_metricas(s, m, particao))
-    notas = ["n/c: não comparável — no restrito e na Pair-Aware só o F1 de negation_of se compara "
+    notas = ["n/c: não comparável — no restrito só o F1 de negation_of se compara "
              "com o baseline (os pares fora do espaço restrito são no_relation por construção)."]
     if particao == "dev":
         notas.append("DEV: diagnóstico. No baseline calibrado e no Two-Stage é otimista "
@@ -187,7 +187,7 @@ def comparacoes(inventario: inv.Inventario, *, natureza: str = "cientifica",
              "As duas comparações principais são reportadas sem correção de multiplicidade.",
              "Com uma semente, a incerteza é a da amostra do TEST, dados os modelos treinados; "
              "não mede a variação do treino.",
-             "n/c: McNemar não comparável quando um dos lados é o restrito ou a Pair-Aware."]
+             "n/c: McNemar não comparável quando um dos lados é o restrito."]
     tabela = Tabela("comparacoes_test", f"Comparações no TEST ({fase.ROTULO_NATUREZA.get(natureza, natureza)})",
                     colunas, linhas, natureza, origens=inv.origens(origens.values()),
                     pendencias=pendencias, notas=notas)

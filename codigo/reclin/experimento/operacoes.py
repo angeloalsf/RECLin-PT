@@ -258,7 +258,7 @@ def argumentos_de_treino(ctx: Contexto, config: Any, nome: str, *, retomar: bool
     for campo in ctx.espec.campos:
         valor = getattr(config, campo)
         if valor is None and getattr(padrao, campo) is None:
-            continue                       # campo opcional no padrão (ex.: `mlp_hidden`): o script já assume None
+            continue                       # campo opcional no padrão (ex.: `head_dropout`): o script já assume None
         argumentos += ["--" + campo.replace("_", "-"), str(valor)]
     argumentos += ["--checkpoint-a-cada", str(int(ctx.checkpoint_a_cada))]
     if retomar:

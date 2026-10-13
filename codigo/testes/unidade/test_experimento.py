@@ -245,6 +245,22 @@ def _execucao(raiz_local: Path, tentativa=1, concluida=True, com_ultimo=False):
     return pasta, run, chave
 
 
+def test_vincular_config_aceita_o_modelo_do_config_efetivo_e_recusa_outra_diferenca(tmp_path):
+    """O `config.json` real traz `modelo` em `config.config` (`Config.como_dict()`); a chave o remove. Só isso é
+    ignorado: qualquer outra diferença continua sendo recusada."""
+    pasta, run, chave = _execucao(tmp_path)
+    proveniencia.criar(pasta, run=run, chave=chave, codigo={"origem": "local", "revisao": None})
+    registro = ler_json(pasta / "config.json")
+    registro["config"]["config"] = {**CFG, "modelo": "pucpr/biobertpt-all"}
+    gravar_json(pasta / "config.json", registro)
+    vinculado = proveniencia.vincular_config(pasta)
+    assert vinculado["sha256_config"] and vinculado["parametros_de_treinamento"]["modelo"] == "pucpr/biobertpt-all"
+    registro["config"]["config"] = {**CFG, "lr": 9e-5, "modelo": "pucpr/biobertpt-all"}
+    gravar_json(pasta / "config.json", registro)
+    with pytest.raises(proveniencia.ErroProveniencia, match="difere da registrada"):
+        proveniencia.vincular_config(pasta)
+
+
 def test_registro_de_proveniencia_ciclo_completo(tmp_path):
     pasta, run, chave = _execucao(tmp_path)
     proveniencia.criar(pasta, run=run, chave=chave, codigo={"origem": "local", "revisao": None},

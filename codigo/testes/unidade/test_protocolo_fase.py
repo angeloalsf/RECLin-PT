@@ -42,12 +42,20 @@ def test_criterios_das_estrategias_treinadas(registro):
     from reclin.treino import laco
     e = registro["estrategias"]
     assert e["baseline"] == {"epocas": Config().epochs, "campo_selecao": laco.CAMPO_SELECAO}
-    for nome, classe, modulo in (("restrito", restrito.ConfigRestrito, restrito),
-                                 ("pair_aware", pair_aware.ConfigPairAware, pair_aware)):
-        assert e[nome]["epocas"] == classe().epochs and e[nome]["campo_selecao"] == laco.CAMPO_SELECAO
-        reg = modulo.montagem(classe(), lexico={"nao": 1}).registro
-        assert reg["selecao_melhor_epoca"] == e[nome]["selecao_melhor_epoca"]
-        assert reg["remapeamento"] == e[nome]["remapeamento"]
+    assert e["restrito"]["epocas"] == restrito.ConfigRestrito().epochs
+    assert e["restrito"]["campo_selecao"] == laco.CAMPO_SELECAO
+    reg = restrito.montagem(restrito.ConfigRestrito(), lexico={"nao": 1}).registro
+    assert reg["selecao_melhor_epoca"] == e["restrito"]["selecao_melhor_epoca"]
+    assert reg["remapeamento"] == e["restrito"]["remapeamento"]
+    # Pair-Aware (D10): todos os pares, sem filtro lexical, sem MLP, 3 épocas como o baseline
+    pa = e["pair_aware"]
+    assert pa["epocas"] == pair_aware.ConfigPairAware().epochs == Config().epochs
+    assert pair_aware.ConfigPairAware().batch_size == Config().batch_size == 64
+    assert pa["campo_selecao"] == laco.CAMPO_SELECAO
+    reg = pair_aware.montagem(pair_aware.ConfigPairAware()).registro
+    assert reg["selecao_melhor_epoca"] == pa["selecao_melhor_epoca"]
+    assert reg["filtro_lexical"] == pa["filtro_lexical"] and reg["cabeca"]["mlp"] is pa["mlp"] is False
+    assert pair_aware.montagem(pair_aware.ConfigPairAware()).selecionar is None
     for estagio in (1, 2):
         assert e[f"two_stage_e{estagio}"] == {"epocas": two_stage.CONFIGS[estagio]().epochs,
                                               "campo_selecao": two_stage.CAMPO_SELECAO[estagio]}

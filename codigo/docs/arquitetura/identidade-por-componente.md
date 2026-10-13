@@ -105,7 +105,7 @@ diferente por classe: todo arquivo do conjunto invalida o componente (seção 10
 | --- | --- | --- |
 | baseline | `estrategias/baseline.py` | |
 | restrito | `estrategias/restrito.py`, `negacao/__init__.py` (só docstring), `negacao/lexico.py` | + identidade do léxico congelado (`lexico_sha1`) na chave |
-| pair_aware | `estrategias/pair_aware/__init__.py`, `estrategias/pair_aware/cabeca.py`, `negacao/__init__.py`, `negacao/lexico.py` | idem |
+| pair_aware | `estrategias/pair_aware/__init__.py`, `estrategias/pair_aware/cabeca.py` | desde a D10 não usa o léxico (sem `negacao/*` e sem `lexico_sha1` na chave); a chave leva `versao` da configuração |
 | baseline_calibrado | `estrategias/baseline_calibrado.py`, `avaliacao/limiar.py` + subconjunto de N1-controle (`diretorio`, `trilha`, `validacao`, `caminhos`, `identidade_codigo`, `versao_dados`, `estrategias/__init__`) | **não** depende de N1-numérico: não importa `entrada`/`laco`/`modelos`; depende de uma execução do baseline por dados (hash das probabilidades), não por código |
 | filtro_pistas | `estrategias/filtro_pistas.py`, `estrategias/__init__.py`, `negacao/*` | só N0 + isso |
 | regra_pura | **a levantar na 8.3** (não foi incluída no levantamento da 8.1) | pendência |

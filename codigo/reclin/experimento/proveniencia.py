@@ -153,7 +153,10 @@ def vincular_config(pasta: str | Path) -> dict[str, Any]:
     prov = gravado.get("proveniencia_pesos")
     if prov and any(prov.get(k) != registro["pesos_pretreinados"].get(k) for k in ("commit", "hash_manifesto")):
         problemas.append("proveniência dos pesos do config.json difere da chave")
-    if efetiva and efetiva != registro["chave_configuracao"]["config"]:
+    # a chave não leva `modelo` (caminho/identificador do checkpoint; `ids.chave_configuracao` o remove), mas a
+    # configuração efetiva gravada pelo treino (`Config.como_dict()`) o traz: compara-se sem ele
+    sem_modelo = {k: v for k, v in efetiva.items() if k != "modelo"}
+    if efetiva and sem_modelo != registro["chave_configuracao"]["config"]:
         problemas.append("a configuração efetiva do config.json difere da registrada na chave")
     if problemas:
         raise ErroProveniencia(f"{pasta.name}: o config.json não corresponde à chave registrada: " + "; ".join(problemas))

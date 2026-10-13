@@ -43,13 +43,12 @@ def campos(classe):
 def test_configuracoes_diferem_so_no_que_declaram():
     base, rest, pa = campos(Config), campos(restrito.ConfigRestrito), campos(pair_aware.ConfigPairAware)
     assert {k for k in base if base[k] != rest[k]} == {"epochs"} and rest["epochs"] == 2     # D5
-    # a Pair-Aware difere do restrito só nos campos da cabeça
-    assert {k: v for k, v in pa.items() if k not in rest} == {"mlp_hidden": None, "head_dropout": None}
-    assert all(pa[k] == rest[k] for k in rest)
+    # a Pair-Aware (D10) tem a configuração do baseline (3 épocas, lote 64) mais o dropout da cabeça
+    assert {k: v for k, v in pa.items() if k not in base} == {"head_dropout": None}
+    assert all(pa[k] == base[k] for k in base) and pa["epochs"] == 3 and pa["batch_size"] == 64
 
 
-@pytest.mark.parametrize("kw,mensagem", [({"mlp_hidden": 0}, "mlp_hidden"),
-                                         ({"head_dropout": 1.0}, "head_dropout"),
+@pytest.mark.parametrize("kw,mensagem", [({"head_dropout": 1.0}, "head_dropout"),
                                          ({"lr": 0}, "lr")])
 def test_config_pair_aware_valida(kw, mensagem):
     with pytest.raises(ValueError, match=mensagem):
@@ -72,8 +71,8 @@ def test_baseline_e_o_classificador_com_outro_nome():
     assert m.selecionar is None and m.registro == {} and m.extras_sidecar == {}
 
 
-@pytest.mark.parametrize("modulo", [restrito, pair_aware])
-def test_selecao_pelo_e1_em_ordem(modulo):
+def test_selecao_pelo_e1_em_ordem():
+    modulo = restrito
     selecionados = modulo.selecionar(CANDS, LEX)
     assert selecionados == sorted(selecionados)
     assert {(CANDS[i]["e1"]["text"]) for i in selecionados} == {"NEGA", "sem"}
@@ -82,9 +81,8 @@ def test_selecao_pelo_e1_em_ordem(modulo):
     assert all(CANDS[i]["e1"]["text"] in ("NEGA", "sem") for i in selecionados)
 
 
-@pytest.mark.parametrize("modulo,classe", [(restrito, restrito.ConfigRestrito),
-                                           (pair_aware, pair_aware.ConfigPairAware)])
-def test_montagem_reconstruida_do_registro(modulo, classe):
+def test_montagem_reconstruida_do_registro():
+    modulo, classe = restrito, restrito.ConfigRestrito
     config = classe(encoder="bertimbau", seed=7)
     m = modulo.montagem(config, lexico=LEX)
     registro = {"estrategia": m.estrategia, "config": config.como_dict(), "estrategia_config": m.registro}
@@ -99,11 +97,25 @@ def test_montagem_reconstruida_do_registro(modulo, classe):
         modulo.montagem_de_registro(adulterado)
 
 
+def test_pair_aware_nao_filtra_nem_usa_o_lexico():
+    config = pair_aware.ConfigPairAware(encoder="bertimbau", seed=7)
+    m = pair_aware.montagem(config)
+    assert m.selecionar is None                                   # todos os pares candidatos
+    assert m.registro["filtro_lexical"] == "desativado" and m.registro["cabeca"]["mlp"] is False
+    assert "formas" not in str(m.registro) and "lexico_sha1" not in str(m.registro)
+    assert not hasattr(pair_aware, "selecionar") and not hasattr(pair_aware, "registro_do_lexico")
+    registro = {"estrategia": m.estrategia, "config": config.como_dict(), "estrategia_config": m.registro}
+    r = pair_aware.montagem_de_registro(registro)
+    assert r.registro == m.registro and r.extras_sidecar == m.extras_sidecar
+    antigo = {**registro, "estrategia_config": {"espaco": "restrito: e1 no lexico induzido do train"}}
+    with pytest.raises(ValueError, match="outra configuração"):
+        pair_aware.montagem_de_registro(antigo)
+
+
 def test_extras_dos_sidecars():
     assert restrito.montagem(restrito.ConfigRestrito(), lexico=LEX).extras_sidecar == {
         "espaco": "restrito remapeado ao completo", "encoder": "biobertpt"}
-    assert pair_aware.montagem(pair_aware.ConfigPairAware(), lexico=LEX).extras_sidecar == {
-        "espaco": "restrito remapeado ao completo", "cabeca": "pair-aware", "encoder": "biobertpt"}
+    assert pair_aware.montagem(pair_aware.ConfigPairAware()).extras_sidecar == {}      # como o baseline
 
 
 # --------------------------------------------------------------------------- #
@@ -145,17 +157,18 @@ def test_cabeca_le_cls_e1_e2(tokenizer):
 def test_arquitetura_e_configuracao(tokenizer):
     rede = pa(tokenizer)
     camadas = list(rede.head)
-    assert [type(c).__name__ for c in camadas] == ["Linear", "GELU", "Dropout", "Linear"]
-    assert (camadas[0].in_features, camadas[0].out_features, camadas[3].out_features) == (48, 16, 3)
-    assert camadas[2].p == 0.1 and not rede.pair_aware_config["tem_pooler"]
+    assert [type(c).__name__ for c in camadas] == ["Dropout", "Linear"]          # sem MLP
+    assert (camadas[1].in_features, camadas[1].out_features) == (48, 3)
+    assert camadas[0].p == 0.1 and not rede.pair_aware_config["tem_pooler"]
+    assert "mlp_hidden" not in rede.pair_aware_config and rede.pair_aware_config["formato"] == 2
     assert not hasattr(rede.encoder, "pooler") or rede.encoder.pooler is None
-    assert pa(tokenizer, mlp_hidden=8, head_dropout=0.3).pair_aware_config["mlp_hidden"] == 8
+    assert pa(tokenizer, head_dropout=0.3).pair_aware_config["dropout"] == 0.3
 
 
 def test_inicializacao_deterministica(tokenizer):
     a, b, c = pa(tokenizer, 1), pa(tokenizer, 1), pa(tokenizer, 2)
     assert all(torch.equal(x, y) for x, y in zip(a.state_dict().values(), b.state_dict().values()))
-    assert not torch.equal(a.head[0].weight, c.head[0].weight)
+    assert not torch.equal(a.head[1].weight, c.head[1].weight)
 
 
 def test_salvar_e_recarregar_mesmos_logits(tokenizer, tmp_path):
@@ -187,9 +200,9 @@ def test_contar_marcadores_ausentes(tokenizer):
 
 def test_descrever_mede_os_marcadores(tokenizer):
     config = pair_aware.ConfigPairAware(max_length=16)
-    m = pair_aware.montagem(config, lexico=LEX)
+    m = pair_aware.montagem(config)
     rede = pa(tokenizer)
     ex = entrada.Exemplos(["[E1] nega [/E1] febre"], [0])
     d = m.descrever(tokenizer, rede, {"dev": ex})
     assert d["marcadores_ausentes"]["dev"]["E2_fora_do_texto"] == 1
-    assert d["n_params_cabeca"] == 48 * 16 + 16 + 16 * 3 + 3 and d["cabeca"] == rede.pair_aware_config
+    assert d["n_params_cabeca"] == 48 * 3 + 3 and d["cabeca"] == rede.pair_aware_config
