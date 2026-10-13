@@ -228,6 +228,27 @@ def test_estagio_salva_config_e_treino_e_recusa_nao_concluido(tmp_path, monkeypa
     assert any("validação técnica" in m for m in versionamento.plano_de_salvamento(pasta, "estagio")["problemas"])
 
 
+def test_estagio_aceita_aviso_de_biblioteca_mas_recusa_outro_texto_longo(tmp_path, monkeypatch):
+    monkeypatch.setattr(versionamento.proveniencia, "ler", lambda pasta: {"estado": "concluida", "run_id": "r", "config_id": "c"})
+    aviso = ("UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable "
+             "determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at "
+             "/pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)")
+    assert len(aviso) > versionamento.LIMITE_DE_TEXTO
+    pasta = _escrever(tmp_path / "twostage_e1_biobertpt_seed42", **{"config.json": {"config": {"config": {}}},
+                      "treino.json": {"concluido": True, "sessoes": [{"avisos": [aviso]}]}})
+    assert versionamento.plano_de_salvamento(pasta, "estagio")["problemas"] == []
+
+    def problemas(treino):
+        (pasta / "treino.json").write_text(json.dumps(treino), encoding="utf-8")
+        return versionamento.plano_de_salvamento(pasta, "estagio")["problemas"]
+
+    texto = "Paciente com " + "x" * 300
+    assert any("texto" in m for m in problemas({"concluido": True, "sessoes": [{"avisos": [texto]}]}))
+    assert any("texto" in m for m in problemas({"concluido": True, "sessoes": [{"avisos": ["UserWarning: " + "x" * 700]}]}))
+    assert any("texto" in m for m in problemas({"concluido": True, "sessoes": [{"avisos": [aviso], "nota": aviso}]}))
+    assert any("texto" in m for m in problemas({"concluido": True, "avisos": [aviso]}))
+
+
 def test_perfil_desconhecido_e_branch_principal_recusados(tmp_path):
     with pytest.raises(versionamento.ErroVersionamento, match="perfil"):
         versionamento.plano_de_salvamento(tmp_path, "outro")

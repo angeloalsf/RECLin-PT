@@ -93,6 +93,26 @@ def sem_texto_clinico(predicoes: dict[str, Any]) -> list[str]:
     return motivos
 
 
+LIMITE_DE_AVISO = 600
+_AVISO_DE_BIBLIOTECA = re.compile(r"(User|Future|Deprecation|Runtime)Warning: ")
+
+
+def _sem_avisos_de_biblioteca(conteudo: Any) -> Any:
+    """Cópia do `treino.json` sem os avisos de biblioteca de `sessoes[*].avisos` (ex.: UserWarning do PyTorch).
+    Só some o item que começa com `<Tipo>Warning: ` e tem até `LIMITE_DE_AVISO` caracteres; qualquer outro texto
+    longo (neste campo ou em outro) continua sendo achado por `_textos_longos`."""
+    if not isinstance(conteudo, dict) or not isinstance(conteudo.get("sessoes"), list):
+        return conteudo
+    sessoes = []
+    for sessao in conteudo["sessoes"]:
+        if isinstance(sessao, dict) and isinstance(sessao.get("avisos"), list):
+            avisos = ["" if (isinstance(a, str) and len(a) <= LIMITE_DE_AVISO and _AVISO_DE_BIBLIOTECA.match(a)) else a
+                      for a in sessao["avisos"]]
+            sessao = {**sessao, "avisos": avisos}
+        sessoes.append(sessao)
+    return {**conteudo, "sessoes": sessoes}
+
+
 def _textos_longos(valor: Any, caminho: str = "") -> list[str]:
     """Strings com mais de `LIMITE_DE_TEXTO` caracteres em qualquer nível (texto clínico não cabe nestes arquivos)."""
     achados: list[str] = []
@@ -165,7 +185,8 @@ def plano_de_salvamento(pasta: str | Path, perfil: str = "execucao") -> dict[str
         if achados:
             problemas.append(f"{relativo} parece conter segredo ({'; '.join(achados)})")
         if perfil != "execucao":
-            problemas += [f"{relativo} contém texto? {m}" for m in _textos_longos(conteudo)
+            verificado = _sem_avisos_de_biblioteca(conteudo) if relativo == "treino.json" else conteudo
+            problemas += [f"{relativo} contém texto? {m}" for m in _textos_longos(verificado)
                           if not (relativo == "predicoes_dev.json")]
         if relativo == "treino.json" and not conteudo.get("concluido"):
             problemas.append("treino.json diz que o treino não foi concluído")
