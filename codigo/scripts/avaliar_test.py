@@ -5,7 +5,7 @@
 
 Recarrega o `melhor_modelo/` da execução (a época escolhida pelo DEV), prevê o
 TEST com a mesma estratégia que a treinou (lida de `config.json`: baseline,
-restrito, Pair-Aware ou o classificador da etapa 5; no restrito, a seleção dos pares sai do léxico gravado na execução, sem ler o
+restrito, Pair-Aware (com ou sem MLP) ou o classificador da etapa 5; no restrito, a seleção dos pares sai do léxico gravado na execução, sem ler o
 TRAIN) e grava `predicoes_test.json` (no conjunto completo), as métricas do TEST em `metricas.json` e
 uma linha em `avaliacoes_test.jsonl` (trilha das avaliações do TEST, com o
 `eval_index_for_config`). Recusa uma execução cujo treino não terminou.
@@ -21,14 +21,14 @@ import logging
 import sys
 from pathlib import Path
 
-from reclin.estrategias import baseline, pair_aware, restrito
+from reclin.estrategias import baseline, pair_aware, pair_aware_mlp, restrito
 from reclin.util import caminhos
 from reclin.util.io import ler_json
 from reclin.util.log import configurar
 
 log = logging.getLogger("reclin.scripts.avaliar_test")
 
-ESTRATEGIAS = {m.NOME: m for m in (baseline, restrito, pair_aware)}
+ESTRATEGIAS = {m.NOME: m for m in (baseline, restrito, pair_aware, pair_aware_mlp)}
 
 
 def montagem_da_execucao(pasta: Path):

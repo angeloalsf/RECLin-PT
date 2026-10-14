@@ -9,9 +9,10 @@
 Estratégias (`reclin.estrategias`): `baseline` (todos os candidatos, cabeça
 [CLS]), `restrito` (só os pares cujo e1 é pista do léxico congelado; época
 escolhida no DEV remapeado) e `pair_aware` (todos os candidatos, sem filtro nem
-léxico, com a cabeça linear [h_cls ; h_E1 ; h_E2], sem MLP). O nome padrão da execução é o do legado:
+léxico, com a cabeça linear [h_cls ; h_E1 ; h_E2], sem MLP) e `pair_aware_mlp` (como a
+`pair_aware`, mas com uma cabeça MLP; estratégia independente, fora do protocolo da fase). O nome padrão da execução é o do legado:
 `baseline_<encoder>_seed<N>`, `restrito_<encoder>_seed<N>`,
-`pairaware_<encoder>_seed<N>`.
+`pairaware_<encoder>_seed<N>`, `pairawaremlp_<encoder>_seed<N>`.
 
 Cria a execução `<saida>/<nome>` (padrão: `codigo/resultados/execucoes/`) com
 `config.json`, `treino.json` (histórico do DEV, melhor época, sessões),
@@ -60,7 +61,7 @@ import sys
 from pathlib import Path
 
 from reclin.config import CLASS_WEIGHTS, ENCODERS
-from reclin.estrategias import baseline, pair_aware, restrito
+from reclin.estrategias import baseline, pair_aware, pair_aware_mlp, restrito
 from reclin.util import caminhos
 from reclin.util.log import configurar
 
@@ -72,6 +73,7 @@ ESTRATEGIAS = {
     baseline.NOME: (baseline, baseline.Config),
     restrito.NOME: (restrito, restrito.ConfigRestrito),
     pair_aware.NOME: (pair_aware, pair_aware.ConfigPairAware),
+    pair_aware_mlp.NOME: (pair_aware_mlp, pair_aware_mlp.ConfigPairAwareMLP),
 }
 
 
@@ -167,7 +169,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.threads:
         torch.set_num_threads(args.threads)
     try:
-        if modulo in (baseline, pair_aware):    # todos os candidatos; sem léxico
+        if modulo in (baseline, pair_aware, pair_aware_mlp):    # todos os candidatos; sem léxico
             montagem = modulo.montagem(config)
         else:     # restrito: o léxico congelado, induzido do TRAIN
             divergencias = particoes.conferir_particoes(args.particoes, ("train",))

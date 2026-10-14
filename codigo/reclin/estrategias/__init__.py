@@ -22,7 +22,9 @@ descrita por uma `treino.montagem.Montagem`:
 * `restrito` — só os pares cujo e1 é pista do léxico congelado; época
   escolhida no DEV remapeado ao conjunto completo;
 * `pair_aware` (pacote, com `cabeca`) — todos os candidatos, sem filtro nem
-  léxico, com a cabeça linear `[h_cls ; h_[E1] ; h_[E2]] → Linear` (sem MLP).
+  léxico, com a cabeça linear `[h_cls ; h_[E1] ; h_[E2]] → Linear` (sem MLP);
+* `pair_aware_mlp` (pacote, com `cabeca`) — estratégia independente: como a `pair_aware`, mas
+  com a cabeça `[h_cls ; h_[E1] ; h_[E2]] → MLP`; fora do protocolo pré-registrado da fase.
 
 Etapa 6.1:
 
