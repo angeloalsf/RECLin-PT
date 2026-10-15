@@ -63,9 +63,10 @@ def _exigir_estrategia(ctx: operacoes.Contexto) -> None:
 # --------------------------------------------------------------------------- #
 # Contexto, semente, Secrets                                                  #
 # --------------------------------------------------------------------------- #
-def pasta_dos_pesos(raiz_pesos: str | Path, revisao: str) -> Path:
-    """Caminho fixo dos pesos (o resume compara o caminho do modelo), por revisão."""
-    return Path(raiz_pesos) / f"biobertpt-all@{revisao or 'sem-revisao'}"
+def pasta_dos_pesos(raiz_pesos: str | Path, revisao: str, nome: str = "biobertpt-all") -> Path:
+    """Caminho fixo dos pesos (o resume compara o caminho do modelo), por revisão. `nome` é o do repositório
+    sem o dono (`biobertpt-clin` para a variante clínica)."""
+    return Path(raiz_pesos) / f"{nome}@{revisao or 'sem-revisao'}"
 
 
 def contexto(codigo: str | Path, raiz_local: str | Path, raiz_drive: str | Path | None, raiz_pesos: str | Path,
@@ -74,9 +75,10 @@ def contexto(codigo: str | Path, raiz_local: str | Path, raiz_drive: str | Path 
     importa a estratégia na hora (este módulo, como `operacoes`, é neutro e não a importa); com `espec`
     None só as operações de ambiente, GPU e instalação funcionam."""
     codigo = Path(codigo)
+    nome_pesos = extra.pop("nome_pesos", "biobertpt-all")
     return operacoes.Contexto(
         codigo=codigo, raiz_local=Path(raiz_local), raiz_drive=Path(raiz_drive) if raiz_drive else None,
-        espec=espec, pasta_pesos=pasta_dos_pesos(raiz_pesos, revisao_pesos),
+        espec=espec, pasta_pesos=pasta_dos_pesos(raiz_pesos, revisao_pesos, nome_pesos),
         pasta_particoes=codigo / "dados" / "particoes-v2", revisao_pesos=revisao_pesos, **extra)
 
 

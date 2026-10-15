@@ -87,10 +87,11 @@ class Especificacao:
     config_cls: type
     estrategia_config: Mapping[str, Any] | None = None
     estagio: int | None = None
+    encoder: str = ENCODER_DA_FASE      # chave de `config.ENCODERS`; outra que a da fase = variante de encoder (sem nome oficial)
 
     def config_protocolo(self) -> Any:
-        """A configuração do protocolo: os padrões da classe, com o encoder e a semente da fase."""
-        return self.config_cls(encoder=ENCODER_DA_FASE, seed=SEMENTE_DA_FASE)
+        """A configuração do protocolo: os padrões da classe, com o encoder (o da fase, salvo variante) e a semente da fase."""
+        return self.config_cls(encoder=self.encoder, seed=SEMENTE_DA_FASE)
 
     @property
     def campos(self) -> tuple[str, ...]:
@@ -104,6 +105,8 @@ class Especificacao:
 
     @property
     def alias_oficial(self) -> str | None:
+        if self.encoder != ENCODER_DA_FASE:        # os nomes oficiais do protocolo são do encoder da fase
+            return None
         achados = [n for n, e in plano.NOMES_OFICIAIS.items() if e == self.estrategia]
         return achados[0] if len(achados) == 1 else None
 
@@ -207,6 +210,9 @@ def _chave(ctx: Contexto, config: Any) -> dict[str, Any]:
                                         codigo=ctx.codigo)
     except (plano.ErroPlano, ValueError, OSError) as erro:
         raise ErroOperacao(str(erro)) from erro
+    if ctx.repositorio_pesos and ctx.repositorio_pesos != config.modelo:
+        raise ErroOperacao(f"os pesos são de {ctx.repositorio_pesos!r}, mas a configuração usa o encoder "
+                           f"{config.encoder!r} ({config.modelo!r}): os checkpoints não se misturam")
     if chave["dados"]["versao"] != _versao_da_fase():
         raise ErroOperacao(f"as partições são da versão {chave['dados']['versao']!r}; a fase usa {_versao_da_fase()!r}")
     return chave
@@ -260,6 +266,8 @@ def argumentos_de_treino(ctx: Contexto, config: Any, nome: str, *, retomar: bool
         if valor is None and getattr(padrao, campo) is None:
             continue                       # campo opcional no padrão (ex.: `head_dropout`): o script já assume None
         argumentos += ["--" + campo.replace("_", "-"), str(valor)]
+    if ctx.espec.encoder != ENCODER_DA_FASE:        # variante de encoder: o script (padrão biobertpt) precisa sabê-lo
+        argumentos += ["--encoder", ctx.espec.encoder]
     argumentos += ["--checkpoint-a-cada", str(int(ctx.checkpoint_a_cada))]
     if retomar:
         argumentos.append("--retomar")
@@ -515,7 +523,7 @@ def compor_dev(ctx: Contexto) -> dict[str, Any]:
         if derivado != "concluida":
             raise ErroOperacao(f"o estágio {numero} ({nome}) não está concluído (os arquivos evidenciam {derivado!r})")
         pastas[numero] = pasta
-    nome_composicao = f"twostage_{ENCODER_DA_FASE}_seed{SEMENTE_DA_FASE}"
+    nome_composicao = f"twostage_{ctx.espec.encoder}_seed{SEMENTE_DA_FASE}"
     destino = ctx.raiz_local / nome_composicao
     if (destino / "config.json").exists():
         raise ErroOperacao(f"a composição {nome_composicao} já existe: o τ dela já foi escolhido e congelado; "

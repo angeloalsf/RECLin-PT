@@ -36,6 +36,7 @@ from reclin.tarefa import MAX_GAP
 # caminho de código é o mesmo, o que garante a paridade por construção.
 ENCODERS: dict[str, str] = {
     "biobertpt": "pucpr/biobertpt-all",                      # clínico
+    "biobertpt_clin": "pucpr/biobertpt-clin",                # clínico (variante -clin do BioBERTpt)
     "bertimbau": "neuralmind/bert-base-portuguese-cased",    # geral
 }
 

@@ -14,7 +14,8 @@ def test_defaults_e_checkpoint():
     assert c.encoder == "biobertpt" and c.modelo == "pucpr/biobertpt-all"
     assert Config(encoder="bertimbau").modelo == "neuralmind/bert-base-portuguese-cased"
     assert c.max_gap == tarefa.MAX_GAP
-    assert set(ENCODERS) == {"biobertpt", "bertimbau"}
+    assert set(ENCODERS) == {"biobertpt", "biobertpt_clin", "bertimbau"}
+    assert ENCODERS["biobertpt_clin"] == "pucpr/biobertpt-clin" and ENCODERS["biobertpt"] == "pucpr/biobertpt-all"
 
 
 def test_congelada():
