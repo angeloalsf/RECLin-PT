@@ -456,7 +456,7 @@ def exigir_quadro(quadro: Mapping[str, Any] | None, ctx: operacoes.Contexto, ope
 # Execução escolhida e curvas do DEV                                          #
 # --------------------------------------------------------------------------- #
 def execucao_atual(ctx: operacoes.Contexto, *, restaurar: bool = False) -> str:
-    """O nome da execução **mais recente** (por `atualizado_em`, local ou Drive) da estratégia, sem campo
+    """O nome da execução **mais recente** (por `atualizado_em`, local ou Drive) da estratégia **e do encoder**, sem campo
     `EXECUCAO`. Com `restaurar=True`, uma execução que só existe no Drive é trazida para o disco local
     (verificada) antes de devolver o nome. Levanta `ErroOperacao` se não há execução."""
     _exigir_estrategia(ctx)
@@ -468,8 +468,15 @@ def execucao_atual(ctx: operacoes.Contexto, *, restaurar: bool = False) -> str:
     recentes: dict[str, str] = {}
     for e in achadas:
         pasta = (ctx.raiz_local if e["onde"] == "local" else persistencia.raiz_das_execucoes(ctx.raiz_drive)) / e["nome"]
-        quando = proveniencia.ler(pasta).get("atualizado_em") or ""
+        registro = proveniencia.ler(pasta)
+        # outra variante de encoder (mesma estratégia) nunca é "a execução atual" deste notebook
+        if (registro.get("parametros_de_treinamento") or {}).get("encoder", operacoes.ENCODER_DA_FASE) != ctx.espec.encoder:
+            continue
+        quando = registro.get("atualizado_em") or ""
         recentes[e["nome"]] = max(recentes.get(e["nome"], ""), quando)
+    if not recentes:
+        raise ErroOperacao(f"nenhuma execução do encoder {ctx.espec.encoder!r} encontrada (há execuções da estratégia "
+                           "com outro encoder, que não são usadas aqui): treine primeiro")
     nome = max(recentes, key=lambda n: (recentes[n], n))
     if restaurar and not (ctx.raiz_local / nome / proveniencia.ARQUIVO).is_file():
         print(f"A execução mais recente ({nome}) só existe no Drive: restaurando para o disco local…")
