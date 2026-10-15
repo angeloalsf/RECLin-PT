@@ -1,0 +1,100 @@
+{
+  "dev": {
+    "classification_report": {
+      "accuracy": 0.9190096516995384,
+      "associated_with": {
+        "f1-score": 0.4380664652567976,
+        "precision": 0.3076923076923077,
+        "recall": 0.7601572739187418,
+        "support": 763.0
+      },
+      "macro avg": {
+        "f1-score": 0.737162002997437,
+        "precision": 0.6706577280230027,
+        "recall": 0.8796313887615451,
+        "support": 19064.0
+      },
+      "negation_of": {
+        "f1-score": 0.8171428571428572,
+        "precision": 0.715,
+        "recall": 0.9533333333333334,
+        "support": 150.0
+      },
+      "no_relation": {
+        "f1-score": 0.9562766865926559,
+        "precision": 0.9892808763767006,
+        "recall": 0.9254035590325602,
+        "support": 18151.0
+      },
+      "weighted avg": {
+        "f1-score": 0.9344415799363021,
+        "precision": 0.9598434965318257,
+        "recall": 0.9190096516995384,
+        "support": 19064.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "negation_of",
+        "associated_with",
+        "no_relation"
+      ],
+      "matrix": [
+        [
+          143,
+          2,
+          5
+        ],
+        [
+          6,
+          580,
+          177
+        ],
+        [
+          51,
+          1303,
+          16797
+        ]
+      ]
+    },
+    "f1_per_class": {
+      "associated_with": 0.4380664652567976,
+      "negation_of": 0.8171428571428572,
+      "no_relation": 0.9562766865926559
+    },
+    "macro_f1": 0.737162002997437,
+    "mcc": 0.49822948878291,
+    "micro_f1": 0.9190096516995384,
+    "n": 19064,
+    "por_classe": {
+      "associated_with": {
+        "f1": 0.4380664652567976,
+        "fn": 183,
+        "fp": 1305,
+        "precision": 0.3076923076923077,
+        "recall": 0.7601572739187418,
+        "support": 763,
+        "tp": 580
+      },
+      "negation_of": {
+        "f1": 0.8171428571428572,
+        "fn": 7,
+        "fp": 57,
+        "precision": 0.715,
+        "recall": 0.9533333333333334,
+        "support": 150,
+        "tp": 143
+      },
+      "no_relation": {
+        "f1": 0.9562766865926559,
+        "fn": 1354,
+        "fp": 182,
+        "precision": 0.9892808763767006,
+        "recall": 0.9254035590325602,
+        "support": 18151,
+        "tp": 16797
+      }
+    },
+    "weighted_f1": 0.9344415799363021
+  }
+}
