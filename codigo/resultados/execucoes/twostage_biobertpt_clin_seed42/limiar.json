@@ -1,0 +1,505 @@
+{
+  "configuracao_busca": {
+    "comparacao": "exata, por frações das contagens",
+    "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+    "desempates": [
+      "maior macro-F1 (contagens)",
+      "menor |limiar - 0,5|",
+      "maior limiar"
+    ],
+    "grade": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "regra": "two_stage: P(relacao) do estágio 1, arredondada a 4 casas, >= τ -> estágio 2 (argmax entre negation_of e associated_with); senão no_relation",
+    "versao": 1
+  },
+  "congelado_em": "2026-10-16T02:50:42+0000",
+  "hash_configuracao_busca": "2028a02acf1ed9b97ee8f1b5ee7931ab96a4d9294ff377106f3658bee96c42ae",
+  "hash_registro": "3abb73fe11bb0f7b40b8f31c754f2846439cc73411c1c1d695ae4cf5b48def82",
+  "limiar": 0.95,
+  "tabela": [
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 44,
+          "fp": 3684,
+          "tp": 719
+        },
+        "negation_of": {
+          "fn": 1,
+          "fp": 141,
+          "tp": 149
+        },
+        "no_relation": {
+          "fn": 3816,
+          "fp": 36,
+          "tp": 14335
+        }
+      },
+      "f1_negation_of": 0.6772727272727272,
+      "limiar": 0.05,
+      "macro_f1": 0.6123961083175934,
+      "n_roteados": 4693
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 57,
+          "fp": 3088,
+          "tp": 706
+        },
+        "negation_of": {
+          "fn": 2,
+          "fp": 116,
+          "tp": 148
+        },
+        "no_relation": {
+          "fn": 3196,
+          "fp": 51,
+          "tp": 14955
+        }
+      },
+      "f1_negation_of": 0.714975845410628,
+      "limiar": 0.1,
+      "macro_f1": 0.642300259843342,
+      "n_roteados": 4058
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 68,
+          "fp": 2801,
+          "tp": 695
+        },
+        "negation_of": {
+          "fn": 4,
+          "fp": 102,
+          "tp": 146
+        },
+        "no_relation": {
+          "fn": 2895,
+          "fp": 64,
+          "tp": 15256
+        }
+      },
+      "f1_negation_of": 0.7336683417085427,
+      "limiar": 0.15,
+      "macro_f1": 0.657210381947226,
+      "n_roteados": 3744
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 81,
+          "fp": 2582,
+          "tp": 682
+        },
+        "negation_of": {
+          "fn": 5,
+          "fp": 93,
+          "tp": 145
+        },
+        "no_relation": {
+          "fn": 2667,
+          "fp": 78,
+          "tp": 15484
+        }
+      },
+      "f1_negation_of": 0.7474226804123711,
+      "limiar": 0.2,
+      "macro_f1": 0.668237922143363,
+      "n_roteados": 3502
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 88,
+          "fp": 2424,
+          "tp": 675
+        },
+        "negation_of": {
+          "fn": 6,
+          "fp": 91,
+          "tp": 144
+        },
+        "no_relation": {
+          "fn": 2507,
+          "fp": 86,
+          "tp": 15644
+        }
+      },
+      "f1_negation_of": 0.7480519480519481,
+      "limiar": 0.25,
+      "macro_f1": 0.6736930639143751,
+      "n_roteados": 3334
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 93,
+          "fp": 2264,
+          "tp": 670
+        },
+        "negation_of": {
+          "fn": 7,
+          "fp": 85,
+          "tp": 143
+        },
+        "no_relation": {
+          "fn": 2341,
+          "fp": 92,
+          "tp": 15810
+        }
+      },
+      "f1_negation_of": 0.7566137566137566,
+      "limiar": 0.3,
+      "macro_f1": 0.6825407841640306,
+      "n_roteados": 3162
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 105,
+          "fp": 2120,
+          "tp": 658
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 80,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 2192,
+          "fp": 105,
+          "tp": 15959
+        }
+      },
+      "f1_negation_of": 0.7634408602150538,
+      "limiar": 0.35,
+      "macro_f1": 0.6893176633184322,
+      "n_roteados": 3000
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 110,
+          "fp": 1981,
+          "tp": 653
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 76,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 2049,
+          "fp": 110,
+          "tp": 16102
+        }
+      },
+      "f1_negation_of": 0.7717391304347826,
+      "limiar": 0.4,
+      "macro_f1": 0.6977889327716759,
+      "n_roteados": 2852
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 115,
+          "fp": 1868,
+          "tp": 648
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 72,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1932,
+          "fp": 115,
+          "tp": 16219
+        }
+      },
+      "f1_negation_of": 0.7802197802197802,
+      "limiar": 0.45,
+      "macro_f1": 0.7053676968436836,
+      "n_roteados": 2730
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 126,
+          "fp": 1742,
+          "tp": 637
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 70,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1804,
+          "fp": 126,
+          "tp": 16347
+        }
+      },
+      "f1_negation_of": 0.7845303867403315,
+      "limiar": 0.5,
+      "macro_f1": 0.7114209749706585,
+      "n_roteados": 2591
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 140,
+          "fp": 1635,
+          "tp": 623
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 68,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1695,
+          "fp": 140,
+          "tp": 16456
+        }
+      },
+      "f1_negation_of": 0.7888888888888889,
+      "limiar": 0.55,
+      "macro_f1": 0.7161749280645473,
+      "n_roteados": 2468
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 156,
+          "fp": 1545,
+          "tp": 607
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 67,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1604,
+          "fp": 156,
+          "tp": 16547
+        }
+      },
+      "f1_negation_of": 0.7910863509749304,
+      "limiar": 0.6,
+      "macro_f1": 0.7190188490205663,
+      "n_roteados": 2361
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 174,
+          "fp": 1439,
+          "tp": 589
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 65,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1496,
+          "fp": 174,
+          "tp": 16655
+        }
+      },
+      "f1_negation_of": 0.7955182072829131,
+      "limiar": 0.65,
+      "macro_f1": 0.7232825276626682,
+      "n_roteados": 2235
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 200,
+          "fp": 1312,
+          "tp": 563
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 61,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1365,
+          "fp": 200,
+          "tp": 16786
+        }
+      },
+      "f1_negation_of": 0.8045325779036827,
+      "limiar": 0.7,
+      "macro_f1": 0.7289437160934383,
+      "n_roteados": 2078
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 222,
+          "fp": 1182,
+          "tp": 541
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 60,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1234,
+          "fp": 222,
+          "tp": 16917
+        }
+      },
+      "f1_negation_of": 0.8068181818181818,
+      "limiar": 0.75,
+      "macro_f1": 0.7335991213590097,
+      "n_roteados": 1925
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 243,
+          "fp": 1040,
+          "tp": 520
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 58,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1090,
+          "fp": 243,
+          "tp": 17061
+        }
+      },
+      "f1_negation_of": 0.8114285714285714,
+      "limiar": 0.8,
+      "macro_f1": 0.7405095203835896,
+      "n_roteados": 1760
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 272,
+          "fp": 890,
+          "tp": 491
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 54,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 936,
+          "fp": 272,
+          "tp": 17215
+        }
+      },
+      "f1_negation_of": 0.8208092485549133,
+      "limiar": 0.85,
+      "macro_f1": 0.7483117446328044,
+      "n_roteados": 1577
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 316,
+          "fp": 716,
+          "tp": 447
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 51,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 759,
+          "fp": 316,
+          "tp": 17392
+        }
+      },
+      "f1_negation_of": 0.8279883381924198,
+      "limiar": 0.9,
+      "macro_f1": 0.754061422004173,
+      "n_roteados": 1356
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 523,
+          "fp": 259,
+          "tp": 240
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 41,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 294,
+          "fp": 531,
+          "tp": 17857
+        }
+      },
+      "f1_negation_of": 0.8318042813455657,
+      "limiar": 0.95,
+      "macro_f1": 0.7298581065488259,
+      "n_roteados": 676
+    }
+  ],
+  "vinculos": {
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "max_gap": 25,
+      "n_candidatos": 19064,
+      "particao": "dev",
+      "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "estagio1": {
+      "melhor_epoca": 2,
+      "nome": "two_stage_e1__82490c70baed__t1",
+      "sha256_config": "0d793f957267bb345d268ec3302cb2b63908114587b0f3804240a827ce689658",
+      "sha256_melhor_modelo": "2d6ccc94538b83369938b7f35d1d1e1ae58c268d48c34db5759ffc6cb6b850de"
+    },
+    "estagio2": {
+      "melhor_epoca": 6,
+      "nome": "two_stage_e2__65e72d6c30e8__t1",
+      "sha256_config": "35742bd072ef30af56c151c1d57869ad8be6de461895ba4474fe05c2e43aac2d",
+      "sha256_melhor_modelo": "4db8da0f739179139643b29bd738980576173780145d27b62edf6e78761e94a0"
+    },
+    "proveniencia_pesos": {
+      "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+      "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+      "repositorio": "pucpr/biobertpt-clin"
+    },
+    "seed": 42
+  }
+}
