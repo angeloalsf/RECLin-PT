@@ -1,0 +1,288 @@
+{
+  "campo_selecao": "dev_negation_of_f1_relacoes_anotadas",
+  "concluido": true,
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "encoder": "bertimbau",
+    "epochs": 10,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "neuralmind/bert-base-portuguese-cased",
+    "seed": 42,
+    "tipo": "ConfigEstagio2",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "contagem_por_rotulo": {
+    "dev": {
+      "associated_with": 763,
+      "negation_of": 150
+    },
+    "train": {
+      "associated_with": 7096,
+      "negation_of": 1255
+    }
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.18751657158136367,
+      "dev_macro_f1_estagio": 0.9491839374489335,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9146757679180887,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9370629370629371,
+      "dev_recall_negation_of_relacoes_anotadas": 0.8933333333333333,
+      "duration_s": 167.5,
+      "epoch": 1,
+      "train_loss": 0.4974571601523243
+    },
+    {
+      "dev_loss": 0.13139694659039378,
+      "dev_macro_f1_estagio": 0.9639086053620998,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9395973154362416,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9459459459459459,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9333333333333333,
+      "duration_s": 177.2,
+      "epoch": 2,
+      "train_loss": 0.07276669233852556
+    },
+    {
+      "dev_loss": 0.09364864400898416,
+      "dev_macro_f1_estagio": 0.9663661047654338,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9438943894389439,
+      "dev_precision_negation_of_relacoes_anotadas": 0.934640522875817,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9533333333333334,
+      "duration_s": 180.3,
+      "epoch": 3,
+      "train_loss": 0.03271557372738785
+    },
+    {
+      "dev_loss": 0.16998893688044822,
+      "dev_macro_f1_estagio": 0.9613797924611894,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9351535836177475,
+      "dev_precision_negation_of_relacoes_anotadas": 0.958041958041958,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9133333333333333,
+      "duration_s": 187.5,
+      "epoch": 4,
+      "train_loss": 0.0215310970088467
+    },
+    {
+      "dev_loss": 0.08796081929079567,
+      "dev_macro_f1_estagio": 0.9782368913188102,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9636963696369637,
+      "dev_precision_negation_of_relacoes_anotadas": 0.954248366013072,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+      "duration_s": 180.4,
+      "epoch": 5,
+      "train_loss": 0.017208182731934803
+    },
+    {
+      "dev_loss": 0.13281422910513357,
+      "dev_macro_f1_estagio": 0.9639086053620998,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9395973154362416,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9459459459459459,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9333333333333333,
+      "duration_s": 180.7,
+      "epoch": 6,
+      "train_loss": 0.008973571046198654
+    },
+    {
+      "dev_loss": 0.09721425407139274,
+      "dev_macro_f1_estagio": 0.9722280161999617,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9536423841059603,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9473684210526315,
+      "dev_recall_negation_of_relacoes_anotadas": 0.96,
+      "duration_s": 182.9,
+      "epoch": 7,
+      "train_loss": 0.004339026587123037
+    },
+    {
+      "dev_loss": 0.13168049781622054,
+      "dev_macro_f1_estagio": 0.968090869375273,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9466666666666667,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9466666666666667,
+      "dev_recall_negation_of_relacoes_anotadas": 0.9466666666666667,
+      "duration_s": 186.6,
+      "epoch": 8,
+      "train_loss": 0.00403578475718422
+    },
+    {
+      "dev_loss": 0.14247676716962207,
+      "dev_macro_f1_estagio": 0.9660054361515027,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9431438127090301,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9463087248322147,
+      "dev_recall_negation_of_relacoes_anotadas": 0.94,
+      "duration_s": 181.3,
+      "epoch": 9,
+      "train_loss": 0.003505210998247712
+    },
+    {
+      "dev_loss": 0.14498533814912662,
+      "dev_macro_f1_estagio": 0.9660054361515027,
+      "dev_negation_of_f1_relacoes_anotadas": 0.9431438127090301,
+      "dev_precision_negation_of_relacoes_anotadas": 0.9463087248322147,
+      "dev_recall_negation_of_relacoes_anotadas": 0.94,
+      "duration_s": 181.8,
+      "epoch": 10,
+      "train_loss": 0.0041343539136547225
+    }
+  ],
+  "dispositivo": "cuda",
+  "estagio": 2,
+  "estrategia": "two_stage_e2",
+  "final": {
+    "encoder_mudou_no_treino": true,
+    "sha256_encoder_completo_final": "4ed44a94adffe545c9c164403e9d348ba94c1064e5e7456042892c04060e45d9",
+    "sha256_melhor_modelo": "b2a745fd222a21e9266724f0b31d7bb4ef6fda56a2b2df6e4be1c860d6b80abf"
+  },
+  "identidade_modelo": {
+    "classe": "BertForSequenceClassification",
+    "config_sha256": "b82e79402a1f7e07e3c768cf619f24d022a2eae6249718b3cedfc016b328fc14",
+    "ids_marcadores": [
+      29794,
+      29795,
+      29796,
+      29797
+    ],
+    "modelo": "/content/reclin_pesos/bert-base-portuguese-cased@94d69c95f98f7d5b2a8700c420230ae10def0baa",
+    "n_parametros": 108927746,
+    "tokenizer": "BertTokenizer",
+    "vocabulario": 29798,
+    "vocabulario_sha256": "c66192f621add113467087c06b22cbb0684cdb5c82a5eb5317dd1da093539262"
+  },
+  "inicializacao": {
+    "cabeca": {
+      "chaves": [
+        "classifier.weight",
+        "classifier.bias"
+      ],
+      "formato": [
+        2,
+        768
+      ],
+      "nova": true,
+      "sha256": "84813930efab3c7f5db460d2b17da8c702e19a9026e69eff927c0bba9b60716f"
+    },
+    "chaves_nao_usadas_do_checkpoint": [
+      "cls.predictions.bias",
+      "cls.predictions.decoder.weight",
+      "cls.predictions.transform.LayerNorm.bias",
+      "cls.predictions.transform.LayerNorm.weight",
+      "cls.predictions.transform.dense.bias",
+      "cls.predictions.transform.dense.weight",
+      "cls.seq_relationship.bias",
+      "cls.seq_relationship.weight"
+    ],
+    "encoder": {
+      "iguais_ao_checkpoint": true,
+      "n_tensores": 199,
+      "origem": "arquivo de pesos do commit",
+      "sha256": "aac2b60840f3778b17bdbf0a461f935d3d08b87d58c0ddbb247e295bfa2841cd"
+    },
+    "marcadores": {
+      "ids": [
+        29794,
+        29795,
+        29796,
+        29797
+      ],
+      "sha256_linhas_novas": "199f708bf65ba9a77012d01bde99e8b896562367e71262484dccd0a67c616541",
+      "tokens": [
+        "[E1]",
+        "[/E1]",
+        "[E2]",
+        "[/E2]"
+      ],
+      "vocabulario_original": 29794
+    },
+    "pooler": {
+      "chaves": [
+        "bert.pooler.dense.bias",
+        "bert.pooler.dense.weight"
+      ],
+      "novo": false
+    },
+    "sha256_encoder_completo_inicial": "aac2b60840f3778b17bdbf0a461f935d3d08b87d58c0ddbb247e295bfa2841cd"
+  },
+  "melhor_epoca": 5,
+  "melhor_valor_selecao": 0.9636963696369637,
+  "modelo": "/content/reclin_pesos/bert-base-portuguese-cased@94d69c95f98f7d5b2a8700c420230ae10def0baa",
+  "n_candidatos": {
+    "dev": 19064,
+    "train": 152686
+  },
+  "n_exemplos": {
+    "dev": 913,
+    "train": 8351
+  },
+  "n_params": 108927746,
+  "nome": "two_stage_e2__9c00a5279316__t1",
+  "passos": {
+    "aquecimento": 131,
+    "por_epoca": 131,
+    "total": 1310
+  },
+  "pesos_classe": [
+    3.3270916334661353,
+    0.5884301014656145
+  ],
+  "posicao": {
+    "epoca": 10,
+    "epoca_concluida": true,
+    "epocas": 10,
+    "passo_global": 1310,
+    "passo_na_epoca": 131,
+    "passos_por_epoca": 131
+  },
+  "restaurou_melhor_estado": true,
+  "seed": 42,
+  "sessoes": [
+    {
+      "a_partir_de": null,
+      "ambiente": {
+        "cuda": "13.0",
+        "cudnn": 92700,
+        "gpu": "Tesla T4",
+        "plataforma": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "python": "3.13.15",
+        "pythonhashseed_valeu_no_processo": false,
+        "threads_torch": 1,
+        "variaveis": {
+          "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+          "MKL_NUM_THREADS": null,
+          "OMP_NUM_THREADS": null,
+          "PYTHONHASHSEED": "0",
+          "TOKENIZERS_PARALLELISM": null
+        },
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "ate": {
+        "epoca": 10,
+        "epoca_concluida": true,
+        "epocas": 10,
+        "passo_global": 1310,
+        "passo_na_epoca": 131,
+        "passos_por_epoca": 131
+      },
+      "avisos": [
+        "UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)"
+      ],
+      "checkpoints_gravados": 12,
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "fim": "2026-10-18T14:55:33+0000",
+      "inicio": "2026-10-18T14:23:20+0000",
+      "status": "concluido",
+      "tipo": "nova"
+    }
+  ]
+}
