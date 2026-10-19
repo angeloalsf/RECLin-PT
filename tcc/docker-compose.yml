@@ -1,0 +1,85 @@
+# Servicos para compilar o TCC do RECLin-PT.
+# Toda a infraestrutura LaTeX vive aqui — nada precisa ser instalado no host
+# alem do Docker Desktop (Windows/Mac) ou docker engine (Linux).
+#
+# Uso (a partir desta pasta tcc/):
+#   docker compose run --rm build    -> compila uma vez (PDF em build/main.pdf)
+#   docker compose run --rm watch    -> recompila a cada save (Ctrl+C sai)
+#   docker compose run --rm clean    -> remove arquivos auxiliares
+#   docker compose run --rm shell    -> bash dentro do container (debug)
+#
+# Primeira vez:
+#   docker compose build             -> constroi a imagem (~5 GB, demora)
+#
+# Os quatro servicos compartilham a mesma configuracao (volume, workdir,
+# imagem) via o anchor YAML &latex-common. So o command: muda.
+
+# ----------------------------------------------------------------------
+# Config compartilhada por todos os servicos
+# ----------------------------------------------------------------------
+x-latex-common: &latex-common
+  build: .
+  image: reclin-pt/tcc-latex:local
+  working_dir: /workdir/src
+  volumes:
+    - ./:/workdir
+  # environment em formato MAPA (chave: valor) — evita o problema de
+  # parsing quando a string contem ':' (formato lista exige aspas).
+  environment:
+    LANG: "C.UTF-8"
+    LC_ALL: "C.UTF-8"
+
+# ----------------------------------------------------------------------
+# Servicos
+# ----------------------------------------------------------------------
+services:
+
+  # Build padrao: latexmk roda pdflatex + bibtex + pdflatex N vezes
+  # ate referencias/citacoes convergirem. PDF sai em ../build/main.pdf
+  # (configurado em .latexmkrc).
+  build:
+    <<: *latex-common
+    command:
+      - latexmk
+      - -pdf
+      - -interaction=nonstopmode
+      - -file-line-error
+      - main.tex
+
+  # Modo watch: -pvc (preview continuously) recompila a cada save.
+  # Ideal durante a escrita. Sai com Ctrl+C.
+  watch:
+    <<: *latex-common
+    command:
+      - latexmk
+      - -pdf
+      - -pvc
+      - -interaction=nonstopmode
+      - -file-line-error
+      - main.tex
+
+  # Remove aux files (aux, bbl, log, fdb_latexmk, etc.) e o PDF.
+  # Faz duas coisas:
+  #   1. latexmk -C -> limpa tudo dentro de ../build/ (config do .latexmkrc).
+  #   2. rm main.*  -> remove qualquer lixo que tenha escapado para src/
+  #                    (acontece se um build for rodado SEM o .latexmkrc lido,
+  #                    por engano). Idempotente: nao falha se nao houver lixo.
+  clean:
+    <<: *latex-common
+    command:
+      - sh
+      - -c
+      - >-
+        latexmk -C main.tex;
+        rm -f main.aux main.bbl main.blg main.fdb_latexmk main.fls
+        main.log main.out main.pdf main.toc main.lof main.lot main.loq
+        main.idx main.ilg main.ind main.brf main.synctex.gz main.run.xml;
+        echo "Limpeza concluida."
+
+  # Shell interativo dentro do container — para depurar pacotes,
+  # rodar tlmgr search, inspecionar versoes, etc.
+  shell:
+    <<: *latex-common
+    command: ["bash"]
+    stdin_open: true
+    tty: true

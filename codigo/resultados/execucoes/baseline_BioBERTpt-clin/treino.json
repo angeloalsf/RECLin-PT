@@ -1,0 +1,146 @@
+{
+  "concluido": true,
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "encoder": "biobertpt_clin",
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "pucpr/biobertpt-clin",
+    "seed": 42,
+    "tipo": "Config",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.40715857514027104,
+      "dev_macro_f1": 0.7029832603599037,
+      "dev_negation_of_f1": 0.7873563218390804,
+      "duration_s": 3552.8,
+      "epoch": 1,
+      "train_loss": 0.527642621348822
+    },
+    {
+      "dev_loss": 0.3742470834037014,
+      "dev_macro_f1": 0.7171794514491877,
+      "dev_negation_of_f1": 0.8045977011494253,
+      "duration_s": 2539.5,
+      "epoch": 2,
+      "train_loss": 0.2995404074521234
+    },
+    {
+      "dev_loss": 0.3745276391003812,
+      "dev_macro_f1": 0.7306581153074333,
+      "dev_negation_of_f1": 0.813953488372093,
+      "duration_s": 3486.6,
+      "epoch": 3,
+      "train_loss": 0.23346238470023883
+    }
+  ],
+  "dispositivo": "cuda",
+  "estrategia": "baseline",
+  "identidade_modelo": {
+    "classe": "BertForSequenceClassification",
+    "config_sha256": "21d26ba3847bc0c91b34122d81fcedb4613c51649ec7c00413e06b268119f730",
+    "ids_marcadores": [
+      119547,
+      119548,
+      119549,
+      119550
+    ],
+    "modelo": "/content/reclin_pesos/biobertpt-clin@b59beec2e379e58a31b945039cc9ef163cfe22b7",
+    "n_parametros": 177858819,
+    "tokenizer": "BertTokenizer",
+    "vocabulario": 119551,
+    "vocabulario_sha256": "0f2b80fdf264aa2020da11a8f4768708f63d48914eb82128bec4738c32c5b42c"
+  },
+  "melhor_dev_macro_f1": 0.7306581153074333,
+  "melhor_epoca": 3,
+  "modelo": "/content/reclin_pesos/biobertpt-clin@b59beec2e379e58a31b945039cc9ef163cfe22b7",
+  "n_candidatos": {
+    "dev": 19064,
+    "train": 152686
+  },
+  "n_params": 177858819,
+  "nome": "baseline_BioBERTpt-clin",
+  "passos": {
+    "aquecimento": 715,
+    "por_epoca": 2386,
+    "total": 7158
+  },
+  "pesos_classe": [
+    40.55405046480744,
+    7.17239759488914,
+    0.3526194847634554
+  ],
+  "posicao": {
+    "epoca": 3,
+    "epoca_concluida": true,
+    "epocas": 3,
+    "passo_global": 7158,
+    "passo_na_epoca": 2386,
+    "passos_por_epoca": 2386
+  },
+  "restaurou_melhor_estado": true,
+  "seed": 42,
+  "sessoes": [
+    {
+      "a_partir_de": {
+        "epoca": 2,
+        "epoca_concluida": false,
+        "epocas": 3,
+        "passo_global": 3000,
+        "passo_na_epoca": 614,
+        "passos_por_epoca": 2386
+      },
+      "ambiente": {
+        "cuda": "13.0",
+        "cudnn": 92700,
+        "gpu": "Tesla T4",
+        "plataforma": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "python": "3.13.15",
+        "pythonhashseed_valeu_no_processo": false,
+        "threads_torch": 1,
+        "variaveis": {
+          "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+          "MKL_NUM_THREADS": null,
+          "OMP_NUM_THREADS": null,
+          "PYTHONHASHSEED": "0",
+          "TOKENIZERS_PARALLELISM": null
+        },
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "ate": {
+        "epoca": 3,
+        "epoca_concluida": true,
+        "epocas": 3,
+        "passo_global": 7158,
+        "passo_na_epoca": 2386,
+        "passos_por_epoca": 2386
+      },
+      "avisos": [
+        "UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)"
+      ],
+      "checkpoints_gravados": 10,
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "fim": "2026-10-18T03:00:04+0000",
+      "inicio": "2026-10-18T01:15:51+0000",
+      "status": "concluido",
+      "tipo": "retomada"
+    }
+  ],
+  "test_avaliado": false
+}

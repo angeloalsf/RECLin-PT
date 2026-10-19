@@ -1,0 +1,24 @@
+\chapter[Histórico de treino por época]{Histórico de treino por época}
+\label{ap:historico}
+
+Este apêndice reúne a evolução por época das execuções no DEV, resumida na
+Seção~\ref{sec:curvas} e na Seção~\ref{sec:resultados_twostage}. A
+Tabela~\ref{tab:dev_history} apresenta as execuções de três rótulos, com a época
+selecionada pelo maior macro-F1 no DEV. As Tabelas~\ref{tab:dev_estagio1}
+e~\ref{tab:dev_estagio2} apresentam os dois estágios do Two-Stage, cada um com o seu
+critério de seleção. Os valores vêm dos arquivos \texttt{treino.json} de cada
+execução.
+
+As durações registram o tempo de cada época na sessão em que ela foi concluída. Três
+execuções foram interrompidas e retomadas a partir de um \emph{checkpoint}: o
+baseline com o BERTimbau-base, a Pair-Aware MLP e o estágio 1 do Two-Stage. Em cada
+uma delas, o registro preserva apenas a sessão final; a época retomada mostra a
+duração da parte executada nessa sessão, e as épocas anteriores, concluídas em sessões
+sem registro, não podem ser conferidas. Por isso, as durações não servem para comparar
+o custo de treino entre estratégias.
+
+\input{tabelas/dev_history}
+
+\input{tabelas/dev_estagio1}
+
+\input{tabelas/dev_estagio2}

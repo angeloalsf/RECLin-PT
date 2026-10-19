@@ -1,0 +1,157 @@
+{
+  "alias_oficial": null,
+  "ambiente": {
+    "colab": true,
+    "cuda": "13.0",
+    "cudnn": 92700,
+    "gpu": "Tesla T4",
+    "gpus": [
+      {
+        "driver": "580.82.07",
+        "memoria_mib": 15360,
+        "nome": "Tesla T4"
+      }
+    ],
+    "plataforma": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "python": "3.13.15",
+    "versoes": {
+      "huggingface_hub": "1.29.0",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0",
+      "scipy": "1.16.3",
+      "tokenizers": "0.23.2",
+      "torch": "2.11.0+cu130",
+      "transformers": "5.16.1"
+    }
+  },
+  "atualizado_em": "2026-10-18T03:01:14+0000",
+  "chave_configuracao": {
+    "codigo": {
+      "algoritmo": "sha256-manifesto-v1",
+      "escopo": "global-v1",
+      "identidade": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c"
+    },
+    "config": {
+      "batch_size": 64,
+      "class_weight": "balanced",
+      "ctx_chars": 128,
+      "encoder": "biobertpt_clin",
+      "epochs": 3,
+      "lr": 2e-05,
+      "max_gap": 25,
+      "max_grad_norm": 1.0,
+      "max_length": 128,
+      "seed": 42,
+      "tipo": "Config",
+      "warmup_ratio": 0.1,
+      "weight_decay": 0.01
+    },
+    "dados": {
+      "particoes": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "versao": "v2-texto-fonte"
+    },
+    "estrategia": "baseline",
+    "estrategia_config": {},
+    "pesos": {
+      "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+      "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+      "repositorio": "pucpr/biobertpt-clin"
+    }
+  },
+  "checkpoints": {
+    "drive": {
+      "copiados": 9,
+      "destino": "/content/drive/MyDrive/RECLin-PT/execucoes/baseline__5f040555ccbe__t1",
+      "inalterados": 4,
+      "incluiu_ultimo": true,
+      "n_arquivos": 13,
+      "sincronizado_em": "2026-10-18T03:01:14+0000"
+    },
+    "hf": null,
+    "local": "checkpoints"
+  },
+  "codigo": {
+    "branch": "main",
+    "identidade_global": {
+      "algoritmo": "sha256-manifesto-v1",
+      "identidade": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c"
+    },
+    "infraestrutura": {
+      "algoritmo": "sha256-manifesto-v1",
+      "componente": "infraestrutura",
+      "identidade": "671b559dbf11a1c228513c5e99245893ed4692c1b853bfa664a3b79576df83a9",
+      "n_arquivos": 17
+    },
+    "origem": "git",
+    "repositorio": "angeloalsf/RECLin-PT",
+    "revisao": "3e3cb39d7cb19ce64ab968ec11962966d4225afe",
+    "tarball_sha256": null
+  },
+  "config_id": "5f040555ccbe",
+  "criado_em": "2026-10-16T11:48:27+0000",
+  "estado": "concluida",
+  "estrategia": "baseline",
+  "historico_de_estados": [
+    {
+      "em": "2026-10-16T11:48:27+0000",
+      "estado": "planejada",
+      "nota": "natureza=protocolo"
+    },
+    {
+      "em": "2026-10-16T11:48:27+0000",
+      "estado": "iniciada",
+      "nota": "início do treino"
+    },
+    {
+      "em": "2026-10-18T03:00:10+0000",
+      "estado": "concluida",
+      "nota": "treino concluído"
+    }
+  ],
+  "metricas": {
+    "metricas_json": {
+      "particoes": [
+        "dev"
+      ],
+      "sha256": "24caf37a756690b73394fcdab2c1db83b2c31946e3ee4899f766aa78e48ab95a"
+    },
+    "treino": {
+      "concluido": true,
+      "epocas_no_historico": 3,
+      "melhor_dev_macro_f1": 0.7306581153074333,
+      "melhor_epoca": 3,
+      "n_sessoes": 1
+    }
+  },
+  "nome": "baseline_BioBERTpt-clin",
+  "parametros_de_treinamento": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "encoder": "biobertpt_clin",
+    "epochs": 3,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "pucpr/biobertpt-clin",
+    "seed": 42,
+    "tipo": "Config",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "pesos_pretreinados": {
+    "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+    "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+    "repositorio": "pucpr/biobertpt-clin"
+  },
+  "publicacoes": [],
+  "run_id": "baseline__5f040555ccbe__t1",
+  "schema": "reclin-experimento/1",
+  "seed": 42,
+  "sha256_config": "8884a527b129cba0757dac287bfdc15e517625aaac4d68556729b7db89d4d924",
+  "tentativa": 1
+}

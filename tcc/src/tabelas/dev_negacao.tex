@@ -1,0 +1,20 @@
+%% GERADO por analise/gerar_artefatos_tcc.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Resultados no conjunto de desenvolvimento (DEV) dos sistemas do protocolo, BioBERTpt-all, seed 42: precisão (P), \emph{recall} (R) e F1 de \texttt{negation\_of}, macro-F1 e MCC. Melhor valor por coluna em negrito.}
+  \label{tab:dev_negacao}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrr}
+  \toprule
+  Sistema & P & R & F1 & VP/FP/FN & Macro-F1 & MCC \\
+  \midrule
+Baseline & 0{,}696 & \textbf{0{,}947} & 0{,}802 & 142/62/8 & 0{,}719 & 0{,}480 \\
+Baseline calibrado ($t=0{,}90$) & 0{,}723 & 0{,}920 & 0{,}809 & 138/53/12 & 0{,}721 & 0{,}479 \\
+Filtro léxico & 0{,}750 & 0{,}900 & 0{,}818 & 135/45/15 & 0{,}724 & 0{,}477 \\
+Pair-Aware & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & \textbf{0{,}741} & \textbf{0{,}497} \\
+Two-Stage ($\tau=0{,}95$) & \textbf{0{,}798} & 0{,}867 & \textbf{0{,}831} & 130/33/20 & 0{,}725 & 0{,}462 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize DEV, $n=19\,064$ pares (150 \texttt{negation\_of}). Não são resultados de teste. $\tau$ e $t$ foram escolhidos neste mesmo DEV.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

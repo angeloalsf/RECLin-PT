@@ -1,0 +1,137 @@
+\chapter[Introdução]{Introdução}
+\label{cap:introducao}
+
+O registro eletrônico em saúde concentra grande parte da informação clínica
+sob a forma de texto livre. Notas de evolução, sumários de alta e laudos são
+redigidos em linguagem natural, com abreviações idiossincráticas, ausência
+frequente de pontuação padronizada e construções negativas características do
+discurso médico. Essa riqueza textual, embora valiosa para pesquisa e apoio à
+decisão, permanece majoritariamente inacessível a consultas estruturadas, o que
+motiva o desenvolvimento de técnicas de Processamento de Linguagem Natural (PLN)
+capazes de transformar texto clínico em conhecimento estruturado.
+
+No contexto da língua portuguesa, o avanço dessas técnicas foi historicamente
+limitado pela escassez de recursos anotados. A disponibilização do corpus
+\textbf{SemClinBr} \cite{oliveira_2022_semclinbr}, primeiro corpus clínico
+anotado semanticamente para o português, com mil documentos provenientes de
+múltiplas instituições e especialidades, criou condições para investigar tarefas
+antes restritas ao inglês, entre elas a extração de relações entre entidades
+clínicas.
+
+\section{Problema de pesquisa}
+
+A extração de entidades nomeadas identifica menções a conceitos clínicos
+(sintomas, doenças, achados, procedimentos), mas isoladamente não captura como
+esses conceitos se articulam no enunciado. Saber que um documento menciona
+``febre'' não é suficiente. É preciso distinguir se a febre está \emph{associada}
+ao quadro do paciente ou se está sendo \emph{negada} (``paciente afebril'').
+Esse vínculo é o objeto da extração de relações (\foreignlanguage{english}{Relation Extraction}, RE).
+
+Os sistemas atuais de extração de relações partem de um \emph{encoder}\footnote{\emph{Encoder} é a
+metade codificadora da arquitetura \foreignlanguage{english}{Transformer}, que
+recebe a sequência de entrada e devolve uma representação vetorial contextual de
+cada \emph{token}, sem gerar texto novo. É o tipo de modelo do BERT e de suas
+variantes.} pré-treinado, ajustado à tarefa a partir de um
+\emph{checkpoint}\footnote{\emph{Checkpoint} é o arquivo com os pesos de um modelo
+já pré-treinado, distribuído publicamente e usado como ponto de partida do ajuste
+fino.} público. Para o português, contudo, a extração de relações clínicas é pouco
+representada na literatura, que se concentra na classificação de textos e no
+reconhecimento de entidades \cite{shimaoka_2026_revisao}. O problema abordado neste
+trabalho é, assim, o desenvolvimento de um modelo de extração de relações em notas
+clínicas em português, com ênfase na identificação de relações de negação: o
+RECLin-PT, desenvolvido sobre o SemClinBr. Esse desenvolvimento envolve decisões para
+as quais a literatura não oferece resposta pronta: qual \emph{encoder} usar, entre os
+de domínio geral e os adaptados ao domínio clínico, escolha com consequências de
+custo e de desempenho, e qual estratégia de modelagem define como as saídas desse
+\emph{encoder} produzem os rótulos de relação. Daí a pergunta de pesquisa:
+
+\begin{quote}
+\emph{Como desenvolver o RECLin-PT para a extração de relações clínicas em português
+no corpus SemClinBr, com ênfase na identificação de relações de negação, e de que
+modo a escolha do encoder pré-treinado e da estratégia de modelagem influencia seu
+desempenho?}
+\end{quote}
+
+A primeira parte da pergunta corresponde à finalidade do trabalho, o desenvolvimento
+do modelo; a segunda, às decisões que esse desenvolvimento exige, investigadas
+experimentalmente para subsidiar a definição de sua configuração. Para isso, os
+componentes do modelo são avaliados em duas dimensões, sob um
+protocolo pré-registrado e sobre os mesmos dados e pares candidatos: os
+\emph{encoders}, comparados sob configuração idêntica, e as estratégias de
+modelagem, comparadas com o mesmo \emph{encoder}. O desafio é agravado por dois
+fatores inerentes ao corpus: o forte desbalanceamento entre as classes de relação e o
+fato de o SemClinBr anotar apenas relações positivas, o que exige a geração controlada
+de exemplos negativos.
+
+\section{Motivação}
+\label{sec:motivacao}
+
+A negação clínica é um fenômeno linguístico de alto impacto, uma vez que tratar um
+achado negado como presente pode inverter completamente a interpretação de um
+prontuário, o que justifica um modelo dedicado a essa relação. No desenvolvimento
+do RECLin-PT, a primeira decisão é o \emph{encoder}. Em português, a negação é fortemente
+lexicalizada (``não'', ``sem'', ``nega'', ``ausência de''), e há a expectativa
+difundida de que modelos
+pré-treinados sobre texto do próprio domínio clínico capturem melhor essas
+construções do que modelos de domínio geral. Esse ganho, contudo, não é
+automático. Em inglês, \citeonline{lin_2020_negacao} reportam que, na detecção de
+negação clínica, o BERT sem as extensões de adaptação de domínio avaliadas obteve, em
+média, o melhor desempenho. Para o português, não localizamos
+avaliação controlada que isole o efeito do pré-treinamento de domínio na extração
+de relações clínicas. A comparação direta entre \emph{encoders} clínicos e de
+domínio geral sobre o SemClinBr foi conduzida para o reconhecimento de entidades
+\cite{almeida_2026_benchmarkner}, e não para a etapa de relações
+(Capítulo~\ref{cap:relacionados}).
+
+A escolha do \emph{encoder} também não é independente da estratégia de modelagem.
+Um classificador direto de três classes, uma cabeça que lê explicitamente o par de
+entidades e uma arquitetura em dois estágios, que primeiro detecta a existência de
+relação e depois decide seu tipo, distribuem o problema de formas diferentes, e o
+efeito do pré-treinamento pode variar com essa distribuição. Comparar estratégias e
+\emph{encoders} de forma justa exige que todos passem pelos mesmos dados, pelos
+mesmos pares candidatos e pelo mesmo protocolo de seleção e de avaliação. Por isso, o
+desenvolvimento do RECLin-PT apoia-se em uma cadeia experimental reprodutível, que
+também responde a críticas recorrentes à literatura de PLN biomédico, como o
+compartilhamento restrito de modelos e o detalhamento insuficiente do ajuste
+fino\footnote{Ajuste fino (\foreignlanguage{english}{fine-tuning}) é o
+retreinamento de um modelo pré-treinado sobre os dados de uma tarefa específica,
+partindo dos pesos já aprendidos em vez de uma inicialização aleatória
+\cite{devlin_2019_bert}.} \cite{navarro_2023_revisao,shimaoka_2026_revisao}.
+
+\section{Objetivos}
+
+\subsection{Objetivo geral}
+
+Desenvolver o RECLin-PT, um modelo de extração de relações clínicas em português
+aplicado ao corpus SemClinBr, com ênfase na identificação de relações de negação
+(\texttt{negation\_of}), investigando alternativas de \emph{encoder} pré-treinado e
+de estratégia de modelagem para subsidiar a definição de sua configuração.
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+  \item Reconstruir os dados do SemClinBr a partir dos XML originais, com o texto
+        alinhado aos offsets de anotação, e congelar partições em nível de
+        documento, estratificadas e verificáveis por \emph{hashes}.
+  \item Caracterizar o corpus, quantificando a distribuição das relações e a
+        distância entre entidades relacionadas, e justificar a janela de geração
+        de pares candidatos.
+  \item Implementar um gerador determinístico de pares candidatos compartilhado por
+        todas as estratégias, garantindo a comparabilidade dos resultados.
+  \item Implementar as estratégias de modelagem candidatas do RECLin-PT: baseline,
+        baseline calibrado, filtro léxico, Pair-Aware e Two-Stage, além de uma
+        variante exploratória da Pair-Aware.
+  \item Comparar, para orientar a escolha do \emph{encoder}, \emph{encoders} para o
+        português sob configuração idêntica, mudando apenas o \emph{checkpoint} de
+        pré-treino: BioBERTpt-all e BERTimbau-base, com o BioBERTpt-clin previsto.
+  \item Comparar, para orientar a escolha da estratégia, as estratégias implementadas
+        com o mesmo \emph{encoder} e sob o mesmo protocolo.
+  \item Avaliar as configurações do RECLin-PT por precisão, \emph{recall} e F1 por
+        classe, macro-F1 e MCC, com
+        comparações pareadas por \emph{bootstrap}\footnote{O \emph{bootstrap} pareado
+        estima a incerteza de uma diferença de desempenho reamostrando com reposição
+        o mesmo conjunto para os dois modelos, sem supor uma distribuição para a
+        métrica (Seção~\ref{sec:avaliacao}).} e McNemar.
+  \item Indicar a estratégia de referência preliminar do RECLin-PT e registrar o que
+        falta para congelar sua configuração e avaliá-la no conjunto de teste.
+\end{itemize}

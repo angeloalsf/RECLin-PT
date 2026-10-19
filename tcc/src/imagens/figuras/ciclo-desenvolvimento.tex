@@ -1,0 +1,57 @@
+% Ciclo de desenvolvimento do RECLin-PT, com o estado de cada etapa conferido
+% nos artefatos (branch resultados-colab, commit bb9457f) e no protocolo.
+\begin{figure}[htbp]
+  \centering
+  \caption{Ciclo de desenvolvimento do RECLin-PT e estado atual de cada etapa.}
+  \label{fig:ciclo}
+  \begin{tikzpicture}[
+      font=\sffamily\footnotesize,
+      etapa/.style={rounded corners=3pt, minimum height=1.25cm, text width=3.0cm, align=center, inner sep=3pt},
+      concluida/.style={etapa, draw=black!80, fill=black!20, line width=0.8pt},
+      parcial/.style={etapa, draw=black!80, line width=0.8pt, fill=white, pattern=north east lines, pattern color=black!25},
+      pendente/.style={etapa, draw=black!60, dashed, line width=0.8pt, fill=white},
+      seta/.style={-{Stealth[length=2.2mm]}, line width=0.8pt},
+      estado/.style={font=\sffamily\scriptsize\itshape, text=black!70, below=1.5pt}
+    ]
+    % linha 1 (da esquerda para a direita)
+    \node[concluida] (e1) at (0,0)    {\textbf{1.} Preparação\\ dos dados};
+    \node[concluida] (e2) at (3.75,0) {\textbf{2.} Geração de\\ pares candidatos};
+    \node[parcial]   (e3) at (7.5,0)  {\textbf{3.} \emph{Fine-tuning}\\ (\emph{encoder} $\times$ estratégia)};
+    \node[concluida] (e4) at (11.25,0){\textbf{4.} Seleção de épocas\\ e limiares no DEV};
+    % linha 2 (da direita para a esquerda)
+    \node[parcial]   (e5) at (11.25,-3.4) {\textbf{5.} Comparação de\\ estratégias e \emph{encoders}};
+    \node[pendente]  (e6) at (7.5,-3.4)   {\textbf{6.} Congelamento\\ da configuração};
+    \node[pendente]  (e7) at (3.75,-3.4)  {\textbf{7.} Avaliação única\\ no TEST};
+    \node[pendente]  (e8) at (0,-3.4)     {\textbf{8.} Seleção do\\ modelo final};
+    \draw[seta] (e1) -- (e2);
+    \draw[seta] (e2) -- (e3);
+    \draw[seta] (e3) -- (e4);
+    \draw[seta] (e4.south) -- (e5.north);
+    \draw[seta] (e5) -- (e6);
+    \draw[seta] (e6) -- (e7);
+    \draw[seta] (e7) -- (e8);
+    % retorno 5 -> 3
+    \draw[seta, dashed] (9.95,-2.775) -- (9.95,-1.7) -- (8.35,-1.7) -- (8.35,-0.625);
+    \node[font=\sffamily\scriptsize, anchor=north east] at (9.85,-1.78) {novos \emph{encoders} ou estratégias};
+    % estados
+    \node[estado] at (e1.south) {concluída};
+    \node[estado] at (e2.south) {concluída};
+    \node[estado, xshift=-6mm] at (e3.south) {parcial$^{a}$};
+    \node[estado, xshift=-8mm] at (e4.south) {concluída$^{b}$};
+    \node[estado, xshift=-8mm] at (e5.south) {parcial$^{c}$};
+    \node[estado] at (e6.south) {pendente};
+    \node[estado] at (e7.south) {pendente};
+    \node[estado] at (e8.south) {pendente};
+    % legenda
+    \begin{scope}[shift={(3.9,-4.95)}, font=\sffamily\scriptsize]
+      \node[draw=black!80, fill=black!20, minimum width=5mm, minimum height=3.2mm, rounded corners=1pt] (l1) at (0,0) {};
+      \node[right=1mm of l1] (t1) {concluída};
+      \node[draw=black!80, fill=white, pattern=north east lines, pattern color=black!25, minimum width=5mm, minimum height=3.2mm, rounded corners=1pt, right=6mm of t1] (l2) {};
+      \node[right=1mm of l2] (t2) {parcial};
+      \node[draw=black!60, dashed, fill=white, minimum width=5mm, minimum height=3.2mm, rounded corners=1pt, right=6mm of t2] (l3) {};
+      \node[right=1mm of l3] {pendente};
+    \end{scope}
+  \end{tikzpicture}\\[4pt]
+  {\footnotesize $^{a}$ O BioBERTpt-all foi ajustado em todas as estratégias treinadas; o BERTimbau-base, apenas no baseline; o BioBERTpt-clin e o \emph{fine-tuning} restrito não têm execução. $^{b}$ Para as execuções existentes e verificadas. $^{c}$ Estratégias comparadas com o BioBERTpt-all; \emph{encoders}, apenas na estratégia baseline; comparações descritivas no DEV.}\\[2pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{figure}

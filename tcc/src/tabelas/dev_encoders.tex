@@ -1,0 +1,17 @@
+%% GERADO por analise/gerar_artefatos_tcc.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Comparação de \emph{encoders} na estratégia baseline, no DEV (seed 42, mesma configuração; só o \emph{checkpoint} muda): F1 por classe, P e R de \texttt{negation\_of}, macro-F1 e MCC.}
+  \label{tab:dev_encoders}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llrrrrrrr}
+  \toprule
+  \emph{Encoder} & Parâm. & F1 neg & F1 assoc & F1 no\_rel & P neg & R neg & Macro-F1 & MCC \\
+  \midrule
+BioBERTpt-all & 177{,}9 M & 0{,}802 & 0{,}408 & 0{,}946 & 0{,}696 & 0{,}947 & 0{,}719 & 0{,}480 \\
+BERTimbau-base & 108{,}9 M & 0{,}800 & 0{,}417 & 0{,}951 & 0{,}708 & 0{,}920 & 0{,}723 & 0{,}480 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize A execução BERTimbau-base está fora do escopo pré-registrado (que fixa o BioBERTpt-all) e não tem nome oficial. BioBERTpt-clin: sem resultado.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

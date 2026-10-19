@@ -1,0 +1,483 @@
+\chapter[Metodologia]{Metodologia}
+\label{cap:metodologia}
+
+Neste capítulo são descritos os métodos empregados no desenvolvimento do RECLin-PT:
+o ajuste fino de \emph{encoders} pré-treinados para a extração de relações, o
+\emph{dataset} utilizado, a preparação do ambiente experimental, as métricas de
+avaliação, a preparação dos dados e o protocolo que rege a seleção e a comparação
+dos modelos. Os experimentos descritos são o instrumento pelo qual as decisões de
+modelagem do RECLin-PT, isto é, a escolha do \emph{encoder} e da estratégia, passam
+a se apoiar em evidência medida, e não em preferência prévia. Todas as etapas foram
+projetadas sob a premissa de
+reprodutibilidade: cada artefato é identificado por \emph{hash}, e cada
+decisão tomada sobre os dados fica registrada antes de ser usada.
+
+\section{\emph{Fine-tuning} de \emph{encoders} pré-treinados}
+\label{sec:finetuning}
+
+Os modelos deste trabalho partem de \emph{encoders} pré-treinados: redes da
+família BERT \cite{devlin_2019_bert} que já aprenderam, sobre grandes volumes de texto
+não anotado, a produzir uma representação vetorial contextual para cada
+\emph{token}. Esse conhecimento prévio é a razão de usá-los. Em vez de aprender a
+língua a partir dos poucos exemplos anotados da tarefa, o modelo parte de pesos que
+já codificam vocabulário, morfologia e relações sintáticas, e o treino só precisa
+especializá-los. O \emph{encoder} é escolhido pelo seu \emph{checkpoint} de
+pré-treino; neste trabalho, o BioBERTpt-all, de domínio clínico, e o BERTimbau-base,
+de domínio geral, com o BioBERTpt-clin previsto (Seção~\ref{sec:encoders}).
+
+O \emph{fine-tuning} (ajuste fino) adapta esses pesos à extração de relações.
+Cada exemplo é um par de entidades, apresentado ao modelo como uma janela de texto em
+torno do par, com as duas entidades delimitadas por marcadores
+(Seção~\ref{sec:markers}). O \emph{encoder} transforma a janela em representações
+contextuais, e uma cabeça de classificação, uma camada nova acrescentada
+sobre ele, converte essas representações em uma pontuação para cada rótulo. Durante o
+treino, as predições são comparadas aos rótulos anotados por uma função de perda de
+entropia cruzada; o gradiente dessa perda é propagado de volta por toda a rede
+(retropropagação), e um otimizador atualiza tanto a cabeça quanto os pesos do
+\emph{encoder}. Como as classes são muito desbalanceadas, a perda de cada exemplo é
+ponderada pelo inverso da frequência de sua classe no treino, com peso
+$n/(K\cdot n_c)$, em que $n$ é o número de exemplos, $K$ o número de classes e $n_c$
+o número de exemplos da classe $c$; sem essa ponderação, o modelo minimizaria o erro
+prevendo \texttt{no\_relation} para quase tudo.
+
+O procedimento de treino é o mesmo para todas as estratégias treinadas e segue a
+configuração do Quadro~\ref{quad:hiperparametros}. Os exemplos de treino são
+apresentados em lotes de 64, embaralhados por um gerador com semente fixa. O
+otimizador é o AdamW, com taxa de aprendizado de $2\times10^{-5}$ e
+\emph{weight decay} de $0{,}01$; a taxa cresce linearmente durante os primeiros 10\%
+dos passos (aquecimento) e decresce linearmente até zero, e a norma do gradiente é
+limitada a 1. O treino percorre um número fixo de épocas, sem parada
+antecipada. Ao fim de cada época, o modelo é avaliado no conjunto de desenvolvimento
+(DEV) pelo critério da estratégia, e os pesos da melhor época são restaurados ao
+final. Essa é a única escolha feita durante o treino, e ela usa apenas o DEV
+(Seção~\ref{sec:protocolo}). Para que a mesma configuração produza os mesmos números
+no mesmo ambiente, as sementes de Python, NumPy e PyTorch são fixadas, as operações
+determinísticas da GPU são exigidas sempre que disponíveis, e o estado completo dos
+geradores aleatórios é salvo nos \emph{checkpoints}, o que permite retomar um treino
+interrompido exatamente do ponto em que parou.
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Hiperparâmetros e configuração do \emph{fine-tuning}, comuns às estratégias treinadas.}
+  \label{quad:hiperparametros}
+  \small
+  \begin{tabular}{l >{\raggedright\arraybackslash}p{8.8cm}}
+  \toprule
+  Item & Valor \\
+  \midrule
+  Entrada & janela de $\pm128$ caracteres em torno do par (\texttt{ctx\_chars}), com marcadores \texttt{[E1]}/\texttt{[E2]}, sem tipo semântico; até 128 \emph{tokens} (\texttt{max\_length}) \\
+  Pares candidatos & distância máxima de 25 caracteres entre as entidades (\texttt{max\_gap}) \\
+  Lote (\emph{batch}) & 64 \\
+  Otimizador & AdamW; taxa de aprendizado $2\times10^{-5}$; \emph{weight decay} $0{,}01$ \\
+  Escalonador & linear, com aquecimento nos primeiros 10\% dos passos \\
+  Norma máxima do gradiente & 1,0 \\
+  Perda & entropia cruzada ponderada (\texttt{class\_weight="balanced"}), com pesos calculados no treino de cada estratégia ou estágio \\
+  Épocas & 3 (estratégias de três rótulos e estágio 1 do Two-Stage); 10 (estágio 2) \\
+  Seleção da época & maior macro-F1 no DEV (estratégias de três rótulos); critérios próprios nos estágios do Two-Stage \\
+  Semente & 42 \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{quadro}
+
+O \emph{fine-tuning} é a base comum de todas as estratégias treinadas, que diferem na
+forma de ler a representação do \emph{encoder} e de organizar a decisão; duas
+estratégias apenas pós-processam as predições do baseline, sem treino próprio
+(Capítulo~\ref{cap:prototipo}).
+
+Três conceitos são distinguidos ao longo do texto. O \emph{encoder} é o modelo de
+linguagem pré-treinado, fixado pelo seu \emph{checkpoint}. A estratégia é a forma
+como esse \emph{encoder} é ajustado e como suas saídas são combinadas para produzir
+os três rótulos. O RECLin-PT é o modelo em desenvolvimento, formado por um
+\emph{encoder} e uma estratégia e apoiado pela cadeia de dados e pelo protocolo
+descritos neste capítulo. Sua configuração final será a combinação de
+\emph{encoder} e estratégia selecionada pelos critérios do protocolo, depois do
+congelamento das escolhas e da avaliação no conjunto de teste, e ainda não foi
+definida; o Capítulo~\ref{cap:experimentos} indica qual estratégia serve de
+referência nas análises preliminares.
+
+\section{O \emph{dataset} SemClinBr}
+\label{sec:corpus}
+
+Os documentos clínicos utilizados neste trabalho foram retirados do
+\textbf{SemClinBr} \cite{oliveira_2022_semclinbr}\footnote{Repositório do corpus e
+formulário de requisição de acesso em
+\href{https://github.com/HAILab-PUCPR/SemClinBr}{github.com/HAILab-PUCPR/SemClinBr}.},
+primeiro corpus clínico em português do Brasil anotado semanticamente. Ele reúne mil
+documentos provenientes de múltiplas instituições e especialidades, redigidos por
+profissionais de saúde no registro do cuidado, e é distribuído mediante solicitação
+formal, para uso não comercial. Neste trabalho, o SemClinBr é a única fonte de dados:
+dele saem os exemplos de treino, a escolha de modelos no DEV e o conjunto de teste
+reservado para a avaliação final.
+
+O texto do corpus é típico do prontuário. As frases são curtas e telegráficas, com
+omissão de verbos e artigos, abreviações frequentes e não padronizadas (como MSE,
+para membro superior esquerdo), mistura de letras maiúsculas e minúsculas e ausência
+ocasional de acentos, e construções negativas recorrentes, como ``sem sinais
+flogísticos'' ou ``nega queixas''. Essas características afastam o texto da
+linguagem dos corpora usados no pré-treino de domínio geral e motivam a comparação
+entre \emph{encoders}.
+
+Cada documento traz anotações de entidades, trechos do texto delimitados
+por posições de caractere (\emph{offsets}) e associados a tipos semânticos da UMLS,
+além de categorias próprias como \texttt{Abbreviation} e \texttt{Negation}; uma
+mesma entidade pode receber vários tipos, separados por ``|''. Entre as entidades,
+são anotadas relações dirigidas, de um primeiro argumento ($e_1$) para um
+segundo ($e_2$), de dois tipos: \texttt{associated\_with}, que liga conceitos
+relacionados, como um dispositivo e a região do corpo em que está, e
+\texttt{negation\_of}, que liga uma expressão de negação ao conceito negado. A
+\autoref{fig:exemplo_anotacao} mostra um trecho real de um documento do corpus, com
+as entidades e as relações anotadas.
+
+\input{imagens/figuras/exemplo-anotacao}
+
+No trecho, a entidade ``sem'' (tipo \texttt{Negation}) é o primeiro argumento de uma
+relação \texttt{negation\_of} cujo segundo argumento é ``sinais flogisticos'': o
+registro afirma a \emph{ausência} de sinais inflamatórios no acesso venoso, e um
+sistema que perdesse essa relação leria o achado como presente. As outras três
+relações, do tipo \texttt{associated\_with}, ligam a localização (``MSE''), o achado
+negado e o estado (``salinizado'') ao dispositivo descrito.
+
+Três características da anotação afetam diretamente o treino e a avaliação. A
+primeira é o desbalanceamento: das $11\,458$ relações anotadas no corpus,
+$9\,852$ são \texttt{associated\_with} e apenas $1\,606$ ($14{,}02\%$) são
+\texttt{negation\_of}. A segunda é que o corpus anota apenas relações
+positivas. Um par de entidades sem anotação não é, por si, um exemplo explícito de
+ausência de relação, e por isso os exemplos negativos (\texttt{no\_relation}) precisam
+ser construídos a partir dos pares não anotados (Seção~\ref{sec:candidatos}), o que
+agrava ainda mais o desbalanceamento. A terceira é que as relações são
+dirigidas: o par $(e_1, e_2)$ e o par inverso são exemplos diferentes, e só um deles
+pode carregar a relação anotada.
+
+\section{Preparação do ambiente}
+\label{sec:ambiente}
+
+Os experimentos foram organizados em um pacote Python próprio, versionado em um
+repositório Git\footnote{Código e resultados em
+\href{https://github.com/angeloalsf/RECLin-PT}{github.com/angeloalsf/RECLin-PT}
+(branch \texttt{resultados-colab}); o corpus SemClinBr não é redistribuído, por ter
+acesso restrito.}, que reúne a leitura do corpus, as partições, a geração de
+candidatos, as estratégias, o treino, a avaliação e os relatórios. O
+Quadro~\ref{quad:ambiente} resume os ambientes utilizados e as versões registradas
+pelo próprio código em cada execução.
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Ambientes de execução e versões das principais bibliotecas.}
+  \label{quad:ambiente}
+  \small
+  \begin{tabular}{l >{\raggedright\arraybackslash}p{9.4cm}}
+  \toprule
+  Item & Valor \\
+  \midrule
+  Treino e avaliação no DEV & Google Colab, GPU NVIDIA Tesla T4 (15 GB), CUDA 13.0 \\
+  Python & 3.13 (treino); 3.10 (reconstrução dos dados, no computador do autor) \\
+  Bibliotecas & PyTorch 2.11.0, Transformers 5.16.1, Tokenizers 0.23.2, Hugging Face Hub 1.29.0, Safetensors 0.8.0, NumPy 2.1.3, SciPy 1.16.3 \\
+  Pesos pré-treinados & \texttt{pucpr/biobertpt-all} (revisão \texttt{36b11cf}) e \texttt{neuralmind/\allowbreak bert-base-portuguese-cased} (revisão \texttt{94d69c9}), baixados por revisão exata e conferidos por \emph{hash} \\
+  Determinismo & \texttt{PYTHONHASHSEED=0}, \texttt{CUBLAS\_WORKSPACE\_CONFIG=:4096:8}, sementes fixas e algoritmos determinísticos do PyTorch \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{quadro}
+
+A reconstrução dos dados a partir dos XML do corpus foi executada no
+computador do autor, porque os arquivos originais não podem ser redistribuídos; o
+resultado são partições derivadas, identificadas por \emph{hashes}
+(Seção~\ref{sec:preparacao}). O treino foi executado no Google Colab, com
+um \emph{notebook} por estratégia, que obtém o código do repositório, confere o
+ambiente e a GPU e chama os \emph{scripts} de treino. Os pesos pré-treinados são
+baixados uma única vez, na revisão exata registrada no protocolo, e carregados sem
+acesso à rede, com os \emph{hashes} de todos os arquivos conferidos antes de cada
+carga. As versões das bibliotecas são fixadas por um arquivo de restrições, com o
+qual o pacote é instalado.
+
+Cada execução grava uma pasta própria com a configuração completa
+(\texttt{config.json}), o histórico de treino por época e as sessões
+(\texttt{treino.json}), as métricas (\texttt{metricas.json}), as predições do DEV
+(\texttt{predicoes\_dev.json}) e o registro do ambiente e da proveniência
+(\texttt{experimento.json}). Os \emph{checkpoints}, que permitem retomar um treino
+interrompido, são espelhados no Google Drive durante o treino. Para reproduzir os
+experimentos, basta instalar o pacote com as versões fixadas, conferir as partições
+contra o manifesto e executar os \emph{scripts} de treino com a mesma configuração e
+semente; as tabelas e figuras deste trabalho são regeneradas a partir das pastas das
+execuções por \emph{scripts}, sem transcrição manual de números.
+
+\section{Métricas utilizadas para avaliar os modelos}
+\label{sec:metricas}
+
+Nesta seção são apresentadas as métricas utilizadas para avaliar o desempenho dos
+modelos de extração de relações. As métricas centrais são a precisão
+(\emph{precision}), o \emph{recall} e o F1-\emph{Score}, calculadas para cada uma das
+três classes da tarefa, \texttt{negation\_of}, \texttt{associated\_with} e
+\texttt{no\_relation}. Para uma classe, um par conta como verdadeiro positivo (TP)
+quando é dessa classe e o modelo o atribui a ela; como falso positivo (FP) quando o
+modelo o atribui à classe sem que ele pertença a ela; e como falso negativo (FN)
+quando pertence à classe e o modelo o atribui a outra.
+
+A precisão (\emph{precision}) é calculada pela razão entre o número de verdadeiros
+positivos e o total de previsões positivas realizadas pelo modelo. Essa métrica indica
+a proporção de previsões positivas que foram classificadas corretamente, conforme
+apresentado na Fórmula~\ref{eq:precisao}.
+
+\formula{Precisão}{eq:precisao}
+\[
+  \text{Precisão} =
+  \frac{\text{Verdadeiros positivos}}
+       {\text{Verdadeiros positivos} + \text{Falsos positivos}}
+\]
+
+O \emph{recall}, também conhecido como sensibilidade ou taxa de detecção, corresponde
+à proporção de exemplos positivos reais que foram identificados corretamente pelo
+modelo. Dessa forma, a métrica permite avaliar a capacidade do modelo de recuperar os
+exemplos pertencentes à classe analisada, conforme apresentado na
+Fórmula~\ref{eq:recall}.
+
+\formula{\emph{Recall}}{eq:recall}
+\[
+  \text{\emph{Recall}} =
+  \frac{\text{Verdadeiros positivos}}
+       {\text{Verdadeiros positivos} + \text{Falsos negativos}}
+\]
+
+Por fim, o F1-\emph{Score} combina as medidas de precisão e \emph{recall} por meio da
+média harmônica entre elas. Essa métrica permite avaliar conjuntamente a capacidade do
+modelo de realizar previsões positivas corretas e identificar os exemplos positivos
+reais. Seu cálculo é apresentado na Fórmula~\ref{eq:f1}.
+
+\formula{F1-\emph{Score}}{eq:f1}
+\[
+  \text{F1-\emph{Score}} =
+  2 \cdot \frac{\text{Precisão} \cdot \text{\emph{Recall}}}
+               {\text{Precisão} + \text{\emph{Recall}}}
+\]
+
+No código do projeto, as três métricas são calculadas a partir da matriz de confusão,
+com o F1 na forma equivalente $2\,TP/(2\,TP + FP + FN)$, e valem zero quando o
+denominador é nulo, por exemplo quando o modelo nunca prediz a classe. O F1 de
+\texttt{negation\_of} é a métrica primária do trabalho. Para resumir o
+desempenho nas três classes, usa-se o macro-F1, média simples dos três F1,
+que dá o mesmo peso a cada classe e, por isso, penaliza modelos que negligenciam as
+minoritárias \cite{forman_2010_apples}; ele é também o critério de seleção de época
+das estratégias de três rótulos. São reportados ainda a acurácia, pouco informativa
+isoladamente porque \texttt{no\_relation} domina os pares, e o coeficiente de
+correlação de Matthews (MCC) multiclasse, que considera a matriz de confusão inteira e
+é robusto ao desbalanceamento.
+
+\section{Preparação dos dados}
+\label{sec:preparacao}
+
+\subsection{Reconstrução dos dados e alinhamento dos offsets}
+\label{sec:parsing}
+
+Os dados empregados foram reconstruídos diretamente dos XML do SemClinBr. Um
+\emph{parser} lê cada arquivo e produz um registro com identificador do documento,
+texto, entidades (tipo e offsets) e relações, sem normalizar tipos e sem alterar ou
+descartar nenhuma anotação. O ponto crítico da reconstrução é o alinhamento entre o
+texto e os offsets. Em parte dos documentos, os offsets foram calculados sobre o texto
+com quebras de linha de dois caracteres, e substituir cada quebra por um único espaço
+desloca todas as entidades seguintes. A regra adotada identifica, por documento e com
+todas as anotações, qual convenção os offsets seguem e, quando é a de dois caracteres,
+substitui cada quebra por dois espaços, de modo que o texto passe a ter o comprimento
+pressuposto pelos offsets. A regra transformou 421 dos 1.000 documentos; nos demais, o
+texto foi mantido sem alteração.
+
+O resultado foi verificado por auditoria: nenhuma entidade das três partições
+apresenta divergência entre o trecho recortado pelo offset e o texto anotado, e a
+reconstrução preserva os documentos de cada partição, as entidades, as relações, os
+pares candidatos e os rótulos de referência. As 26 anomalias de anotação encontradas
+(por exemplo, um offset inválido) foram mantidas como estão e registradas em arquivo
+próprio. Um manifesto (\texttt{MANIFEST.json}) registra o SHA-256 de cada partição,
+as contagens e a proveniência da fonte (Apêndice~\ref{ap:sha256}).
+
+\subsection{Caracterização do corpus}
+\label{sec:eda}
+
+A análise exploratória (\foreignlanguage{english}{Exploratory Data Analysis}, EDA)
+foi conduzida com as próprias funções do código do projeto, totalizando $1\,000$
+documentos, $45\,508$ entidades e $11\,458$ relações. A mediana é de $10$ relações por
+documento, o percentil 90 é de $24$ e o máximo é de $65$; $46$ documentos não possuem
+relação anotada. Entre as categorias de entidade (após decompor as anotações
+multirrótulo), predominam \texttt{Abbreviation} ($12\,592$), \texttt{Finding}
+($6\,827$) e \texttt{Therapeutic or Preventive Procedure} ($4\,759$), e a categoria
+\texttt{Negation} soma $2\,646$ menções.
+
+A Tabela~\ref{tab:distancia} e a \autoref{fig:eda_dist} mostram que as relações
+ocorrem entre entidades próximas, com um contraste nítido entre os tipos. A negação é
+praticamente adjacente, com mediana e percentil 75 de um único caractere, enquanto a
+associação se distribui por uma cauda bem mais longa. Essa assimetria fundamenta a
+janela máxima (\texttt{max\_gap}$=25$) da geração de pares candidatos
+(Seção~\ref{sec:teto_recall}).
+\label{sec:eda_distancia}
+
+\input{tabelas/distancia}
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Distribuição da distância em caracteres entre entidades relacionadas (recorte em 200), com a janela \texttt{max\_gap} assinalada.}
+  \label{fig:eda_dist}
+  \includegraphics[width=0.8\textwidth]{resultados/eda_distancia.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{figure}
+
+\subsection{Particionamento dos dados}
+\label{sec:particao}
+
+A partição segue a razão 80/10/10 em nível de documento, e não de relação.
+Essa escolha previne o vazamento de dados, pois relações de um mesmo documento
+compartilham vocabulário e trechos repetidos, e dividi-las entre partições inflaria
+artificialmente as métricas. A partição é estratificada pela presença de
+\texttt{negation\_of}: os documentos com ao menos uma relação de negação e os demais
+são embaralhados separadamente, com semente $42$, e divididos 80/10/10 dentro de cada
+grupo, o que garante exemplos da classe rara nas três partições. O resultado são
+$800$ documentos de treino, $100$ de DEV e $100$ de teste, congelados e verificados
+por SHA-256 (Apêndice~\ref{ap:sha256}). A Tabela~\ref{tab:corpus} apresenta as
+contagens por partição.
+
+\input{tabelas/corpus}
+
+\subsection{Geração de pares candidatos}
+\label{sec:candidatos}
+
+Como o corpus anota apenas relações positivas, avaliar um classificador no espaço
+\{\texttt{negation\_of}, \texttt{associated\_with}, \texttt{no\_relation}\} exige
+construir os exemplos negativos. Treinar ou avaliar apenas com os pares
+anotados produziria um classificador incapaz de operar em um cenário real, em que o
+sistema recebe \emph{todos} os pares de entidades de um documento.
+
+A geração é feita por uma única função do código, compartilhada por todas as
+estratégias, condição necessária para que os resultados fiquem na mesma régua. Para
+cada documento, ela percorre os pares ordenados de entidades $(e_1, e_2)$,
+já que a direção é relevante para a negação, e respeita cinco propriedades:
+(i) os pares são emitidos sempre na mesma ordem, pela posição de $e_1$ e de $e_2$;
+(ii) não há pares entre documentos diferentes; (iii) apenas pares cuja distância em
+caracteres (entre o fim de $e_1$ e o início de $e_2$) seja
+$\leq \texttt{max\_gap}=25$ são gerados; (iv) nunca se forma o par de uma entidade
+consigo mesma, nem entre entidades com \emph{span} idêntico; e (v) um par presente
+nas relações anotadas (\emph{gold}) recebe o tipo anotado, e um par ausente recebe
+\texttt{no\_relation}.
+
+O Quadro~\ref{quad:exemplo_candidatos} ilustra o processo em outro trecho real do
+corpus. A relação anotada é $16 \rightarrow 52 = \texttt{negation\_of}$ (a entidade
+``NÃO ESPECIFICADA'' nega ``OSTEOMIELITE''). Das seis combinações ordenadas possíveis
+entre as três entidades próximas, apenas o par $(16, 52)$ casa com o \emph{gold}; os
+outros cinco tornam-se \texttt{no\_relation}.
+
+\begin{quadro}[htbp]
+  \centering
+  \caption{Exemplo de geração de candidatos para um trecho do SemClinBr.}
+  \label{quad:exemplo_candidatos}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lll}
+  \toprule
+  \multicolumn{3}{l}{Entidades: \texttt{16}=``OSTEOMIELITE'' (\emph{Disease or Syndrome}),
+  \texttt{52}=``NÃO ESPECIFICADA'' (\emph{Negation}),} \\
+  \multicolumn{3}{l}{\texttt{17}=``INTUBADO'' (\emph{Finding}). Relação \emph{gold}:
+  $16 \rightarrow 52 = \texttt{negation\_of}$.} \\
+  \midrule
+  Par ordenado & Rótulo gerado & \\
+  \midrule
+  $16 \rightarrow 52$ & \texttt{negation\_of}  & (casa com o \emph{gold}) \\
+  $16 \rightarrow 17$ & \texttt{no\_relation}  & \\
+  $52 \rightarrow 16$ & \texttt{no\_relation}  & (direção inversa do \emph{gold}) \\
+  $52 \rightarrow 17$ & \texttt{no\_relation}  & \\
+  $17 \rightarrow 16$ & \texttt{no\_relation}  & \\
+  $17 \rightarrow 52$ & \texttt{no\_relation}  & \\
+  \bottomrule
+  \end{tabular}}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor a partir de dados do SemClinBr \cite{oliveira_2022_semclinbr}.}
+\end{quadro}
+
+O procedimento produz $152\,686$ candidatos de treino, $19\,064$ de DEV e $19\,210$
+de teste (Tabela~\ref{tab:corpus}). No DEV, sobre o qual os resultados deste trabalho
+são medidos, $18\,151$ pares ($95{,}21\%$) pertencem a \texttt{no\_relation}, contra
+$763$ \texttt{associated\_with} e $150$ \texttt{negation\_of}. Esse desbalanceamento
+é intrínseco à tarefa, pois decorre da combinatória de pares de entidades, e é
+tratado pela ponderação da perda (Seção~\ref{sec:finetuning}) e pelo uso do
+macro-F1 na seleção de modelos (Seção~\ref{sec:metricas}).
+
+\subsection{Teto de recall imposto pela janela}
+\label{sec:teto_recall}
+
+A janela \texttt{max\_gap}$=25$ impõe um teto de recall: toda relação \emph{gold}
+cujo par fique a mais de $25$ caracteres jamais é gerada como candidato e é
+irrecuperável por qualquer classificador. A Tabela~\ref{tab:teto_recall} quantifica a
+cobertura das relações anotadas por partição (além da janela, pares com \emph{span}
+idêntico e relações repetidas sobre o mesmo par contam como não cobertos). O limite
+não se distribui igualmente entre as classes: a cobertura é maior na classe-alvo
+\texttt{negation\_of} do que em \texttt{associated\_with}, coerente com a
+distância menor entre os argumentos da negação. A Tabela~\ref{tab:max_gap} mostra o
+custo de ampliar a janela, que é de outra natureza: a partir de $25$, os ganhos de
+cobertura de \texttt{negation\_of} são pequenos, enquanto o número de pares
+candidatos e de exemplos \texttt{no\_relation} por relação coberta continua a crescer
+quase linearmente (com $50$, cerca de 76\% mais candidatos). Como o teto é idêntico
+para todas as estratégias, que recebem exatamente os mesmos candidatos, ele limita o
+desempenho absoluto, mas não afeta a comparação entre elas.
+
+\input{tabelas/cobertura}
+
+\input{tabelas/max_gap}
+
+\section{Protocolo pré-registrado e comparações estatísticas}
+\label{sec:protocolo}
+
+As decisões experimentais desta fase foram fixadas em um protocolo registrado antes
+de qualquer treino, rotulado ``validação inicial, seed 42''. Ele define o escopo
+(\emph{encoder} BioBERTpt-all, semente $42$ e as partições congeladas), a revisão
+exata dos pesos pré-treinados, os critérios de seleção e de parada de cada
+estratégia, os limiares escolhidos no DEV, a sequência de execução e a forma de
+interpretar os resultados. Alterações posteriores ao registro dependem de aprovação
+explícita do autor e ficam documentadas; a mais relevante para este texto é a decisão
+que fixou a configuração atual da Pair-Aware (Seção~\ref{sec:pairaware}), aprovada
+antes de seu treino. Duas execuções apresentadas aqui estão fora do escopo
+pré-registrado e são assim identificadas: o baseline com o BERTimbau-base, que
+estende a comparação de \emph{encoders}, e a variante Pair-Aware MLP, exploratória.
+O protocolo prevê ainda uma estratégia de \emph{fine-tuning} restrito, treinada apenas
+sobre os pares cujo primeiro argumento é pista do léxico de negação, que não foi
+executada até o momento e, por isso, não é descrita no Capítulo~\ref{cap:prototipo}
+(Seção~\ref{sec:limitacoes}).
+
+Todas as escolhas usam somente o DEV:
+
+\begin{itemize}
+  \item Época: cada estratégia de três rótulos treina um número fixo de
+        épocas, sem parada antecipada, e mantém a de maior macro-F1 no DEV (empate:
+        a primeira). Os estágios do Two-Stage usam métricas próprias
+        (Seção~\ref{sec:twostage}).
+  \item Limiares: o limiar $\tau$ do Two-Stage e o limiar $t$ do baseline
+        calibrado são escolhidos numa grade de $0{,}05$ a $0{,}95$, com passo de
+        $0{,}05$, pelo maior F1 de \texttt{negation\_of} da saída final no DEV
+        (desempates: maior macro-F1, menor distância de $0{,}5$, maior limiar) e
+        congelados em arquivo vinculado aos \emph{hashes} dos modelos e do DEV.
+  \item Léxico de pistas: o léxico usado pelo filtro foi congelado antes
+        da fase, por validação cruzada só no treino (Seção~\ref{sec:filtro}).
+\end{itemize}
+
+O teste de cada sistema deve ser avaliado uma única vez, depois que todas as
+escolhas do DEV estiverem congeladas, e nenhum resultado de teste influencia qualquer
+escolha. Até o momento deste texto, nenhum sistema foi avaliado no teste,
+porque a configuração definitiva, inclusive a escolha do \emph{encoder}, ainda não
+foi congelada. Por isso, todos os resultados do Capítulo~\ref{cap:experimentos} são
+de DEV. Os do Two-Stage e do baseline calibrado são, além disso, otimistas
+por construção, porque seus limiares foram escolhidos no mesmo DEV em que são
+medidos.
+
+\label{sec:avaliacao}
+Para as comparações estatísticas entre sistemas, empregam-se dois testes pareados, calculados sobre o
+\emph{mesmo} conjunto a partir das predições salvas. O teste de McNemar
+\cite{dietterich_1998_mcnemar} considera as instâncias em que os dois sistemas
+discordam quanto ao acerto ($b$: só o primeiro acerta; $c$: só o segundo) e avalia,
+sob a hipótese nula de mesma taxa de acerto, $b \sim \mathrm{Binomial}(b+c,\,0{,}5)$
+pelo teste binomial exato. Por incidir sobre o acerto global, ele é dominado pela
+classe \texttt{no\_relation} e não é específico da classe-alvo. O
+\emph{bootstrap} pareado responde à pergunta da classe-alvo: reamostram-se as
+instâncias com reposição $10\,000$ vezes (semente $42$), recalcula-se a diferença no
+F1 de \texttt{negation\_of} e reportam-se a diferença, o intervalo de confiança de
+95\% (percentis $2{,}5$/$97{,}5$) e um valor-$p$ bilateral. Uma diferença é tratada
+como detectada quando o IC95\% exclui o zero.
+
+O protocolo prevê esses testes no conjunto de teste. Neste trabalho eles são
+aplicados ao DEV apenas de forma descritiva, para dimensionar a incerteza
+das diferenças observadas; não substituem a comparação pré-registrada no teste e não
+corrigem o otimismo dos sistemas com limiar escolhido no DEV. Com uma única semente,
+eles medem a incerteza sobre os exemplos, dados os modelos treinados, e não a
+variação do treino.

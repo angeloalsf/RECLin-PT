@@ -1,0 +1,155 @@
+\chapter[Discussão]{Discussão}
+\label{cap:discussao}
+
+Este capítulo interpreta os resultados de desenvolvimento do RECLin-PT à luz da
+pergunta de pesquisa e do que implicam para as decisões de configuração do modelo,
+discute as estratégias e registra as limitações e ameaças à validade. Todas as leituras abaixo são preliminares, porque se apoiam no DEV, com uma
+única semente, e aguardam a avaliação no teste; quando uma explicação é plausível,
+mas não foi testada, ela é apresentada como hipótese.
+
+\section{A escolha do \emph{encoder}}
+\label{sec:discussao_encoder}
+
+Na única comparação direta disponível, a estratégia baseline, o pré-treinamento
+clínico não produziu vantagem detectável. O BioBERTpt-all e o BERTimbau-base
+chegam a F1 de \texttt{negation\_of} praticamente iguais, com intervalo de confiança
+da diferença centrado em zero, e o \emph{encoder} geral fica ligeiramente à frente
+nas outras classes e no macro-F1. Os dois se distinguem mais no perfil do que no
+nível: o clínico recupera um pouco mais das negações, e o geral erra um pouco menos
+ao predizê-las. Esse quadro contrasta com a expectativa difundida, bem como com os
+ganhos relatados para o reconhecimento de entidades clínicas em português
+\cite{schneider_2020_biobertpt}, de que modelos de domínio se transfiram melhor.
+
+Duas hipóteses são compatíveis com esse resultado, sem que os experimentos atuais
+permitam distingui-las ou demonstrá-las. A primeira é linguística: a negação clínica
+em português é fortemente lexicalizada, e o gatilho está quase sempre colado ao achado
+negado, com distância mediana de um único caractere (Seção~\ref{sec:eda_distancia});
+um sinal tão local e regular pode depender pouco de vocabulário clínico
+especializado. A segunda é estrutural: a tarefa, tal como formulada, depende da
+delimitação e da direção do par, fornecidas igualmente aos dois \emph{encoders} pela
+mesma representação de entrada. Testar essas hipóteses exigiria, por exemplo, analisar
+os erros por tipo de gatilho e por distância entre os argumentos, o que não foi feito.
+Há, além disso, um argumento de eficiência: com desempenho equivalente, o
+BERTimbau-base usa cerca de 61\% dos parâmetros, o que tende a reduzir o custo de
+memória e de inferência, embora esse custo não tenha sido medido neste trabalho.
+
+Essas leituras respondem apenas parcialmente à parte da pergunta de pesquisa que
+trata do \emph{encoder}. A
+comparação cobre uma estratégia, uma semente e o DEV, e o BERTimbau-base foi treinado
+fora do escopo pré-registrado. Não se sabe ainda se o efeito do \emph{encoder} muda
+quando a decisão é decomposta, como no Two-Stage, ou quando a cabeça lê o par, como
+na Pair-Aware, nem como se comporta a variante BioBERTpt-clin. Para o RECLin-PT,
+a evidência disponível permite manter o BERTimbau-base como candidato viável, mas
+não basta para fixar o \emph{encoder}, cuja escolha permanece em aberto.
+
+\section{As estratégias de modelagem}
+\label{sec:discussao_estrategias}
+
+Com o BioBERTpt-all, todas as estratégias superam o baseline no F1 de
+\texttt{negation\_of}, e o fazem principalmente pela precisão. O baseline já
+recupera quase todas as negações, e o seu gargalo são os falsos positivos. As
+estratégias diferem na forma de reduzi-los e no que pagam por isso.
+
+O filtro léxico e o baseline calibrado atuam só sobre as predições
+de \texttt{negation\_of}: o primeiro exige que o primeiro argumento seja uma pista de
+negação, e o segundo exige uma probabilidade alta. Ambos trocam alguns acertos por
+menos falsos positivos e deixam as outras classes intactas. A Pair-Aware
+reduz os falsos positivos sem sacrificar o \emph{recall} e melhora também
+\texttt{associated\_with} e \texttt{no\_relation}. Como a única diferença em
+relação ao baseline é a forma de ler a representação, o resultado é compatível com um
+benefício da leitura explícita do par, mas, com uma única semente, ele não pode ser
+separado da variação do treino. É a única estratégia cuja diferença para o baseline
+tem intervalo de confiança inteiramente acima de zero no DEV, e a de maior macro-F1
+entre as do protocolo. O Two-Stage vai
+mais longe na precisão e no F1 da classe-alvo; o diagnóstico do fluxo
+(Seção~\ref{sec:resultados_twostage}) é coerente com a explicação de que só os pares
+que o estágio 1 considera muito prováveis chegam a ser classificados, e entre eles o
+estágio 2 quase não erra o tipo. O preço é o \emph{recall}: o que o estágio 1 não encaminha
+vira \texttt{no\_relation}, o que custa algumas negações e, sobretudo, a maior parte
+das relações \texttt{associated\_with}.
+
+Esse compromisso é amplificado pelo limiar. O $\tau$ foi escolhido, como manda o
+protocolo, apenas pelo F1 de \texttt{negation\_of}, e o valor vencedor ficou no
+extremo da grade, à frente de $\tau=0{,}90$ por uma margem mínima, mas com perda
+expressiva de macro-F1. Um critério baseado no macro-F1 teria escolhido
+$\tau=0{,}90$ (Apêndice~\ref{ap:tau}). Como esse critério foi fixado antes de qualquer resultado, ele não foi
+alterado, e a consequência é registrada aqui.
+
+Os resultados sustentam o uso do Two-Stage como estratégia de referência preliminar
+do RECLin-PT, pelo maior F1 e pela maior precisão observados na classe clinicamente
+mais crítica, em que um falso positivo apaga um achado do prontuário. Não sustentam,
+porém, afirmar que ele é superior, nem tomá-lo como a configuração final: sua vantagem sobre a Pair-Aware é de uma fração
+de ponto, e nenhuma de suas diferenças é distinguível de zero, nem mesmo com o viés
+favorável de um limiar escolhido no DEV. Em particular, o protocolo condiciona
+qualquer atribuição do efeito à arquitetura a uma diferença positiva contra o
+baseline calibrado, que controla o efeito de apenas recalibrar a decisão, e
+essa diferença não foi detectada no DEV. A Pair-Aware é, assim, a alternativa mais
+forte até a avaliação no teste, e a variante exploratória com MLP não acrescentou
+ganho observado sobre a cabeça linear.
+
+\section{A classe \texttt{associated\_with}}
+
+A classe \texttt{associated\_with} é a mais difícil para todas as estratégias. Dois
+fatores podem contribuir para isso. O primeiro, uma hipótese conceitual, é que
+distinguir associação genuína de mera proximidade textual seja ambíguo em texto
+clínico telegráfico, em que entidades vizinhas frequentemente não mantêm relação
+anotada, como no exemplo do Quadro~\ref{quad:exemplo_candidatos}. O segundo é
+metodológico e foi medido: o F1 da classe é calculado sob o teto de \emph{recall} imposto pela janela, que deixa de fora
+cerca de 8\% das relações \texttt{associated\_with} do DEV, contra cerca de 3\% das
+de \texttt{negation\_of} (Seção~\ref{sec:teto_recall}). No Two-Stage, a
+dificuldade aparece na forma de \emph{recall} baixo, pelo roteamento restritivo; nas
+demais estratégias, na forma de precisão baixa. Como o foco deste trabalho é a
+negação, nenhuma decisão foi otimizada para essa classe.
+
+\section{Limitações}
+\label{sec:limitacoes}
+
+A limitação mais séria é a ausência de avaliação no teste. Todos os
+números são de DEV, o mesmo conjunto usado para escolher épocas e limiares; os do
+Two-Stage e do baseline calibrado são otimistas por construção, e mesmo as escolhas
+de época introduzem algum otimismo nas demais estratégias. A avaliação definitiva
+será feita no teste, uma única vez, depois de congelada a configuração.
+
+Além disso: (i) há uma única semente, de modo que não é possível separar o
+efeito de uma estratégia ou de um \emph{encoder} da variação do treino; os
+intervalos de confiança medem só a incerteza sobre os exemplos; (ii) as estratégias
+foram comparadas com um único \emph{encoder}, e a comparação de
+\emph{encoders}, com uma única estratégia; (iii) o baseline com o BERTimbau-base e a
+Pair-Aware MLP estão fora do escopo pré-registrado; (iv) em todas as
+execuções de três rótulos, a época escolhida foi a última permitida, o que
+sugere que mais treino poderia mudar os valores absolutos; (v) o limiar $\tau$ e o
+\texttt{min\_freq} do léxico ficaram no extremo das respectivas grades; (vi)
+o \emph{fine-tuning} restrito, previsto no protocolo, não foi executado; (vii) a tarefa
+pressupõe entidades já anotadas, e o erro de uma etapa automática de
+reconhecimento de entidades não é considerado; e (viii) o achado se limita a esta
+formulação de três classes e à escala \emph{base} dos modelos
+(Seção~\ref{sec:encoders}).
+
+\section{Ameaças à validade}
+
+Quanto à validade interna, as partições congeladas e verificadas por
+\emph{hash}, a reconstrução dos dados com offsets alinhados ao texto e o
+particionamento em nível de documento mitigam o vazamento de dados e os erros de
+alinhamento. Persistem, contudo, pontos de procedência que precisam ser resolvidos
+antes da avaliação no teste. As execuções foram produzidas com quatro
+versões distintas do código, enquanto o protocolo prevê uma identidade única na
+conferência final. A comparação dos manifestos mostrou que, entre o baseline
+BioBERTpt-all e o baseline BERTimbau-base, o código da estratégia baseline é idêntico, e as
+diferenças estão em outras estratégias e em infraestrutura; para as demais
+execuções, as diferenças correspondem às mudanças documentadas da Pair-Aware e à
+criação da variante MLP. Três execuções foram retomadas a partir de um
+\emph{checkpoint} (o baseline com o BERTimbau-base, a Pair-Aware MLP e o estágio 1
+do Two-Stage) e registram apenas a sessão final de treino (Apêndice~\ref{ap:historico}),
+e todas as sessões registradas trazem um aviso de não determinismo de uma rotina de
+atenção da GPU, emitido apesar de os algoritmos determinísticos terem sido
+solicitados. Nenhum desses pontos altera as métricas recalculadas a
+partir das predições, mas todos limitam a reprodutibilidade estrita.
+
+Uma segunda ameaça diz respeito à independência das instâncias: o
+\emph{bootstrap} pareado trata os pares candidatos como independentes, embora pares
+de um mesmo documento compartilhem texto, de modo que os intervalos reportados são
+provavelmente mais estreitos que os reais. A comparação pareada atenua, mas não
+elimina, esse efeito. Quanto à validade externa, o SemClinBr representa um
+conjunto específico de instituições e de estilos de redação, e as 26 anomalias de
+anotação mantidas no corpus impõem um limite ao desempenho alcançável, igual para
+todos os sistemas.

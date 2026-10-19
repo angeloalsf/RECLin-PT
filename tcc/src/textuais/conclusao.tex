@@ -1,0 +1,89 @@
+\chapter[Conclusão]{Conclusão}
+\label{cap:conclusao}
+
+Este trabalho teve como objetivo desenvolver o RECLin-PT, modelo de extração de
+relações em notas clínicas em português sobre o corpus SemClinBr, com ênfase na
+relação \texttt{negation\_of}. Quanto à primeira parte da pergunta de pesquisa, como
+desenvolver o modelo, o trabalho construiu sua cadeia de dados, com a reconstrução do
+corpus a partir dos XML, as partições congeladas e o gerador de pares candidatos, e,
+sobre ela, a representação do par por marcadores e o ajuste fino de \emph{encoders},
+com cinco estratégias de modelagem implementadas, todas avaliadas no DEV com o
+BioBERTpt-all, além do baseline com o BERTimbau-base. Os experimentos realizados
+sobre essa base indicaram uma estratégia de referência preliminar, mas a configuração
+final do modelo ainda não foi selecionada nem validada no teste, de modo que essa
+parte da resposta permanece incompleta. Quanto à segunda parte, a influência do
+\emph{encoder} e da estratégia sobre o desempenho, a resposta disponível é
+provisória e delimitada: na única comparação direta realizada, a estratégia baseline, o
+pré-treinamento clínico não trouxe vantagem detectável no DEV; com o mesmo
+\emph{encoder}, as diferenças observadas entre estratégias na classe-alvo foram
+maiores do que a diferença entre \emph{encoders}, embora apenas uma delas tenha sido
+detectada pelo \emph{bootstrap} pareado.
+
+\section{Principais resultados}
+
+Na estratégia baseline, o BioBERTpt-all e o BERTimbau-base alcançam F1 de
+\texttt{negation\_of} de $0{,}802$ e $0{,}800$, com intervalo de confiança da
+diferença centrado em zero, e o \emph{encoder} geral, com cerca de 61\% dos
+parâmetros, fica ligeiramente à frente no macro-F1. Com o BioBERTpt-all, todas as
+estratégias melhoram o F1 de \texttt{negation\_of} do baseline, sobretudo pela
+precisão. O Two-Stage obtém o maior F1 ($0{,}831$) e a maior precisão ($0{,}798$) na
+classe-alvo, ao custo de \emph{recall} e, principalmente, da classe
+\texttt{associated\_with}, e é usado como estratégia de referência preliminar. Sua
+vantagem, contudo, não se distingue da Pair-Aware ($0{,}829$) nem dos demais sistemas,
+e seu limiar foi escolhido no próprio DEV, no extremo da grade. A Pair-Aware tem o
+maior macro-F1 ($0{,}741$) e é a única estratégia com diferença detectada sobre o
+baseline. Para o desenvolvimento do RECLin-PT, esses resultados indicam que a escolha
+entre Two-Stage e Pair-Aware continua em aberto e que o \emph{encoder} de domínio
+geral é um candidato viável, a confirmar nas demais estratégias.
+
+\section{Limitações}
+
+Essas conclusões não podem ser tomadas como definitivas. Todos os números são de DEV,
+o mesmo conjunto usado nas escolhas de época e de limiar; há uma única semente; os
+\emph{encoders} foram comparados em uma só estratégia, e o BioBERTpt-clin ainda não
+foi avaliado; e a configuração final do RECLin-PT não foi congelada nem avaliada no
+teste. As limitações e as ameaças à validade são detalhadas no
+Capítulo~\ref{cap:discussao} (Seção~\ref{sec:limitacoes} em diante).
+
+\section{Contribuições}
+
+As principais contribuições são: (i) o desenvolvimento do RECLin-PT, com a
+implementação e a comparação, sob o mesmo protocolo, de cinco estratégias de modelagem
+para a extração de relações clínicas em português, do classificador direto a uma
+arquitetura em dois estágios, usada como referência preliminar da versão atual; (ii) a
+comparação, sob configuração idêntica, entre um \emph{encoder} clínico e um geral na
+extração de relações sobre o SemClinBr, que subsidia a escolha do \emph{encoder} do
+modelo e oferece evidência inicial sobre a lacuna descrita no
+Capítulo~\ref{cap:relacionados}; (iii) a cadeia de dados que sustenta essas
+comparações, com os dados reconstruídos dos XML e o texto alinhado aos offsets de
+anotação, partições em nível de documento congeladas por \emph{hashes} e um gerador
+determinístico de pares candidatos compartilhado por todas as estratégias, com o teto
+de \emph{recall} quantificado; (iv) uma caracterização do corpus que evidencia o
+desbalanceamento das relações e a quase adjacência dos pares de negação; e (v) um
+protocolo pré-registrado e uma matriz de rastreabilidade que ligam cada escolha e cada
+número do texto ao artefato de origem.
+
+\section{Trabalhos futuros}
+
+Os próximos passos decorrem diretamente das limitações registradas e são necessários
+para completar a avaliação do RECLin-PT:
+
+\begin{itemize}
+  \item completar a comparação de \emph{encoders}, treinando o BERTimbau-base e o
+        BioBERTpt-clin nas mesmas estratégias, em especial no Two-Stage e na
+        Pair-Aware;
+  \item congelar a configuração definitiva, unificar a identidade do código das
+        execuções e conferir a proveniência de todas elas, como prevê o protocolo;
+  \item avaliar no teste, uma única vez, cada sistema congelado, e aplicar as
+        comparações pré-registradas, em particular a do Two-Stage contra o baseline e
+        contra o baseline calibrado;
+  \item repetir os experimentos com mais sementes, para separar o efeito das
+        estratégias e dos \emph{encoders} da variação do treino;
+  \item executar o \emph{fine-tuning} restrito previsto no protocolo;
+  \item investigar, em novo protocolo, critérios de limiar que considerem as três
+        classes, grades que não terminem no valor escolhido e orçamentos de treino
+        maiores, já que a melhor época coincidiu com o teto;
+  \item enriquecer a entrada com o tipo semântico das entidades e integrar uma etapa
+        automática de reconhecimento de entidades, medindo a extração de relações em
+        um cenário fim a fim.
+\end{itemize}

@@ -1,0 +1,9 @@
+# Esta pasta recebe tabelas LaTeX GERADAS PELO PIPELINE Python.
+# Nunca editar à mão — sempre regenerar via scripts/.
+#
+# Exemplos esperados:
+#   - estatisticas_corpus.tex      (scripts/eda/eda_relations.py)
+#   - distribuicao_relacoes.tex    (scripts/eda/eda_relations.py)
+#   - comparacao_baselines.tex     (scripts/evaluation/compare_baselines.py)
+#
+# Os capítulos em ../textuais/ incluem essas tabelas via \input{tabelas/nome}.

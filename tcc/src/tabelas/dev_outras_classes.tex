@@ -1,0 +1,20 @@
+%% GERADO por analise/gerar_artefatos_tcc.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Precisão, \emph{recall} e F1 de \texttt{associated\_with} e \texttt{no\_relation} no DEV, sistemas do protocolo (BioBERTpt-all, seed 42).}
+  \label{tab:dev_outras}
+  \begin{tabular}{lrrrrrr}
+  \toprule
+  & \multicolumn{3}{c}{\texttt{associated\_with}} & \multicolumn{3}{c}{\texttt{no\_relation}} \\
+  \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+  Sistema & P & R & F1 & P & R & F1 \\
+  \midrule
+Baseline & 0{,}271 & \textbf{0{,}826} & 0{,}408 & \textbf{0{,}992} & 0{,}904 & 0{,}946 \\
+Baseline calibrado ($t=0{,}90$) & 0{,}270 & \textbf{0{,}826} & 0{,}407 & \textbf{0{,}992} & 0{,}904 & 0{,}946 \\
+Filtro léxico & 0{,}271 & \textbf{0{,}826} & 0{,}408 & \textbf{0{,}992} & 0{,}905 & 0{,}946 \\
+Pair-Aware & 0{,}305 & 0{,}764 & \textbf{0{,}436} & 0{,}989 & 0{,}925 & 0{,}956 \\
+Two-Stage ($\tau=0{,}95$) & \textbf{0{,}508} & 0{,}286 & 0{,}366 & 0{,}970 & \textbf{0{,}987} & \textbf{0{,}978} \\
+  \bottomrule
+  \end{tabular}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

@@ -1,0 +1,72 @@
+% RESUMO - PT
+\begin{resumo}
+  \vspace{-15pt}
+
+  O registro eletrônico em saúde concentra grande parte da informação clínica em
+  texto livre, no qual a relação entre conceitos, em especial a negação de
+  achados, é determinante para a correta interpretação. Este trabalho desenvolve o
+  RECLin-PT, um modelo de extração de relações em notas clínicas em português sobre o
+  corpus SemClinBr, com ênfase na relação \texttt{negation\_of}, no espaço de rótulos
+  \texttt{negation\_of}, \texttt{associated\_with} e \texttt{no\_relation}. A
+  definição de sua configuração é orientada por experimentos controlados, que
+  investigam como a escolha do \emph{encoder} pré-treinado e da estratégia de
+  modelagem influencia o desempenho, com todas as alternativas avaliadas sobre os
+  mesmos dados e pares candidatos e sob um protocolo
+  pré-registrado que fixa os critérios de seleção no conjunto de desenvolvimento (DEV)
+  e reserva o conjunto de teste para uma avaliação única, posterior ao congelamento da
+  configuração. Os resultados apresentados são preliminares, todos no DEV, com
+  semente 42. Na estratégia baseline, o BERTimbau-base, de domínio geral, e o
+  BioBERTpt-all, clínico, alcançam F1 de \texttt{negation\_of} de 0,800 e 0,802, sem
+  diferença detectável pelo \emph{bootstrap} pareado, com o BERTimbau-base usando
+  cerca de 61\% dos parâmetros. Com o BioBERTpt-all, o Two-Stage, que detecta a
+  existência de relação antes de decidir o tipo, obtém o maior F1 de
+  \texttt{negation\_of} (0,831), com precisão de 0,798, e é usado como referência
+  preliminar. Sua vantagem, porém, não se distingue da Pair-Aware (0,829), que tem o
+  maior macro-F1 (0,741) e é a única estratégia cuja diferença para o baseline (0,802)
+  tem intervalo de confiança acima de zero. A configuração final do RECLin-PT ainda
+  não foi selecionada: dependem dela a comparação entre \emph{encoders} nas demais
+  estratégias e a avaliação no teste, e a resposta sobre a influência do
+  \emph{encoder} é provisória e limitada à estratégia baseline.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Palavras-chave}: \palavraschaveemlinha
+\end{resumo}
+
+% RESUMO - EN
+\begin{resumo}[Abstract]
+  \vspace{-15pt}
+
+  \begin{otherlanguage*}{english}
+
+  Electronic health records store much clinical information as free text, in which
+  the relationship between concepts, particularly the negation of findings, is
+  decisive for correct interpretation. This work develops RECLin-PT, a relation
+  extraction model for Portuguese clinical notes on the SemClinBr corpus, with emphasis
+  on the \texttt{negation\_of} relation, in the label space \texttt{negation\_of},
+  \texttt{associated\_with} and \texttt{no\_relation}. The definition of its
+  configuration is informed by controlled experiments that investigate how the
+  choice of pre-trained encoder and of modelling strategy influences performance,
+  with all alternatives evaluated on the
+  same data and candidate pairs and under a pre-registered protocol that fixes
+  selection criteria on the development set (DEV) and reserves the test set for a
+  single evaluation after the configuration is frozen. The results reported here are
+  preliminary, all on DEV, with seed 42. In the baseline strategy, the general-domain
+  BERTimbau-base and the clinical BioBERTpt-all reach \texttt{negation\_of} F1 of
+  0.800 and 0.802, with no difference detected by the paired bootstrap, the former
+  using about 61\% of the parameters. With BioBERTpt-all, the Two-Stage architecture,
+  which detects whether a relation exists before deciding its type, obtains the
+  highest \texttt{negation\_of} F1 (0.831), with precision of 0.798, and is used as
+  the preliminary reference. Its advantage, however, cannot be distinguished from
+  Pair-Aware (0.829), which has the highest macro-F1 (0.741) and is the only strategy
+  whose difference from the baseline (0.802) has a confidence interval above zero. The
+  final RECLin-PT configuration has not yet been selected: it depends on the encoder
+  comparison in the other strategies and on the test-set evaluation, and the answer
+  regarding the influence of the encoder is provisional and limited to the baseline
+  strategy.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Keywords}: \inlinekeywords
+\end{otherlanguage*}
+\end{resumo}

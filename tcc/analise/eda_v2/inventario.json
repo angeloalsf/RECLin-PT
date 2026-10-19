@@ -1,0 +1,205 @@
+{
+  "codigo_referencia": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+  "execucoes": {
+    "baseline_BERTimbau": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "bertimbau",
+      "estrategia": "baseline",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder bertimbau (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [
+        "dev"
+      ],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "baseline_BioBERTpt-clin": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "biobertpt_clin",
+      "estrategia": "baseline",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder biobertpt_clin (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [
+        "dev"
+      ],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "baseline_biobertpt_seed42": {
+      "avisos": [],
+      "codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "dependencias": [],
+      "encoder": "biobertpt",
+      "estrategia": "baseline",
+      "motivos_fora_da_fase": [],
+      "natureza": "cientifica",
+      "particoes": [
+        "dev"
+      ],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "pair_aware_mlp_BioBERTpt-all": {
+      "avisos": [],
+      "codigo": "22339ff5cbfbe56903586c6a758ef63961c21ba62a27596c52c1d377725d389c",
+      "dependencias": [],
+      "encoder": "biobertpt",
+      "estrategia": "pair_aware_mlp",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (22339ff5cbfb…; referência 8a6c194680c7…)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [
+        "dev"
+      ],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "pairaware_biobertpt_seed42": {
+      "avisos": [],
+      "codigo": "ecbb98cae7bcdcd8f895e0bf8d9d3380a704b3471a15fd08df4e526220d85e8d",
+      "dependencias": [],
+      "encoder": "biobertpt",
+      "estrategia": "pair_aware",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (ecbb98cae7bc…; referência 8a6c194680c7…)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [
+        "dev"
+      ],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "two_stage_e1_BERTimbau": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "bertimbau",
+      "estrategia": "two_stage_e1",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder bertimbau (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "two_stage_e1__82490c70baed__t1": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "biobertpt_clin",
+      "estrategia": "two_stage_e1",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder biobertpt_clin (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "two_stage_e2_BERTimbau": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "bertimbau",
+      "estrategia": "two_stage_e2",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder bertimbau (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "two_stage_e2__65e72d6c30e8__t1": {
+      "avisos": [],
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "dependencias": [],
+      "encoder": "biobertpt_clin",
+      "estrategia": "two_stage_e2",
+      "motivos_fora_da_fase": [
+        "produzida por outra versão do código (0526d9123ecc…; referência 8a6c194680c7…)",
+        "encoder biobertpt_clin (a fase usa biobertpt)"
+      ],
+      "natureza": "fora_da_fase",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "twostage_e1_biobertpt_seed42": {
+      "avisos": [],
+      "codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "dependencias": [],
+      "encoder": "biobertpt",
+      "estrategia": "two_stage_e1",
+      "motivos_fora_da_fase": [],
+      "natureza": "cientifica",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    },
+    "twostage_e2_biobertpt_seed42": {
+      "avisos": [],
+      "codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "dependencias": [],
+      "encoder": "biobertpt",
+      "estrategia": "two_stage_e2",
+      "motivos_fora_da_fase": [],
+      "natureza": "cientifica",
+      "particoes": [],
+      "problemas": [],
+      "seed": 42,
+      "valida": true,
+      "versao_dados": "v2-texto-fonte"
+    }
+  },
+  "particoes": "dados/particoes-v2",
+  "particoes_congeladas": true,
+  "raiz": "resultados/execucoes",
+  "recusados": [
+    {
+      "caminho": "two_stage_limiar_BioBERTpt-all",
+      "motivo": "pasta sem config.json: não é uma execução do código novo"
+    },
+    {
+      "caminho": "two_stage_limiar_BioBERTpt-clin",
+      "motivo": "pasta sem config.json: não é uma execução do código novo"
+    }
+  ],
+  "versao_dados": "v2-texto-fonte"
+}

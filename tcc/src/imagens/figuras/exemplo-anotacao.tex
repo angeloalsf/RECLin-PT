@@ -1,0 +1,53 @@
+% Exemplo real de anotação do SemClinBr: documento 9091 (partição de treino),
+% offsets 1060--1127. Texto, entidades (id, tipo) e relações conferidos no XML
+% original (9091.xml) e nos dados derivados (particoes, train.jsonl): idênticos.
+\begin{figure}[htbp]
+  \centering
+  \caption{Exemplo real de anotação de um documento do SemClinBr (documento 9091, trecho): entidades anotadas, com seus identificadores, e relações entre elas.}
+  \label{fig:exemplo_anotacao}
+  \begin{tikzpicture}[
+      font=\sffamily\small,
+      ent/.style={draw=black!70, fill=black!6, rounded corners=2pt, inner xsep=2.5pt, inner ysep=3pt, anchor=base west},
+      neg/.style={draw=black!70, fill=black!18, rounded corners=2pt, inner xsep=2.5pt, inner ysep=3pt, anchor=base west},
+      txt/.style={inner xsep=1.2pt, inner ysep=3pt, anchor=base west},
+      ident/.style={font=\sffamily\scriptsize, text=black!65, below=1pt},
+      relneg/.style={-{Stealth[length=2.2mm]}, line width=1.1pt, draw=black},
+      relass/.style={-{Stealth[length=2.2mm]}, line width=0.7pt, draw=black!60, dashed},
+      rot/.style={font=\sffamily\scriptsize, fill=white, inner sep=1pt}
+    ]
+    \node[ent] (a) at (0,0) {acesso venoso periferico};
+    \node[txt] (t1) at ([xshift=0.6mm]a.base east) {em};
+    \node[ent] (b) at ([xshift=0.6mm]t1.base east) {MSE};
+    \node[neg] (c) at ([xshift=1.4mm]b.base east) {sem};
+    \node[ent] (d) at ([xshift=1.4mm]c.base east) {sinais flogisticos};
+    \node[txt] (t2) at ([xshift=0.6mm]d.base east) {e};
+    \node[ent] (e) at ([xshift=0.6mm]t2.base east) {salinizado};
+    \node[ident] at (a.south) {9553};
+    \node[ident] at (b.south) {9513};
+    \node[ident] at (c.south) {9514};
+    \node[ident] at (d.south) {9554};
+    \node[ident] at (e.south) {9515};
+    % relações (e1 -> e2, como anotadas)
+    \draw[relass] ([xshift=-1mm]b.north) .. controls +(0,0.75) and +(0,0.75) .. ([xshift=-6mm]a.north)
+      node[rot, pos=0.5, above=-1pt] {associated\_with};
+    \draw[relneg] (c.north) .. controls +(0,0.75) and +(0,0.75) .. ([xshift=-4mm]d.north)
+      node[rot, pos=0.5, above=-1pt] {negation\_of};
+    \draw[relass] ([xshift=4mm]d.north) .. controls +(0,1.55) and +(0,1.55) .. (a.north)
+      node[rot, pos=0.5, above=-1pt] {associated\_with};
+    \draw[relass] (e.north) .. controls +(0,2.35) and +(0,2.35) .. ([xshift=6mm]a.north)
+      node[rot, pos=0.5, above=-1pt] {associated\_with};
+  \end{tikzpicture}\\[6pt]
+  {\footnotesize
+  \begin{tabular}{lll}
+  \toprule
+  Id & Entidade & Tipo anotado \\
+  \midrule
+  9553 & acesso venoso periferico & \emph{Therapeutic or Preventive Procedure}$|$\emph{Medical Device} \\
+  9513 & MSE & \emph{Body Location or Region}$|$\emph{Abbreviation} \\
+  9514 & sem & \emph{Negation} \\
+  9554 & sinais flogisticos & \emph{Sign or Symptom} \\
+  9515 & salinizado & \emph{Therapeutic or Preventive Procedure}$|$\emph{Finding} \\
+  \bottomrule
+  \end{tabular}}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor a partir de dados do SemClinBr \cite{oliveira_2022_semclinbr}.}
+\end{figure}

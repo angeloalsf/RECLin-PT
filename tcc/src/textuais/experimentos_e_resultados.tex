@@ -1,0 +1,188 @@
+\chapter[Experimentos e Resultados]{Experimentos e Resultados}
+\label{cap:experimentos}
+
+Neste capítulo são descritos os experimentos conduzidos no desenvolvimento do
+RECLin-PT, com foco na classe \texttt{negation\_of}, bem como os resultados obtidos
+até o momento, todos no conjunto de desenvolvimento. Cada experimento responde a uma
+decisão de configuração do modelo: a comparação entre \emph{encoders}, à escolha do
+\emph{encoder}, e a comparação entre estratégias, à escolha da estratégia. Este
+capítulo reporta o que foi observado; o que esses resultados implicam para o
+RECLin-PT é discutido no Capítulo~\ref{cap:discussao}. A \autoref{fig:ciclo} apresenta
+o ciclo de desenvolvimento e o estado atual de cada etapa. A preparação dos dados e a
+geração de pares candidatos estão concluídas. O \emph{fine-tuning} foi realizado
+apenas para parte das combinações de \emph{encoder} e estratégia, e a seleção de
+épocas e de limiares no DEV foi feita para todas as execuções existentes. A
+comparação é parcial: as estratégias foram comparadas com o BioBERTpt-all, e os
+\emph{encoders}, apenas na estratégia baseline, de forma descritiva e no DEV. O
+congelamento da configuração, a avaliação única no conjunto de teste e a seleção da
+configuração final do RECLin-PT permanecem pendentes. A seta de retorno indica que
+novos \emph{encoders} ou estratégias voltam à etapa de \emph{fine-tuning} antes de
+entrar na comparação.
+
+\input{imagens/figuras/ciclo-desenvolvimento}
+
+Todos os números são do conjunto de desenvolvimento (DEV), com semente $42$, sobre os
+$19\,064$ pares candidatos das partições congeladas (Seção~\ref{sec:candidatos}). O
+DEV é o mesmo conjunto usado nas escolhas de época e de limiar, e nenhum sistema foi avaliado no teste. Os resultados são, portanto,
+evidências preliminares, e não estimativas finais de desempenho; os do
+Two-Stage e do baseline calibrado, cujo limiar foi escolhido neste mesmo DEV, são
+otimistas por construção (Seção~\ref{sec:protocolo}).
+
+\section{Treino e seleção de época}
+\label{sec:curvas}
+
+Nas execuções de três rótulos, a época selecionada foi sempre a terceira, a última
+permitida pelo protocolo, e o macro-F1 do DEV ainda subia entre a segunda e a
+terceira época (no baseline BioBERTpt-all, de $0{,}712$ para $0{,}719$); a evolução
+completa por época, com perdas e duração, está no Apêndice~\ref{ap:historico}. Nessas
+execuções, a perda do DEV deixou de cair a partir da segunda época, de modo que perda
+e macro-F1 não apontaram a mesma época. A coincidência entre a melhor época e o teto
+é compatível com a possibilidade de que um orçamento maior de treino altere os
+números absolutos; essa possibilidade é comum a todas as estratégias e não foi
+explorada. As épocas executadas em uma única sessão levaram cerca de uma hora na GPU
+T4; as interrompidas e retomadas registram apenas a parte final, o que impede usar as
+durações para comparar o custo das estratégias.
+
+O Two-Stage não segue esse padrão porque seus dois estágios são classificadores
+binários treinados separadamente, com critérios de seleção próprios, e o macro-F1 do
+\emph{pipeline} completo só é definido após a escolha do limiar~$\tau$
+(Seção~\ref{sec:resultados_twostage}).
+
+\section{Comparação entre \emph{encoders}}
+\label{sec:resultados_encoders}
+
+A Tabela~\ref{tab:dev_encoders} compara o BioBERTpt-all e o BERTimbau-base na
+estratégia baseline, sob configuração idêntica. Os dois \emph{encoders} chegam a
+desempenhos muito próximos. Na classe-alvo, o BioBERTpt-all alcança F1 de $0{,}802$
+e o BERTimbau-base, de $0{,}800$, com perfis ligeiramente diferentes: o clínico tem
+\emph{recall} maior ($0{,}947$ contra $0{,}920$), e o geral, precisão maior
+($0{,}708$ contra $0{,}696$). Nas demais classes e no macro-F1, a pequena vantagem é
+do BERTimbau-base ($0{,}723$ contra $0{,}719$), e o MCC é praticamente igual. A
+diferença no F1 de \texttt{negation\_of} ($-0{,}0023$ para o BERTimbau-base) tem IC95\% de
+$[-0{,}0295;\,+0{,}0253]$ pelo \emph{bootstrap} pareado descritivo
+(Seção~\ref{sec:resultados_comparacoes}), isto é, não é distinguível de zero. O
+BERTimbau-base obtém esse resultado com cerca de 61\% dos parâmetros do
+BioBERTpt-all.
+
+\input{tabelas/dev_encoders}
+
+Esse é, até aqui, o único resultado que compara \emph{encoders} diretamente, com uma
+estratégia, uma semente e no DEV. As estratégias seguintes foram treinadas apenas com
+o BioBERTpt-all, de modo que a comparação nas demais estratégias é uma etapa
+pendente, e não se sabe ainda se o efeito do \emph{encoder} muda com a estratégia.
+
+\section{Estratégias do protocolo com o BioBERTpt-all}
+\label{sec:resultados}
+
+A Tabela~\ref{tab:dev_negacao} reúne os cinco sistemas do protocolo com resultado
+disponível, todos com o BioBERTpt-all. Na classe-alvo, todos superam o F1 do
+baseline, principalmente pela precisão. O Two-Stage tem o maior F1 e a maior precisão,
+com o menor número de falsos positivos, mas também o menor \emph{recall}. A
+Pair-Aware fica logo atrás no F1 de \texttt{negation\_of}, com \emph{recall}
+próximo ao do baseline, e tem, entre os sistemas do protocolo, o maior macro-F1 e o
+maior MCC. O filtro léxico e o baseline calibrado melhoram a precisão do baseline ao
+custo de parte do \emph{recall}: o filtro rebaixou $24$ das $204$ predições
+\texttt{negation\_of} do baseline, e o limiar escolhido para o calibrado foi
+$t=0{,}90$.
+
+\input{tabelas/dev_negacao}
+
+As outras duas classes completam o quadro (Tabela~\ref{tab:dev_outras}). O
+Two-Stage tem o maior F1 de \texttt{no\_relation}, mas o menor de
+\texttt{associated\_with}: sua precisão nessa classe é a maior, e seu \emph{recall}
+é o menor, cerca de um terço do baseline. É essa perda que mantém o seu macro-F1
+abaixo do da Pair-Aware, apesar do melhor resultado na classe-alvo. O filtro e o calibrado praticamente não alteram
+\texttt{associated\_with}, como esperado de regras que atuam sobre
+\texttt{negation\_of}; entre os sistemas do protocolo, a Pair-Aware tem o maior F1
+de \texttt{associated\_with} ($0{,}436$), ainda baixo para todas as estratégias.
+
+\input{tabelas/dev_outras_classes}
+
+A \autoref{fig:confusao} mostra para onde vão os erros. No baseline e na Pair-Aware,
+a classe \texttt{negation\_of} é quase toda recuperada, e o erro dominante é a
+confusão de \texttt{no\_relation} com \texttt{associated\_with} ($1\,693$ e $1\,323$
+pares). No Two-Stage, essa confusão quase desaparece ($208$ pares), mas o erro se
+desloca para o sentido inverso: $541$ das $763$ relações \texttt{associated\_with}
+são classificadas como \texttt{no\_relation}, e $17$ das $150$ \texttt{negation\_of}
+também.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Matrizes de confusão no DEV (normalizadas por linha, contagens entre parênteses): baseline, Pair-Aware e Two-Stage, BioBERTpt-all, seed 42.}
+  \label{fig:confusao}
+  \includegraphics[width=\textwidth]{resultados/matrizes_confusao_dev.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{figure}
+
+\section{O Two-Stage em detalhe}
+\label{sec:resultados_twostage}
+
+No estágio 1, a época selecionada pela AP de \texttt{relacao} foi a segunda das três
+($0{,}544$), e as épocas executadas em sessão única levaram cerca de uma hora. No estágio 2, medido só sobre os 913
+pares do DEV com relação anotada, o F1 de \texttt{negation\_of} ficou entre $0{,}943$
+e $0{,}970$ ao longo das dez épocas, a selecionada foi a oitava ($0{,}970$), e cada
+época levou cerca de três minutos, por ser treinado só sobre os pares com relação
+anotada. A evolução completa por época dos dois estágios está no
+Apêndice~\ref{ap:historico}. Esses números descrevem cada estágio isoladamente e não
+são resultados da arquitetura, porque o estágio 2 nunca vê, na inferência, os pares
+que o estágio 1 não roteia.
+
+A \autoref{fig:tau} mostra o efeito de $\tau$ sobre o
+\emph{pipeline} completo (a tabela completa está no Apêndice~\ref{ap:tau}). O F1 de
+\texttt{negation\_of} cresce com $\tau$, de $0{,}733$ em $\tau=0{,}05$ até $0{,}8307$
+em $\tau=0{,}95$, enquanto o macro-F1 cresce até $0{,}751$ em $\tau=0{,}90$ e cai
+para $0{,}725$ em $\tau=0{,}95$. O valor congelado, $0{,}95$, é o extremo superior da
+grade e venceu $\tau=0{,}90$ por pouco no critério do protocolo ($0{,}8307$ contra
+$0{,}8293$), mas reduziu os pares roteados ao estágio 2 de $1\,303$ para $592$; como
+os pares não roteados recebem \texttt{no\_relation}, essa redução se reflete
+diretamente na queda do \emph{recall} de \texttt{associated\_with}.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Two-Stage no DEV: F1 de \texttt{negation\_of} e macro-F1 do \emph{pipeline} completo em função do limiar $\tau$.}
+  \label{fig:tau}
+  \includegraphics[width=0.85\textwidth]{resultados/tau_two_stage.png}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{figure}
+
+Com $\tau=0{,}95$, o estágio 1 encaminha ao estágio 2
+$592$ pares, dos quais $237$ não têm relação anotada. Ele recupera $88{,}7\%$ dos
+pares \texttt{negation\_of}, mas só $38{,}9\%$ do conjunto de pares com relação, e,
+entre os pares roteados que têm relação, o estágio 2 acerta o tipo em $98{,}0\%$
+dos casos. Nesta execução, portanto, as perdas do Two-Stage concentram-se no estágio 1
+e no limiar, e não na distinção entre os tipos.
+
+\section{Comparações pareadas descritivas}
+\label{sec:resultados_comparacoes}
+
+A Tabela~\ref{tab:dev_comparacoes} aplica ao DEV, apenas de forma descritiva, os
+testes que o protocolo prevê para o teste. No F1 de \texttt{negation\_of}, o
+Two-Stage fica à frente de todos os sistemas, mas nenhuma dessas diferenças é
+distinguível de zero, nem mesmo contra o baseline calibrado, controle exigido pelo
+protocolo para atribuir o efeito à arquitetura; contra a Pair-Aware, a vantagem é de
+apenas $+0{,}0013$. A única diferença com IC95\% inteiramente acima de zero é a da
+Pair-Aware sobre o baseline ($+0{,}0272$, $[+0{,}0052;\,+0{,}0506]$). Entre
+\emph{encoders}, o intervalo é centrado em zero.
+
+\input{tabelas/dev_comparacoes}
+
+O McNemar rejeita a igualdade em quase todas as comparações, mas responde a outra
+pergunta: ele incide sobre o acerto global, dominado pela classe
+\texttt{no\_relation}. O Two-Stage, por exemplo, acerta muito mais pares no total
+(acurácia de $0{,}958$, contra $0{,}901$ do baseline), em grande parte porque prevê
+\texttt{no\_relation} com mais frequência, o que não se traduz em vantagem na
+classe-alvo nem no macro-F1. A única comparação sem diferença no McNemar é a do
+baseline calibrado com o baseline, cujas predições diferem em apenas 12 pares.
+
+\section{Resultado exploratório}
+\label{sec:resultados_exploratorios}
+
+A variante Pair-Aware MLP, fora do protocolo, foi treinada com a mesma entrada, os
+mesmos dados e a mesma seleção da Pair-Aware do protocolo, mudando apenas a cabeça.
+Ela teve \emph{recall} de \texttt{negation\_of} um pouco maior ($0{,}953$) e precisão
+menor ($0{,}715$), e terminou com F1 de $0{,}817$ e macro-F1 de $0{,}737$, ambos abaixo
+da Pair-Aware linear; a diferença para o Two-Stage no F1 de \texttt{negation\_of}
+também não é distinguível de zero (Tabela~\ref{tab:dev_comparacoes}). Os valores
+completos estão no Apêndice~\ref{ap:exploratoria}. Por ser exploratório, esse
+resultado não é evidência confirmatória e não entra na escolha da estratégia de
+referência.
