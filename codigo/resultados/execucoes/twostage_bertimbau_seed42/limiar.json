@@ -1,0 +1,505 @@
+{
+  "configuracao_busca": {
+    "comparacao": "exata, por frações das contagens",
+    "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+    "desempates": [
+      "maior macro-F1 (contagens)",
+      "menor |limiar - 0,5|",
+      "maior limiar"
+    ],
+    "grade": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "regra": "two_stage: P(relacao) do estágio 1, arredondada a 4 casas, >= τ -> estágio 2 (argmax entre negation_of e associated_with); senão no_relation",
+    "versao": 1
+  },
+  "congelado_em": "2026-10-19T01:30:47+0000",
+  "hash_configuracao_busca": "2028a02acf1ed9b97ee8f1b5ee7931ab96a4d9294ff377106f3658bee96c42ae",
+  "hash_registro": "f8bac61669f84469ec026b990d6e9323a0ecc724d7d1801668ca52af10fbf427",
+  "limiar": 0.85,
+  "tabela": [
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 78,
+          "fp": 2670,
+          "tp": 685
+        },
+        "negation_of": {
+          "fn": 6,
+          "fp": 103,
+          "tp": 144
+        },
+        "no_relation": {
+          "fn": 2763,
+          "fp": 74,
+          "tp": 15388
+        }
+      },
+      "f1_negation_of": 0.72544080604534,
+      "limiar": 0.05,
+      "macro_f1": 0.6579082358372486,
+      "n_roteados": 3602
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 97,
+          "fp": 2281,
+          "tp": 666
+        },
+        "negation_of": {
+          "fn": 6,
+          "fp": 84,
+          "tp": 144
+        },
+        "no_relation": {
+          "fn": 2355,
+          "fp": 93,
+          "tp": 15796
+        }
+      },
+      "f1_negation_of": 0.7619047619047619,
+      "limiar": 0.1,
+      "macro_f1": 0.6830063392819751,
+      "n_roteados": 3175
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 116,
+          "fp": 2057,
+          "tp": 647
+        },
+        "negation_of": {
+          "fn": 7,
+          "fp": 76,
+          "tp": 143
+        },
+        "no_relation": {
+          "fn": 2123,
+          "fp": 113,
+          "tp": 16028
+        }
+      },
+      "f1_negation_of": 0.7750677506775068,
+      "limiar": 0.15,
+      "macro_f1": 0.6943654603853066,
+      "n_roteados": 2923
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 127,
+          "fp": 1879,
+          "tp": 636
+        },
+        "negation_of": {
+          "fn": 10,
+          "fp": 69,
+          "tp": 140
+        },
+        "no_relation": {
+          "fn": 1938,
+          "fp": 127,
+          "tp": 16213
+        }
+      },
+      "f1_negation_of": 0.7799442896935933,
+      "limiar": 0.2,
+      "macro_f1": 0.7027050291671164,
+      "n_roteados": 2724
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 133,
+          "fp": 1754,
+          "tp": 630
+        },
+        "negation_of": {
+          "fn": 10,
+          "fp": 66,
+          "tp": 140
+        },
+        "no_relation": {
+          "fn": 1810,
+          "fp": 133,
+          "tp": 16341
+        }
+      },
+      "f1_negation_of": 0.7865168539325843,
+      "limiar": 0.25,
+      "macro_f1": 0.7102608820018295,
+      "n_roteados": 2590
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 149,
+          "fp": 1653,
+          "tp": 614
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 64,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1707,
+          "fp": 150,
+          "tp": 16444
+        }
+      },
+      "f1_negation_of": 0.7875354107648725,
+      "limiar": 0.3,
+      "macro_f1": 0.7131231332491027,
+      "n_roteados": 2470
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 158,
+          "fp": 1538,
+          "tp": 605
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 59,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1587,
+          "fp": 159,
+          "tp": 16564
+        }
+      },
+      "f1_negation_of": 0.7988505747126436,
+      "limiar": 0.35,
+      "macro_f1": 0.7217215088827974,
+      "n_roteados": 2341
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 167,
+          "fp": 1463,
+          "tp": 596
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 57,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1510,
+          "fp": 168,
+          "tp": 16641
+        }
+      },
+      "f1_negation_of": 0.8034682080924855,
+      "limiar": 0.4,
+      "macro_f1": 0.7259553202105951,
+      "n_roteados": 2255
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 176,
+          "fp": 1408,
+          "tp": 587
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 55,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1453,
+          "fp": 177,
+          "tp": 16698
+        }
+      },
+      "f1_negation_of": 0.8081395348837209,
+      "limiar": 0.45,
+      "macro_f1": 0.7290911508248316,
+      "n_roteados": 2189
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 187,
+          "fp": 1333,
+          "tp": 576
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 55,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1378,
+          "fp": 188,
+          "tp": 16773
+        }
+      },
+      "f1_negation_of": 0.8081395348837209,
+      "limiar": 0.5,
+      "macro_f1": 0.7315590409097398,
+      "n_roteados": 2103
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 194,
+          "fp": 1264,
+          "tp": 569
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 55,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1309,
+          "fp": 195,
+          "tp": 16842
+        }
+      },
+      "f1_negation_of": 0.8081395348837209,
+      "limiar": 0.55,
+      "macro_f1": 0.734588136367022,
+      "n_roteados": 2027
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 201,
+          "fp": 1215,
+          "tp": 562
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 55,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1260,
+          "fp": 202,
+          "tp": 16891
+        }
+      },
+      "f1_negation_of": 0.8081395348837209,
+      "limiar": 0.6,
+      "macro_f1": 0.7363923272705465,
+      "n_roteados": 1971
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 214,
+          "fp": 1151,
+          "tp": 549
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 54,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1195,
+          "fp": 215,
+          "tp": 16956
+        }
+      },
+      "f1_negation_of": 0.8104956268221575,
+      "limiar": 0.65,
+      "macro_f1": 0.7387916566536034,
+      "n_roteados": 1893
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 232,
+          "fp": 1088,
+          "tp": 531
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 54,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1132,
+          "fp": 233,
+          "tp": 17019
+        }
+      },
+      "f1_negation_of": 0.8104956268221575,
+      "limiar": 0.7,
+      "macro_f1": 0.7392611336552921,
+      "n_roteados": 1812
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 248,
+          "fp": 1008,
+          "tp": 515
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 48,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1047,
+          "fp": 251,
+          "tp": 17104
+        }
+      },
+      "f1_negation_of": 0.8214285714285714,
+      "limiar": 0.75,
+      "macro_f1": 0.7451466829146591,
+      "n_roteados": 1709
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 267,
+          "fp": 931,
+          "tp": 496
+        },
+        "negation_of": {
+          "fn": 13,
+          "fp": 48,
+          "tp": 137
+        },
+        "no_relation": {
+          "fn": 970,
+          "fp": 271,
+          "tp": 17181
+        }
+      },
+      "f1_negation_of": 0.817910447761194,
+      "limiar": 0.8,
+      "macro_f1": 0.7453406236947074,
+      "n_roteados": 1612
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 285,
+          "fp": 834,
+          "tp": 478
+        },
+        "negation_of": {
+          "fn": 13,
+          "fp": 45,
+          "tp": 137
+        },
+        "no_relation": {
+          "fn": 870,
+          "fp": 289,
+          "tp": 17281
+        }
+      },
+      "f1_negation_of": 0.8253012048192772,
+      "limiar": 0.85,
+      "macro_f1": 0.7511927320715914,
+      "n_roteados": 1494
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 330,
+          "fp": 693,
+          "tp": 433
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 45,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 729,
+          "fp": 335,
+          "tp": 17422
+        }
+      },
+      "f1_negation_of": 0.8217522658610272,
+      "limiar": 0.9,
+      "macro_f1": 0.7501882022956272,
+      "n_roteados": 1307
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 499,
+          "fp": 356,
+          "tp": 264
+        },
+        "negation_of": {
+          "fn": 19,
+          "fp": 37,
+          "tp": 131
+        },
+        "no_relation": {
+          "fn": 386,
+          "fp": 511,
+          "tp": 17765
+        }
+      },
+      "f1_negation_of": 0.8238993710691824,
+      "limiar": 0.95,
+      "macro_f1": 0.7270178404285469,
+      "n_roteados": 788
+    }
+  ],
+  "vinculos": {
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "max_gap": 25,
+      "n_candidatos": 19064,
+      "particao": "dev",
+      "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "estagio1": {
+      "melhor_epoca": 3,
+      "nome": "two_stage_e1__727707a32ba8__t1",
+      "sha256_config": "7ee70a15057405f773397428947dea46dcf0a6481792f5ef6f61e5bed323bf14",
+      "sha256_melhor_modelo": "028a5888711a72a6c3caa2a696756f6f7d22d93a4674050125a37c3c294bd959"
+    },
+    "estagio2": {
+      "melhor_epoca": 5,
+      "nome": "two_stage_e2__9c00a5279316__t1",
+      "sha256_config": "a03111314b90c9991fb4309ee4bbe8e2b10390210fa5b5febffa49e50f8c6fd7",
+      "sha256_melhor_modelo": "b2a745fd222a21e9266724f0b31d7bb4ef6fda56a2b2df6e4be1c860d6b80abf"
+    },
+    "proveniencia_pesos": {
+      "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+      "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+      "repositorio": "neuralmind/bert-base-portuguese-cased"
+    },
+    "seed": 42
+  }
+}

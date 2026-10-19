@@ -1,0 +1,108 @@
+{
+  "dev": {
+    "classification_report": {
+      "accuracy": 0.9387326898866974,
+      "associated_with": {
+        "f1-score": 0.46072289156626506,
+        "precision": 0.3643292682926829,
+        "recall": 0.6264744429882044,
+        "support": 763.0
+      },
+      "macro avg": {
+        "f1-score": 0.7511927320715914,
+        "precision": 0.7002093430975463,
+        "recall": 0.8306255109546257,
+        "support": 19064.0
+      },
+      "negation_of": {
+        "f1-score": 0.8253012048192772,
+        "precision": 0.7527472527472527,
+        "recall": 0.9133333333333333,
+        "support": 150.0
+      },
+      "no_relation": {
+        "f1-score": 0.9675540998292321,
+        "precision": 0.9835515082527034,
+        "recall": 0.9520687565423392,
+        "support": 18151.0
+      },
+      "weighted avg": {
+        "f1-score": 0.9461498747895689,
+        "precision": 0.9569523051780437,
+        "recall": 0.9387326898866974,
+        "support": 19064.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "negation_of",
+        "associated_with",
+        "no_relation"
+      ],
+      "matrix": [
+        [
+          137,
+          2,
+          11
+        ],
+        [
+          7,
+          478,
+          278
+        ],
+        [
+          38,
+          832,
+          17281
+        ]
+      ]
+    },
+    "f1_per_class": {
+      "associated_with": 0.46072289156626506,
+      "negation_of": 0.8253012048192772,
+      "no_relation": 0.9675540998292321
+    },
+    "macro_f1": 0.7511927320715914,
+    "mcc": 0.5048584677807072,
+    "micro_f1": 0.9387326898866974,
+    "n": 19064,
+    "por_classe": {
+      "associated_with": {
+        "f1": 0.46072289156626506,
+        "fn": 285,
+        "fp": 834,
+        "precision": 0.3643292682926829,
+        "recall": 0.6264744429882044,
+        "support": 763,
+        "tp": 478
+      },
+      "negation_of": {
+        "f1": 0.8253012048192772,
+        "fn": 13,
+        "fp": 45,
+        "precision": 0.7527472527472527,
+        "recall": 0.9133333333333333,
+        "support": 150,
+        "tp": 137
+      },
+      "no_relation": {
+        "f1": 0.9675540998292321,
+        "fn": 870,
+        "fp": 289,
+        "precision": 0.9835515082527034,
+        "recall": 0.9520687565423392,
+        "support": 18151,
+        "tp": 17281
+      }
+    },
+    "weighted_f1": 0.9461498747895689
+  },
+  "dev_diagnostico_estagios": {
+    "acuracia_do_tipo_nos_roteados_com_relacao": 0.9855769230769231,
+    "n_roteados_ao_estagio2": 1494,
+    "recall_estagio1_nos_pares_com_relacao": 0.683461117196057,
+    "recall_estagio1_nos_pares_negation_of": 0.9266666666666666,
+    "roteados_sem_relacao_anotada": 870,
+    "rotulo": "diagnóstico por estágio no fluxo real (não é resultado da arquitetura)"
+  }
+}
