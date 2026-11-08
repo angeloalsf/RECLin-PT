@@ -10,6 +10,16 @@ repositório original. Pela decisão da etapa 7 (o projeto novo não incorpora
 artefatos do legado), eles não foram copiados; esta página descreve só o
 código novo.
 
+**Papéis na fase atual:**
+- **Pair-Aware linear:** arquitetura oficial do RECLin-PT.
+- **Baseline:** referência experimental.
+- **Two-Stage:** estratégia experimental.
+- **Pair-Aware MLP:** variante experimental, fora do protocolo.
+- **Baseline calibrado e filtro léxico:** controles do protocolo.
+- **Regra pura e restrito:** continuam implementados.
+
+Os **controles diagnósticos informados pelas anotações**, que usam o tipo semântico `Negation`, não são estratégias e ficam em `codigo/diagnosticos/`. Nenhuma estratégia recebe tipos semânticos como entrada.
+
 | Estratégia | Módulo | Comando | Execução (fase) | Dados de cada decisão | Saída |
 | --- | --- | --- | --- | --- | --- |
 | Baseline | `estrategias/baseline.py` | `treinar.py --estrategia baseline` | `baseline_biobertpt_seed42` | treino: TRAIN; época: maior macro-F1 do DEV (primeiro máximo); 3 épocas, sem parada antecipada | DEV; TEST em `avaliar_test.py` |

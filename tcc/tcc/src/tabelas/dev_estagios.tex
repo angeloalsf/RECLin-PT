@@ -1,0 +1,23 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Two-Stage: valor do critério de seleção de cada estágio por época, no DEV, para os três \emph{encoders}. Em negrito, a época selecionada.}
+  \label{tab:dev_estagios}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{llrrrrrrrrrr}
+  \toprule
+  Estágio & \emph{Encoder} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+  \midrule
+\begin{tabular}[b]{@{}l@{}}Estágio 1\\(AP de relação)\end{tabular} & BioBERTpt-all & 0{,}506 & \textbf{0{,}544} & 0{,}533 & -- & -- & -- & -- & -- & -- & -- \\
+ & BioBERTpt-clin & 0{,}498 & \textbf{0{,}553} & 0{,}546 & -- & -- & -- & -- & -- & -- & -- \\
+ & BERTimbau-base & 0{,}488 & 0{,}516 & \textbf{0{,}518} & -- & -- & -- & -- & -- & -- & -- \\
+\midrule
+\begin{tabular}[b]{@{}l@{}}Estágio 2\\(F1 neg)\end{tabular} & BioBERTpt-all & 0{,}943 & 0{,}946 & 0{,}957 & 0{,}967 & 0{,}963 & 0{,}967 & 0{,}963 & \textbf{0{,}970} & 0{,}963 & 0{,}967 \\
+ & BioBERTpt-clin & 0{,}935 & 0{,}960 & 0{,}946 & 0{,}960 & 0{,}960 & \textbf{0{,}971} & 0{,}961 & 0{,}964 & 0{,}957 & 0{,}953 \\
+ & BERTimbau-base & 0{,}915 & 0{,}940 & 0{,}944 & 0{,}935 & \textbf{0{,}964} & 0{,}940 & 0{,}954 & 0{,}947 & 0{,}943 & 0{,}943 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Estágio 1: AP da classe \texttt{relacao} no DEV completo (3 épocas). Estágio 2: F1 de \texttt{negation\_of} nos 913 pares do DEV com relação anotada (10 épocas). Valores de cada estágio isolado, não da arquitetura.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

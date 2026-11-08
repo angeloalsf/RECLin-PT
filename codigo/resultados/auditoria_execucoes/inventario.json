@@ -1,0 +1,2503 @@
+{
+  "codigo": {
+    "arquivos_diferentes": {
+      "0526d9123ecc|22339ff5cbfb": [
+        "reclin/config.py"
+      ],
+      "0526d9123ecc|8a6c194680c7": [
+        "reclin/config.py",
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware/cabeca.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "reclin/estrategias/restrito.py",
+        "reclin/execucao/subconjunto.py",
+        "scripts/avaliar_test.py",
+        "scripts/treinar.py"
+      ],
+      "0526d9123ecc|ecbb98cae7bc": [
+        "reclin/config.py",
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "scripts/avaliar_test.py",
+        "scripts/treinar.py"
+      ],
+      "22339ff5cbfb|8a6c194680c7": [
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware/cabeca.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "reclin/estrategias/restrito.py",
+        "reclin/execucao/subconjunto.py",
+        "scripts/avaliar_test.py",
+        "scripts/treinar.py"
+      ],
+      "22339ff5cbfb|ecbb98cae7bc": [
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "scripts/avaliar_test.py",
+        "scripts/treinar.py"
+      ],
+      "8a6c194680c7|ecbb98cae7bc": [
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware/cabeca.py",
+        "reclin/estrategias/restrito.py",
+        "reclin/execucao/subconjunto.py",
+        "scripts/avaliar_test.py",
+        "scripts/treinar.py"
+      ]
+    },
+    "identidades": {
+      "0526d9123ecc": 71,
+      "22339ff5cbfb": 71,
+      "8a6c194680c7": 69,
+      "ecbb98cae7bc": 69
+    }
+  },
+  "execucoes": [
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BERTimbau",
+      "estrategia": "baseline",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/baseline__fdcac6602f78__t1",
+          "hf": null,
+          "n_arquivos_drive": 13
+        },
+        "commit": "c2cc2307176f8d6bbcc62e17adcd556f9253d2ce",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-15T18:10:57+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-15T18:10:57+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-16T01:43:53+0000"
+          ]
+        ],
+        "identidade_global": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+        "publicacoes": [],
+        "run_id": "baseline__fdcac6602f78__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "cb897db7e97bb9f8d43938e7a83d3bb0485ef674adc751a680dbac53e59956a7",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "baseline_BERTimbau",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "baseline_BERTimbau",
+      "pesos": {
+        "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+        "repositorio": "neuralmind/bert-base-portuguese-cased"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/bert-base-portuguese-cased@94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "8bc3b22f9d40241fe43605b921809a361319cf094e4818b3c074291386696f07",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.43118301455412783,
+            "dev_macro_f1": 0.6881904855499553,
+            "dev_negation_of_f1": 0.7784090909090909,
+            "duration_s": 3985.9,
+            "epoch": 1,
+            "train_loss": 0.5411180634604266
+          },
+          {
+            "dev_loss": 0.37737632427019246,
+            "dev_macro_f1": 0.713468190301361,
+            "dev_negation_of_f1": 0.7988505747126436,
+            "duration_s": 4037.6,
+            "epoch": 2,
+            "train_loss": 0.2881836959134322
+          },
+          {
+            "dev_loss": 0.3930310823715561,
+            "dev_macro_f1": 0.7227137486532044,
+            "dev_negation_of_f1": 0.8,
+            "duration_s": 1215.5,
+            "epoch": 3,
+            "train_loss": 0.2264692682637431
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.6881904855499553,
+          0.713468190301361,
+          0.7227137486532044
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7227137486532044,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 108928515,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 2,
+            "fim": "2026-10-16T01:43:48+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-16T01:19:57+0000",
+            "retomada_do_passo": 6500,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "baseline",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/baseline__5f040555ccbe__t1",
+          "hf": null,
+          "n_arquivos_drive": 13
+        },
+        "commit": "3e3cb39d7cb19ce64ab968ec11962966d4225afe",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-16T11:48:27+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-16T11:48:27+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-18T03:00:10+0000"
+          ]
+        ],
+        "identidade_global": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+        "publicacoes": [],
+        "run_id": "baseline__5f040555ccbe__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "24caf37a756690b73394fcdab2c1db83b2c31946e3ee4899f766aa78e48ab95a",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "baseline_BioBERTpt-clin",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "baseline_BioBERTpt-clin",
+      "pesos": {
+        "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+        "repositorio": "pucpr/biobertpt-clin"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-clin@b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "9325b449095994ebe45ce8d42c1ff68eeb09787dea2217f9ea942e21b487efeb",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.40715857514027104,
+            "dev_macro_f1": 0.7029832603599037,
+            "dev_negation_of_f1": 0.7873563218390804,
+            "duration_s": 3552.8,
+            "epoch": 1,
+            "train_loss": 0.527642621348822
+          },
+          {
+            "dev_loss": 0.3742470834037014,
+            "dev_macro_f1": 0.7171794514491877,
+            "dev_negation_of_f1": 0.8045977011494253,
+            "duration_s": 2539.5,
+            "epoch": 2,
+            "train_loss": 0.2995404074521234
+          },
+          {
+            "dev_loss": 0.3745276391003812,
+            "dev_macro_f1": 0.7306581153074333,
+            "dev_negation_of_f1": 0.813953488372093,
+            "duration_s": 3486.6,
+            "epoch": 3,
+            "train_loss": 0.23346238470023883
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.7029832603599037,
+          0.7171794514491877,
+          0.7306581153074333
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7306581153074333,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858819,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 10,
+            "fim": "2026-10-18T03:00:04+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-18T01:15:51+0000",
+            "retomada_do_passo": 3000,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "baseline",
+      "experimento": {
+        "alias_oficial": "baseline_biobertpt_seed42",
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/baseline_biobertpt_seed42",
+          "hf": null,
+          "n_arquivos_drive": 12
+        },
+        "commit": "cc3d8b3ae015862dd6035ca9cf9027a223dc8ecd",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-12T23:02:42+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-12T23:02:42+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-13T02:12:08+0000"
+          ]
+        ],
+        "identidade_global": null,
+        "publicacoes": [],
+        "run_id": "baseline__9ebd1891237e__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "f9ea438fd79c367267e512f18438a9b13e5ef76af0b86e7b0cdecd30c9b1645e",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "baseline_biobertpt_seed42",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "baseline_biobertpt_seed42",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "0c1076c8b9873af66d814611c5ae046d589de90fe94040fd49e5321e7f5ac3d9",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.36224413630958874,
+            "dev_macro_f1": 0.5800502035748275,
+            "dev_negation_of_f1": 0.5071428571428571,
+            "duration_s": 3731.3,
+            "epoch": 1,
+            "train_loss": 0.5641540908797239
+          },
+          {
+            "dev_loss": 0.3544169244209567,
+            "dev_macro_f1": 0.7119282481027714,
+            "dev_negation_of_f1": 0.7977839335180056,
+            "duration_s": 3685.0,
+            "epoch": 2,
+            "train_loss": 0.3226213955514801
+          },
+          {
+            "dev_loss": 0.3609316854522057,
+            "dev_macro_f1": 0.7186618698983892,
+            "dev_negation_of_f1": 0.8022598870056498,
+            "duration_s": 3636.0,
+            "epoch": 3,
+            "train_loss": 0.25499192342472055
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.5800502035748275,
+          0.7119282481027714,
+          0.7186618698983892
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7186618698983892,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858819,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 17,
+            "fim": "2026-10-13T02:12:03+0000",
+            "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+            "inicio": "2026-10-12T23:03:04+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "pair_aware",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/pair_aware__6d11685f9cdb__t1",
+          "hf": null,
+          "n_arquivos_drive": 15
+        },
+        "commit": "54faa5eeae24974f8461593657c986b3fed408f9",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-21T10:52:25+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-21T10:52:25+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-22T13:03:08+0000"
+          ]
+        ],
+        "identidade_global": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+        "publicacoes": [],
+        "run_id": "pair_aware__6d11685f9cdb__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "3e0a3e5226f1d12c57f9a3348defcc9087e27d1ec53aa3958d5e183f0cd4d348",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "pair_aware__6d11685f9cdb__t1",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "pair_aware__6d11685f9cdb__t1",
+      "pesos": {
+        "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+        "repositorio": "pucpr/biobertpt-clin"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-clin@b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "19c47a1f1d7ba075a1a0af0a32929a3c6936cf681dd04193723ec465fb17bf58",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.4003395805052941,
+            "dev_macro_f1": 0.711289204703896,
+            "dev_negation_of_f1": 0.7853107344632768,
+            "duration_s": 3860.7,
+            "epoch": 1,
+            "train_loss": 0.40256415151780955
+          },
+          {
+            "dev_loss": 0.31671492531489354,
+            "dev_macro_f1": 0.7325018471490937,
+            "dev_negation_of_f1": 0.813953488372093,
+            "duration_s": 2172.6,
+            "epoch": 2,
+            "train_loss": 0.2459188064933838
+          },
+          {
+            "dev_loss": 0.35679034001136123,
+            "dev_macro_f1": 0.7457918787834394,
+            "dev_negation_of_f1": 0.8255813953488372,
+            "duration_s": 4003.4,
+            "epoch": 3,
+            "train_loss": 0.1798591109060808
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.711289204703896,
+          0.7325018471490937,
+          0.7457918787834394
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7457918787834394,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177272835,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 9,
+            "fim": "2026-10-22T13:02:21+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-22T11:12:52+0000",
+            "retomada_do_passo": 3500,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BERTimbau",
+      "estrategia": "pair_aware",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/pair_aware__f7a5acb7f500__t1",
+          "hf": null,
+          "n_arquivos_drive": 14
+        },
+        "commit": "5a42f285187c80f703e73e7963ce45e1be7c27f8",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-19T11:07:43+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-19T11:07:43+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-19T14:17:07+0000"
+          ]
+        ],
+        "identidade_global": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+        "publicacoes": [],
+        "run_id": "pair_aware__f7a5acb7f500__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "a8a01ffe309aa16bf6ca939ded2ad4251296fa7eb9a1e9a907719ea1d898ecb0",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "pair_aware__f7a5acb7f500__t1",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "pair_aware__f7a5acb7f500__t1",
+      "pesos": {
+        "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+        "repositorio": "neuralmind/bert-base-portuguese-cased"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/bert-base-portuguese-cased@94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "eba2f61b4ee6ff172a06dcaed83d068c1f2b16d6856994236fd21032534e19c2",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.36388901758184283,
+            "dev_macro_f1": 0.689693193537174,
+            "dev_negation_of_f1": 0.7679558011049724,
+            "duration_s": 3659.3,
+            "epoch": 1,
+            "train_loss": 0.43792864141403404
+          },
+          {
+            "dev_loss": 0.3425035833450653,
+            "dev_macro_f1": 0.7240403762034494,
+            "dev_negation_of_f1": 0.797752808988764,
+            "duration_s": 3715.6,
+            "epoch": 2,
+            "train_loss": 0.25290046202382643
+          },
+          {
+            "dev_loss": 0.39049735301838434,
+            "dev_macro_f1": 0.7360888230005426,
+            "dev_negation_of_f1": 0.8181818181818182,
+            "duration_s": 3729.8,
+            "epoch": 3,
+            "train_loss": 0.19169045043703284
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.689693193537174,
+          0.7240403762034494,
+          0.7360888230005426
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7360888230005426,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 108342531,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 17,
+            "fim": "2026-10-19T14:17:01+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-19T11:08:02+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware_mlp",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/pair_aware_mlp__6d9b07b48c37__t1",
+          "hf": null,
+          "n_arquivos_drive": 16
+        },
+        "commit": "e16836d1c5e5ce2eabfb9ad3017dd889d00d68b5",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-14T11:31:40+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-14T11:31:40+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-15T11:47:20+0000"
+          ]
+        ],
+        "identidade_global": "22339ff5cbfbe56903586c6a758ef63961c21ba62a27596c52c1d377725d389c",
+        "publicacoes": [],
+        "run_id": "pair_aware_mlp__6d9b07b48c37__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "b58486c52cdcb4d21b62a74fdf16ef484a63ae17cff81a47f9a47b5cc2af33a5",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "22339ff5cbfbe56903586c6a758ef63961c21ba62a27596c52c1d377725d389c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "pair_aware_mlp_BioBERTpt-all",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "pair_aware_mlp_BioBERTpt-all",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "01cffd4f9c3fdfcb21479b48bcf8f559686b1f325c37d965513d368e34487915",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.36229990583206934,
+            "dev_macro_f1": 0.7085901394991359,
+            "dev_negation_of_f1": 0.7953890489913544,
+            "duration_s": 1443.1,
+            "epoch": 1,
+            "train_loss": 0.4219037539084432
+          },
+          {
+            "dev_loss": 0.3321560717997651,
+            "dev_macro_f1": 0.7176637476760647,
+            "dev_negation_of_f1": 0.7954545454545454,
+            "duration_s": 621.0,
+            "epoch": 2,
+            "train_loss": 0.2557850296742596
+          },
+          {
+            "dev_loss": 0.36828750305209035,
+            "dev_macro_f1": 0.737162002997437,
+            "dev_negation_of_f1": 0.8171428571428572,
+            "duration_s": 4088.9,
+            "epoch": 3,
+            "train_loss": 0.19153272156402226
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.7085901394991359,
+          0.7176637476760647,
+          0.737162002997437
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.737162002997437,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 179038467,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 7,
+            "fim": "2026-10-15T11:46:23+0000",
+            "identidade_codigo": "22339ff5cbfbe56903586c6a758ef63961c21ba62a27596c52c1d377725d389c",
+            "inicio": "2026-10-15T10:22:53+0000",
+            "retomada_do_passo": 4500,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware",
+      "experimento": {
+        "alias_oficial": "pairaware_biobertpt_seed42",
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/pairaware_biobertpt_seed42",
+          "hf": null,
+          "n_arquivos_drive": 14
+        },
+        "commit": "cb88c52e57ceec905860db1933d72410a2d9e37d",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-10-13T21:37:25+0000"
+          ],
+          [
+            "iniciada",
+            "2026-10-13T21:37:25+0000"
+          ],
+          [
+            "concluida",
+            "2026-10-14T00:39:59+0000"
+          ]
+        ],
+        "identidade_global": "ecbb98cae7bcdcd8f895e0bf8d9d3380a704b3471a15fd08df4e526220d85e8d",
+        "publicacoes": [],
+        "run_id": "pair_aware__bbf8bb5dcb48__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "c1e1ff06ad944ab5bd8f1ee51e6d0b1488f3b9e03db6edce40db79a6f47c0679",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "ecbb98cae7bcdcd8f895e0bf8d9d3380a704b3471a15fd08df4e526220d85e8d",
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "pairaware_biobertpt_seed42",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "pairaware_biobertpt_seed42",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "c37659c0acedf7de21faab0b5b9df8d9824cdab40f572c603e79989444497304",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.3964280038431362,
+            "dev_macro_f1": 0.7017722394095554,
+            "dev_negation_of_f1": 0.7875354107648725,
+            "duration_s": 3505.1,
+            "epoch": 1,
+            "train_loss": 0.41654046999301514
+          },
+          {
+            "dev_loss": 0.3330497202432098,
+            "dev_macro_f1": 0.7268736509392498,
+            "dev_negation_of_f1": 0.8022922636103151,
+            "duration_s": 3557.7,
+            "epoch": 2,
+            "train_loss": 0.25427772644583263
+          },
+          {
+            "dev_loss": 0.380250080827467,
+            "dev_macro_f1": 0.7405688468951017,
+            "dev_negation_of_f1": 0.8294117647058824,
+            "duration_s": 3579.3,
+            "epoch": 3,
+            "train_loss": 0.18962179392705805
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.7017722394095554,
+          0.7268736509392498,
+          0.7405688468951017
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7405688468951017,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177272835,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 17,
+            "fim": "2026-10-14T00:39:53+0000",
+            "identidade_codigo": "ecbb98cae7bcdcd8f895e0bf8d9d3380a704b3471a15fd08df4e526220d85e8d",
+            "inicio": "2026-10-13T21:37:45+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BERTimbau",
+      "estrategia": "two_stage_e1",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "two_stage_e1_BERTimbau",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "two_stage_e1_BERTimbau",
+      "pesos": {
+        "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+        "repositorio": "neuralmind/bert-base-portuguese-cased"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "7ee70a15057405f773397428947dea46dcf0a6481792f5ef6f61e5bed323bf14",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_ap_relacao",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_ap_relacao": 0.4878963905029635,
+            "dev_f1_relacao": 0.43372781065088756,
+            "dev_loss": 0.34909758974810523,
+            "dev_macro_f1_estagio": 0.6893227518777634,
+            "dev_precision_relacao": 0.29712201053911635,
+            "dev_recall_relacao": 0.8028477546549836,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9733333333333334,
+            "duration_s": 3609.2,
+            "epoch": 1,
+            "train_loss": 0.45102073272498133
+          },
+          {
+            "dev_ap_relacao": 0.5161488011237119,
+            "dev_f1_relacao": 0.4498249708284714,
+            "dev_loss": 0.3390527242714939,
+            "dev_macro_f1_estagio": 0.6977366929070311,
+            "dev_precision_relacao": 0.3065606361829026,
+            "dev_recall_relacao": 0.8444687842278203,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9466666666666667,
+            "duration_s": 3655.9,
+            "epoch": 2,
+            "train_loss": 0.29409405240814035
+          },
+          {
+            "dev_ap_relacao": 0.5176590439134319,
+            "dev_f1_relacao": 0.4807692307692308,
+            "dev_loss": 0.3660796003829494,
+            "dev_macro_f1_estagio": 0.7180845470319155,
+            "dev_precision_relacao": 0.34474560152163575,
+            "dev_recall_relacao": 0.7940854326396495,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9466666666666667,
+            "duration_s": 1853.0,
+            "epoch": 3,
+            "train_loss": 0.23084322677000932
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.4878963905029635,
+          0.5161488011237119,
+          0.5176590439134319
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.5176590439134319,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 108927746,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 3,
+            "fim": "2026-10-18T14:01:42+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-18T13:28:01+0000",
+            "retomada_do_passo": 6000,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": "028a5888711a72a6c3caa2a696756f6f7d22d93a4674050125a37c3c294bd959",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "two_stage_e1",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "two_stage_e1__82490c70baed__t1",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "two_stage_e1__82490c70baed__t1",
+      "pesos": {
+        "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+        "repositorio": "pucpr/biobertpt-clin"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "0d793f957267bb345d268ec3302cb2b63908114587b0f3804240a827ce689658",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_ap_relacao",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_ap_relacao": 0.49828552318796737,
+            "dev_f1_relacao": 0.45702592087312416,
+            "dev_loss": 0.44342081558315594,
+            "dev_macro_f1_estagio": 0.7058967540494726,
+            "dev_precision_relacao": 0.3318474492322932,
+            "dev_recall_relacao": 0.7338444687842278,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9733333333333334,
+            "duration_s": 3837.6,
+            "epoch": 1,
+            "train_loss": 0.4601744711992377
+          },
+          {
+            "dev_ap_relacao": 0.5527471528668095,
+            "dev_f1_relacao": 0.4492009132420091,
+            "dev_loss": 0.3023451387166552,
+            "dev_macro_f1_estagio": 0.6967296155858844,
+            "dev_precision_relacao": 0.30374372829023544,
+            "dev_recall_relacao": 0.8619934282584885,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9466666666666667,
+            "duration_s": 3928.0,
+            "epoch": 2,
+            "train_loss": 0.3063943548009349
+          },
+          {
+            "dev_ap_relacao": 0.5464077980749117,
+            "dev_f1_relacao": 0.484266313348791,
+            "dev_loss": 0.35282012407281965,
+            "dev_macro_f1_estagio": 0.7199593550850594,
+            "dev_precision_relacao": 0.34710351377018045,
+            "dev_recall_relacao": 0.80065717415115,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9466666666666667,
+            "duration_s": 1990.4,
+            "epoch": 3,
+            "train_loss": 0.24558076420791092
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.49828552318796737,
+          0.5527471528668095,
+          0.5464077980749117
+        ],
+        "melhor_epoca": 2,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.5527471528668095,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858050,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 3,
+            "fim": "2026-10-16T01:55:55+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-16T01:18:49+0000",
+            "retomada_do_passo": 6000,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": "2d6ccc94538b83369938b7f35d1d1e1ae58c268d48c34db5759ffc6cb6b850de",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BERTimbau",
+      "estrategia": "two_stage_e2",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 10,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "two_stage_e2_BERTimbau",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "two_stage_e2_BERTimbau",
+      "pesos": {
+        "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+        "repositorio": "neuralmind/bert-base-portuguese-cased"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "a03111314b90c9991fb4309ee4bbe8e2b10390210fa5b5febffa49e50f8c6fd7",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_negation_of_f1_relacoes_anotadas",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.18751657158136367,
+            "dev_macro_f1_estagio": 0.9491839374489335,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9146757679180887,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9370629370629371,
+            "dev_recall_negation_of_relacoes_anotadas": 0.8933333333333333,
+            "duration_s": 167.5,
+            "epoch": 1,
+            "train_loss": 0.4974571601523243
+          },
+          {
+            "dev_loss": 0.13139694659039378,
+            "dev_macro_f1_estagio": 0.9639086053620998,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9395973154362416,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9459459459459459,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9333333333333333,
+            "duration_s": 177.2,
+            "epoch": 2,
+            "train_loss": 0.07276669233852556
+          },
+          {
+            "dev_loss": 0.09364864400898416,
+            "dev_macro_f1_estagio": 0.9663661047654338,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9438943894389439,
+            "dev_precision_negation_of_relacoes_anotadas": 0.934640522875817,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9533333333333334,
+            "duration_s": 180.3,
+            "epoch": 3,
+            "train_loss": 0.03271557372738785
+          },
+          {
+            "dev_loss": 0.16998893688044822,
+            "dev_macro_f1_estagio": 0.9613797924611894,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9351535836177475,
+            "dev_precision_negation_of_relacoes_anotadas": 0.958041958041958,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9133333333333333,
+            "duration_s": 187.5,
+            "epoch": 4,
+            "train_loss": 0.0215310970088467
+          },
+          {
+            "dev_loss": 0.08796081929079567,
+            "dev_macro_f1_estagio": 0.9782368913188102,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9636963696369637,
+            "dev_precision_negation_of_relacoes_anotadas": 0.954248366013072,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+            "duration_s": 180.4,
+            "epoch": 5,
+            "train_loss": 0.017208182731934803
+          },
+          {
+            "dev_loss": 0.13281422910513357,
+            "dev_macro_f1_estagio": 0.9639086053620998,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9395973154362416,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9459459459459459,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9333333333333333,
+            "duration_s": 180.7,
+            "epoch": 6,
+            "train_loss": 0.008973571046198654
+          },
+          {
+            "dev_loss": 0.09721425407139274,
+            "dev_macro_f1_estagio": 0.9722280161999617,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9536423841059603,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9473684210526315,
+            "dev_recall_negation_of_relacoes_anotadas": 0.96,
+            "duration_s": 182.9,
+            "epoch": 7,
+            "train_loss": 0.004339026587123037
+          },
+          {
+            "dev_loss": 0.13168049781622054,
+            "dev_macro_f1_estagio": 0.968090869375273,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9466666666666667,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9466666666666667,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9466666666666667,
+            "duration_s": 186.6,
+            "epoch": 8,
+            "train_loss": 0.00403578475718422
+          },
+          {
+            "dev_loss": 0.14247676716962207,
+            "dev_macro_f1_estagio": 0.9660054361515027,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9431438127090301,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9463087248322147,
+            "dev_recall_negation_of_relacoes_anotadas": 0.94,
+            "duration_s": 181.3,
+            "epoch": 9,
+            "train_loss": 0.003505210998247712
+          },
+          {
+            "dev_loss": 0.14498533814912662,
+            "dev_macro_f1_estagio": 0.9660054361515027,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9431438127090301,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9463087248322147,
+            "dev_recall_negation_of_relacoes_anotadas": 0.94,
+            "duration_s": 181.8,
+            "epoch": 10,
+            "train_loss": 0.0041343539136547225
+          }
+        ],
+        "epocas_previstas": 10,
+        "epocas_registradas": 10,
+        "historico_selecao": [
+          0.9146757679180887,
+          0.9395973154362416,
+          0.9438943894389439,
+          0.9351535836177475,
+          0.9636963696369637,
+          0.9395973154362416,
+          0.9536423841059603,
+          0.9466666666666667,
+          0.9431438127090301,
+          0.9431438127090301
+        ],
+        "melhor_epoca": 5,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.9636963696369637,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 108927746,
+        "passos_por_epoca": 131,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 12,
+            "fim": "2026-10-18T14:55:33+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-18T14:23:20+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": "b2a745fd222a21e9266724f0b31d7bb4ef6fda56a2b2df6e4be1c860d6b80abf",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "two_stage_e2",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 10,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "n_arquivos_codigo": 71,
+      "nome_registrado": "two_stage_e2__65e72d6c30e8__t1",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "two_stage_e2__65e72d6c30e8__t1",
+      "pesos": {
+        "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+        "repositorio": "pucpr/biobertpt-clin"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "35742bd072ef30af56c151c1d57869ad8be6de461895ba4474fe05c2e43aac2d",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_negation_of_f1_relacoes_anotadas",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.21559690305342277,
+            "dev_macro_f1_estagio": 0.9613797924611894,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9351535836177475,
+            "dev_precision_negation_of_relacoes_anotadas": 0.958041958041958,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9133333333333333,
+            "duration_s": 191.7,
+            "epoch": 1,
+            "train_loss": 0.42795670775071015
+          },
+          {
+            "dev_loss": 0.1001632036951681,
+            "dev_macro_f1_estagio": 0.9760681520314547,
+            "dev_negation_of_f1_relacoes_anotadas": 0.96,
+            "dev_precision_negation_of_relacoes_anotadas": 0.96,
+            "dev_recall_negation_of_relacoes_anotadas": 0.96,
+            "duration_s": 194.9,
+            "epoch": 2,
+            "train_loss": 0.06473012347101369
+          },
+          {
+            "dev_loss": 0.07103677006283154,
+            "dev_macro_f1_estagio": 0.9672254729511434,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9456869009584664,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9079754601226994,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9866666666666667,
+            "duration_s": 196.4,
+            "epoch": 3,
+            "train_loss": 0.029745616545751405
+          },
+          {
+            "dev_loss": 0.14626989850463967,
+            "dev_macro_f1_estagio": 0.9759390702413999,
+            "dev_negation_of_f1_relacoes_anotadas": 0.959731543624161,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9662162162162162,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9533333333333334,
+            "duration_s": 216.5,
+            "epoch": 4,
+            "train_loss": 0.018697003063919974
+          },
+          {
+            "dev_loss": 0.1436202024090259,
+            "dev_macro_f1_estagio": 0.9760681520314547,
+            "dev_negation_of_f1_relacoes_anotadas": 0.96,
+            "dev_precision_negation_of_relacoes_anotadas": 0.96,
+            "dev_recall_negation_of_relacoes_anotadas": 0.96,
+            "duration_s": 194.6,
+            "epoch": 5,
+            "train_loss": 0.010236947864110987
+          },
+          {
+            "dev_loss": 0.051443338584310064,
+            "dev_macro_f1_estagio": 0.9823795442312682,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9706840390879479,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9490445859872612,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9933333333333333,
+            "duration_s": 196.7,
+            "epoch": 6,
+            "train_loss": 0.005683813813517496
+          },
+          {
+            "dev_loss": 0.0944533670747963,
+            "dev_macro_f1_estagio": 0.9763209765543952,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9605263157894737,
+            "dev_precision_negation_of_relacoes_anotadas": 0.948051948051948,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+            "duration_s": 196.0,
+            "epoch": 7,
+            "train_loss": 0.0038451751634542555
+          },
+          {
+            "dev_loss": 0.08340718197093035,
+            "dev_macro_f1_estagio": 0.9783511710371735,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9639344262295082,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9483870967741935,
+            "dev_recall_negation_of_relacoes_anotadas": 0.98,
+            "duration_s": 214.7,
+            "epoch": 8,
+            "train_loss": 0.0017173911932720767
+          },
+          {
+            "dev_loss": 0.13864578622839568,
+            "dev_macro_f1_estagio": 0.9741430205326507,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9568106312292359,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9536423841059603,
+            "dev_recall_negation_of_relacoes_anotadas": 0.96,
+            "duration_s": 195.4,
+            "epoch": 9,
+            "train_loss": 0.00147134053064528
+          },
+          {
+            "dev_loss": 0.1437380386608614,
+            "dev_macro_f1_estagio": 0.972079510703364,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9533333333333334,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9533333333333334,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9533333333333334,
+            "duration_s": 197.9,
+            "epoch": 10,
+            "train_loss": 0.0008587846279194053
+          }
+        ],
+        "epocas_previstas": 10,
+        "epocas_registradas": 10,
+        "historico_selecao": [
+          0.9351535836177475,
+          0.96,
+          0.9456869009584664,
+          0.959731543624161,
+          0.96,
+          0.9706840390879479,
+          0.9605263157894737,
+          0.9639344262295082,
+          0.9568106312292359,
+          0.9533333333333334
+        ],
+        "melhor_epoca": 6,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.9706840390879479,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858050,
+        "passos_por_epoca": 131,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 12,
+            "fim": "2026-10-16T02:39:05+0000",
+            "identidade_codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+            "inicio": "2026-10-16T01:59:52+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": "4db8da0f739179139643b29bd738980576173780145d27b62edf6e78761e94a0",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "limiar.json",
+        "metricas.json",
+        "predicoes_dev.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estagios": {
+        "estagio1": {
+          "melhor_epoca": 2,
+          "nome": "twostage_e1_biobertpt_seed42",
+          "sha256_config": "326a6b42ab56e5acc27214eb11a72824653563a51d1abcefbe9d06b5dfeb4853",
+          "sha256_melhor_modelo": "36e059d36d1cd0f6a5bf0e0d0c3479a96f47a9f844784a47b923a3f1a658e6eb"
+        },
+        "estagio2": {
+          "melhor_epoca": 8,
+          "nome": "twostage_e2_biobertpt_seed42",
+          "sha256_config": "cb08b4548850e02751ceb49539ed712f541a011169c380cd705a2181354fd83e",
+          "sha256_melhor_modelo": "307219e60bcb03d6175eb83e621f623dc413b2fb9cfbe9f9e3a0f7040d655c7c"
+        }
+      },
+      "estrategia": "two_stage",
+      "fora_do_repositorio": [],
+      "limiar": {
+        "congelado_em": "2026-10-13T11:10:49+0000",
+        "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+        "grade": [
+          0.05,
+          0.1,
+          0.15,
+          0.2,
+          0.25,
+          0.3,
+          0.35,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          0.8,
+          0.85,
+          0.9,
+          0.95
+        ],
+        "tau": 0.95
+      },
+      "pasta": "two_stage_limiar_BioBERTpt-all",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": null,
+        "modelo": "two_stage(twostage_e1_biobertpt_seed42 + twostage_e2_biobertpt_seed42)",
+        "n": 19064,
+        "tem_probabilidades": false
+      },
+      "seed": 42,
+      "tipo": "composicao_two_stage"
+    },
+    {
+      "arquivos": [
+        "limiar.json",
+        "metricas.json",
+        "predicoes_dev.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-clin",
+      "estagios": {
+        "estagio1": {
+          "melhor_epoca": 2,
+          "nome": "two_stage_e1__82490c70baed__t1",
+          "sha256_config": "0d793f957267bb345d268ec3302cb2b63908114587b0f3804240a827ce689658",
+          "sha256_melhor_modelo": "2d6ccc94538b83369938b7f35d1d1e1ae58c268d48c34db5759ffc6cb6b850de"
+        },
+        "estagio2": {
+          "melhor_epoca": 6,
+          "nome": "two_stage_e2__65e72d6c30e8__t1",
+          "sha256_config": "35742bd072ef30af56c151c1d57869ad8be6de461895ba4474fe05c2e43aac2d",
+          "sha256_melhor_modelo": "4db8da0f739179139643b29bd738980576173780145d27b62edf6e78761e94a0"
+        }
+      },
+      "estrategia": "two_stage",
+      "fora_do_repositorio": [],
+      "limiar": {
+        "congelado_em": "2026-10-16T02:50:42+0000",
+        "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+        "grade": [
+          0.05,
+          0.1,
+          0.15,
+          0.2,
+          0.25,
+          0.3,
+          0.35,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          0.8,
+          0.85,
+          0.9,
+          0.95
+        ],
+        "tau": 0.95
+      },
+      "pasta": "two_stage_limiar_BioBERTpt-clin",
+      "pesos": {
+        "commit": "b59beec2e379e58a31b945039cc9ef163cfe22b7",
+        "hash_manifesto": "1324977177c95cb506898c16b3f4881bef7607a884295233f060587a81d252e8",
+        "repositorio": "pucpr/biobertpt-clin"
+      },
+      "predicoes": {
+        "melhor_epoca": null,
+        "modelo": "two_stage(two_stage_e1__82490c70baed__t1 + two_stage_e2__65e72d6c30e8__t1)",
+        "n": 19064,
+        "tem_probabilidades": false
+      },
+      "seed": 42,
+      "tipo": "composicao_two_stage"
+    },
+    {
+      "arquivos": [
+        "limiar.json",
+        "metricas.json",
+        "predicoes_dev.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BERTimbau",
+      "estagios": {
+        "estagio1": {
+          "melhor_epoca": 3,
+          "nome": "two_stage_e1__727707a32ba8__t1",
+          "sha256_config": "7ee70a15057405f773397428947dea46dcf0a6481792f5ef6f61e5bed323bf14",
+          "sha256_melhor_modelo": "028a5888711a72a6c3caa2a696756f6f7d22d93a4674050125a37c3c294bd959"
+        },
+        "estagio2": {
+          "melhor_epoca": 5,
+          "nome": "two_stage_e2__9c00a5279316__t1",
+          "sha256_config": "a03111314b90c9991fb4309ee4bbe8e2b10390210fa5b5febffa49e50f8c6fd7",
+          "sha256_melhor_modelo": "b2a745fd222a21e9266724f0b31d7bb4ef6fda56a2b2df6e4be1c860d6b80abf"
+        }
+      },
+      "estrategia": "two_stage",
+      "fora_do_repositorio": [],
+      "limiar": {
+        "congelado_em": "2026-10-19T01:30:47+0000",
+        "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+        "grade": [
+          0.05,
+          0.1,
+          0.15,
+          0.2,
+          0.25,
+          0.3,
+          0.35,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          0.8,
+          0.85,
+          0.9,
+          0.95
+        ],
+        "tau": 0.85
+      },
+      "pasta": "twostage_bertimbau_seed42",
+      "pesos": {
+        "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+        "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+        "repositorio": "neuralmind/bert-base-portuguese-cased"
+      },
+      "predicoes": {
+        "melhor_epoca": null,
+        "modelo": "two_stage(two_stage_e1__727707a32ba8__t1 + two_stage_e2__9c00a5279316__t1)",
+        "n": 19064,
+        "tem_probabilidades": false
+      },
+      "seed": 42,
+      "tipo": "composicao_two_stage"
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "two_stage_e1",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "twostage_e1_biobertpt_seed42",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "twostage_e1_biobertpt_seed42",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "326a6b42ab56e5acc27214eb11a72824653563a51d1abcefbe9d06b5dfeb4853",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_ap_relacao",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_ap_relacao": 0.506298712520331,
+            "dev_f1_relacao": 0.44879898862199746,
+            "dev_loss": 0.3506103470490233,
+            "dev_macro_f1_estagio": 0.6994595560888274,
+            "dev_precision_relacao": 0.3154153709462461,
+            "dev_recall_relacao": 0.7776560788608982,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9733333333333334,
+            "duration_s": 3593.9,
+            "epoch": 1,
+            "train_loss": 0.4349221642654505
+          },
+          {
+            "dev_ap_relacao": 0.5443920380068963,
+            "dev_f1_relacao": 0.46177558569667077,
+            "dev_loss": 0.33922414911868704,
+            "dev_macro_f1_estagio": 0.7058619930547337,
+            "dev_precision_relacao": 0.3213213213213213,
+            "dev_recall_relacao": 0.8203723986856517,
+            "dev_recall_relacao_nos_pares_negation_of": 0.9466666666666667,
+            "duration_s": 3646.3,
+            "epoch": 2,
+            "train_loss": 0.2830351515015789
+          },
+          {
+            "dev_ap_relacao": 0.5325725194946433,
+            "dev_f1_relacao": 0.47600391772771794,
+            "dev_loss": 0.35965768890353794,
+            "dev_macro_f1_estagio": 0.7151158901343566,
+            "dev_precision_relacao": 0.33906976744186046,
+            "dev_recall_relacao": 0.7984665936473165,
+            "dev_recall_relacao_nos_pares_negation_of": 0.96,
+            "duration_s": 2228.0,
+            "epoch": 3,
+            "train_loss": 0.22521343613133202
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.506298712520331,
+          0.5443920380068963,
+          0.5325725194946433
+        ],
+        "melhor_epoca": 2,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.5443920380068963,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858050,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 3,
+            "fim": "2026-10-13T03:26:18+0000",
+            "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+            "inicio": "2026-10-13T02:44:23+0000",
+            "retomada_do_passo": 6000,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": "36e059d36d1cd0f6a5bf0e0d0c3479a96f47a9f844784a47b923a3f1a658e6eb",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "treino.json"
+      ],
+      "conjunto_dev": null,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "two_stage_e2",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 10,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "twostage_e2_biobertpt_seed42",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "twostage_e2_biobertpt_seed42",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "seed": 42,
+      "sha256_config_canonico": "cb08b4548850e02751ceb49539ed712f541a011169c380cd705a2181354fd83e",
+      "tipo": "estagio_two_stage",
+      "treino": {
+        "campo_selecao": "dev_negation_of_f1_relacoes_anotadas",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.18976693407942852,
+            "dev_macro_f1_estagio": 0.965821282368045,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9427609427609428,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9523809523809523,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9333333333333333,
+            "duration_s": 171.3,
+            "epoch": 1,
+            "train_loss": 0.3949194970071486
+          },
+          {
+            "dev_loss": 0.12913110391236843,
+            "dev_macro_f1_estagio": 0.9679187603218665,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9463087248322147,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9527027027027027,
+            "dev_recall_negation_of_relacoes_anotadas": 0.94,
+            "duration_s": 182.1,
+            "epoch": 2,
+            "train_loss": 0.05355169392325951
+          },
+          {
+            "dev_loss": 0.08350540945927303,
+            "dev_macro_f1_estagio": 0.9744150203166597,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9573770491803278,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9419354838709677,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+            "duration_s": 184.4,
+            "epoch": 3,
+            "train_loss": 0.02368480607845913
+          },
+          {
+            "dev_loss": 0.1255383943595613,
+            "dev_macro_f1_estagio": 0.9801628687142585,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9668874172185431,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9605263157894737,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+            "duration_s": 206.0,
+            "epoch": 4,
+            "train_loss": 0.017191849520540165
+          },
+          {
+            "dev_loss": 0.13295041049326148,
+            "dev_macro_f1_estagio": 0.9781210173737813,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9634551495016611,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9602649006622517,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "duration_s": 184.1,
+            "epoch": 5,
+            "train_loss": 0.010725424419697517
+          },
+          {
+            "dev_loss": 0.1562102110037813,
+            "dev_macro_f1_estagio": 0.9800567933595457,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9666666666666667,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "duration_s": 184.5,
+            "epoch": 6,
+            "train_loss": 0.003975099616707125
+          },
+          {
+            "dev_loss": 0.14271576116831663,
+            "dev_macro_f1_estagio": 0.9781210173737813,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9634551495016611,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9602649006622517,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "duration_s": 185.3,
+            "epoch": 7,
+            "train_loss": 0.0038696217005414787
+          },
+          {
+            "dev_loss": 0.1537408802100496,
+            "dev_macro_f1_estagio": 0.9820990142149121,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9700996677740864,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9668874172185431,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9733333333333334,
+            "duration_s": 206.4,
+            "epoch": 8,
+            "train_loss": 0.0013839017821099069
+          },
+          {
+            "dev_loss": 0.172205012140815,
+            "dev_macro_f1_estagio": 0.9778843591793231,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9629629629629629,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9727891156462585,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9533333333333334,
+            "duration_s": 187.0,
+            "epoch": 9,
+            "train_loss": 0.0009352717138044821
+          },
+          {
+            "dev_loss": 0.16595717725043263,
+            "dev_macro_f1_estagio": 0.9800567933595457,
+            "dev_negation_of_f1_relacoes_anotadas": 0.9666666666666667,
+            "dev_precision_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "dev_recall_negation_of_relacoes_anotadas": 0.9666666666666667,
+            "duration_s": 184.7,
+            "epoch": 10,
+            "train_loss": 0.00040250106255669603
+          }
+        ],
+        "epocas_previstas": 10,
+        "epocas_registradas": 10,
+        "historico_selecao": [
+          0.9427609427609428,
+          0.9463087248322147,
+          0.9573770491803278,
+          0.9668874172185431,
+          0.9634551495016611,
+          0.9666666666666667,
+          0.9634551495016611,
+          0.9700996677740864,
+          0.9629629629629629,
+          0.9666666666666667
+        ],
+        "melhor_epoca": 8,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.9700996677740864,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177858050,
+        "passos_por_epoca": 131,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 12,
+            "fim": "2026-10-13T10:54:31+0000",
+            "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+            "inicio": "2026-10-13T10:16:56+0000",
+            "retomada_do_passo": null,
+            "status": "concluido",
+            "tipo": "nova"
+          }
+        ],
+        "sha256_melhor_modelo": "307219e60bcb03d6175eb83e621f623dc413b2fb9cfbe9f9e3a0f7040d655c7c",
+        "test_avaliado": null
+      },
+      "versoes_dados": null
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "limiar.json",
+        "metricas.json",
+        "predicoes_dev.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estagios": {
+        "estagio1": null,
+        "estagio2": null
+      },
+      "estrategia": "baseline_calibrado",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "base": {
+          "nome": "baseline_biobertpt_seed42",
+          "pasta": "resultados/execucoes/baseline_biobertpt_seed42"
+        },
+        "regra": "baseline_calibrado: P(negation_of) >= t -> negation_of; senão argmax entre associated_with e no_relation (empate -> associated_with); probabilidades de 4 casas do sidecar da base"
+      },
+      "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "limiar": {
+        "congelado_em": "2026-10-15T22:56:49-0300",
+        "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+        "grade": [
+          0.05,
+          0.1,
+          0.15,
+          0.2,
+          0.25,
+          0.3,
+          0.35,
+          0.4,
+          0.45,
+          0.5,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          0.8,
+          0.85,
+          0.9,
+          0.95
+        ],
+        "tau": 0.9
+      },
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "baseline_calibrado_biobertpt_seed42",
+      "particoes_sha256": null,
+      "pasta": "baseline_calibrado_biobertpt_seed42",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": null,
+        "modelo": "calibrado(/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c)",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "5437a54d389ccd70738b3fd46753dde29ea1b98dc19ae9bfa31e72f43b3d3b42",
+      "tipo": "derivada_dev",
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "metricas.json",
+        "predicoes_dev.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "filtro_pistas",
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "base": "baseline_biobertpt_seed42",
+        "lexico_sha1": "8af0716633e9",
+        "max_gap": 25,
+        "min_freq": 10,
+        "n_formas": 8
+      },
+      "identidade_codigo": "8a6c194680c732fe911d26004fd8eb982889ad5dcc6806935a6bd5762993cddb",
+      "n_arquivos_codigo": 69,
+      "nome_registrado": "filtro_biobertpt_seed42",
+      "particoes_sha256": null,
+      "pasta": "filtro_biobertpt_seed42",
+      "pesos": {
+        "commit": null,
+        "hash_manifesto": null,
+        "repositorio": null
+      },
+      "predicoes": {
+        "melhor_epoca": null,
+        "modelo": "filtro(/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c s42)",
+        "n": 19064,
+        "tem_probabilidades": false
+      },
+      "seed": null,
+      "sha256_config_canonico": "e042e88d57a10b816dbad744ecdb67f41339b1c1f9f62e544f3f171d8f13b816",
+      "tipo": "derivada_dev",
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    }
+  ],
+  "proveniencia": {
+    "derivadas": [
+      "baseline_calibrado_biobertpt_seed42",
+      "filtro_biobertpt_seed42"
+    ],
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+      "n_candidatos": 19064,
+      "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "execucoes": "resultados-colab@ad7c2a20d9dd78133f1781d646654fbc28f8cbc8",
+    "n_boot": 10000,
+    "seed_bootstrap": 42
+  },
+  "vinculos_two_stage": [
+    {
+      "composicao": "two_stage_limiar_BioBERTpt-all",
+      "estagio1": {
+        "melhor_epoca_confere": true,
+        "nome_confere": true,
+        "nome_no_limiar": "twostage_e1_biobertpt_seed42",
+        "pastas": [
+          "twostage_e1_biobertpt_seed42"
+        ]
+      },
+      "estagio2": {
+        "melhor_epoca_confere": true,
+        "nome_confere": true,
+        "nome_no_limiar": "twostage_e2_biobertpt_seed42",
+        "pastas": [
+          "twostage_e2_biobertpt_seed42"
+        ]
+      }
+    },
+    {
+      "composicao": "two_stage_limiar_BioBERTpt-clin",
+      "estagio1": {
+        "melhor_epoca_confere": true,
+        "nome_confere": true,
+        "nome_no_limiar": "two_stage_e1__82490c70baed__t1",
+        "pastas": [
+          "two_stage_e1__82490c70baed__t1"
+        ]
+      },
+      "estagio2": {
+        "melhor_epoca_confere": true,
+        "nome_confere": true,
+        "nome_no_limiar": "two_stage_e2__65e72d6c30e8__t1",
+        "pastas": [
+          "two_stage_e2__65e72d6c30e8__t1"
+        ]
+      }
+    },
+    {
+      "composicao": "twostage_bertimbau_seed42",
+      "estagio1": {
+        "melhor_epoca_confere": true,
+        "nome_confere": false,
+        "nome_no_limiar": "two_stage_e1__727707a32ba8__t1",
+        "pastas": [
+          "two_stage_e1_BERTimbau"
+        ]
+      },
+      "estagio2": {
+        "melhor_epoca_confere": true,
+        "nome_confere": false,
+        "nome_no_limiar": "two_stage_e2__9c00a5279316__t1",
+        "pastas": [
+          "two_stage_e2_BERTimbau"
+        ]
+      }
+    }
+  ]
+}

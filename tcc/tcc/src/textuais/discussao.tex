@@ -1,0 +1,264 @@
+\chapter[Discussão]{Discussão}
+\label{cap:discussao}
+
+Este capítulo interpreta os resultados de desenvolvimento do RECLin-PT à luz da
+pergunta de pesquisa, isto é, do que eles implicam para as decisões de configuração do
+modelo. Discute a arquitetura adotada, as estratégias investigadas e a escolha do
+\emph{encoder}, e registra as limitações e as ameaças à validade. Todas as leituras
+abaixo são preliminares, porque se apoiam no DEV, com uma única semente, e aguardam
+a avaliação no teste. O texto distingue o que foi observado (com remissão ao
+Capítulo~\ref{cap:experimentos}), o que se pode interpretar a partir disso e o que
+permanece como hipótese, isto é, explicações plausíveis que não foram testadas.
+
+\section{A arquitetura oficial: a Pair-Aware linear}
+\label{sec:discussao_estrategias}
+
+A designação da Pair-Aware linear como arquitetura oficial do RECLin-PT não decorre
+de um teste confirmatório: foi registrada depois de conhecidos os resultados do DEV,
+fora do protocolo pré-registrado (Seção~\ref{sec:protocolo}). Cabe, portanto,
+examinar se os resultados do DEV a sustentam e até onde.
+
+Contra o baseline, que difere dela apenas na forma de ler a representação, o padrão
+se repete nos três \emph{encoders}: a Pair-Aware linear tem macro-F1 e F1 de
+\texttt{associated\_with} maiores, com diferença detectada mesmo quando se reamostram
+documentos inteiros, e F1 de \texttt{negation\_of} maior, mas com diferença
+detectada só com o BioBERTpt-all. Esse padrão é compatível com um benefício da
+leitura explícita do par, que reduz os falsos positivos de \texttt{associated\_with}
+sem sacrificar o \emph{recall} de \texttt{negation\_of}. Com uma única semente, porém,
+ele não pode ser separado da variação do treino, e a repetição nos três
+\emph{encoders} reduz, mas não elimina, essa dúvida, porque cada combinação foi
+treinada uma única vez.
+
+Na classe-alvo, a Pair-Aware linear não se distingue do Two-Stage em nenhum
+\emph{encoder}, e a diferença para o baseline calibrado, controle que o protocolo
+exige para atribuir um efeito à arquitetura e não à simples recalibração da decisão,
+tem limite inferior igual a zero. Os resultados, portanto, não sustentam afirmar que
+a Pair-Aware linear é superior na identificação de \texttt{negation\_of}. Sustentam
+que ela alcança, sem limiar escolhido no DEV, F1 da classe-alvo equivalente ao das
+demais estratégias e, em cada \emph{encoder}, o maior macro-F1 entre as estratégias
+sem limiar escolhido no DEV. A variante MLP não acrescentou ganho observado sobre a cabeça linear, o
+que é compatível com a escolha da cabeça mais simples.
+
+\section{O Two-Stage e o papel do limiar}
+\label{sec:discussao_twostage}
+
+O Two-Stage deixa de ser a referência do RECLin-PT e permanece como estratégia
+experimental. Pela avaliação do autor, ele não apresentou no DEV ganho suficientemente
+relevante para justificar a sua maior complexidade: dois classificadores treinados
+separadamente e um limiar escolhido no próprio DEV. Seus resultados ilustram um compromisso que não depende do
+\emph{encoder}: o estágio 2 quase não erra o tipo dos pares que recebe, e as perdas
+se concentram no estágio 1 e no limiar. Os pares que o estágio 1 não encaminha viram
+\texttt{no\_relation}, o que custa algumas negações e, sobretudo, relações
+\texttt{associated\_with}.
+
+O limiar amplifica esse compromisso. Com os dois BioBERTpt, o critério do protocolo,
+o F1 de \texttt{negation\_of}, escolheu o extremo da grade, $\tau=0{,}95$, à frente de
+$\tau=0{,}90$ por margens de $0{,}0014$ e $0{,}0038$ no F1, com perda de cerca de
+$0{,}025$ no macro-F1. Com o BERTimbau-base, escolheu $0{,}85$. A diferença entre os
+\emph{encoders} no Two-Stage, nas classes que não são a alvo, decorre em grande parte
+dessa escolha, e não pode ser atribuída ao \emph{encoder}. Um critério baseado no
+macro-F1 teria escolhido $\tau=0{,}90$ com os dois BioBERTpt e $0{,}85$ com o
+BERTimbau-base (Apêndice~\ref{ap:tau}). Como o critério foi fixado antes de qualquer
+resultado, ele não foi alterado, e a consequência é registrada aqui. Do mesmo modo, a
+vantagem do Two-Stage sobre o baseline na classe-alvo, de até $0{,}028$, não é
+distinguível de zero nem contra o baseline nem contra o baseline calibrado, mesmo
+com o viés favorável de um limiar escolhido no DEV.
+
+\section{A escolha do \emph{encoder}}
+\label{sec:discussao_encoder}
+
+Com os três \emph{encoders} treinados nas três estratégias, o pré-treinamento clínico
+não produziu vantagem detectável na classe-alvo em nenhuma estratégia: as nove
+comparações de F1 de \texttt{negation\_of} têm intervalos que contêm o zero, e o
+\emph{encoder} com o maior F1 muda de uma estratégia para outra. Esse quadro
+contrasta com a expectativa difundida, bem como com os ganhos relatados para o
+reconhecimento de entidades clínicas em português \cite{schneider_2020_biobertpt}, de
+que modelos de domínio se transfiram melhor.
+
+Duas hipóteses são compatíveis com esse resultado, sem que os experimentos atuais
+permitam distingui-las ou demonstrá-las. A primeira é linguística: a negação clínica
+em português é fortemente lexicalizada, e o gatilho está quase sempre colado ao achado
+negado, com distância mediana de um único caractere (Seção~\ref{sec:eda_distancia}).
+Um sinal tão local e regular pode depender pouco de vocabulário clínico
+especializado. A segunda é estrutural: a tarefa, tal como formulada, depende da
+delimitação e da direção do par, fornecidas igualmente aos três \emph{encoders} pela
+mesma representação de entrada. Testar essas hipóteses exigiria, por exemplo, analisar
+os erros por tipo de gatilho e por distância entre os argumentos.
+
+Fora do Two-Stage, cujas diferenças entre \emph{encoders} acompanham o limiar, as
+diferenças detectadas favorecem o BioBERTpt-clin, e não na classe-alvo: na
+Pair-Aware linear e no baseline, ele tem F1 de \texttt{associated\_with} maior que o
+do BioBERTpt-all, e, na Pair-Aware linear, também maior que o do BERTimbau-base.
+Uma hipótese compatível, não testada, é que o pré-treinamento só em narrativas
+clínicas ajude a relação menos lexicalizada, mais dependente do contexto clínico. Há,
+por fim, o argumento de eficiência: com F1 de \texttt{negation\_of} equivalente, o
+BERTimbau-base usa cerca de 61\% dos parâmetros, o que tende a reduzir o custo de
+memória e de inferência, embora esse custo não tenha sido medido neste trabalho.
+
+Para o RECLin-PT, a evidência disponível não basta para trocar o \emph{encoder} da
+Pair-Aware linear. Pela métrica primária, os três são equivalentes no DEV; pelo
+macro-F1 e pelo MCC, o BioBERTpt-clin fica à frente, mas, no macro-F1, sem diferença
+detectada nos dois níveis de reamostragem, e a vantagem detectada é a de
+\texttt{associated\_with}, a classe mais ruidosa da anotação; pelo custo, o
+BERTimbau-base é o menor. Por isso, o BioBERTpt-all, fixado no protocolo, continua
+sendo o \emph{encoder} de referência, e os demais seguem como variantes
+experimentais, que só substituem a referência se assim indicar a seleção da
+configuração final, feita no DEV antes do congelamento.
+
+\section{A classe \texttt{associated\_with}}
+
+A classe \texttt{associated\_with} é a mais difícil para todas as estratégias, e a
+análise dos falsos positivos (Seção~\ref{sec:resultados_assoc}) indica de onde vem
+parte da dificuldade. Cerca de um quarto dos falsos positivos são pares cuja direção
+inversa está anotada como associação: o modelo reconhece o vínculo entre as duas
+entidades, mas não a direção escolhida pela anotação. Como quase nenhuma associação do
+DEV é anotada nas duas direções, e como a associação, ao contrário da negação, não
+tem uma direção linguística evidente, uma hipótese plausível é que a direção anotada
+seja, em parte, arbitrária para o modelo. A precisão também cai com a distância entre
+os argumentos, o que é compatível com a hipótese de que distinguir associação
+genuína de mera proximidade seja ambíguo em texto clínico telegráfico, em que
+entidades vizinhas frequentemente não mantêm relação anotada, como no exemplo do
+Quadro~\ref{quad:exemplo_candidatos}.
+
+Dois fatores medidos limitam, além disso, o que se pode esperar da classe. O F1 é
+calculado sob o teto de \emph{recall} imposto pela janela, que deixa de fora cerca de
+8\% das relações \texttt{associated\_with} do DEV, contra cerca de 3\% das de
+\texttt{negation\_of} (Seção~\ref{sec:teto_recall}). E, nas seis notas anotadas duas
+vezes no corpus, a concordância entre as duas anotações de \texttt{associated\_with} é
+de cerca de $0{,}57$ (Seção~\ref{sec:particao}), um indício de que a própria
+referência é instável nessa classe. Como o foco deste trabalho é a negação, nenhuma
+decisão foi otimizada para \texttt{associated\_with}.
+
+\section{Limitações}
+\label{sec:limitacoes}
+
+As limitações deste trabalho são agrupadas em cinco categorias: experimentais,
+arquiteturais, dos dados, de escopo e de reprodutibilidade. Todas foram observadas
+ou registradas ao longo do desenvolvimento, e as remissões indicam onde cada uma é
+fundamentada.
+
+\subsection{Limitações experimentais}
+
+A limitação mais séria é a ausência de avaliação no teste. Todos os números são de
+DEV, o mesmo conjunto usado para escolher épocas e limiares. Os do Two-Stage e do
+baseline calibrado são otimistas por construção, e mesmo as escolhas de época
+introduzem algum otimismo nas demais estratégias. A avaliação definitiva será feita no
+teste, uma única vez, depois de congelada a configuração final. Pela emenda proposta,
+essa avaliação se restringe ao modelo final. Assim, o teste estimará o desempenho do
+RECLin-PT, mas não a sua vantagem sobre o baseline ou sobre as demais estratégias,
+que continuará apoiada só no DEV. Os experimentos de aprimoramento previstos até o
+congelamento, avaliados no mesmo DEV, tendem a aumentar esse otimismo.
+
+Há uma única semente, de modo que não é possível separar o efeito de uma estratégia
+ou de um \emph{encoder} da variação do treino: os intervalos de confiança medem só a
+incerteza sobre os exemplos. O processo de seleção também limita a leitura dos
+resultados. A designação da Pair-Aware linear como arquitetura oficial foi registrada
+depois de conhecidos os resultados do DEV e não é confirmatória, e o protocolo
+registrado ainda prevê as comparações principais do Two-Stage no teste, enquanto a
+emenda proposta (E3) não for aprovada (Seção~\ref{sec:protocolo}). O protocolo fixa
+o BioBERTpt-all, de modo que as execuções com o BioBERTpt-clin e o BERTimbau-base são
+variantes de \emph{encoder} fora do pré-registro, e a Pair-Aware MLP é exploratória.
+Em todas as execuções de três rótulos, a época escolhida foi a última permitida, o
+que sugere que mais treino poderia mudar os valores absolutos
+(Seção~\ref{sec:curvas}); o limiar $\tau$ com os dois BioBERTpt e o
+\texttt{min\_freq} do léxico ficaram no extremo das respectivas grades; e os
+controles do protocolo (baseline calibrado e filtro léxico) só existem com o
+BioBERTpt-all.
+
+\subsection{Limitações arquiteturais}
+
+Os achados se limitam à formulação de três classes adotada, com apenas
+\texttt{negation\_of} e \texttt{associated\_with} como relações, e à escala
+\emph{base} dos modelos (Seção~\ref{sec:encoders}). Entre as estratégias
+investigadas, o Two-Stage não tem otimização conjunta dos dois estágios e depende de
+um limiar escolhido no DEV (Seção~\ref{sec:twostage}), e a cabeça da Pair-Aware foi
+avaliada apenas nas formas linear e com uma camada oculta. O \emph{fine-tuning}
+restrito, previsto no protocolo, não foi executado. Outras possibilidades
+arquiteturais, como modelos de maior porte ou tipos semânticos na entrada, ficaram
+deliberadamente fora deste trabalho e permanecem para investigação futura.
+
+\subsection{Limitações dos dados}
+
+A anotação apresenta inconsistências que afetam o treino e a avaliação. $38$
+relações \texttt{negation\_of} do treino e $5$ do DEV têm a direção invertida, com a
+expressão de negação como segundo argumento. Cerca de $37\%$ das entidades
+\texttt{Negation} não participam de nenhuma \texttt{negation\_of} anotada, de modo
+que parte dos pares \texttt{no\_relation} pode corresponder a relações omitidas, e
+não a ausências reais (Seção~\ref{sec:controles_tipo}). Nas seis notas anotadas duas
+vezes no corpus, a concordância entre as duas anotações (F1) é de cerca de $0{,}57$
+nas entidades e nas relações \texttt{associated\_with}, contra $1{,}0$ nas $7$
+relações \texttt{negation\_of} (Seção~\ref{sec:particao}). Variações na delimitação
+de entidades e omissões de anotação no SemClinBr também foram relatadas por
+\citeonline{ramos_2025_clinpthyb}.
+
+Quanto ao alinhamento e à delimitação, a reconstrução dependeu de uma regra de
+alinhamento dos \emph{offsets} aplicada a $421$ documentos; a auditoria não encontrou
+divergência entre o trecho recortado e o texto anotado, mas as $26$ anomalias de
+anotação encontradas, como um \emph{offset} inválido, foram mantidas no corpus
+(Seção~\ref{sec:parsing}). Há ainda particularidades da organização dos dados: três
+notas do teste são cópias, diferentes só em espaços, de notas do treino; há uma
+única partição, na qual a semente $42$ deixou o DEV com poucas relações
+\texttt{associated\_with} e o teste com muitas
+(Tabela~\ref{tab:sensibilidade_semente}); e a janela de candidatos impõe um teto de
+\emph{recall} mais baixo para \texttt{associated\_with} do que para
+\texttt{negation\_of} (Seção~\ref{sec:teto_recall}). Essa janela
+(\texttt{max\_gap}$=25$) foi definida a partir das distâncias das relações
+\emph{gold} do corpus completo, inclusive das anotações do teste.
+
+\subsection{Limitações de escopo}
+
+O RECLin-PT trabalha com entidades previamente anotadas no corpus. O sistema não
+realiza o reconhecimento automático de entidades integrado à extração de relações, e
+o erro que uma etapa automática de reconhecimento introduziria não é considerado nas
+métricas. Os resultados descrevem, portanto, a extração de relações em condições
+ideais de entrada. A integração entre NER e RE permanece como possibilidade de
+evolução do sistema (Capítulo~\ref{cap:conclusao}).
+
+\subsection{Limitações de reprodutibilidade}
+
+Persistem pontos de procedência que precisam ser resolvidos antes da avaliação no
+teste (Apêndice~\ref{ap:inventario}). As execuções foram produzidas com quatro
+versões distintas do código, registradas em sete revisões, enquanto o protocolo prevê
+uma identidade única na conferência final. As diferenças entre as versões,
+conferidas nos manifestos de código registrados por cada execução, correspondem às
+mudanças documentadas da Pair-Aware, à criação da variante MLP e à inclusão dos novos
+\emph{encoders} na configuração. O código da estratégia baseline é o mesmo em todas
+elas. Sete execuções foram retomadas a partir de um \emph{checkpoint} e registram
+apenas a sessão final de treino; os estágios do Two-Stage não registram a revisão do
+código nem o campo de avaliação do teste; na composição do Two-Stage com o
+BERTimbau-base, os nomes dos estágios registrados no limiar diferem dos nomes das
+pastas, embora os \emph{hashes} da configuração e do modelo confiram; os
+\emph{checkpoints} e os registros de console ficam fora do repositório e não foram
+verificados; e todas as sessões registradas trazem um aviso de não determinismo de
+uma rotina de atenção da GPU, emitido apesar de os algoritmos determinísticos terem
+sido solicitados. Nenhum desses pontos altera as métricas recalculadas a partir das
+predições, mas todos limitam a reprodutibilidade estrita e reforçam a necessidade de
+preservar versões, configurações e registros experimentais até a avaliação final.
+
+\section{Ameaças à validade}
+
+Quanto à validade interna, as partições congeladas e verificadas por
+\emph{hash}, a reconstrução dos dados com offsets alinhados ao texto e o
+particionamento em nível de documento mitigam o vazamento de dados e os erros de
+alinhamento. Duas ameaças permanecem registradas: as três notas do teste com cópia no
+treino, para as quais o protocolo prevê relatar o teste também sem esses documentos
+(Seção~\ref{sec:particao}), e a definição da janela de candidatos
+(\texttt{max\_gap}$=25$), feita com as distâncias das relações \emph{gold} do corpus
+completo, inclusive as do teste (Seção~\ref{sec:teto_recall}). Essa segunda ameaça é
+limitada: a decisão envolveu apenas anotações, não predições ou métricas de modelos,
+é idêntica para todos os sistemas comparados e afeta a cobertura dos candidatos, e
+não a seleção de épocas, limiares ou configurações, feita só no DEV. Ainda assim, a
+cobertura do teste não pode ser considerada estimada de forma independente dessa
+escolha; no teste, por exemplo, todas as relações \texttt{negation\_of} anotadas
+ficaram dentro da janela (Tabela~\ref{tab:teto_recall}).
+
+Uma segunda ameaça diz respeito à independência das instâncias. O \emph{bootstrap}
+previsto no protocolo trata os pares candidatos como independentes, embora pares de
+um mesmo documento compartilhem texto. Para dimensionar esse efeito, as comparações
+do DEV foram repetidas com o \emph{bootstrap} por documento, que produziu intervalos
+em geral mais largos e, em algumas comparações, deixou de detectar diferenças
+detectadas por candidato (Seção~\ref{sec:resultados_comparacoes}). As conclusões
+deste capítulo se apoiam nas diferenças detectadas nos dois níveis. Quanto à
+validade externa, o SemClinBr representa um conjunto específico de instituições e de
+estilos de redação, e as 26 anomalias de anotação mantidas no corpus impõem um limite
+ao desempenho alcançável, igual para todos os sistemas.

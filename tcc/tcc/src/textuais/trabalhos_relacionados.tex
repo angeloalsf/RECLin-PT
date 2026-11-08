@@ -1,0 +1,125 @@
+\chapter[Trabalhos Relacionados]{Trabalhos Relacionados}
+\label{cap:relacionados}
+
+Este capítulo situa o desenvolvimento do RECLin-PT em relação a recursos e estudos de
+extração de informação clínica. Parte das campanhas em inglês que consolidaram a
+extração de relações clínicas, passa pelos recursos e modelos para o reconhecimento
+de entidades clínicas em português, incluindo antecedentes desenvolvidos no próprio
+campus, e chega aos poucos trabalhos de extração de relações clínicas em português,
+para identificar o que esses estudos oferecem ao modelo e o que deixam em aberto.
+
+\section{Recursos e desafios em inglês}
+
+A extração de relações clínicas consolidou-se em língua inglesa em torno de
+campanhas de avaliação como as séries \foreignlanguage{english}{Informatics for
+Integrating Biology and the Bedside} (i2b2) e \foreignlanguage{english}{National
+NLP Clinical Challenges} (n2c2) \cite{uzuner_2011_i2b2}, que disponibilizaram
+corpora anotados e tarefas compartilhadas para problemas como relações entre
+medicamentos, dosagens e efeitos adversos. Esses esforços estabeleceram protocolos
+de avaliação e evidenciaram a importância de tratar adequadamente o desbalanceamento
+de classes e o vazamento de dados entre partições, preocupações transpostas para
+este trabalho, respectivamente, pela geração controlada de pares candidatos
+(Seção~\ref{sec:candidatos}) e pelo particionamento em nível de documento
+(Seção~\ref{sec:particao}).
+
+Quanto aos modelos, o BioBERT \cite{lee_2020_biobert} demonstrou os
+ganhos da adaptação de domínio biomédico em inglês, estabelecendo o precedente que
+torna a escolha entre \emph{encoders} de domínio e gerais uma decisão a examinar no
+desenvolvimento do RECLin-PT. Quanto à representação de entrada,
+a delimitação do par por marcadores de entidade inseridos no próprio texto
+\cite{soares_2019_markers} tornou-se a técnica padrão para a extração de relações com modelos baseados em \foreignlanguage{english}{BERT}, sendo também adotada neste trabalho
+(Seção~\ref{sec:markers}).
+
+\section{Reconhecimento de entidades clínicas em português}
+\label{sec:recursos_pt}
+
+O desenvolvimento de PLN clínico em português foi por muito tempo limitado pela
+ausência de corpora anotados de acesso controlado. O \textbf{SemClinBr}
+\cite{oliveira_2022_semclinbr} preencheu parte dessa lacuna ao disponibilizar mil
+documentos clínicos de múltiplas instituições e especialidades, anotados
+semanticamente e acompanhados de dicionários de abreviações e de pistas de negação.
+Para este trabalho, sua contribuição central é a anotação de relações, inclusive de
+negação, entre entidades. Como o corpus anota apenas relações positivas, usá-lo para
+classificar todos os pares de um documento exige construir os exemplos negativos
+(Seção~\ref{sec:candidatos}). É o corpus sobre o qual o RECLin-PT é desenvolvido.
+
+Os \emph{encoders} disponíveis para o português foram avaliados, até aqui, sobretudo
+em reconhecimento de entidades. O BioBERTpt \cite{schneider_2020_biobertpt}
+adaptou modelos BERT a narrativas clínicas e textos biomédicos em português
+brasileiro e relatou ganhos em NER em dois corpora de narrativas clínicas. O
+BERTimbau \cite{souza_2020_bertimbau}, referência de domínio geral, foi avaliado em
+similaridade textual, inferência textual e reconhecimento de entidades, todas tarefas
+de domínio geral. Nenhum dos dois trabalhos mede o efeito do pré-treinamento sobre a
+extração de relações. O estudo mais próximo, de \citeonline{almeida_2026_benchmarkner},
+compara sobre o SemClinBr, com hiperparâmetros comuns sempre que possível, variantes
+do BioBERTpt, o BERTimbau, modelos BERT recentes e modelos de linguagem de grande
+porte, também em reconhecimento de entidades. Nesse estudo, o melhor desempenho
+coube a um modelo multilíngue de domínio geral (mmBERT-base), à frente das variantes
+do BioBERTpt, o que indica que o domínio do pré-treino não é o único fator relevante
+mesmo em NER. Esses resultados motivam a comparação entre \emph{encoders} antes da escolha daquele que será utilizado no RECLin-PT, mas não dispensam essa análise. Permanece em aberto a questão de saber se a vantagem observada no reconhecimento de entidades também se manifesta na extração de relações.
+
+No reconhecimento de entidades clínicas em português, destacam-se também pesquisas
+desenvolvidas no Instituto Federal do Espírito Santo, Campus Cachoeiro de Itapemirim.
+\citeonline{torres_2024_ner} desenvolveu um modelo baseado na biblioteca spaCy para
+identificar entidades clínicas em relatos de casos, inicialmente com relatos anotados
+manualmente e, em seguida, com amostras do SemClinBr, para as quais definiu categorias
+próprias de representação das informações médicas. Nos relatos não usados no treino,
+os melhores resultados foram os das categorias Conclusão e Procedimento Diagnóstico,
+com F1 de $0{,}71$ e $0{,}65$. Posteriormente, \citeonline{ramos_2025_clinpthyb}
+propôs o ClinptHyb, abordagem híbrida que combina um modelo NER treinado com o spaCy
+sobre o SemClinBr e um modelo de linguagem de grande porte
+(\foreignlanguage{english}{Large Language Model}, LLM), utilizado como revisor das
+anotações produzidas pelo primeiro. Com o ClinptHyb avaliado em uma amostra
+estratificada de 33 relatos do conjunto de validação, o trabalho relata F1 superior ao
+do modelo spaCy isolado em todas as categorias consideradas, incluindo $0{,}972$ na
+categoria \texttt{Negation}. Ao
+revisar as anotações, o trabalho também identificou variações na delimitação de
+entidades e omissões de anotação no próprio SemClinBr.
+
+Embora adotem estratégias distintas, os dois trabalhos concentram-se na
+identificação e classificação de entidades clínicas. O F1 de $0{,}972$ em
+\texttt{Negation}, por exemplo, mede o reconhecimento das expressões de negação, e não
+a ligação entre cada expressão e o conceito negado, que é o objeto da relação
+\texttt{negation\_of} (Seção~\ref{sec:re_tarefa}). As duas pesquisas apontam a
+extração de relações entre as entidades reconhecidas como possibilidade de
+continuidade, sem realizá-la. O RECLin-PT dá um passo nessa direção ao investigar
+diretamente a extração de relações entre entidades clínicas, a partir das entidades
+já anotadas no SemClinBr e com ênfase nas relações de negação. A integração entre um
+reconhecimento automático de entidades e a extração de relações permanece fora do
+escopo deste trabalho.
+
+\section{Extração de relações clínicas em português}
+
+A extração de relações clínicas em português é pouco representada na literatura
+revisada. Uma revisão sistemática de 28 estudos de modelos de linguagem em português
+voltados à saúde, publicados entre janeiro de 2020 e novembro de 2024, inventaria
+classificação (16 modelos), reconhecimento de entidades nomeadas (8), modelagem de
+tópicos, resposta a perguntas, geração de texto e agentes conversacionais, sem
+registrar extração de relações \cite{shimaoka_2026_revisao}. O desequilíbrio não é
+exclusivo do português: uma revisão de 94 estudos de extração de informação em texto
+clínico registra 63 dedicados a reconhecimento de entidades contra 13 dedicados a
+extração de relações \cite{navarro_2023_revisao}. O trabalho de extração de relações
+em texto clínico em português aqui localizado \cite{silva_2023_oncologia} contribui
+com um corpus próprio de oncologia em português brasileiro e menciona três
+\emph{encoders} candidatos (BERT multilíngue, BioBERTpt e BERTimbau), mas não
+reporta comparação entre eles e resolve a etapa de relações com uma rede BiLSTM, sem
+teste de significância. O efeito do pré-treinamento de domínio sobre a extração de
+relações, portanto, não é isolado ali.
+
+\section{Síntese e posicionamento}
+
+Os trabalhos revisados oferecem o corpus, os \emph{encoders} e as técnicas de
+representação do par em que o RECLin-PT se apoia, e os antecedentes do campus
+mostram uma linha de pesquisa em reconhecimento de entidades clínicas em português
+que já relata resultados altos para as expressões de negação. Permanece, porém, a lacuna referente à etapa seguinte, que consiste em investigar a extração de relações entre entidades clínicas em português, especialmente as relações de negação, responsáveis por identificar os conceitos aos quais a negação está associada. Não foram identificados estudos que verifiquem, para o português, se a vantagem do
+pré-treinamento clínico relatada em NER se transfere para a extração de relações, nem
+que compare, sobre um mesmo corpus clínico em português, estratégias de modelagem
+distintas sob protocolo único.
+
+O RECLin-PT se posiciona nessa lacuna. É desenvolvido sobre o SemClinBr com foco na
+negação clínica, e sua arquitetura e as estratégias investigadas combinam técnicas já
+descritas na literatura, como os marcadores de entidade e a decomposição da decisão.
+Sua contribuição central é o próprio modelo. As comparações de \emph{encoders} e de
+estratégias, conduzidas sob as mesmas condições e com uma cadeia reprodutível, servem
+para orientar sua configuração e, ao mesmo tempo, produzem evidência sobre a lacuna
+descrita, que pode servir de referência para trabalhos futuros sobre o mesmo corpus.

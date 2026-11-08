@@ -1,0 +1,32 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{quadro}[htbp]
+  \centering
+  \caption{Teste de McNemar das comparações pareadas entre estratégias, no DEV.}
+  \label{quad:mcnemar}
+  \small
+  \begin{tabular}{llrrr}
+  \toprule
+  Comparação (A $-$ B) & \emph{Encoder} & $b$ & $c$ & $p$ \\
+  \midrule
+  \multicolumn{5}{l}{\textit{Pair-Aware linear frente às demais estratégias (Tabela~\ref{tab:dev_comparacoes_pa})}} \\
+  Pair-Aware linear $-$ Baseline & BioBERTpt-all & 588 & 255 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Baseline & BioBERTpt-clin & 432 & 254 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Baseline & BERTimbau-base & 423 & 270 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Two-Stage & BioBERTpt-all & 383 & 1\,137 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Two-Stage & BioBERTpt-clin & 376 & 1\,039 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Two-Stage & BERTimbau-base & 183 & 589 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Pair-Aware MLP & BioBERTpt-all & 249 & 261 & $0{,}6262$ \\
+  Pair-Aware linear $-$ Baseline calibrado & BioBERTpt-all & 587 & 258 & $<0{,}0001$ \\
+  Pair-Aware linear $-$ Filtro léxico & BioBERTpt-all & 589 & 264 & $<0{,}0001$ \\
+  \midrule
+  \multicolumn{5}{l}{\textit{Two-Stage e baseline calibrado (Tabela~\ref{tab:dev_comparacoes_ts})}} \\
+  Two-Stage $-$ Baseline & BioBERTpt-all & 1\,517 & 430 & $<0{,}0001$ \\
+  Two-Stage $-$ Baseline & BioBERTpt-clin & 1\,212 & 371 & $<0{,}0001$ \\
+  Two-Stage $-$ Baseline & BERTimbau-base & 738 & 179 & $<0{,}0001$ \\
+  Two-Stage $-$ Baseline calibrado & BioBERTpt-all & 1\,512 & 429 & $<0{,}0001$ \\
+  Baseline calibrado $-$ Baseline & BioBERTpt-all & 8 & 4 & $0{,}3877$ \\
+  \bottomrule
+  \end{tabular}\\[2pt]
+  \parbox{\textwidth}{\footnotesize Teste de McNemar exato sobre o acerto global de cada par candidato do DEV, dominado pela classe \texttt{no\_relation}; não é específico de nenhuma classe. $b$: pares em que só A acerta; $c$: pares em que só B acerta. $p$: valor-$p$ bilateral do teste binomial exato, $b \sim \mathrm{Binomial}(b+c,\,0{,}5)$. Descritivo, no DEV.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{quadro}

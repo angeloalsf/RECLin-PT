@@ -1,0 +1,14 @@
+\chapter[Léxico de pistas de negação]{Léxico de pistas de negação}
+\label{ap:lexico}
+
+O Quadro~\ref{quad:lexico} registra o léxico de pistas congelado usado pelo filtro
+léxico (Seção~\ref{sec:filtro}). As formas foram induzidas exclusivamente do treino,
+a partir do primeiro argumento ($e_1$) dos pares candidatos \texttt{negation\_of}, e
+são comparadas após remoção de acentos, colapso de espaços e conversão para caixa
+baixa. O limiar \texttt{min\_freq}$=10$ foi escolhido antes da fase experimental, por
+validação cruzada em 5 partes só no treino, na grade $\{1, 2, 3, 5, 10\}$, pelo
+maior F1 do léxico como detector de \texttt{negation\_of}. Nenhuma
+estratégia de três rótulos, nem o Two-Stage, recebe esse léxico: ele é usado apenas
+pelo filtro.
+
+\input{tabelas/lexico_d4}

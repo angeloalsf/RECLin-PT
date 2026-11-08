@@ -369,7 +369,7 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `reclin/estrategias/baseline.py` | Estratégia treinada: o classificador da tarefa (todos os candidatos, cabeça [CLS]) |
 | `reclin/estrategias/restrito.py` | Estratégia treinada: fine-tuning só nos pares cujo e1 é pista, com a época escolhida no DEV remapeado |
 | `reclin/estrategias/pair_aware/` | Estratégia treinada: o baseline (todos os pares, sem léxico) com a cabeça Pair-Aware linear (`cabeca.py`) |
-| `reclin/estrategias/pair_aware_mlp/` | Estratégia treinada independente: como a Pair-Aware, mas com a cabeça MLP (`cabeca.py`); exploratória, fora do protocolo |
+| `reclin/estrategias/pair_aware_mlp/` | Estratégia treinada independente: como a Pair-Aware, mas com a cabeça MLP (`cabeca.py`); exploratória, fora do protocolo. Reutiliza da Pair-Aware linear só as funções auxiliares de leitura do par (carga do encoder sem pooler, marcadores), lista explícita em `testes/unidade/test_pacote.py` (`COMPARTILHADAS_ENTRE_ESTRATEGIAS`) |
 | `reclin/estrategias/two_stage/` | Estratégia treinada (etapa 6.1): dois estágios binários independentes a partir dos pesos originais (`inicializacao`, `estagios`, `metricas`, `treino`) e a inferência conjunta com τ escolhido no DEV (`composicao`) |
 | `reclin/estrategias/baseline_calibrado.py` | Controle de calibração (etapa 6.1): limiar t sobre as probabilidades do baseline, escolhido no DEV |
 | `reclin/pretreino.py` | Proveniência dos pesos pré-treinados: download num commit exato, `PROVENIENCIA.json`, conferência antes da carga, checagem entre execuções |
@@ -394,6 +394,8 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `testes/` | Testes de unidade, de integração e de equivalência com o legado, e as referências do legado |
 | `docs/entregas/` | Índice das entregas e, por etapa, o que foi entregue, como foi verificado e o que ficou pendente |
 | `docs/protocolo/` | Protocolo pré-registrado da fase científica atual (BioBERTpt, seed 42) |
+| `docs/analises/` | Análises documentadas: janela `max_gap`, integridade das partições, controles por tipo semântico, adjudicação |
+| `diagnosticos/` | Diagnósticos reproduzíveis e controles informados pelas anotações (fora das quatro configurações; não avaliam o TEST): `diagnosticar.py` → `resultados/diagnosticos/`; auditoria das execuções gravadas e consolidação do DEV: `auditar_execucoes.py` → `resultados/auditoria_execucoes/` |
 
 `dados/brutos/` e `SemClinBr-xml-public-v1/` (XML do SemClinBr) e
 `dados/processados/` (datasets e representação intermediária) ficam fora do

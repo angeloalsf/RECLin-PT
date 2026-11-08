@@ -1,0 +1,18 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Resultado exploratório no DEV (fora do protocolo pré-registrado): Pair-Aware MLP ao lado da Pair-Aware linear, BioBERTpt-all, semente 42.}
+  \label{tab:dev_exploratoria}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{lrrrrrr}
+  \toprule
+  Sistema & P neg & R neg & F1 neg & VP/FP/FN & Macro-F1 & MCC \\
+  \midrule
+Pair-Aware linear (protocolo) & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & 0{,}741 & 0{,}497 \\
+Pair-Aware MLP (exploratória) & 0{,}715 & 0{,}953 & 0{,}817 & 143/57/7 & 0{,}737 & 0{,}498 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize P, R e F1 neg: precisão, \emph{recall} e F1 de \texttt{negation\_of}; VP/FP/FN da mesma classe.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

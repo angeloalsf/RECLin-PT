@@ -1,0 +1,109 @@
+\chapter[Introdução]{Introdução}
+\label{cap:introducao}
+
+O registro eletrônico em saúde concentra grande parte da informação clínica
+sob a forma de texto livre. Notas de evolução, sumários de alta e laudos são
+redigidos em linguagem natural, com abreviações idiossincráticas, ausência
+frequente de pontuação padronizada e construções negativas características do
+discurso médico. Essa riqueza textual, embora valiosa para pesquisa e apoio à
+decisão, permanece majoritariamente inacessível a consultas estruturadas.
+
+A extração de informações estruturadas desses textos é uma tarefa desafiadora, sobretudo em razão de suas características linguísticas, uma vez que um mesmo achado pode ser descrito de diferentes formas, apresentado de maneira abreviada ou expresso por meio de afirmações e negações em frases linguisticamente semelhantes. Técnicas de Processamento de Linguagem Natural (\foreignlanguage{english}{Natural Language Processing}, NLP) buscam transformar o texto clínico em conhecimento estruturado, mas, no
+contexto da língua portuguesa, seu avanço foi historicamente limitado pela escassez
+de recursos anotados. A disponibilização do corpus \textbf{SemClinBr}
+\cite{oliveira_2022_semclinbr}, primeiro corpus clínico anotado semanticamente para o
+português, com mil documentos provenientes de múltiplas instituições e
+especialidades, criou condições para investigar tarefas antes restritas ao inglês,
+entre elas a extração de relações entre entidades clínicas.
+
+\section{Problema de pesquisa}
+
+Uma primeira etapa da extração de informação clínica é o reconhecimento de entidades
+nomeadas (\foreignlanguage{english}{Named Entity Recognition}, NER), que identifica
+no texto as menções a conceitos clínicos (sintomas, doenças, achados,
+procedimentos) e classifica cada uma em uma categoria. Em uma frase como ``paciente
+sem febre'', o NER pode reconhecer ``febre'' como sinal ou sintoma e ``sem'' como uma
+expressão de negação.
+
+Identificar as entidades, porém, não basta para compreender o que o texto afirma
+sobre elas. As duas menções do exemplo, isoladas, não informam que é a febre que está
+sendo negada, nem distinguem essa frase de outra em que a febre é relatada e a
+negação se refere a um conceito vizinho. Essa articulação entre entidades é o objeto
+da extração de relações (\foreignlanguage{english}{Relation Extraction}, RE), etapa
+complementar ao NER que determina se duas entidades já identificadas mantêm uma
+relação e de que tipo.
+
+A negação torna essa etapa especialmente relevante no domínio clínico. Não basta
+encontrar a expressão que indica ausência ou negação: é preciso identificar a
+informação clínica à qual ela se refere. Tratar como presente um achado que o texto
+nega pode inverter a interpretação de um prontuário, e um mesmo documento costuma
+conter várias expressões de negação, cada uma ligada a um conceito diferente.
+
+Para o português, a extração de relações clínicas é pouco representada na
+literatura, que se concentra na classificação de textos e no reconhecimento de
+entidades \cite{shimaoka_2026_revisao}. O problema abordado neste trabalho consiste, portanto, no desenvolvimento de um modelo de extração de relações em notas clínicas em português, com ênfase na identificação de relações de negação. Esse modelo, denominado RECLin-PT, é desenvolvido sobre o conjunto de dados SemClinBr. A partir desse problema, estabelece-se a seguinte pergunta de pesquisa:
+
+\begin{quote}
+\emph{Como desenvolver o RECLin-PT para a extração de relações clínicas em português
+no corpus SemClinBr, com ênfase na identificação de relações de negação?}
+\end{quote}
+
+Responder a essa pergunta envolve decisões para as quais a literatura não oferece
+resposta pronta, como a escolha do modelo de linguagem pré-treinado sobre o qual o
+RECLin-PT é construído e a forma de organizar a decisão de classificação. Neste
+trabalho, essas decisões são investigadas experimentalmente, como parte do próprio
+desenvolvimento, para definir uma configuração adequada ao modelo. O desafio é agravado pelo forte desbalanceamento entre as classes de relação e pelo fato de que o SemClinBr contém apenas anotações de relações positivas, o que exige a construção controlada de exemplos de ausência de relação.
+
+\section{Motivação}
+\label{sec:motivacao}
+
+A negação clínica é um fenômeno linguístico de alto impacto, o que justifica um
+modelo com ênfase nessa relação. Em português, ela é fortemente lexicalizada (``não'',
+``sem'', ``nega'', ``ausência de''), e há a expectativa difundida de que modelos
+pré-treinados sobre texto do próprio domínio clínico capturem melhor essas
+construções do que modelos de domínio geral. Esse ganho, contudo, não é automático. Em
+inglês, \citeonline{lin_2020_negacao} reportam que, na detecção de negação clínica, o
+BERT sem as extensões de adaptação de domínio avaliadas obteve, em média, o melhor
+desempenho. Para o português, não foram encontradas avaliações controladas que permitam isolar o efeito do pré-treinamento de domínio na extração de relações clínicas. A comparação direta
+entre modelos clínicos e de domínio geral sobre o SemClinBr foi conduzida para o
+reconhecimento de entidades \cite{almeida_2026_benchmarkner}, e não para a etapa de
+relações (Capítulo~\ref{cap:relacionados}). Desenvolver o RECLin-PT exige, portanto,
+examinar essa escolha em vez de pressupô-la.
+
+A escolha do modelo pré-treinado também não é independente da forma como a decisão de
+classificação é organizada, e alternativas distintas só podem ser comparadas de forma
+justa se passarem pelos mesmos dados e pelo mesmo protocolo de seleção e de
+avaliação. Por isso, o desenvolvimento do RECLin-PT apoia-se em uma cadeia
+experimental reprodutível, que também responde a críticas recorrentes à literatura
+de PLN biomédico, como o compartilhamento restrito de modelos e o detalhamento
+insuficiente do ajuste fino\footnote{Ajuste fino (\foreignlanguage{english}{fine-tuning})
+é o retreinamento de um modelo pré-treinado sobre os dados de uma tarefa específica,
+partindo dos pesos já aprendidos em vez de uma inicialização aleatória
+\cite{devlin_2019_bert}.} \cite{navarro_2023_revisao,shimaoka_2026_revisao}.
+
+\section{Objetivos}
+
+\subsection{Objetivo geral}
+
+Desenvolver o RECLin-PT, um modelo de extração de relações clínicas em português
+aplicado ao corpus SemClinBr, com ênfase na identificação de relações de negação
+(\texttt{negation\_of}), investigando alternativas de modelo pré-treinado e de
+estratégia de modelagem para subsidiar a definição de sua configuração.
+
+\subsection{Objetivos específicos}
+
+\begin{enumerate}
+  \item Preparar os dados do corpus SemClinBr para a tarefa de extração de relações,
+        considerando o alinhamento entre os textos e as anotações e a organização de
+        conjuntos experimentais de treino, desenvolvimento e teste.
+  \item Caracterizar as relações clínicas presentes no corpus e estabelecer
+        procedimentos reprodutíveis para a geração de pares candidatos de entidades.
+  \item Desenvolver o RECLin-PT, investigando representações de pares de entidades e
+        estratégias de modelagem para a classificação de relações clínicas.
+  \item Avaliar experimentalmente as configurações consideradas, utilizando
+        diferentes modelos pré-treinados e métricas adequadas a uma tarefa com
+        classes desbalanceadas.
+  \item Definir uma configuração de referência para o RECLin-PT e estabelecer os
+        procedimentos para o congelamento de sua configuração final e para a
+        avaliação única dessa configuração no conjunto de teste.
+\end{enumerate}

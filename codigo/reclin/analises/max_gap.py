@@ -47,3 +47,37 @@ def sensibilidade(documentos: Iterable[Documento], limites: Sequence[int] = LIMI
                        "da_tarefa": limite == MAX_GAP})
     return {"n_documentos": len(docs), "relacoes_anotadas": dict(sorted(total_relacoes.items())),
             "max_gap_da_tarefa": MAX_GAP, "linhas": linhas}
+
+
+def distancias_anotadas(documentos: Iterable[Documento],
+                        limites: Sequence[int] = (20, 25, 50)) -> dict[str, Any]:
+    """Distribuição de `entity_gap` nas relações anotadas, por tipo.
+
+    `entity_gap` é simétrico: caracteres entre o fim do primeiro span **no
+    texto** e o início do segundo, qualquer que seja o e1; 0 quando os spans se
+    tocam ou se sobrepõem. Para cada limite, conta as relações com distância
+    acima dele (as que nunca viram candidato com aquele `max_gap`).
+    """
+    from reclin.tarefa import entity_gap
+    por_tipo: dict[str, list[int]] = {}
+    for doc in documentos:
+        m = {e["id"]: e for e in doc["entities"]}
+        for r in doc["relations"]:
+            por_tipo.setdefault(r["type"], []).append(entity_gap(m[r["e1_id"]], m[r["e2_id"]]))
+    out: dict[str, Any] = {}
+    for tipo, v in sorted(por_tipo.items()):
+        v.sort()
+        n = len(v)
+
+        def q(p: float) -> int:
+            return v[min(n - 1, int(p * n))]
+
+        out[tipo] = {"n": n, "mediana": q(0.5), "p90": q(0.9), "p95": q(0.95), "p99": q(0.99),
+                     "max": v[-1], "ate_1": sum(1 for g in v if g <= 1),
+                     "acima_de": {str(lim): sum(1 for g in v if g > lim) for lim in limites}}
+    total = sum(d["n"] for d in out.values())
+    out["todas"] = {"n": total, "acima_de": {str(lim): sum(d["acima_de"][str(lim)] for d in out.values())
+                                             for lim in limites}}
+    out["todas"]["fracao_acima_de"] = {k: (x / total if total else None)
+                                       for k, x in out["todas"]["acima_de"].items()}
+    return out

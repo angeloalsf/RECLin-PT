@@ -1,0 +1,331 @@
+{
+  "n_documentos": 1000,
+  "n_pares": 7,
+  "n_pares_identicos_sem_espacos": 7,
+  "parametros": {
+    "k": 8,
+    "limiar_jaccard": 0.8,
+    "min_shingles": 10,
+    "normalizacao": "minúsculas, sem espaços em branco",
+    "razao_minima": 0.8
+  },
+  "pares": [
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 1,
+          "b": 1,
+          "em_comum": 1
+        },
+        "relacoes": {
+          "a": 0,
+          "b": 0,
+          "em_comum": 0
+        },
+        "relacoes_por_tipo": {}
+      },
+      "diferencas": {
+        "blocos": 1,
+        "caracteres_por_classe": {
+          "espaco": 4
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9280",
+      "doc_b": "9271",
+      "entre_particoes": true,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "dev",
+      "tamanhos": [
+        23,
+        19
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 40,
+          "b": 43,
+          "em_comum": 21
+        },
+        "relacoes": {
+          "a": 13,
+          "b": 17,
+          "em_comum": 8
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 12,
+            "b": 16,
+            "em_comum": 7
+          },
+          "negation_of": {
+            "a": 1,
+            "b": 1,
+            "em_comum": 1
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 10,
+        "caracteres_por_classe": {
+          "espaco": 13
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9531",
+      "doc_b": "9632",
+      "entre_particoes": false,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "train",
+      "tamanhos": [
+        433,
+        428
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 34,
+          "b": 33,
+          "em_comum": 20
+        },
+        "relacoes": {
+          "a": 8,
+          "b": 7,
+          "em_comum": 6
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 8,
+            "b": 7,
+            "em_comum": 6
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 4,
+        "caracteres_por_classe": {
+          "espaco": 4
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9532",
+      "doc_b": "9633",
+      "entre_particoes": false,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "train",
+      "tamanhos": [
+        288,
+        284
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 49,
+          "b": 55,
+          "em_comum": 23
+        },
+        "relacoes": {
+          "a": 18,
+          "b": 26,
+          "em_comum": 10
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 17,
+            "b": 25,
+            "em_comum": 9
+          },
+          "negation_of": {
+            "a": 1,
+            "b": 1,
+            "em_comum": 1
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 3,
+        "caracteres_por_classe": {
+          "espaco": 4
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9533",
+      "doc_b": "9634",
+      "entre_particoes": false,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "train",
+      "tamanhos": [
+        412,
+        408
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 59,
+          "b": 58,
+          "em_comum": 34
+        },
+        "relacoes": {
+          "a": 20,
+          "b": 19,
+          "em_comum": 11
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 18,
+            "b": 17,
+            "em_comum": 9
+          },
+          "negation_of": {
+            "a": 2,
+            "b": 2,
+            "em_comum": 2
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 2,
+        "caracteres_por_classe": {
+          "espaco": 3
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9635",
+      "doc_b": "9534",
+      "entre_particoes": true,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "test",
+      "tamanhos": [
+        502,
+        505
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 58,
+          "b": 60,
+          "em_comum": 39
+        },
+        "relacoes": {
+          "a": 24,
+          "b": 27,
+          "em_comum": 16
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 22,
+            "b": 25,
+            "em_comum": 14
+          },
+          "negation_of": {
+            "a": 2,
+            "b": 2,
+            "em_comum": 2
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 7,
+        "caracteres_por_classe": {
+          "espaco": 8
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9636",
+      "doc_b": "9535",
+      "entre_particoes": true,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "test",
+      "tamanhos": [
+        479,
+        479
+      ]
+    },
+    {
+      "anotacao": {
+        "entidades": {
+          "a": 46,
+          "b": 47,
+          "em_comum": 30
+        },
+        "relacoes": {
+          "a": 22,
+          "b": 22,
+          "em_comum": 16
+        },
+        "relacoes_por_tipo": {
+          "associated_with": {
+            "a": 21,
+            "b": 21,
+            "em_comum": 15
+          },
+          "negation_of": {
+            "a": 1,
+            "b": 1,
+            "em_comum": 1
+          }
+        }
+      },
+      "diferencas": {
+        "blocos": 3,
+        "caracteres_por_classe": {
+          "espaco": 4
+        },
+        "so_espacos": true
+      },
+      "doc_a": "9637",
+      "doc_b": "9536",
+      "entre_particoes": true,
+      "identicos_byte_a_byte": false,
+      "identicos_sem_espacos": true,
+      "jaccard": 1.0,
+      "particao_a": "train",
+      "particao_b": "test",
+      "tamanhos": [
+        352,
+        356
+      ]
+    }
+  ],
+  "pares_entre_particoes": {
+    "train-dev": 1,
+    "train-test": 3
+  },
+  "proveniencia": {
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "particoes_sha256": {
+      "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "test": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666",
+      "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+    },
+    "pasta_particoes": "dados/particoes-v2"
+  },
+  "test_com_copia_no_treino": [
+    "9534",
+    "9535",
+    "9536"
+  ]
+}

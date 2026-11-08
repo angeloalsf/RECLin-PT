@@ -1,0 +1,1076 @@
+{
+  "definicao": "entity_gap simétrico: caracteres entre o fim do primeiro span no texto e o início do segundo, qualquer que seja o e1; 0 se os spans se tocam ou se sobrepõem",
+  "distancias_anotadas": {
+    "dev": {
+      "associated_with": {
+        "acima_de": {
+          "20": 93,
+          "25": 68,
+          "50": 20
+        },
+        "ate_1": 326,
+        "max": 334,
+        "mediana": 4,
+        "n": 832,
+        "p90": 22,
+        "p95": 35,
+        "p99": 74
+      },
+      "negation_of": {
+        "acima_de": {
+          "20": 8,
+          "25": 3,
+          "50": 0
+        },
+        "ate_1": 117,
+        "max": 31,
+        "mediana": 1,
+        "n": 155,
+        "p90": 11,
+        "p95": 21,
+        "p99": 31
+      },
+      "todas": {
+        "acima_de": {
+          "20": 101,
+          "25": 71,
+          "50": 20
+        },
+        "fracao_acima_de": {
+          "20": 0.10233029381965553,
+          "25": 0.07193515704154002,
+          "50": 0.020263424518743668
+        },
+        "n": 987
+      }
+    },
+    "train": {
+      "associated_with": {
+        "acima_de": {
+          "20": 1047,
+          "25": 806,
+          "50": 353
+        },
+        "ate_1": 2740,
+        "max": 541,
+        "mediana": 4,
+        "n": 7922,
+        "p90": 26,
+        "p95": 47,
+        "p99": 165
+      },
+      "negation_of": {
+        "acima_de": {
+          "20": 43,
+          "25": 27,
+          "50": 1
+        },
+        "ate_1": 1010,
+        "max": 54,
+        "mediana": 1,
+        "n": 1299,
+        "p90": 12,
+        "p95": 15,
+        "p99": 32
+      },
+      "todas": {
+        "acima_de": {
+          "20": 1090,
+          "25": 833,
+          "50": 354
+        },
+        "fracao_acima_de": {
+          "20": 0.11820843726276976,
+          "25": 0.09033727361457543,
+          "50": 0.038390630083505045
+        },
+        "n": 9221
+      }
+    }
+  },
+  "max_gap_da_tarefa": 25,
+  "origem_11_6": {
+    "distancias": {
+      "associated_with": {
+        "acima_de": {
+          "20": 1272,
+          "25": 974,
+          "50": 405
+        },
+        "ate_1": 3475,
+        "max": 541,
+        "mediana": 4,
+        "n": 9852,
+        "p90": 25,
+        "p95": 43,
+        "p99": 151
+      },
+      "negation_of": {
+        "acima_de": {
+          "20": 52,
+          "25": 30,
+          "50": 1
+        },
+        "ate_1": 1247,
+        "max": 54,
+        "mediana": 1,
+        "n": 1606,
+        "p90": 11,
+        "p95": 15,
+        "p99": 31
+      },
+      "todas": {
+        "acima_de": {
+          "20": 1324,
+          "25": 1004,
+          "50": 406
+        },
+        "fracao_acima_de": {
+          "20": 0.11555245243497993,
+          "25": 0.08762436725432013,
+          "50": 0.035433758072962125
+        },
+        "n": 11458
+      }
+    },
+    "nota": "corpus inteiro (TRAIN+DEV+TEST), relações anotadas com distância simétrica acima de 20; só contagem descritiva, nenhuma escolha"
+  },
+  "proveniencia": {
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "particoes_sha256": {
+      "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "test": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666",
+      "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+    },
+    "pasta_particoes": "dados/particoes-v2"
+  },
+  "sensibilidade": {
+    "dev": {
+      "linhas": [
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 0,
+            "negation_of": 0,
+            "no_relation": 0
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 0,
+              "fracao": 0.0,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 0,
+              "fracao": 0.0,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 0,
+          "n_candidatos": 0,
+          "no_relation_por_relacao": null
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 570,
+            "negation_of": 125,
+            "no_relation": 6141
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 570,
+              "fracao": 0.6850961538461539,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 125,
+              "fracao": 0.8064516129032258,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 5,
+          "n_candidatos": 6836,
+          "no_relation_por_relacao": 8.835971223021582
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 650,
+            "negation_of": 132,
+            "no_relation": 8852
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 650,
+              "fracao": 0.78125,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 132,
+              "fracao": 0.8516129032258064,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 10,
+          "n_candidatos": 9634,
+          "no_relation_por_relacao": 11.319693094629155
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 702,
+            "negation_of": 146,
+            "no_relation": 12080
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 702,
+              "fracao": 0.84375,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 146,
+              "fracao": 0.9419354838709677,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 15,
+          "n_candidatos": 12928,
+          "no_relation_por_relacao": 14.245283018867925
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 738,
+            "negation_of": 146,
+            "no_relation": 15110
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 738,
+              "fracao": 0.8870192307692307,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 146,
+              "fracao": 0.9419354838709677,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 20,
+          "n_candidatos": 15994,
+          "no_relation_por_relacao": 17.092760180995477
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 763,
+            "negation_of": 150,
+            "no_relation": 18151
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 763,
+              "fracao": 0.9170673076923077,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 150,
+              "fracao": 0.967741935483871,
+              "total": 155
+            }
+          },
+          "da_tarefa": true,
+          "max_gap": 25,
+          "n_candidatos": 19064,
+          "no_relation_por_relacao": 19.880613362541073
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 781,
+            "negation_of": 151,
+            "no_relation": 21216
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 781,
+              "fracao": 0.9387019230769231,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 151,
+              "fracao": 0.9741935483870968,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 30,
+          "n_candidatos": 22148,
+          "no_relation_por_relacao": 22.763948497854077
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 801,
+            "negation_of": 153,
+            "no_relation": 26972
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 801,
+              "fracao": 0.9627403846153846,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 40,
+          "n_candidatos": 27926,
+          "no_relation_por_relacao": 28.27253668763103
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 811,
+            "negation_of": 153,
+            "no_relation": 32542
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 811,
+              "fracao": 0.9747596153846154,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 50,
+          "n_candidatos": 33506,
+          "no_relation_por_relacao": 33.75726141078838
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 823,
+            "negation_of": 153,
+            "no_relation": 46044
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 823,
+              "fracao": 0.9891826923076923,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 75,
+          "n_candidatos": 47020,
+          "no_relation_por_relacao": 47.17622950819672
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 825,
+            "negation_of": 153,
+            "no_relation": 58478
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 825,
+              "fracao": 0.9915865384615384,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 100,
+          "n_candidatos": 59456,
+          "no_relation_por_relacao": 59.79345603271984
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 827,
+            "negation_of": 153,
+            "no_relation": 81724
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 827,
+              "fracao": 0.9939903846153846,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 150,
+          "n_candidatos": 82704,
+          "no_relation_por_relacao": 83.39183673469388
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 828,
+            "negation_of": 153,
+            "no_relation": 102751
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 828,
+              "fracao": 0.9951923076923077,
+              "total": 832
+            },
+            "negation_of": {
+              "cobertas": 153,
+              "fracao": 0.9870967741935484,
+              "total": 155
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 200,
+          "n_candidatos": 103732,
+          "no_relation_por_relacao": 104.74108053007136
+        }
+      ],
+      "max_gap_da_tarefa": 25,
+      "n_documentos": 100,
+      "relacoes_anotadas": {
+        "associated_with": 832,
+        "negation_of": 155
+      }
+    },
+    "train": {
+      "linhas": [
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 0,
+            "negation_of": 0,
+            "no_relation": 22
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 0,
+              "fracao": 0.0,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 0,
+              "fracao": 0.0,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 0,
+          "n_candidatos": 22,
+          "no_relation_por_relacao": null
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 5142,
+            "negation_of": 1038,
+            "no_relation": 48966
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 5142,
+              "fracao": 0.6490785155263822,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1038,
+              "fracao": 0.7990762124711316,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 5,
+          "n_candidatos": 55146,
+          "no_relation_por_relacao": 7.923300970873786
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 5921,
+            "negation_of": 1133,
+            "no_relation": 70730
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 5921,
+              "fracao": 0.7474122696288816,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1133,
+              "fracao": 0.8722093918398768,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 10,
+          "n_candidatos": 77784,
+          "no_relation_por_relacao": 10.026935072299404
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 6510,
+            "negation_of": 1221,
+            "no_relation": 96113
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 6510,
+              "fracao": 0.8217621812673567,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1221,
+              "fracao": 0.9399538106235565,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 15,
+          "n_candidatos": 103844,
+          "no_relation_por_relacao": 12.432156254042168
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 6855,
+            "negation_of": 1239,
+            "no_relation": 120286
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 6855,
+              "fracao": 0.8653117899520323,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1239,
+              "fracao": 0.953810623556582,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 20,
+          "n_candidatos": 128380,
+          "no_relation_por_relacao": 14.861131702495676
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7096,
+            "negation_of": 1255,
+            "no_relation": 144335
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7096,
+              "fracao": 0.8957334006564,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1255,
+              "fracao": 0.9661277906081601,
+              "total": 1299
+            }
+          },
+          "da_tarefa": true,
+          "max_gap": 25,
+          "n_candidatos": 152686,
+          "no_relation_por_relacao": 17.283558855226918
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7259,
+            "negation_of": 1266,
+            "no_relation": 168283
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7259,
+              "fracao": 0.9163090128755365,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1266,
+              "fracao": 0.9745958429561201,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 30,
+          "n_candidatos": 176808,
+          "no_relation_por_relacao": 19.739941348973606
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7451,
+            "negation_of": 1280,
+            "no_relation": 215311
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7451,
+              "fracao": 0.9405453168391821,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1280,
+              "fracao": 0.985373364126251,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 40,
+          "n_candidatos": 224042,
+          "no_relation_por_relacao": 24.66051998625587
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7549,
+            "negation_of": 1281,
+            "no_relation": 260508
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7549,
+              "fracao": 0.9529159303206262,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1281,
+              "fracao": 0.9861431870669746,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 50,
+          "n_candidatos": 269338,
+          "no_relation_por_relacao": 29.502604756511893
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7691,
+            "negation_of": 1282,
+            "no_relation": 369653
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7691,
+              "fracao": 0.970840696793739,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1282,
+              "fracao": 0.9869130100076983,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 75,
+          "n_candidatos": 378626,
+          "no_relation_por_relacao": 41.19614398751811
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7755,
+            "negation_of": 1282,
+            "no_relation": 473419
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7755,
+              "fracao": 0.9789194647816208,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1282,
+              "fracao": 0.9869130100076983,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 100,
+          "n_candidatos": 482456,
+          "no_relation_por_relacao": 52.38674338829257
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7814,
+            "negation_of": 1282,
+            "no_relation": 666628
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7814,
+              "fracao": 0.9863670790204494,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1282,
+              "fracao": 0.9869130100076983,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 150,
+          "n_candidatos": 675724,
+          "no_relation_por_relacao": 73.28803869832893
+        },
+        {
+          "candidatos_por_rotulo": {
+            "associated_with": 7846,
+            "negation_of": 1282,
+            "no_relation": 841184
+          },
+          "cobertura": {
+            "associated_with": {
+              "cobertas": 7846,
+              "fracao": 0.9904064630143903,
+              "total": 7922
+            },
+            "negation_of": {
+              "cobertas": 1282,
+              "fracao": 0.9869130100076983,
+              "total": 1299
+            }
+          },
+          "da_tarefa": false,
+          "max_gap": 200,
+          "n_candidatos": 850312,
+          "no_relation_por_relacao": 92.15425065731814
+        }
+      ],
+      "max_gap_da_tarefa": 25,
+      "n_documentos": 800,
+      "relacoes_anotadas": {
+        "associated_with": 7922,
+        "negation_of": 1299
+      }
+    }
+  },
+  "sensibilidade_train_dev": {
+    "linhas": [
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 0,
+          "negation_of": 0,
+          "no_relation": 22
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 0,
+            "fracao": 0.0,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 0,
+            "fracao": 0.0,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 0,
+        "n_candidatos": 22,
+        "no_relation_por_relacao": null
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 5712,
+          "negation_of": 1163,
+          "no_relation": 55107
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 5712,
+            "fracao": 0.6525017135023989,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1163,
+            "fracao": 0.7998624484181568,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 5,
+        "n_candidatos": 61982,
+        "no_relation_por_relacao": 8.015563636363636
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 6571,
+          "negation_of": 1265,
+          "no_relation": 79582
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 6571,
+            "fracao": 0.7506282842129313,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1265,
+            "fracao": 0.8700137551581844,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 10,
+        "n_candidatos": 87418,
+        "no_relation_por_relacao": 10.155946911689638
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 7212,
+          "negation_of": 1367,
+          "no_relation": 108193
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 7212,
+            "fracao": 0.8238519533927348,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1367,
+            "fracao": 0.9401650618982118,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 15,
+        "n_candidatos": 116772,
+        "no_relation_por_relacao": 12.611376617321366
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 7593,
+          "negation_of": 1385,
+          "no_relation": 135396
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 7593,
+            "fracao": 0.86737491432488,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1385,
+            "fracao": 0.952544704264099,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 20,
+        "n_candidatos": 144374,
+        "no_relation_por_relacao": 15.080864335041213
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 7859,
+          "negation_of": 1405,
+          "no_relation": 162486
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 7859,
+            "fracao": 0.8977610235320996,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1405,
+            "fracao": 0.9662998624484181,
+            "total": 1454
+          }
+        },
+        "da_tarefa": true,
+        "max_gap": 25,
+        "n_candidatos": 171750,
+        "no_relation_por_relacao": 17.539507772020727
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8040,
+          "negation_of": 1417,
+          "no_relation": 189499
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8040,
+            "fracao": 0.9184372858122002,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1417,
+            "fracao": 0.9745529573590096,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 30,
+        "n_candidatos": 198956,
+        "no_relation_por_relacao": 20.037961298509043
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8252,
+          "negation_of": 1433,
+          "no_relation": 242283
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8252,
+            "fracao": 0.9426547863833676,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1433,
+            "fracao": 0.9855570839064649,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 40,
+        "n_candidatos": 251968,
+        "no_relation_por_relacao": 25.016313887454828
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8360,
+          "negation_of": 1434,
+          "no_relation": 293050
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8360,
+            "fracao": 0.9549920036554718,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1434,
+            "fracao": 0.9862448418156808,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 50,
+        "n_candidatos": 302844,
+        "no_relation_por_relacao": 29.921380437002245
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8514,
+          "negation_of": 1435,
+          "no_relation": 415697
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8514,
+            "fracao": 0.9725839616175462,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1435,
+            "fracao": 0.9869325997248969,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 75,
+        "n_candidatos": 425646,
+        "no_relation_por_relacao": 41.782792240426176
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8580,
+          "negation_of": 1435,
+          "no_relation": 531897
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8580,
+            "fracao": 0.980123372172721,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1435,
+            "fracao": 0.9869325997248969,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 100,
+        "n_candidatos": 541912,
+        "no_relation_por_relacao": 53.11003494757863
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8641,
+          "negation_of": 1435,
+          "no_relation": 748352
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8641,
+            "fracao": 0.9870916152615947,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1435,
+            "fracao": 0.9869325997248969,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 150,
+        "n_candidatos": 758428,
+        "no_relation_por_relacao": 74.2707423580786
+      },
+      {
+        "candidatos_por_rotulo": {
+          "associated_with": 8674,
+          "negation_of": 1435,
+          "no_relation": 943935
+        },
+        "cobertura": {
+          "associated_with": {
+            "cobertas": 8674,
+            "fracao": 0.9908613205391821,
+            "total": 8754
+          },
+          "negation_of": {
+            "cobertas": 1435,
+            "fracao": 0.9869325997248969,
+            "total": 1454
+          }
+        },
+        "da_tarefa": false,
+        "max_gap": 200,
+        "n_candidatos": 954044,
+        "no_relation_por_relacao": 93.37570481748936
+      }
+    ],
+    "max_gap_da_tarefa": 25,
+    "n_documentos": 900,
+    "relacoes_anotadas": {
+      "associated_with": 8754,
+      "negation_of": 1454
+    }
+  }
+}

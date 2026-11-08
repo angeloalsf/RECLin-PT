@@ -1,0 +1,22 @@
+%% GERADO por analise/gerar_tabelas_diagnosticos.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Documentos quase duplicados identificados no corpus (as partições não foram alteradas).}
+  \label{tab:quase_duplicatas}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llrlll}
+  \toprule
+  Documentos & Partições & Espaços diferentes & Entidades (a/b/comum) & Relações (a/b/comum) & \texttt{negation\_of} (a/b/comum) \\
+  \midrule
+9280 / 9271 & treino / DEV & 4 & 1 / 1 / 1 & 0 / 0 / 0 & -- \\
+9531 / 9632 & treino / treino & 13 & 40 / 43 / 21 & 13 / 17 / 8 & 1 / 1 / 1 \\
+9532 / 9633 & treino / treino & 4 & 34 / 33 / 20 & 8 / 7 / 6 & -- \\
+9533 / 9634 & treino / treino & 4 & 49 / 55 / 23 & 18 / 26 / 10 & 1 / 1 / 1 \\
+9635 / 9534 & treino / teste & 3 & 59 / 58 / 34 & 20 / 19 / 11 & 2 / 2 / 2 \\
+9636 / 9535 & treino / teste & 8 & 58 / 60 / 39 & 24 / 27 / 16 & 2 / 2 / 2 \\
+9637 / 9536 & treino / teste & 4 & 46 / 47 / 30 & 22 / 22 / 16 & 1 / 1 / 1 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Jaccard de \emph{shingles} de 8 caracteres do texto sem espaços em branco, limiar 0{,}8. Todos os pares ficam idênticos sem os espaços. ``Em comum'': texto e tipo das entidades e dos argumentos das relações, sem \emph{offsets}.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

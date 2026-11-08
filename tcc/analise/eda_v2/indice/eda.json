@@ -1,0 +1,110 @@
+{
+  "aviso": "Gerado por codigo/scripts/gerar_tcc.py a partir de execuções verificadas; não edite à mão.",
+  "fase": "validação inicial, seed 42",
+  "figuras": [
+    "/home/claude/tcc_v2/analise/eda_v2/figuras/eda_relacoes_candidatas.pdf",
+    "/home/claude/tcc_v2/analise/eda_v2/figuras/eda_relacoes_candidatas.png"
+  ],
+  "grupo": "eda",
+  "natureza": "dados",
+  "tabelas": {
+    "eda_cobertura": {
+      "natureza": "dados",
+      "notas": [],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "e31ea6e3b3b092ca3d092d8a21523a97be40f624f28757babd04a41b803eb420",
+      "status": "completa",
+      "titulo": "Relações anotadas cobertas pelos pares candidatos"
+    },
+    "eda_corpus": {
+      "natureza": "dados",
+      "notas": [
+        "Pares candidatos com max_gap = 25 caracteres (tarefa.MAX_GAP)."
+      ],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "7313c630d5145f35b1ff99b3852a78ef5b3d3b84b2468e7e0ec1518d96bd533b",
+      "status": "completa",
+      "titulo": "Corpus por partição"
+    },
+    "eda_distancias_train": {
+      "natureza": "dados",
+      "notas": [],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "88656b2ff7b526cede9ab0d2bcfbb92c8f080d3fab619c259861c77a32965621",
+      "status": "completa",
+      "titulo": "Distância entre as entidades das relações (TRAIN)"
+    },
+    "eda_entidades_train": {
+      "natureza": "dados",
+      "notas": [],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "52bf97ea43fd52f6ced354c97306d90010b9388053d39f6185f8a79452bcc5de",
+      "status": "completa",
+      "titulo": "Tipos de entidade mais frequentes (TRAIN)"
+    },
+    "eda_max_gap_train_dev": {
+      "natureza": "dados",
+      "notas": [],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "ad7f0bfcd69a6fe5e22a2f9746ebc3d400438aaa7cd0d71205c8cd9e2268fd76",
+      "status": "completa",
+      "titulo": "Sensibilidade ao max_gap (train_dev)"
+    },
+    "eda_proporcao_rotulos": {
+      "natureza": "dados",
+      "notas": [],
+      "origens": [
+        {
+          "estrategia": "dados",
+          "execucao": "particoes congeladas",
+          "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+          "natureza": "dados"
+        }
+      ],
+      "pendencias": [],
+      "sha256_tex": "6a0ba0d04b20fe7033a741c7b87ab9756a70232b62861ba7ebebb4898595886d",
+      "status": "completa",
+      "titulo": "Proporção de cada rótulo entre os pares candidatos"
+    }
+  }
+}

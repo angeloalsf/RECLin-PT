@@ -1,0 +1,35 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{\texttt{associated\_with} e \texttt{no\_relation} no DEV: precisão, \emph{recall}, F1, VP/FP/FN e AP de \texttt{associated\_with}.}
+  \label{tab:dev_classes}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{llrrrrrrrr}
+  \toprule
+  & & \multicolumn{5}{c}{\texttt{associated\_with}} & \multicolumn{3}{c}{\texttt{no\_relation}} \\
+  \cmidrule(lr){3-7}\cmidrule(lr){8-10}
+  Estratégia & \emph{Encoder} & P & R & F1 & VP/FP/FN & AP & P & R & F1 \\
+  \midrule
+Pair-Aware linear & BioBERTpt-all & 0{,}305 & 0{,}764 & 0{,}436 & 583/1326/180 & 0{,}445 & 0{,}989 & 0{,}925 & 0{,}956 \\
+ & BioBERTpt-clin & 0{,}319 & 0{,}785 & 0{,}454 & 599/1276/164 & 0{,}446 & 0{,}990 & 0{,}927 & 0{,}958 \\
+ & BERTimbau-base & 0{,}304 & 0{,}765 & 0{,}435 & 584/1340/179 & 0{,}413 & 0{,}990 & 0{,}923 & 0{,}955 \\
+\midrule
+Baseline & BioBERTpt-all & 0{,}271 & 0{,}826 & 0{,}408 & 630/1696/133 & 0{,}425 & 0{,}992 & 0{,}904 & 0{,}946 \\
+ & BioBERTpt-clin & 0{,}292 & 0{,}785 & 0{,}426 & 599/1453/164 & 0{,}416 & 0{,}990 & 0{,}917 & 0{,}952 \\
+ & BERTimbau-base & 0{,}285 & 0{,}782 & 0{,}417 & 597/1501/166 & 0{,}396 & 0{,}990 & 0{,}915 & 0{,}951 \\
+\midrule
+Two-Stage & BioBERTpt-all ($\tau=0{,}95$) & 0{,}508 & 0{,}286 & 0{,}366 & 218/211/545 & -- & 0{,}970 & 0{,}987 & 0{,}978 \\
+ & BioBERTpt-clin ($\tau=0{,}95$) & 0{,}481 & 0{,}315 & 0{,}380 & 240/259/523 & -- & 0{,}971 & 0{,}984 & 0{,}977 \\
+ & BERTimbau-base ($\tau=0{,}85$) & 0{,}364 & 0{,}626 & 0{,}461 & 478/834/285 & -- & 0{,}984 & 0{,}952 & 0{,}968 \\
+\midrule
+Pair-Aware MLP & BioBERTpt-all & 0{,}308 & 0{,}760 & 0{,}438 & 580/1305/183 & 0{,}436 & 0{,}989 & 0{,}925 & 0{,}956 \\
+\midrule
+Baseline calibrado & BioBERTpt-all ($t=0{,}90$) & 0{,}270 & 0{,}826 & 0{,}407 & 630/1700/133 & 0{,}425 & 0{,}992 & 0{,}904 & 0{,}946 \\
+\midrule
+Filtro léxico & BioBERTpt-all & 0{,}271 & 0{,}826 & 0{,}408 & 630/1696/133 & -- & 0{,}992 & 0{,}905 & 0{,}946 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize AP: precisão média de \texttt{associated\_with} calculada das probabilidades gravadas, sem limiar; não se aplica ao Two-Stage (as probabilidades do estágio 2 não são gravadas) nem ao filtro léxico (pós-processamento sem probabilidades próprias). O baseline calibrado usa as probabilidades do baseline, por isso a mesma AP.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

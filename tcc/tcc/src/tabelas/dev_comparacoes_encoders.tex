@@ -1,0 +1,68 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begingroup\small\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{4pt}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\LTcapwidth}{\textwidth}
+\Needspace*{0.3\textheight}
+\begin{longtable}{@{\extracolsep{\fill}}lrcc}
+\caption{Comparação entre \emph{encoders} dentro de cada estratégia, no DEV, por métrica (mesma configuração; só o \emph{checkpoint} de pré-treino muda).}\label{tab:dev_comparacoes_encoders} \\
+\toprule
+Estratégia e comparação (A $-$ B) & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+\midrule
+\endfirsthead
+\multicolumn{4}{l}{\footnotesize Tabela~\thetable{} -- continuação} \\
+\toprule
+Estratégia e comparação (A $-$ B) & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{\footnotesize continua} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{4}{l}{\textit{Métrica:} F1 de \texttt{negation\_of}} \\*
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Pair-Aware linear}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $-0{,}0038$ & $[-0{,}026;\,+0{,}018]$ & $[-0{,}023;\,+0{,}016]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $-0{,}0112$ & $[-0{,}036;\,+0{,}013]$ & $[-0{,}038;\,+0{,}014]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0074$ & $[-0{,}013;\,+0{,}029]$ & $[-0{,}014;\,+0{,}029]$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Baseline}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0117$ & $[-0{,}013;\,+0{,}036]$ & $[-0{,}009;\,+0{,}035]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $-0{,}0023$ & $[-0{,}029;\,+0{,}025]$ & $[-0{,}029;\,+0{,}028]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0140$ & $[-0{,}009;\,+0{,}038]$ & $[-0{,}010;\,+0{,}036]$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Two-Stage}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0011$ & $[-0{,}029;\,+0{,}031]$ & $[-0{,}027;\,+0{,}031]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $-0{,}0054$ & $[-0{,}037;\,+0{,}026]$ & $[-0{,}036;\,+0{,}026]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0065$ & $[-0{,}026;\,+0{,}039]$ & $[-0{,}027;\,+0{,}040]$ \\
+\midrule
+\multicolumn{4}{l}{\textit{Métrica:} F1 de \texttt{associated\_with}} \\*
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Pair-Aware linear}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0178$ & $[+0{,}006;\,+0{,}030]$$^{\ast}$ & $[+0{,}003;\,+0{,}034]$$^{\ast}$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $-0{,}0017$ & $[-0{,}015;\,+0{,}011]$ & $[-0{,}013;\,+0{,}011]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0194$ & $[+0{,}006;\,+0{,}033]$$^{\ast}$ & $[+0{,}002;\,+0{,}038]$$^{\ast}$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Baseline}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0177$ & $[+0{,}005;\,+0{,}030]$$^{\ast}$ & $[+0{,}004;\,+0{,}032]$$^{\ast}$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $+0{,}0094$ & $[-0{,}003;\,+0{,}022]$ & $[-0{,}008;\,+0{,}025]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0082$ & $[-0{,}005;\,+0{,}021]$ & $[-0{,}009;\,+0{,}025]$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Two-Stage}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0146$ & $[-0{,}013;\,+0{,}042]$ & $[-0{,}015;\,+0{,}047]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $+0{,}0950$ & $[+0{,}061;\,+0{,}129]$$^{\ast}$ & $[+0{,}052;\,+0{,}138]$$^{\ast}$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $-0{,}0804$ & $[-0{,}112;\,-0{,}049]$$^{\ast}$ & $[-0{,}123;\,-0{,}037]$$^{\ast}$ \\
+\midrule
+\multicolumn{4}{l}{\textit{Métrica:} Macro-F1} \\*
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Pair-Aware linear}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0052$ & $[-0{,}003;\,+0{,}014]$ & $[-0{,}004;\,+0{,}014]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $-0{,}0045$ & $[-0{,}014;\,+0{,}005]$ & $[-0{,}015;\,+0{,}006]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0097$ & $[+0{,}001;\,+0{,}019]$$^{\ast}$ & $[-0{,}001;\,+0{,}020]$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Baseline}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0120$ & $[+0{,}003;\,+0{,}021]$$^{\ast}$ & $[+0{,}003;\,+0{,}022]$$^{\ast}$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $+0{,}0041$ & $[-0{,}006;\,+0{,}014]$ & $[-0{,}006;\,+0{,}015]$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $+0{,}0079$ & $[-0{,}001;\,+0{,}017]$ & $[-0{,}001;\,+0{,}017]$ \\
+\addlinespace[2pt]\multicolumn{4}{l}{\quad\textit{Two-Stage}} \\*
+\quad BioBERTpt-clin $-$ BioBERTpt-all & $+0{,}0049$ & $[-0{,}009;\,+0{,}019]$ & $[-0{,}008;\,+0{,}020]$ \\
+\quad BERTimbau-base $-$ BioBERTpt-all & $+0{,}0263$ & $[+0{,}011;\,+0{,}042]$$^{\ast}$ & $[+0{,}007;\,+0{,}046]$$^{\ast}$ \\
+\quad BioBERTpt-clin $-$ BERTimbau-base & $-0{,}0213$ & $[-0{,}037;\,-0{,}006]$$^{\ast}$ & $[-0{,}040;\,-0{,}003]$$^{\ast}$ \\
+\end{longtable}
+\vspace{-\baselineskip}
+\nopagebreak\noindent\begin{minipage}{\linewidth}
+{\footnotesize Descritivas, no DEV: as épocas, $\tau$ e $t$ foram escolhidos neste mesmo conjunto; não substituem as comparações pré-registradas no teste. A e B usam a mesma estratégia e a mesma configuração; só o \emph{checkpoint} de pré-treino muda. $\Delta$: diferença observada A $-$ B no DEV completo. IC95\% (candidato): \emph{bootstrap} pareado que reamostra com reposição os 19\,064 pares candidatos, o do protocolo (10.000 reamostras, semente 42). IC95\% (documento): \emph{bootstrap} pareado que reamostra com reposição os 98 documentos do DEV que têm pares candidatos, cada um com todos os seus pares (10.000 reamostras, semente 42). As três métricas são calculadas sobre as mesmas reamostras de cada nível. Intervalos: percentis 2,5 e 97,5 das diferenças reamostradas. $^{\ast}$: intervalo que exclui o zero. Limites que arredondariam a zero com três casas aparecem com mais casas.\par}\vspace{4pt}
+{\footnotesize Fonte: elaborado pelo autor.}
+\end{minipage}\par
+\endgroup

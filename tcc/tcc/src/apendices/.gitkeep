@@ -1,0 +1,10 @@
+# Apêndices do TCC (material AUTORAL de apoio).
+#
+# Exemplos planejados:
+#   - apendice_a_sha256sums.tex    (hashes dos splits congelados)
+#   - apendice_b_lexico_negacao.tex (marcadores NegEx em PT)
+#   - apendice_c_hiperparametros.tex
+#
+# Para incluir: em main.tex, após \postextual, adicionar:
+#   \apendice
+#   \input{apendices/apendice_a_sha256sums}

@@ -1,0 +1,132 @@
+{
+  "n_documentos": 1000,
+  "n_sementes": 200,
+  "proveniencia": {
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "particoes_sha256": {
+      "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "test": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666",
+      "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+    },
+    "pasta_particoes": "dados/particoes-v2"
+  },
+  "referencia": {
+    "dev": {
+      "associated_with": 832,
+      "documentos": 100,
+      "documentos_com_negation_of": 67,
+      "negation_of": 155
+    },
+    "test": {
+      "associated_with": 1098,
+      "documentos": 100,
+      "documentos_com_negation_of": 67,
+      "negation_of": 152
+    },
+    "train": {
+      "associated_with": 7922,
+      "documentos": 800,
+      "documentos_com_negation_of": 533,
+      "negation_of": 1299
+    }
+  },
+  "resumo": {
+    "dev": {
+      "associated_with": {
+        "max": 1211,
+        "mediana": 979,
+        "min": 765,
+        "p5": 841,
+        "p95": 1117,
+        "percentil_da_referencia": 0.045,
+        "semente_de_referencia": 832
+      },
+      "documentos_com_negation_of": {
+        "max": 67,
+        "mediana": 67,
+        "min": 67,
+        "p5": 67,
+        "p95": 67,
+        "percentil_da_referencia": 1.0,
+        "semente_de_referencia": 67
+      },
+      "negation_of": {
+        "max": 201,
+        "mediana": 157,
+        "min": 127,
+        "p5": 137,
+        "p95": 186,
+        "percentil_da_referencia": 0.47,
+        "semente_de_referencia": 155
+      }
+    },
+    "test": {
+      "associated_with": {
+        "max": 1153,
+        "mediana": 984,
+        "min": 812,
+        "p5": 875,
+        "p95": 1103,
+        "percentil_da_referencia": 0.94,
+        "semente_de_referencia": 1098
+      },
+      "documentos_com_negation_of": {
+        "max": 67,
+        "mediana": 67,
+        "min": 67,
+        "p5": 67,
+        "p95": 67,
+        "percentil_da_referencia": 1.0,
+        "semente_de_referencia": 67
+      },
+      "negation_of": {
+        "max": 202,
+        "mediana": 159,
+        "min": 118,
+        "p5": 138,
+        "p95": 191,
+        "percentil_da_referencia": 0.28,
+        "semente_de_referencia": 152
+      }
+    },
+    "train": {
+      "associated_with": {
+        "max": 8136,
+        "mediana": 7897,
+        "min": 7622,
+        "p5": 7737,
+        "p95": 8067,
+        "percentil_da_referencia": 0.61,
+        "semente_de_referencia": 7922
+      },
+      "documentos_com_negation_of": {
+        "max": 533,
+        "mediana": 533,
+        "min": 533,
+        "p5": 533,
+        "p95": 533,
+        "percentil_da_referencia": 1.0,
+        "semente_de_referencia": 533
+      },
+      "negation_of": {
+        "max": 1341,
+        "mediana": 1286,
+        "min": 1236,
+        "p5": 1254,
+        "p95": 1315,
+        "percentil_da_referencia": 0.775,
+        "semente_de_referencia": 1299
+      }
+    }
+  },
+  "semente_42_reproduz_as_particoes_congeladas": {
+    "dev": true,
+    "test": true,
+    "train": true
+  },
+  "semente_de_referencia": 42,
+  "sementes": [
+    0,
+    199
+  ]
+}

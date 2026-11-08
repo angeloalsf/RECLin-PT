@@ -1,0 +1,33 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Resultados no DEV das três estratégias com os três \emph{encoders}, da variante MLP e dos controles: precisão (P), \emph{recall} (R) e F1 de \texttt{negation\_of}, VP/FP/FN, F1 das outras classes, macro-F1 e MCC.}
+  \label{tab:dev_sistemas}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{llrrrrrrrr}
+  \toprule
+  Estratégia & \emph{Encoder} & \begin{tabular}[b]{@{}c@{}}P\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}R\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}VP/FP/FN\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\assoc\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\no\_rel\end{tabular} & Macro-F1 & MCC \\
+  \midrule
+Pair-Aware linear & BioBERTpt-all & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & 0{,}436 & 0{,}956 & 0{,}741 & 0{,}497 \\
+ & BioBERTpt-clin & 0{,}732 & 0{,}947 & 0{,}826 & 142/52/8 & 0{,}454 & 0{,}958 & 0{,}746 & 0{,}514 \\
+ & BERTimbau-base & 0{,}713 & 0{,}960 & 0{,}818 & 144/58/6 & 0{,}435 & 0{,}955 & 0{,}736 & 0{,}497 \\
+\midrule
+Baseline & BioBERTpt-all & 0{,}696 & 0{,}947 & 0{,}802 & 142/62/8 & 0{,}408 & 0{,}946 & 0{,}719 & 0{,}480 \\
+ & BioBERTpt-clin & 0{,}722 & 0{,}933 & 0{,}814 & 140/54/10 & 0{,}426 & 0{,}952 & 0{,}731 & 0{,}489 \\
+ & BERTimbau-base & 0{,}708 & 0{,}920 & 0{,}800 & 138/57/12 & 0{,}417 & 0{,}951 & 0{,}723 & 0{,}480 \\
+\midrule
+Two-Stage & BioBERTpt-all ($\tau=0{,}95$) & 0{,}798 & 0{,}867 & 0{,}831 & 130/33/20 & 0{,}366 & 0{,}978 & 0{,}725 & 0{,}462 \\
+ & BioBERTpt-clin ($\tau=0{,}95$) & 0{,}768 & 0{,}907 & 0{,}832 & 136/41/14 & 0{,}380 & 0{,}977 & 0{,}730 & 0{,}464 \\
+ & BERTimbau-base ($\tau=0{,}85$) & 0{,}753 & 0{,}913 & 0{,}825 & 137/45/13 & 0{,}461 & 0{,}968 & 0{,}751 & 0{,}505 \\
+\midrule
+Pair-Aware MLP & BioBERTpt-all & 0{,}715 & 0{,}953 & 0{,}817 & 143/57/7 & 0{,}438 & 0{,}956 & 0{,}737 & 0{,}498 \\
+\midrule
+Baseline calibrado & BioBERTpt-all ($t=0{,}90$) & 0{,}723 & 0{,}920 & 0{,}809 & 138/53/12 & 0{,}407 & 0{,}946 & 0{,}721 & 0{,}479 \\
+\midrule
+Filtro léxico & BioBERTpt-all & 0{,}750 & 0{,}900 & 0{,}818 & 135/45/15 & 0{,}408 & 0{,}946 & 0{,}724 & 0{,}477 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize DEV, $n=19\,064$ pares candidatos (150 \texttt{negation\_of}, 763 \texttt{associated\_with}), semente 42. Não são resultados de teste. A época de cada modelo, $\tau$ (Two-Stage) e $t$ (baseline calibrado) foram escolhidos neste mesmo DEV. O protocolo pré-registrado fixa o BioBERTpt-all; as execuções com o BioBERTpt-clin e o BERTimbau-base são variantes de \emph{encoder} fora do pré-registro, e a Pair-Aware MLP é exploratória.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

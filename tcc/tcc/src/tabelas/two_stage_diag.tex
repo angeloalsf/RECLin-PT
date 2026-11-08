@@ -1,0 +1,19 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Two-Stage no DEV, por \emph{encoder}: o que o estágio 1 encaminha com o $\tau$ congelado e quanto o estágio 2 acerta do tipo.}
+  \label{tab:two_stage_diag}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{lrrrrrr}
+  \toprule
+  \emph{Encoder} & $\tau$ & Roteados & \begin{tabular}[b]{@{}c@{}}Sem relação\\anotada\end{tabular} & \begin{tabular}[b]{@{}c@{}}\emph{Recall} est.\,1\\(neg)\end{tabular} & \begin{tabular}[b]{@{}c@{}}\emph{Recall} est.\,1\\(relação)\end{tabular} & \begin{tabular}[b]{@{}c@{}}Acerto\\do tipo\end{tabular} \\
+  \midrule
+BioBERTpt-all & 0{,}95 & 592 & 237 & 88{,}7\% & 38{,}9\% & 98{,}0\% \\
+BioBERTpt-clin & 0{,}95 & 676 & 294 & 90{,}7\% & 41{,}8\% & 98{,}4\% \\
+BERTimbau-base & 0{,}85 & 1\,494 & 870 & 92{,}7\% & 68{,}3\% & 98{,}6\% \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Diagnóstico do fluxo real, gravado na composição (\texttt{metricas.json}); não é resultado da arquitetura. Acerto do tipo: entre os pares roteados que têm relação anotada.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

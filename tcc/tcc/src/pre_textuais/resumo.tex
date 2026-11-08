@@ -1,0 +1,81 @@
+% RESUMO - PT
+\begin{resumo}
+  \vspace{-15pt}
+
+  O registro eletrônico em saúde concentra grande parte da informação clínica em
+  texto livre, no qual a relação entre conceitos, em especial a negação de
+  achados, é determinante para a correta interpretação. Este trabalho desenvolve o
+  RECLin-PT, um modelo de extração de relações em notas clínicas em português sobre o
+  corpus SemClinBr, com ênfase na relação \texttt{negation\_of}, no espaço de rótulos
+  \texttt{negation\_of}, \texttt{associated\_with} e \texttt{no\_relation}. A
+  definição de sua configuração é orientada por experimentos controlados, que
+  investigam como a escolha do \emph{encoder} pré-treinado e da estratégia de
+  modelagem influencia o desempenho, com todas as alternativas avaliadas sobre os
+  mesmos dados e pares candidatos e sob um protocolo
+  pré-registrado que fixa os critérios de seleção no conjunto de desenvolvimento (DEV)
+  e reserva o conjunto de teste para uma avaliação única, posterior ao congelamento da
+  configuração. A arquitetura oficial do RECLin-PT é a Pair-Aware linear, que
+  classifica o par a partir das representações do \texttt{[CLS]} e dos marcadores das
+  duas entidades. Os resultados apresentados são preliminares, todos no DEV, com
+  semente 42, e cruzam três \emph{encoders} (BioBERTpt-all, BioBERTpt-clin e
+  BERTimbau-base) com três estratégias (baseline, Pair-Aware linear e Two-Stage). Com
+  os três \emph{encoders}, a Pair-Aware linear alcança F1 de \texttt{negation\_of}
+  de 0,829, 0,826 e 0,818, acima do baseline, e tem macro-F1 maior que o do baseline
+  com diferença detectada pelo \emph{bootstrap} pareado nos três, inclusive por
+  documento. No F1 de \texttt{negation\_of}, a diferença só é detectada com o
+  BioBERTpt-all. O Two-Stage, que detecta a existência de relação antes de decidir o
+  tipo, alcança F1 de \texttt{negation\_of} equivalente (0,825 a 0,832), sem
+  diferença detectada para a Pair-Aware linear, mas depende de um limiar escolhido no
+  DEV que, com os dois BioBERTpt, sacrificou a classe \texttt{associated\_with}.
+  Nenhuma comparação entre \emph{encoders} detectou diferença no F1 de
+  \texttt{negation\_of}. A configuração de referência atual é a Pair-Aware linear
+  com o BioBERTpt-all, \emph{encoder} do protocolo, e a semente 42, mas não é
+  definitiva: novos experimentos seguem permitidos no DEV, e o teste será usado uma
+  única vez, só para o modelo final, após o congelamento.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Palavras-chave}: \palavraschaveemlinha
+\end{resumo}
+
+% RESUMO - EN
+\begin{resumo}[Abstract]
+  \vspace{-15pt}
+
+  \begin{otherlanguage*}{english}
+
+  Electronic health records store much clinical information as free text, in which
+  the relationship between concepts, particularly the negation of findings, is
+  decisive for correct interpretation. This work develops RECLin-PT, a relation
+  extraction model for Portuguese clinical notes on the SemClinBr corpus, with emphasis
+  on the \texttt{negation\_of} relation, in the label space \texttt{negation\_of},
+  \texttt{associated\_with} and \texttt{no\_relation}. The definition of its
+  configuration is informed by controlled experiments that investigate how the
+  choice of pre-trained encoder and of modelling strategy influences performance,
+  with all alternatives evaluated on the
+  same data and candidate pairs and under a pre-registered protocol that fixes
+  selection criteria on the development set (DEV) and reserves the test set for a
+  single evaluation after the configuration is frozen. The official RECLin-PT
+  architecture is the linear Pair-Aware model, which classifies the pair from the
+  representations of \texttt{[CLS]} and of the two entity markers. The results
+  reported here are preliminary, all on DEV, with seed 42, and cross three encoders
+  (BioBERTpt-all, BioBERTpt-clin and BERTimbau-base) with three strategies (baseline,
+  linear Pair-Aware and Two-Stage). With the three encoders, linear Pair-Aware reaches
+  \texttt{negation\_of} F1 of 0.829, 0.826 and 0.818, above the baseline, and has a
+  higher macro-F1 than the baseline, with a difference detected by the paired
+  bootstrap for all three, including at document level. In \texttt{negation\_of}
+  F1, the difference is detected only with BioBERTpt-all. Two-Stage, which detects
+  whether a relation exists before deciding its type, reaches an equivalent
+  \texttt{negation\_of} F1 (0.825 to 0.832), with no difference detected from linear
+  Pair-Aware, but it depends on a threshold chosen on DEV that, with both BioBERTpt
+  models, sacrificed the \texttt{associated\_with} class. No encoder comparison
+  detected a difference in \texttt{negation\_of} F1. The current reference
+  configuration is linear Pair-Aware with BioBERTpt-all, the protocol encoder, and seed
+  42, but it is not final: further experiments remain allowed on DEV, and the test set
+  will be used only once, for the final model only, after freezing.
+
+  \vspace{\onelineskip}
+
+  \noindent\textbf{Keywords}: \inlinekeywords
+\end{otherlanguage*}
+\end{resumo}

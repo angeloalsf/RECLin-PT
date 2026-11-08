@@ -1,0 +1,25 @@
+\chapter[Inventário das execuções]{Inventário das execuções}
+\label{ap:inventario}
+
+A Tabela~\ref{tab:inventario_execucoes} lista as execuções usadas no
+Capítulo~\ref{cap:experimentos}: as pastas de resultados da branch
+\texttt{resultados-colab} do repositório do projeto e as duas execuções derivadas só do
+DEV (baseline calibrado e filtro léxico). O inventário e todas as métricas do
+Capítulo~\ref{cap:experimentos} foram produzidos pelo mesmo procedimento
+reprodutível, que lê apenas os arquivos gravados pelas execuções, recalcula as
+métricas a partir das predições, confere os \emph{hashes} do conjunto de
+desenvolvimento e liga cada composição do Two-Stage aos seus estágios pelos
+\emph{hashes} da configuração e do melhor modelo. Ele não treina, não executa modelos
+e não lê o conjunto de teste.
+
+Três observações complementam a tabela. Primeiro, as execuções usam quatro
+identidades de código. Entre a identidade da Pair-Aware MLP e a das execuções com os
+novos \emph{encoders}, o único arquivo diferente é o da configuração, em que esses
+\emph{encoders} foram incluídos. Segundo, na composição
+do Two-Stage com o BERTimbau-base, o arquivo do limiar registra os estágios com nomes
+diferentes dos nomes das pastas, mas os \emph{hashes} da configuração e do melhor
+modelo de cada estágio coincidem com os registrados nas pastas. Terceiro, os
+\emph{checkpoints} e os registros de console ficam no armazenamento das sessões de
+treino, fora do repositório, e não foram verificados.
+
+\input{tabelas/inventario_execucoes}

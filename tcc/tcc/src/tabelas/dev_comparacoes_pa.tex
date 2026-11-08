@@ -1,0 +1,59 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begingroup\small\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{4pt}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\LTcapwidth}{\textwidth}
+\Needspace*{0.3\textheight}
+\begin{longtable}{@{\extracolsep{\fill}}llrcc}
+\caption{Comparações pareadas descritivas da Pair-Aware linear, no DEV, por métrica: diferenças e intervalos de confiança de F1 de \texttt{negation\_of}, de F1 de \texttt{associated\_with} e de macro-F1.}\label{tab:dev_comparacoes_pa} \\
+\toprule
+B (A = Pair-Aware linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+\midrule
+\endfirsthead
+\multicolumn{5}{l}{\footnotesize Tabela~\thetable{} -- continuação} \\
+\toprule
+B (A = Pair-Aware linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\footnotesize continua} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{5}{l}{\textit{Métrica:} F1 de \texttt{negation\_of}} \\*
+Baseline & BioBERTpt-all & $+0{,}0272$ & $[+0{,}005;\,+0{,}051]$$^{\ast}$ & $[+0{,}001;\,+0{,}056]$$^{\ast}$ \\
+Baseline & BioBERTpt-clin & $+0{,}0116$ & $[-0{,}009;\,+0{,}034]$ & $[-0{,}008;\,+0{,}032]$ \\
+Baseline & BERTimbau-base & $+0{,}0182$ & $[-0{,}009;\,+0{,}046]$ & $[-0{,}011;\,+0{,}045]$ \\
+Two-Stage & BioBERTpt-all & $-0{,}0013$ & $[-0{,}035;\,+0{,}033]$ & $[-0{,}033;\,+0{,}030]$ \\
+Two-Stage & BioBERTpt-clin & $-0{,}0062$ & $[-0{,}037;\,+0{,}026]$ & $[-0{,}039;\,+0{,}026]$ \\
+Two-Stage & BERTimbau-base & $-0{,}0071$ & $[-0{,}036;\,+0{,}022]$ & $[-0{,}048;\,+0{,}029]$ \\
+Pair-Aware MLP & BioBERTpt-all & $+0{,}0123$ & $[-0{,}011;\,+0{,}036]$ & $[-0{,}011;\,+0{,}037]$ \\
+Baseline calibrado & BioBERTpt-all & $+0{,}0200$ & $[0{,}000;\,+0{,}042]$ & $[-0{,}002;\,+0{,}043]$ \\
+Filtro léxico & BioBERTpt-all & $+0{,}0112$ & $[-0{,}013;\,+0{,}036]$ & $[-0{,}017;\,+0{,}039]$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Métrica:} F1 de \texttt{associated\_with}} \\*
+Baseline & BioBERTpt-all & $+0{,}0285$ & $[+0{,}015;\,+0{,}042]$$^{\ast}$ & $[+0{,}009;\,+0{,}046]$$^{\ast}$ \\
+Baseline & BioBERTpt-clin & $+0{,}0286$ & $[+0{,}016;\,+0{,}042]$$^{\ast}$ & $[+0{,}014;\,+0{,}042]$$^{\ast}$ \\
+Baseline & BERTimbau-base & $+0{,}0173$ & $[+0{,}005;\,+0{,}029]$$^{\ast}$ & $[+0{,}005;\,+0{,}030]$$^{\ast}$ \\
+Two-Stage & BioBERTpt-all & $+0{,}0706$ & $[+0{,}035;\,+0{,}106]$$^{\ast}$ & $[+0{,}013;\,+0{,}126]$$^{\ast}$ \\
+Two-Stage & BioBERTpt-clin & $+0{,}0738$ & $[+0{,}039;\,+0{,}108]$$^{\ast}$ & $[+0{,}014;\,+0{,}135]$$^{\ast}$ \\
+Two-Stage & BERTimbau-base & $-0{,}0260$ & $[-0{,}043;\,-0{,}008]$$^{\ast}$ & $[-0{,}051;\,+0{,}001]$ \\
+Pair-Aware MLP & BioBERTpt-all & $-0{,}0017$ & $[-0{,}013;\,+0{,}010]$ & $[-0{,}015;\,+0{,}011]$ \\
+Baseline calibrado & BioBERTpt-all & $+0{,}0290$ & $[+0{,}015;\,+0{,}042]$$^{\ast}$ & $[+0{,}009;\,+0{,}047]$$^{\ast}$ \\
+Filtro léxico & BioBERTpt-all & $+0{,}0285$ & $[+0{,}015;\,+0{,}042]$$^{\ast}$ & $[+0{,}009;\,+0{,}046]$$^{\ast}$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Métrica:} Macro-F1} \\*
+Baseline & BioBERTpt-all & $+0{,}0219$ & $[+0{,}013;\,+0{,}031]$$^{\ast}$ & $[+0{,}010;\,+0{,}034]$$^{\ast}$ \\
+Baseline & BioBERTpt-clin & $+0{,}0151$ & $[+0{,}006;\,+0{,}024]$$^{\ast}$ & $[+0{,}007;\,+0{,}023]$$^{\ast}$ \\
+Baseline & BERTimbau-base & $+0{,}0134$ & $[+0{,}003;\,+0{,}024]$$^{\ast}$ & $[+0{,}004;\,+0{,}023]$$^{\ast}$ \\
+Two-Stage & BioBERTpt-all & $+0{,}0157$ & $[-0{,}001;\,+0{,}032]$ & $[-0{,}008;\,+0{,}038]$ \\
+Two-Stage & BioBERTpt-clin & $+0{,}0159$ & $[+0{,}0004;\,+0{,}032]$$^{\ast}$ & $[-0{,}008;\,+0{,}040]$ \\
+Two-Stage & BERTimbau-base & $-0{,}0151$ & $[-0{,}027;\,-0{,}003]$$^{\ast}$ & $[-0{,}033;\,+0{,}001]$ \\
+Pair-Aware MLP & BioBERTpt-all & $+0{,}0034$ & $[-0{,}005;\,+0{,}012]$ & $[-0{,}005;\,+0{,}013]$ \\
+Baseline calibrado & BioBERTpt-all & $+0{,}0196$ & $[+0{,}011;\,+0{,}029]$$^{\ast}$ & $[+0{,}009;\,+0{,}030]$$^{\ast}$ \\
+Filtro léxico & BioBERTpt-all & $+0{,}0165$ & $[+0{,}007;\,+0{,}026]$$^{\ast}$ & $[+0{,}006;\,+0{,}027]$$^{\ast}$ \\
+\end{longtable}
+\vspace{-\baselineskip}
+\nopagebreak\noindent\begin{minipage}{\linewidth}
+{\footnotesize Descritivas, no DEV: as épocas, $\tau$ e $t$ foram escolhidos neste mesmo conjunto; não substituem as comparações pré-registradas no teste. A é a Pair-Aware linear; A e B usam o mesmo \emph{encoder}. $\Delta$: diferença observada A $-$ B no DEV completo. IC95\% (candidato): \emph{bootstrap} pareado que reamostra com reposição os 19\,064 pares candidatos, o do protocolo (10.000 reamostras, semente 42). IC95\% (documento): \emph{bootstrap} pareado que reamostra com reposição os 98 documentos do DEV que têm pares candidatos, cada um com todos os seus pares (10.000 reamostras, semente 42). As três métricas são calculadas sobre as mesmas reamostras de cada nível. Intervalos: percentis 2,5 e 97,5 das diferenças reamostradas. $^{\ast}$: intervalo que exclui o zero. Limites que arredondariam a zero com três casas aparecem com mais casas. O teste de McNemar dessas comparações está no Quadro~\ref{quad:mcnemar}.\par}\vspace{4pt}
+{\footnotesize Fonte: elaborado pelo autor.}
+\end{minipage}\par
+\endgroup

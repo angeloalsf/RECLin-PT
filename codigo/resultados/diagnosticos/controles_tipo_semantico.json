@@ -1,0 +1,105 @@
+{
+  "max_gap": 25,
+  "natureza": "controle diagnóstico informado pelas anotações (tipos semânticos do SemClinBr); não é configuração experimental do RECLin-PT",
+  "particoes": {
+    "dev": {
+      "controle_tipo": {
+        "nivel_entidade": {
+          "f1": 0.7331536388140162,
+          "fn": 5,
+          "fp": 94,
+          "n_entidades": 4513,
+          "precision": 0.591304347826087,
+          "previsao": "entidade com o tipo Negation",
+          "recall": 0.9645390070921985,
+          "tp": 136,
+          "verdade": "entidade que é e1 de ao menos uma negation_of anotada"
+        },
+        "nivel_par": {
+          "f1": 0.27724665391969405,
+          "fn": 5,
+          "fp": 751,
+          "max_gap": 25,
+          "n_candidatos": 19064,
+          "precision": 0.16183035714285715,
+          "previsao": "negation_of para todo candidato com e1 Negation e e2 sem Negation",
+          "recall": 0.9666666666666667,
+          "tp": 145
+        }
+      },
+      "controle_tipo_posicao": {
+        "contagens_da_regra": {
+          "alvo_fora_da_janela": 8,
+          "pares_previstos": 222,
+          "pistas": 230,
+          "pistas_sem_entidade_seguinte": 0
+        },
+        "f1": 0.6989247311827957,
+        "fn": 20,
+        "fp": 92,
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "negation_of_anotadas": 155,
+        "precision": 0.5855855855855856,
+        "previsao": "negation_of para (pista, entidade seguinte): pista = entidade com o tipo Negation; alvo = primeira entidade sem Negation que começa depois do fim da pista",
+        "recall": 0.8666666666666667,
+        "recall_sobre_anotadas": 0.8387096774193549,
+        "tp": 130
+      }
+    },
+    "train": {
+      "controle_tipo": {
+        "nivel_entidade": {
+          "f1": 0.7480053191489362,
+          "fn": 42,
+          "fp": 716,
+          "n_entidades": 36455,
+          "precision": 0.6110809342748507,
+          "previsao": "entidade com o tipo Negation",
+          "recall": 0.9640102827763496,
+          "tp": 1125,
+          "verdade": "entidade que é e1 de ao menos uma negation_of anotada"
+        },
+        "nivel_par": {
+          "f1": 0.28017092042961084,
+          "fn": 42,
+          "fp": 6191,
+          "max_gap": 25,
+          "n_candidatos": 152686,
+          "precision": 0.16383036196650458,
+          "previsao": "negation_of para todo candidato com e1 Negation e e2 sem Negation",
+          "recall": 0.9665338645418327,
+          "tp": 1213
+        }
+      },
+      "controle_tipo_posicao": {
+        "contagens_da_regra": {
+          "alvo_fora_da_janela": 55,
+          "pares_previstos": 1773,
+          "pistas": 1841,
+          "pistas_sem_entidade_seguinte": 13
+        },
+        "f1": 0.7192866578599736,
+        "fn": 166,
+        "fp": 684,
+        "max_gap": 25,
+        "n_candidatos": 152686,
+        "negation_of_anotadas": 1299,
+        "precision": 0.6142131979695431,
+        "previsao": "negation_of para (pista, entidade seguinte): pista = entidade com o tipo Negation; alvo = primeira entidade sem Negation que começa depois do fim da pista",
+        "recall": 0.8677290836653386,
+        "recall_sobre_anotadas": 0.8383371824480369,
+        "tp": 1089
+      }
+    }
+  },
+  "proveniencia": {
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "particoes_sha256": {
+      "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+    },
+    "pasta_particoes": "dados/particoes-v2"
+  },
+  "tipo_pista": "Negation"
+}

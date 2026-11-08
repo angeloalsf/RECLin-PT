@@ -1,0 +1,5 @@
+Partição,Documentos,Entidades,negation_of,associated_with,Pares candidatos,no_relation
+TRAIN,800,36455,1299,7922,152686,144335
+DEV,100,4513,155,832,19064,18151
+TEST,100,4540,152,1098,19210,18062
+Total,1000,45508,1606,9852,190960,180548

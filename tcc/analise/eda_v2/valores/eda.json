@@ -1,0 +1,1028 @@
+{
+  "cobertura.dev.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "0,9171",
+    "valor": 0.9170673076923077
+  },
+  "cobertura.dev.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "0,9677",
+    "valor": 0.967741935483871
+  },
+  "cobertura.test.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "0,9071",
+    "valor": 0.907103825136612
+  },
+  "cobertura.test.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "1,0000",
+    "valor": 1.0
+  },
+  "cobertura.train.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "0,8957",
+    "valor": 0.8957334006564
+  },
+  "cobertura.train.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_cobertura",
+    "texto": "0,9661",
+    "valor": 0.9661277906081601
+  },
+  "corpus.dev.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "19.064",
+    "valor": 19064
+  },
+  "corpus.dev.candidatos_no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "18.151",
+    "valor": 18151
+  },
+  "corpus.dev.documentos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "100",
+    "valor": 100
+  },
+  "corpus.dev.entidades": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "4.513",
+    "valor": 4513
+  },
+  "corpus.dev.relacoes_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "832",
+    "valor": 832
+  },
+  "corpus.dev.relacoes_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "155",
+    "valor": 155
+  },
+  "corpus.test.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "19.210",
+    "valor": 19210
+  },
+  "corpus.test.candidatos_no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "18.062",
+    "valor": 18062
+  },
+  "corpus.test.documentos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "100",
+    "valor": 100
+  },
+  "corpus.test.entidades": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "4.540",
+    "valor": 4540
+  },
+  "corpus.test.relacoes_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "1.098",
+    "valor": 1098
+  },
+  "corpus.test.relacoes_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "152",
+    "valor": 152
+  },
+  "corpus.total.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "190.960",
+    "valor": 190960
+  },
+  "corpus.total.candidatos_no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "180.548",
+    "valor": 180548
+  },
+  "corpus.total.documentos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "1.000",
+    "valor": 1000
+  },
+  "corpus.total.entidades": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "45.508",
+    "valor": 45508
+  },
+  "corpus.total.relacoes_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "9.852",
+    "valor": 9852
+  },
+  "corpus.total.relacoes_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "1.606",
+    "valor": 1606
+  },
+  "corpus.train.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "152.686",
+    "valor": 152686
+  },
+  "corpus.train.candidatos_no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "144.335",
+    "valor": 144335
+  },
+  "corpus.train.documentos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "800",
+    "valor": 800
+  },
+  "corpus.train.entidades": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "36.455",
+    "valor": 36455
+  },
+  "corpus.train.relacoes_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "7.922",
+    "valor": 7922
+  },
+  "corpus.train.relacoes_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_corpus",
+    "texto": "1.299",
+    "valor": 1299
+  },
+  "entidades.train.Abbreviation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "936",
+    "valor": 936
+  },
+  "entidades.train.Disease or Syndrome": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "1.070",
+    "valor": 1070
+  },
+  "entidades.train.Finding": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "3.370",
+    "valor": 3370
+  },
+  "entidades.train.Health Care Activity": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "1.727",
+    "valor": 1727
+  },
+  "entidades.train.Laboratory or Test Result": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "1.276",
+    "valor": 1276
+  },
+  "entidades.train.Negation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "1.206",
+    "valor": 1206
+  },
+  "entidades.train.Quantitative Concept": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "2.771",
+    "valor": 2771
+  },
+  "entidades.train.Sign or Symptom": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "2.819",
+    "valor": 2819
+  },
+  "entidades.train.Temporal Concept": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "994",
+    "valor": 994
+  },
+  "entidades.train.Therapeutic or Preventive Procedure": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_entidades_train",
+    "texto": "1.417",
+    "valor": 1417
+  },
+  "gap.train.associated_with.0": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "0",
+    "valor": 0
+  },
+  "gap.train.associated_with.1-5": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "5.160",
+    "valor": 5160
+  },
+  "gap.train.associated_with.11-25": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "1.177",
+    "valor": 1177
+  },
+  "gap.train.associated_with.26-50": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "453",
+    "valor": 453
+  },
+  "gap.train.associated_with.51-100": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "206",
+    "valor": 206
+  },
+  "gap.train.associated_with.6-10": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "779",
+    "valor": 779
+  },
+  "gap.train.associated_with.>100": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "147",
+    "valor": 147
+  },
+  "gap.train.negation_of.0": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "0",
+    "valor": 0
+  },
+  "gap.train.negation_of.1-5": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "1.052",
+    "valor": 1052
+  },
+  "gap.train.negation_of.11-25": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "125",
+    "valor": 125
+  },
+  "gap.train.negation_of.26-50": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "26",
+    "valor": 26
+  },
+  "gap.train.negation_of.51-100": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "1",
+    "valor": 1
+  },
+  "gap.train.negation_of.6-10": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "95",
+    "valor": 95
+  },
+  "gap.train.negation_of.>100": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_distancias_train",
+    "texto": "0",
+    "valor": 0
+  },
+  "max_gap.train_dev.0.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "22",
+    "valor": 22
+  },
+  "max_gap.train_dev.0.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,0000",
+    "valor": 0.0
+  },
+  "max_gap.train_dev.0.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,0000",
+    "valor": 0.0
+  },
+  "max_gap.train_dev.10.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "87.418",
+    "valor": 87418
+  },
+  "max_gap.train_dev.10.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,7506",
+    "valor": 0.7506282842129313
+  },
+  "max_gap.train_dev.10.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,8700",
+    "valor": 0.8700137551581844
+  },
+  "max_gap.train_dev.10.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "10,16",
+    "valor": 10.155946911689638
+  },
+  "max_gap.train_dev.100.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "541.912",
+    "valor": 541912
+  },
+  "max_gap.train_dev.100.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9801",
+    "valor": 0.980123372172721
+  },
+  "max_gap.train_dev.100.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9869",
+    "valor": 0.9869325997248969
+  },
+  "max_gap.train_dev.100.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "53,11",
+    "valor": 53.11003494757863
+  },
+  "max_gap.train_dev.15.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "116.772",
+    "valor": 116772
+  },
+  "max_gap.train_dev.15.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,8239",
+    "valor": 0.8238519533927348
+  },
+  "max_gap.train_dev.15.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9402",
+    "valor": 0.9401650618982118
+  },
+  "max_gap.train_dev.15.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "12,61",
+    "valor": 12.611376617321366
+  },
+  "max_gap.train_dev.150.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "758.428",
+    "valor": 758428
+  },
+  "max_gap.train_dev.150.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9871",
+    "valor": 0.9870916152615947
+  },
+  "max_gap.train_dev.150.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9869",
+    "valor": 0.9869325997248969
+  },
+  "max_gap.train_dev.150.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "74,27",
+    "valor": 74.2707423580786
+  },
+  "max_gap.train_dev.20.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "144.374",
+    "valor": 144374
+  },
+  "max_gap.train_dev.20.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,8674",
+    "valor": 0.86737491432488
+  },
+  "max_gap.train_dev.20.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9525",
+    "valor": 0.952544704264099
+  },
+  "max_gap.train_dev.20.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "15,08",
+    "valor": 15.080864335041213
+  },
+  "max_gap.train_dev.200.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "954.044",
+    "valor": 954044
+  },
+  "max_gap.train_dev.200.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9909",
+    "valor": 0.9908613205391821
+  },
+  "max_gap.train_dev.200.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9869",
+    "valor": 0.9869325997248969
+  },
+  "max_gap.train_dev.200.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "93,38",
+    "valor": 93.37570481748936
+  },
+  "max_gap.train_dev.25.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "171.750",
+    "valor": 171750
+  },
+  "max_gap.train_dev.25.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,8978",
+    "valor": 0.8977610235320996
+  },
+  "max_gap.train_dev.25.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9663",
+    "valor": 0.9662998624484181
+  },
+  "max_gap.train_dev.25.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "17,54",
+    "valor": 17.539507772020727
+  },
+  "max_gap.train_dev.30.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "198.956",
+    "valor": 198956
+  },
+  "max_gap.train_dev.30.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9184",
+    "valor": 0.9184372858122002
+  },
+  "max_gap.train_dev.30.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9746",
+    "valor": 0.9745529573590096
+  },
+  "max_gap.train_dev.30.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "20,04",
+    "valor": 20.037961298509043
+  },
+  "max_gap.train_dev.40.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "251.968",
+    "valor": 251968
+  },
+  "max_gap.train_dev.40.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9427",
+    "valor": 0.9426547863833676
+  },
+  "max_gap.train_dev.40.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9856",
+    "valor": 0.9855570839064649
+  },
+  "max_gap.train_dev.40.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "25,02",
+    "valor": 25.016313887454828
+  },
+  "max_gap.train_dev.5.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "61.982",
+    "valor": 61982
+  },
+  "max_gap.train_dev.5.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,6525",
+    "valor": 0.6525017135023989
+  },
+  "max_gap.train_dev.5.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,7999",
+    "valor": 0.7998624484181568
+  },
+  "max_gap.train_dev.5.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "8,02",
+    "valor": 8.015563636363636
+  },
+  "max_gap.train_dev.50.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "302.844",
+    "valor": 302844
+  },
+  "max_gap.train_dev.50.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9550",
+    "valor": 0.9549920036554718
+  },
+  "max_gap.train_dev.50.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9862",
+    "valor": 0.9862448418156808
+  },
+  "max_gap.train_dev.50.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "29,92",
+    "valor": 29.921380437002245
+  },
+  "max_gap.train_dev.75.candidatos": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "425.646",
+    "valor": 425646
+  },
+  "max_gap.train_dev.75.cobertura_associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9726",
+    "valor": 0.9725839616175462
+  },
+  "max_gap.train_dev.75.cobertura_negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "0,9869",
+    "valor": 0.9869325997248969
+  },
+  "max_gap.train_dev.75.no_relation_por_relacao": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_max_gap_train_dev",
+    "texto": "41,78",
+    "valor": 41.782792240426176
+  },
+  "proporcao.dev.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0400",
+    "valor": 0.04002308015107008
+  },
+  "proporcao.dev.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0079",
+    "valor": 0.007868233319345363
+  },
+  "proporcao.dev.no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,9521",
+    "valor": 0.9521086865295846
+  },
+  "proporcao.test.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0518",
+    "valor": 0.05184799583550234
+  },
+  "proporcao.test.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0079",
+    "valor": 0.007912545549193128
+  },
+  "proporcao.test.no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,9402",
+    "valor": 0.9402394586153046
+  },
+  "proporcao.train.associated_with": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0465",
+    "valor": 0.046474463932515094
+  },
+  "proporcao.train.negation_of": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,0082",
+    "valor": 0.008219483122224697
+  },
+  "proporcao.train.no_relation": {
+    "natureza": "dados",
+    "origens": [
+      "particoes congeladas"
+    ],
+    "tabela": "eda_proporcao_rotulos",
+    "texto": "0,9453",
+    "valor": 0.9453060529452602
+  }
+}

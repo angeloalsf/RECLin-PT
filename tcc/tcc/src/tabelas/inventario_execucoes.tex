@@ -1,0 +1,45 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begingroup\footnotesize\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{2.5pt}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\LTcapwidth}{\textwidth}
+\Needspace*{0.3\textheight}
+\begin{longtable}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{2.9cm} l >{\raggedright\arraybackslash}p{1.8cm} l l l >{\raggedright\arraybackslash}p{1.6cm} l >{\raggedright\arraybackslash\hyphenpenalty=10000}p{1.55cm}}
+\caption{Inventário das execuções da branch \texttt{resultados-colab} e das execuções derivadas só do DEV.}\label{tab:inventario_execucoes} \\
+\toprule
+Pasta & Tipo & Estratégia & \emph{Encoder} & Commit & \begin{tabular}[b]{@{}c@{}}Identi-\\dade\end{tabular} & \begin{tabular}[b]{@{}c@{}}Sessão\\registrada\end{tabular} & Melhor & TEST \\
+\midrule
+\endfirsthead
+\multicolumn{9}{l}{\footnotesize Tabela~\thetable{} -- continuação} \\
+\toprule
+Pasta & Tipo & Estratégia & \emph{Encoder} & Commit & \begin{tabular}[b]{@{}c@{}}Identi-\\dade\end{tabular} & \begin{tabular}[b]{@{}c@{}}Sessão\\registrada\end{tabular} & Melhor & TEST \\
+\midrule
+\endhead
+\midrule
+\multicolumn{9}{r}{\footnotesize continua} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{baseline\_biobertpt\_seed42} & treinada & Baseline & BioBERTpt-all & \texttt{cc3d8b3} & \texttt{8a6c19} & nova & 3/3 & não \\
+\texttt{baseline\_BioBERTpt-clin} & treinada & Baseline & BioBERTpt-clin & \texttt{3e3cb39} & \texttt{0526d9} & retomada (3\,000) & 3/3 & não \\
+\texttt{baseline\_BERTimbau} & treinada & Baseline & BERTimbau-base & \texttt{c2cc230} & \texttt{0526d9} & retomada (6\,500) & 3/3 & não \\
+\texttt{pairaware\_biobertpt\_seed42} & treinada & Pair-Aware linear & BioBERTpt-all & \texttt{cb88c52} & \texttt{ecbb98} & nova & 3/3 & não \\
+\texttt{pair\_aware\_\_6d11685f9cdb\_\_t1} & treinada & Pair-Aware linear & BioBERTpt-clin & \texttt{54faa5e} & \texttt{0526d9} & retomada (3\,500) & 3/3 & não \\
+\texttt{pair\_aware\_\_f7a5acb7f500\_\_t1} & treinada & Pair-Aware linear & BERTimbau-base & \texttt{5a42f28} & \texttt{0526d9} & nova & 3/3 & não \\
+\texttt{pair\_aware\_mlp\_BioBERTpt-all} & treinada & Pair-Aware MLP & BioBERTpt-all & \texttt{e16836d} & \texttt{22339f} & retomada (4\,500) & 3/3 & não \\
+\texttt{twostage\_e1\_biobertpt\_seed42} & estágio & Two-Stage, estágio 1 & BioBERTpt-all & -- & \texttt{8a6c19} & retomada (6\,000) & 2/3 & não registrado \\
+\texttt{two\_stage\_e1\_\_82490c70baed\_\_t1} & estágio & Two-Stage, estágio 1 & BioBERTpt-clin & -- & \texttt{0526d9} & retomada (6\,000) & 2/3 & não registrado \\
+\texttt{two\_stage\_e1\_BERTimbau} & estágio & Two-Stage, estágio 1 & BERTimbau-base & -- & \texttt{0526d9} & retomada (6\,000) & 3/3 & não registrado \\
+\texttt{twostage\_e2\_biobertpt\_seed42} & estágio & Two-Stage, estágio 2 & BioBERTpt-all & -- & \texttt{8a6c19} & nova & 8/10 & não registrado \\
+\texttt{two\_stage\_e2\_\_65e72d6c30e8\_\_t1} & estágio & Two-Stage, estágio 2 & BioBERTpt-clin & -- & \texttt{0526d9} & nova & 6/10 & não registrado \\
+\texttt{two\_stage\_e2\_BERTimbau} & estágio & Two-Stage, estágio 2 & BERTimbau-base & -- & \texttt{0526d9} & nova & 5/10 & não registrado \\
+\texttt{two\_stage\_limiar\_BioBERTpt-all} & composição & Two-Stage & BioBERTpt-all & -- & -- & -- & $\tau=0{,}95$ & -- \\
+\texttt{two\_stage\_limiar\_BioBERTpt-clin} & composição & Two-Stage & BioBERTpt-clin & -- & -- & -- & $\tau=0{,}95$ & -- \\
+\texttt{twostage\_bertimbau\_seed42} & composição & Two-Stage & BERTimbau-base & -- & -- & -- & $\tau=0{,}85$ & -- \\
+\texttt{baseline\_calibrado\_biobertpt\_seed42} & derivada & Baseline calibrado & BioBERTpt-all & -- & \texttt{8a6c19} & -- & -- & -- \\
+\texttt{filtro\_biobertpt\_seed42} & derivada & Filtro léxico & BioBERTpt-all & -- & \texttt{8a6c19} & -- & -- & -- \\
+\end{longtable}
+\vspace{-\baselineskip}
+\nopagebreak\noindent\begin{minipage}{\linewidth}
+{\footnotesize Commit: revisão do código registrada em \texttt{experimento.json} (os estágios do Two-Stage e as composições não têm esse arquivo). Identidade: os seis primeiros dígitos do SHA-256 do manifesto do código (\texttt{config.json}). Sessões: só a sessão final de cada treino fica registrada; "retomada (passo)" indica que o treino começou em sessão anterior, sem registro preservado. Melhor época: selecionada/registradas. TEST: o campo \texttt{test\_avaliado} do \texttt{treino.json}; os estágios do Two-Stage não têm o campo. Checkpoints e \emph{logs} de console ficam fora do repositório (Google Drive) e não foram verificados.\par}\vspace{4pt}
+{\footnotesize Fonte: elaborado pelo autor.}
+\end{minipage}\par
+\endgroup

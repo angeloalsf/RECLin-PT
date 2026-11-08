@@ -1,0 +1,114 @@
+{
+ "n_documentos": 1000,
+ "n_entidades": 45508,
+ "n_relacoes": 11458,
+ "relacoes_por_documento": {
+  "media": 11.458,
+  "mediana": 10.0,
+  "p90": 24.0,
+  "max": 65,
+  "docs_sem_relacao": 46
+ },
+ "distancia_relacoes": {
+  "negation_of": {
+   "n": 1606,
+   "media": 3.5255292652552925,
+   "mediana": 1.0,
+   "p75": 1.0,
+   "p95": 15.0,
+   "max": 54,
+   "frac_ate_1": 0.7764632627646326,
+   "frac_acima_max_gap": 0.0186799501867995
+  },
+  "associated_with": {
+   "n": 9852,
+   "media": 11.843686561104345,
+   "mediana": 4.0,
+   "p75": 10.0,
+   "p95": 43.0,
+   "max": 541,
+   "frac_ate_1": 0.3527202598457166,
+   "frac_acima_max_gap": 0.09886317498984978
+  }
+ },
+ "categorias_atomicas_top15": [
+  [
+   "Abbreviation",
+   12592
+  ],
+  [
+   "Finding",
+   6827
+  ],
+  [
+   "Therapeutic or Preventive Procedure",
+   4759
+  ],
+  [
+   "Sign or Symptom",
+   4616
+  ],
+  [
+   "Quantitative Concept",
+   3951
+  ],
+  [
+   "Laboratory or Test Result",
+   3080
+  ],
+  [
+   "Pharmacologic Substance",
+   3013
+  ],
+  [
+   "Health Care Activity",
+   2758
+  ],
+  [
+   "Negation",
+   2646
+  ],
+  [
+   "Disease or Syndrome",
+   2645
+  ],
+  [
+   "Organic Chemical",
+   2000
+  ],
+  [
+   "Diagnostic Procedure",
+   1978
+  ],
+  [
+   "Temporal Concept",
+   1662
+  ],
+  [
+   "Medical Device",
+   1601
+  ],
+  [
+   "Body Location or Region",
+   1437
+  ]
+ ],
+ "candidatos_por_particao": {
+  "train": {
+   "associated_with": 7096,
+   "no_relation": 144335,
+   "negation_of": 1255
+  },
+  "dev": {
+   "no_relation": 18151,
+   "associated_with": 763,
+   "negation_of": 150
+  },
+  "test": {
+   "no_relation": 18062,
+   "associated_with": 996,
+   "negation_of": 152
+  }
+ },
+ "max_gap": 25
+}

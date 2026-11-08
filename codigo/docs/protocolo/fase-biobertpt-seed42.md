@@ -12,7 +12,10 @@ pelo autor em 11/10/2026 e registrada na nota
 seção 1), selecionado em 11/10/2026 pelo procedimento pré-registrado em
 `docs/protocolo/d4-min-freq.md` e registrado em `docs/entregas/d4-min-freq.md`;
 e D10 (substituição da Pair-Aware, seção 3), autorizada pelo autor em
-13/10/2026, antes de qualquer treino científico dela.
+13/10/2026, antes de qualquer treino científico dela; e E2 (análises
+diagnósticas, situação do TEST e análise de sensibilidade sem as notas
+duplicadas, seção 8), de 01/11/2026, sem mudança de configuração, partição ou
+critério.
 Fixa o escopo, a revisão dos pesos, os critérios de seleção e de parada de
 cada estratégia, os limiares escolhidos no DEV, a sequência de execução, as
 comparações e a forma de interpretar os resultados da fase científica (etapa
@@ -235,6 +238,45 @@ precisão e recall de `negation_of`, macro-F1 e MCC.
 - **D4 — `min_freq`:** resolvida pelo procedimento pré-registrado
   (`docs/protocolo/d4-min-freq.md`): `min_freq=10` (linha "Léxico"). As
   limitações declaradas do critério estão em `docs/entregas/d4-min-freq.md`.
+
+### E2 — Emenda de 01/11/2026 (sem mudança de configuração)
+
+Registrada depois das execuções no DEV e **antes de qualquer avaliação do TEST
+pelas configurações atuais**. Não muda dados, partições, `max_gap`,
+configurações, critérios de seleção nem o bloco JSON da seção 9.
+
+- **Situação do TEST.** O TEST não é inédito: os seus documentos e rótulos já
+  foram usados em avaliações anteriores do projeto, cujos números não entram em
+  nenhum resultado desta fase. Segundo os registros das execuções atuais
+  (`test_avaliado: false`), nenhuma das configurações atuais foi avaliada nele;
+  em particular, a Pair-Aware linear **ainda não foi avaliada no TEST** e não é
+  avaliada nesta etapa. A avaliação do TEST continua dependendo de autorização
+  específica (seção 6, passo 7).
+- **Notas do TEST com cópia no TRAIN.** O detector de quase duplicatas
+  (`reclin/analises/quase_duplicatas.py`) registra que as notas 9534, 9535 e
+  9536 do TEST são cópias, diferentes só em espaços, das notas 9635, 9636 e
+  9637 do TRAIN (`docs/analises/integridade-particoes.md`). A partição não muda.
+  Análise **principal**: o TEST completo. Análise de sensibilidade
+  **secundária**, pré-registrada aqui: as mesmas métricas sem os candidatos
+  dessas três notas, calculadas a partir das predições já gravadas
+  (`reclin/analises/exclusao_documentos.py`, `diagnosticar.py
+  excluir-documentos --test-autorizado`), relatadas ao lado da principal,
+  sem substituir nenhuma conclusão dela.
+- **Janela de candidatos.** `max_gap = 25` (inalterado), distância simétrica
+  entre os spans; cobertura de cada classe e custo de ampliar a janela em
+  `docs/analises/janela-max-gap.md`. O número de 11,6% citado em
+  `reclin/tarefa.py` corresponde a 1.324 de 11.458 relações anotadas com
+  distância simétrica acima de 20 caracteres, contadas no **corpus inteiro**
+  (TRAIN, DEV e TEST): uma contagem de cobertura das anotações feita com o
+  conjunto completo, registrada como tal.
+- **Controles informados pelas anotações.** Os controles diagnósticos por tipo
+  semântico (tipo `Negation` como pista; tipo `Negation` + posição; relações
+  previstas pelo tipo nos pares candidatos) ficam em `codigo/diagnosticos/` e
+  `docs/analises/controles-tipo-semantico.md`. Não são configurações do
+  RECLin-PT nem sistemas comparados nesta fase (seção 7), usam só TRAIN e DEV e
+  não são avaliados no TEST. Os tipos semânticos continuam nas partições, e
+  nenhuma configuração (baseline, Pair-Aware linear, Two-Stage, Pair-Aware MLP)
+  os recebe como entrada.
 
 ## 9. Registro verificável
 

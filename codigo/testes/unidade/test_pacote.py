@@ -11,7 +11,8 @@ está implementado:
   `os.environ` ou `sys.path` alterados);
 * um nível só importa os de cima: o núcleo não importa `negacao` nem
   `estrategias`, `negacao` não importa `estrategias`, e uma estratégia não
-  importa outra;
+  importa outra, salvo as funções auxiliares listadas em
+  `COMPARTILHADAS_ENTRE_ESTRATEGIAS`;
 * todos os scripts de `codigo/scripts/` respondem a `--help`.
 """
 from __future__ import annotations
@@ -115,6 +116,31 @@ def _importacoes_reclin(arquivo) -> set[str]:
 PACOTE = caminhos.CODIGO / "reclin"
 MODULOS = sorted(p for p in PACOTE.rglob("*.py") if "__pycache__" not in p.parts)
 
+# Única exceção à regra "uma estratégia não importa outra": a Pair-Aware MLP
+# (variante experimental) reutiliza da Pair-Aware linear (oficial) só as funções
+# auxiliares que não dependem da cabeça — carga do encoder sem pooler, ids e
+# posições dos marcadores e contagem dos marcadores ausentes —, para que as duas
+# leiam o par exatamente da mesma forma (docs/entregas/pair-aware-mlp.md). A
+# cabeça, a configuração, os arquivos do modelo e a montagem de cada uma
+# continuam independentes: importar qualquer outro nome da Pair-Aware linear, ou
+# qualquer coisa de outra estratégia, continua proibido.
+COMPARTILHADAS_ENTRE_ESTRATEGIAS: dict[str, dict[str, frozenset[str]]] = {
+    "pair_aware_mlp": {
+        "reclin.estrategias.pair_aware.cabeca": frozenset({
+            "_carregar_encoder", "contar_marcadores_ausentes", "ids_dos_marcadores",
+            "posicoes_dos_marcadores"}),
+    },
+}
+
+
+def _compartilhadas_permitidas(estrategia: str) -> set[str]:
+    """Os nomes que `_importacoes_reclin` devolve para os imports permitidos."""
+    permitidos = set()
+    for modulo, nomes in COMPARTILHADAS_ENTRE_ESTRATEGIAS.get(estrategia, {}).items():
+        permitidos.add(modulo)
+        permitidos.update(f"{modulo}.{n}" for n in nomes)
+    return permitidos
+
 
 @pytest.mark.parametrize("arquivo", MODULOS, ids=lambda p: p.relative_to(PACOTE).as_posix())
 def test_um_nivel_so_importa_os_de_cima(arquivo):
@@ -122,12 +148,46 @@ def test_um_nivel_so_importa_os_de_cima(arquivo):
     importados = _importacoes_reclin(arquivo)
     if partes[0] == "estrategias":
         # uma estratégia é um módulo (estrategias/x.py) ou um pacote (estrategias/x/)
-        proprio = "reclin.estrategias." + Path(partes[1]).stem
+        estrategia = Path(partes[1]).stem
+        proprio = "reclin.estrategias." + estrategia
         outras = {n for n in importados if n.startswith("reclin.estrategias")
-                  and not n.startswith(proprio)}
+                  and not n.startswith(proprio + ".") and n != proprio}
+        outras -= _compartilhadas_permitidas(estrategia)
         assert not outras, f"uma estratégia não importa outra: {outras}"
     elif partes[0] == "negacao":
         assert not any(n.startswith("reclin.estrategias") for n in importados)
     else:
         assert not any(n.startswith(("reclin.negacao", "reclin.estrategias")) for n in importados), \
             f"o núcleo não importa especialização nem estratégias: {importados}"
+
+
+def _funcoes_definidas(arquivo: Path) -> set[str]:
+    arvore = ast.parse(arquivo.read_text(encoding="utf-8"))
+    return {no.name for no in arvore.body if isinstance(no, ast.FunctionDef)}
+
+
+@pytest.mark.parametrize("estrategia", sorted(COMPARTILHADAS_ENTRE_ESTRATEGIAS))
+def test_compartilhamento_entre_estrategias_so_de_funcoes_auxiliares_usadas(estrategia):
+    """A exceção é estreita: cada nome permitido existe, é uma função (não uma
+    classe, constante ou configuração) definida no módulo de origem e é de fato
+    importado pela estratégia que o usa (sem entradas obsoletas)."""
+    pasta = PACOTE / "estrategias" / estrategia
+    importados = set().union(*(_importacoes_reclin(a) for a in sorted(pasta.rglob("*.py"))
+                               if "__pycache__" not in a.parts))
+    for modulo, nomes in COMPARTILHADAS_ENTRE_ESTRATEGIAS[estrategia].items():
+        origem = PACOTE.joinpath(*modulo.split(".")[1:]).with_suffix(".py")
+        assert origem.is_file(), origem
+        definidas = _funcoes_definidas(origem)
+        assert nomes <= definidas, f"não são funções de {modulo}: {sorted(nomes - definidas)}"
+        nao_usadas = {n for n in nomes if f"{modulo}.{n}" not in importados}
+        assert not nao_usadas, f"permitidas e não importadas por {estrategia}: {sorted(nao_usadas)}"
+
+
+def test_a_pair_aware_linear_nao_importa_outras_estrategias():
+    """A dependência é numa direção só: a oficial não conhece a variante."""
+    for arquivo in sorted((PACOTE / "estrategias" / "pair_aware").rglob("*.py")):
+        if "__pycache__" in arquivo.parts:
+            continue
+        outras = {n for n in _importacoes_reclin(arquivo) if n.startswith("reclin.estrategias")
+                  and not n.startswith("reclin.estrategias.pair_aware.") and n != "reclin.estrategias.pair_aware"}
+        assert not outras, f"{arquivo.name}: {outras}"

@@ -1,0 +1,35 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Comparações pareadas descritivas do Two-Stage e do baseline calibrado, no DEV, por métrica (as comparações que o protocolo prevê para o teste, aqui aplicadas ao DEV e estendidas aos três \emph{encoders}).}
+  \label{tab:dev_comparacoes_ts}
+  \small\renewcommand{\arraystretch}{1.2}\setlength{\tabcolsep}{3.5pt}
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{3.85cm}lrcc}
+  \toprule
+  Comparação (A $-$ B) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+  \midrule
+\multicolumn{5}{l}{\textit{Métrica:} F1 de \texttt{negation\_of}} \\
+Two-Stage $-$ Baseline & BioBERTpt-all & $+0{,}0284$ & $[-0{,}008;\,+0{,}065]$ & $[-0{,}013;\,+0{,}074]$ \\
+Two-Stage $-$ Baseline & BioBERTpt-clin & $+0{,}0179$ & $[-0{,}014;\,+0{,}049]$ & $[-0{,}018;\,+0{,}057]$ \\
+Two-Stage $-$ Baseline & BERTimbau-base & $+0{,}0253$ & $[-0{,}005;\,+0{,}056]$ & $[-0{,}010;\,+0{,}065]$ \\
+Two-Stage $-$ Baseline calibrado & BioBERTpt-all & $+0{,}0213$ & $[-0{,}011;\,+0{,}054]$ & $[-0{,}011;\,+0{,}056]$ \\
+Baseline calibrado $-$ Baseline & BioBERTpt-all & $+0{,}0071$ & $[-0{,}012;\,+0{,}026]$ & $[-0{,}014;\,+0{,}030]$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Métrica:} F1 de \texttt{associated\_with}} \\
+Two-Stage $-$ Baseline & BioBERTpt-all & $-0{,}0421$ & $[-0{,}078;\,-0{,}006]$$^{\ast}$ & $[-0{,}107;\,+0{,}021]$ \\
+Two-Stage $-$ Baseline & BioBERTpt-clin & $-0{,}0452$ & $[-0{,}079;\,-0{,}011]$$^{\ast}$ & $[-0{,}102;\,+0{,}009]$ \\
+Two-Stage $-$ Baseline & BERTimbau-base & $+0{,}0434$ & $[+0{,}025;\,+0{,}061]$$^{\ast}$ & $[+0{,}013;\,+0{,}071]$$^{\ast}$ \\
+Two-Stage $-$ Baseline calibrado & BioBERTpt-all & $-0{,}0416$ & $[-0{,}078;\,-0{,}005]$$^{\ast}$ & $[-0{,}107;\,+0{,}021]$ \\
+Baseline calibrado $-$ Baseline & BioBERTpt-all & $-0{,}0005$ & $[-0{,}001;\,-0{,}0001]$$^{\ast}$ & $[-0{,}001;\,-0{,}0001]$$^{\ast}$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Métrica:} Macro-F1} \\
+Two-Stage $-$ Baseline & BioBERTpt-all & $+0{,}0062$ & $[-0{,}012;\,+0{,}024]$ & $[-0{,}021;\,+0{,}034]$ \\
+Two-Stage $-$ Baseline & BioBERTpt-clin & $-0{,}0008$ & $[-0{,}017;\,+0{,}015]$ & $[-0{,}025;\,+0{,}023]$ \\
+Two-Stage $-$ Baseline & BERTimbau-base & $+0{,}0285$ & $[+0{,}016;\,+0{,}041]$$^{\ast}$ & $[+0{,}012;\,+0{,}046]$$^{\ast}$ \\
+Two-Stage $-$ Baseline calibrado & BioBERTpt-all & $+0{,}0040$ & $[-0{,}013;\,+0{,}021]$ & $[-0{,}021;\,+0{,}029]$ \\
+Baseline calibrado $-$ Baseline & BioBERTpt-all & $+0{,}0023$ & $[-0{,}004;\,+0{,}009]$ & $[-0{,}005;\,+0{,}010]$ \\
+  \bottomrule
+  \end{tabular*}\\[2pt]
+  \parbox{\textwidth}{\footnotesize Descritivas, no DEV: as épocas, $\tau$ e $t$ foram escolhidos neste mesmo conjunto; não substituem as comparações pré-registradas no teste. A e B usam o mesmo \emph{encoder}. $\Delta$: diferença observada A $-$ B no DEV completo. IC95\% (candidato): \emph{bootstrap} pareado que reamostra com reposição os 19\,064 pares candidatos, o do protocolo (10.000 reamostras, semente 42). IC95\% (documento): \emph{bootstrap} pareado que reamostra com reposição os 98 documentos do DEV que têm pares candidatos, cada um com todos os seus pares (10.000 reamostras, semente 42). As três métricas são calculadas sobre as mesmas reamostras de cada nível. Intervalos: percentis 2,5 e 97,5 das diferenças reamostradas. $^{\ast}$: intervalo que exclui o zero. Limites que arredondariam a zero com três casas aparecem com mais casas. O teste de McNemar dessas comparações está no Quadro~\ref{quad:mcnemar}.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

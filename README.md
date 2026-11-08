@@ -22,25 +22,40 @@ muito menos dados que os de domínio geral, e essa troca — vocabulário
 especializado *versus* volume de pré-treinamento — não é obviamente favorável a
 nenhum dos lados.
 
-Para responder, o trabalho monta um **estudo controlado**: dois encoders em
-português são treinados na **mesma tarefa**, com os **mesmos dados**, os
-**mesmos hiperparâmetros** e a **mesma implementação**, mudando **somente o
-checkpoint de pré-treino**:
+Para responder, o trabalho monta um **estudo controlado**: os encoders são
+treinados na **mesma tarefa**, com os **mesmos dados**, os **mesmos
+hiperparâmetros** e a **mesma implementação**, mudando **somente o checkpoint de
+pré-treino**:
 
-- **BioBERTpt** (`pucpr/biobertpt-all`) — encoder **clínico**.
+- **BioBERTpt-all** (`pucpr/biobertpt-all`) — encoder **clínico**; o encoder
+  pré-registrado no protocolo da fase.
+- **BioBERTpt-clin** (`pucpr/biobertpt-clin`) — encoder **clínico**; variante de
+  encoder fora do pré-registro, avaliada só no DEV.
 - **BERTimbau** (`neuralmind/bert-base-portuguese-cased`) — encoder de **domínio
-  geral** (pré-treinado no brWaC).
+  geral** (pré-treinado no brWaC); variante de encoder fora do pré-registro,
+  avaliada só no DEV.
 
 A tarefa é classificação de relações entre pares de entidades em notas clínicas
 do corpus **SemClinBr**, num espaço de **3 rótulos**: `negation_of`,
 `associated_with` e `no_relation`. A métrica central é o **F1 da classe
 `negation_of`** no conjunto de teste.
 
-Sobre essa base, o RECLin-PT reúne o conhecimento sobre como a negação aparece
-no corpus (o léxico de pistas) e compara **estratégias experimentais** para
-detectar `negation_of` — baseline, filtro de pistas, regra pura, fine-tuning
-restrito, Pair-Aware e Two-Stage — sob o mesmo protocolo. Nenhuma
-delas define o projeto: a de melhor desempenho compõe o modelo entregue.
+Sobre essa base, o RECLin-PT compara quatro **configurações experimentais**,
+todas com marcadores de entidade sem tipo semântico e sob o mesmo protocolo:
+
+| Configuração | Papel |
+| --- | --- |
+| Baseline (`[CLS]` → linear) | referência experimental |
+| **Pair-Aware linear** (`[h_CLS; h_E1; h_E2]` → linear, sem MLP) | **arquitetura oficial do RECLin-PT** |
+| Two-Stage (relação? → tipo) | estratégia experimental |
+| Pair-Aware MLP (`[h_CLS; h_E1; h_E2]` → MLP) | variante experimental |
+
+Ao lado delas ficam **controles** que não são configurações do RECLin-PT:
+- o baseline calibrado e o filtro léxico, controles do protocolo;
+- a regra pura;
+- os **controles diagnósticos informados pelas anotações** (tipo semântico `Negation`; tipo + posição), em [`codigo/diagnosticos/`](codigo/diagnosticos/).
+
+O fine-tuning restrito continua implementado como estratégia experimental.
 
 ## Estado do repositório
 
@@ -50,7 +65,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
-| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Etapa 7: análises, relatórios, inventário de proveniência, `Makefile` e notebook único, sem nenhum dado ou resultado do legado (ver a nota da etapa). Antes da etapa 8: dados reconstruídos dos XML (versão `v2-texto-fonte`, correção do desalinhamento de offsets do D9), agora a versão da fase; a etapa 8 não foi iniciada. Ver [`codigo/README.md`](codigo/README.md) |
+| `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Etapa 7: análises, relatórios, inventário de proveniência, `Makefile` e notebook único, sem nenhum dado ou resultado do legado (ver a nota da etapa). Antes da etapa 8: dados reconstruídos dos XML (versão `v2-texto-fonte`, correção do desalinhamento de offsets do D9), agora a versão da fase. Fase científica (etapa 8): execuções no DEV registradas; a Pair-Aware linear ainda não foi avaliada no TEST. Diagnósticos dos dados e controles por tipo semântico em `codigo/diagnosticos/` (Etapa 2 da auditoria). Ver [`codigo/README.md`](codigo/README.md) |
 | `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
@@ -196,8 +211,9 @@ make -C codigo help                               # os mesmos comandos pelo Make
   significativa. O pareamento só é legítimo entre execuções sobre o mesmo
   conjunto de referência (19.210 pares de teste com `max_gap=25`, mesmo
   `y_true`); predições com outro `max_gap` não são comparáveis.
-- **Múltiplas sementes**: com duas sementes, o desvio é **dispersão observada**,
-  não intervalo de confiança.
+- **Sementes**: a fase atual usa só a semente 42. O bootstrap e o McNemar
+  medem a incerteza sobre os exemplos, não a variação do treino; com uma
+  semente, não se separa o efeito da arquitetura da sorte da semente.
 
 ## Decisões principais
 
@@ -219,18 +235,22 @@ make -C codigo help                               # os mesmos comandos pelo Make
 
 ## Limitações conhecidas
 
-- **Duas sementes por modelo.** Duas execuções não bastam para estimar a
-  variância de inicialização com intervalo de confiança.
-- **Uma única cabeça de classificação nos baselines, sem busca de
-  hiperparâmetros.** É por design: uma busca por modelo quebraria a paridade
-  que sustenta a comparação. O custo é que nenhum dos dois baselines está
-  necessariamente no seu melhor ponto de operação.
-- **`max_gap=25` limita os pares candidatos a entidades próximas.** Relações de
-  longa distância estão fora do espaço de avaliação. O valor era 20 e foi
-  elevado para 25 após uma análise de sensibilidade, que mostrou que 20 já
-  cortava 11,6% das relações anotadas. Com 25, o teto de recall do conjunto de
-  teste é de 92,0% — `negation_of` não perde nenhuma relação, e a perda
-  restante é toda de `associated_with` (100 de 1.098, 9,11%).
+- **Uma semente (42) na fase atual.** Uma execução por configuração não
+  permite estimar a variância de inicialização.
+- **Sem busca de hiperparâmetros.** É por design: todas as configurações usam
+  os mesmos hiperparâmetros, e uma busca por configuração quebraria a paridade
+  que sustenta a comparação. O custo é que nenhuma está necessariamente no seu
+  melhor ponto de operação.
+- **`max_gap=25` limita os pares candidatos a entidades próximas.** A distância
+  é simétrica: caracteres entre o fim do primeiro span no texto e o início do
+  segundo, qualquer que seja o e1. Relações de longa distância ficam fora do
+  espaço de avaliação: com 25, os candidatos cobrem 96,6% (TRAIN) e 96,8% (DEV)
+  das `negation_of` e 89,6% e 91,7% das `associated_with` anotadas. Ampliar
+  para 50 multiplica os pares por 1,76 e acrescenta 3 negações no DEV. O
+  número de 11,6% citado em `codigo/reclin/tarefa.py` corresponde a 1.324 de
+  11.458 relações anotadas com distância acima de 20 caracteres, contadas no
+  corpus inteiro (TRAIN, DEV e TEST). Detalhes em
+  [`codigo/docs/analises/janela-max-gap.md`](codigo/docs/analises/janela-max-gap.md).
 - **Três classes.** O espaço de rótulos é um recorte do SemClinBr; ampliá-lo
   muda a dificuldade da tarefa e pediria reexecutar tudo.
 

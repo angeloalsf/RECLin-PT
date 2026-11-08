@@ -1,0 +1,854 @@
+{
+  "proveniencia": {
+    "derivadas": [
+      "baseline_calibrado_biobertpt_seed42",
+      "filtro_biobertpt_seed42"
+    ],
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+      "n_candidatos": 19064,
+      "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "execucoes": "resultados-colab@ad7c2a20d9dd78133f1781d646654fbc28f8cbc8",
+    "n_boot": 10000,
+    "seed_bootstrap": 42
+  },
+  "sistemas": {
+    "baseline_calibrado|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.42484544965087445,
+        "negation_of": 0.8487508412188126,
+        "no_relation": 0.9972640112263609
+      },
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "baseline_calibrado",
+      "macro_f1": 0.720932730532751,
+      "matriz_confusao": [
+        [
+          138,
+          6,
+          6
+        ],
+        [
+          7,
+          630,
+          126
+        ],
+        [
+          46,
+          1694,
+          16411
+        ]
+      ],
+      "mcc": 0.47929342843076955,
+      "micro_f1": 0.9011225346202266,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "baseline_calibrado_biobertpt_seed42",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4073714839961203,
+          "fn": 133,
+          "fp": 1700,
+          "precision": 0.2703862660944206,
+          "recall": 0.8256880733944955,
+          "support": 763,
+          "tp": 630
+        },
+        "negation_of": {
+          "f1": 0.8093841642228738,
+          "fn": 12,
+          "fp": 53,
+          "precision": 0.7225130890052356,
+          "recall": 0.92,
+          "support": 150,
+          "tp": 138
+        },
+        "no_relation": {
+          "f1": 0.9460425433792586,
+          "fn": 1740,
+          "fp": 132,
+          "precision": 0.992020794293659,
+          "recall": 0.9041375130846785,
+          "support": 18151,
+          "tp": 16411
+        }
+      },
+      "rotulo": "Baseline calibrado (BioBERTpt-all)",
+      "sha256_predicoes": "c6a442863ea2aa5f727d2f1d5709788bfb3f680cb04b1a1234a7fd44f2c860c0",
+      "t": 0.9,
+      "weighted_f1": 0.9234080083822594
+    },
+    "baseline|BERTimbau": {
+      "ap": {
+        "associated_with": 0.39551983374622474,
+        "negation_of": 0.8743595548464531,
+        "no_relation": 0.9970319675102395
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BERTimbau",
+      "estrategia": "baseline",
+      "macro_f1": 0.7227137486532044,
+      "matriz_confusao": [
+        [
+          138,
+          4,
+          8
+        ],
+        [
+          5,
+          597,
+          161
+        ],
+        [
+          52,
+          1497,
+          16602
+        ]
+      ],
+      "mcc": 0.48048745101326584,
+      "micro_f1": 0.909410407049937,
+      "n": 19064,
+      "papel": "referência experimental",
+      "pasta": "baseline_BERTimbau",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4173365955959455,
+          "fn": 166,
+          "fp": 1501,
+          "precision": 0.28455672068636795,
+          "recall": 0.7824377457404981,
+          "support": 763,
+          "tp": 597
+        },
+        "negation_of": {
+          "f1": 0.8,
+          "fn": 12,
+          "fp": 57,
+          "precision": 0.7076923076923077,
+          "recall": 0.92,
+          "support": 150,
+          "tp": 138
+        },
+        "no_relation": {
+          "f1": 0.9508046503636676,
+          "fn": 1549,
+          "fp": 169,
+          "precision": 0.989923081509749,
+          "recall": 0.91466034929205,
+          "support": 18151,
+          "tp": 16602
+        }
+      },
+      "rotulo": "Baseline (BERTimbau)",
+      "sha256_predicoes": "8c36e6ee5afc42cae4c447258e3ca9953b7a5bbce4babf241c96b0fa4a53b754",
+      "weighted_f1": 0.92826704947496
+    },
+    "baseline|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.42484544965087445,
+        "negation_of": 0.8487508412188126,
+        "no_relation": 0.9972640112263609
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "baseline",
+      "macro_f1": 0.7186618698983892,
+      "matriz_confusao": [
+        [
+          142,
+          3,
+          5
+        ],
+        [
+          7,
+          630,
+          126
+        ],
+        [
+          55,
+          1693,
+          16403
+        ]
+      ],
+      "mcc": 0.480071155079284,
+      "micro_f1": 0.9009127150650441,
+      "n": 19064,
+      "papel": "referência experimental",
+      "pasta": "baseline_biobertpt_seed42",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.40789899643897704,
+          "fn": 133,
+          "fp": 1696,
+          "precision": 0.2708512467755804,
+          "recall": 0.8256880733944955,
+          "support": 763,
+          "tp": 630
+        },
+        "negation_of": {
+          "f1": 0.8022598870056498,
+          "fn": 8,
+          "fp": 62,
+          "precision": 0.696078431372549,
+          "recall": 0.9466666666666667,
+          "support": 150,
+          "tp": 142
+        },
+        "no_relation": {
+          "f1": 0.9458267262505405,
+          "fn": 1748,
+          "fp": 131,
+          "precision": 0.9920769323817588,
+          "recall": 0.9036967660184012,
+          "support": 18151,
+          "tp": 16403
+        }
+      },
+      "rotulo": "Baseline (BioBERTpt-all)",
+      "sha256_predicoes": "57a3847ce7011b12332acf554718d8bf4c0023e3ef8882b8f6575e0c484e0f38",
+      "weighted_f1": 0.9231675842167094
+    },
+    "baseline|BioBERTpt-clin": {
+      "ap": {
+        "associated_with": 0.41619589528436474,
+        "negation_of": 0.8536547031784498,
+        "no_relation": 0.9971849853637529
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "baseline",
+      "macro_f1": 0.7306581153074333,
+      "matriz_confusao": [
+        [
+          140,
+          3,
+          7
+        ],
+        [
+          6,
+          599,
+          158
+        ],
+        [
+          48,
+          1450,
+          16653
+        ]
+      ],
+      "mcc": 0.48940378260505946,
+      "micro_f1": 0.9122954259336971,
+      "n": 19064,
+      "papel": "referência experimental",
+      "pasta": "baseline_BioBERTpt-clin",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4255772646536412,
+          "fn": 164,
+          "fp": 1453,
+          "precision": 0.2919103313840156,
+          "recall": 0.7850589777195282,
+          "support": 763,
+          "tp": 599
+        },
+        "negation_of": {
+          "f1": 0.813953488372093,
+          "fn": 10,
+          "fp": 54,
+          "precision": 0.7216494845360825,
+          "recall": 0.9333333333333333,
+          "support": 150,
+          "tp": 140
+        },
+        "no_relation": {
+          "f1": 0.9524435928965655,
+          "fn": 1498,
+          "fp": 165,
+          "precision": 0.990189083125223,
+          "recall": 0.9174701118395681,
+          "support": 18151,
+          "tp": 16653
+        }
+      },
+      "rotulo": "Baseline (BioBERTpt-clin)",
+      "sha256_predicoes": "421d91c644625873afd55e3128cb137f50e08be1448f27b69dffe57d089ff986",
+      "weighted_f1": 0.9302671071575799
+    },
+    "filtro_pistas|BioBERTpt-all": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "filtro_pistas",
+      "macro_f1": 0.724039288509927,
+      "matriz_confusao": [
+        [
+          135,
+          3,
+          12
+        ],
+        [
+          5,
+          630,
+          128
+        ],
+        [
+          40,
+          1693,
+          16418
+        ]
+      ],
+      "mcc": 0.4770290944207049,
+      "micro_f1": 0.9013323541754091,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "filtro_biobertpt_seed42",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.40789899643897704,
+          "fn": 133,
+          "fp": 1696,
+          "precision": 0.2708512467755804,
+          "recall": 0.8256880733944955,
+          "support": 763,
+          "tp": 630
+        },
+        "negation_of": {
+          "f1": 0.8181818181818182,
+          "fn": 15,
+          "fp": 45,
+          "precision": 0.75,
+          "recall": 0.9,
+          "support": 150,
+          "tp": 135
+        },
+        "no_relation": {
+          "f1": 0.9460370509089862,
+          "fn": 1733,
+          "fp": 140,
+          "precision": 0.9915448725691509,
+          "recall": 0.9045231667676712,
+          "support": 18151,
+          "tp": 16418
+        }
+      },
+      "rotulo": "Filtro léxico (BioBERTpt-all)",
+      "sha256_predicoes": "9eb8193ec29f82c740b70675f6d75448ee454f7007cfe302b6aebad690c3a4b9",
+      "weighted_f1": 0.9234931136203955
+    },
+    "pair_aware_mlp|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.43578084597730193,
+        "negation_of": 0.8750150153661933,
+        "no_relation": 0.9973267626002758
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware_mlp",
+      "macro_f1": 0.737162002997437,
+      "matriz_confusao": [
+        [
+          143,
+          2,
+          5
+        ],
+        [
+          6,
+          580,
+          177
+        ],
+        [
+          51,
+          1303,
+          16797
+        ]
+      ],
+      "mcc": 0.49822948878291,
+      "micro_f1": 0.9190096516995384,
+      "n": 19064,
+      "papel": "variante experimental",
+      "pasta": "pair_aware_mlp_BioBERTpt-all",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4380664652567976,
+          "fn": 183,
+          "fp": 1305,
+          "precision": 0.3076923076923077,
+          "recall": 0.7601572739187418,
+          "support": 763,
+          "tp": 580
+        },
+        "negation_of": {
+          "f1": 0.8171428571428572,
+          "fn": 7,
+          "fp": 57,
+          "precision": 0.715,
+          "recall": 0.9533333333333334,
+          "support": 150,
+          "tp": 143
+        },
+        "no_relation": {
+          "f1": 0.9562766865926559,
+          "fn": 1354,
+          "fp": 182,
+          "precision": 0.9892808763767006,
+          "recall": 0.9254035590325602,
+          "support": 18151,
+          "tp": 16797
+        }
+      },
+      "rotulo": "Pair-Aware MLP (BioBERTpt-all)",
+      "sha256_predicoes": "4177351fe3f74d1097a6926d218324e96f91588a79963f10c8c0cc836999f0d0",
+      "weighted_f1": 0.9344415799363021
+    },
+    "pair_aware|BERTimbau": {
+      "ap": {
+        "associated_with": 0.4129071443281589,
+        "negation_of": 0.8425691707592856,
+        "no_relation": 0.9971380636811924
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BERTimbau",
+      "estrategia": "pair_aware",
+      "macro_f1": 0.7360888230005426,
+      "matriz_confusao": [
+        [
+          144,
+          1,
+          5
+        ],
+        [
+          8,
+          584,
+          171
+        ],
+        [
+          50,
+          1339,
+          16762
+        ]
+      ],
+      "mcc": 0.4968489609018588,
+      "micro_f1": 0.9174360050356694,
+      "n": 19064,
+      "papel": "arquitetura oficial",
+      "pasta": "pair_aware__f7a5acb7f500__t1",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4346855228879792,
+          "fn": 179,
+          "fp": 1340,
+          "precision": 0.30353430353430355,
+          "recall": 0.765399737876802,
+          "support": 763,
+          "tp": 584
+        },
+        "negation_of": {
+          "f1": 0.8181818181818182,
+          "fn": 6,
+          "fp": 58,
+          "precision": 0.7128712871287128,
+          "recall": 0.96,
+          "support": 150,
+          "tp": 144
+        },
+        "no_relation": {
+          "f1": 0.9553991279318305,
+          "fn": 1389,
+          "fp": 176,
+          "precision": 0.9896091628291416,
+          "recall": 0.9234752906175968,
+          "support": 18151,
+          "tp": 16762
+        }
+      },
+      "rotulo": "Pair-Aware linear (BERTimbau)",
+      "sha256_predicoes": "8a28511d01fe2dc20b70889e93175bd2affd127f512bc68c80e7ed592f520f63",
+      "weighted_f1": 0.9334789077728419
+    },
+    "pair_aware|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.44467631375164185,
+        "negation_of": 0.8768363864785202,
+        "no_relation": 0.9973924823105156
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware",
+      "macro_f1": 0.7405688468951017,
+      "matriz_confusao": [
+        [
+          141,
+          3,
+          6
+        ],
+        [
+          5,
+          583,
+          175
+        ],
+        [
+          44,
+          1323,
+          16784
+        ]
+      ],
+      "mcc": 0.4970581408368657,
+      "micro_f1": 0.9183801930339908,
+      "n": 19064,
+      "papel": "arquitetura oficial",
+      "pasta": "pairaware_biobertpt_seed42",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.43637724550898205,
+          "fn": 180,
+          "fp": 1326,
+          "precision": 0.30539549502357255,
+          "recall": 0.7640891218872871,
+          "support": 763,
+          "tp": 583
+        },
+        "negation_of": {
+          "f1": 0.8294117647058824,
+          "fn": 9,
+          "fp": 49,
+          "precision": 0.7421052631578947,
+          "recall": 0.94,
+          "support": 150,
+          "tp": 141
+        },
+        "no_relation": {
+          "f1": 0.9559175304704408,
+          "fn": 1367,
+          "fp": 181,
+          "precision": 0.9893309755378721,
+          "recall": 0.9246873450498595,
+          "support": 18151,
+          "tp": 16784
+        }
+      },
+      "rotulo": "Pair-Aware linear (BioBERTpt-all)",
+      "sha256_predicoes": "017cee17142390e68295eb6b985e198d6c9359ffbd890ffcd43c8bb602ea4e44",
+      "weighted_f1": 0.9341285511224408
+    },
+    "pair_aware|BioBERTpt-clin": {
+      "ap": {
+        "associated_with": 0.4463232004342732,
+        "negation_of": 0.849151004151624,
+        "no_relation": 0.9974830189791496
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "pair_aware",
+      "macro_f1": 0.7457918787834394,
+      "matriz_confusao": [
+        [
+          142,
+          1,
+          7
+        ],
+        [
+          5,
+          599,
+          159
+        ],
+        [
+          47,
+          1275,
+          16829
+        ]
+      ],
+      "mcc": 0.5137781392895814,
+      "micro_f1": 0.9216323961393201,
+      "n": 19064,
+      "papel": "arquitetura oficial",
+      "pasta": "pair_aware__6d11685f9cdb__t1",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4541319181197877,
+          "fn": 164,
+          "fp": 1276,
+          "precision": 0.3194666666666667,
+          "recall": 0.7850589777195282,
+          "support": 763,
+          "tp": 599
+        },
+        "negation_of": {
+          "f1": 0.8255813953488372,
+          "fn": 8,
+          "fp": 52,
+          "precision": 0.7319587628865979,
+          "recall": 0.9466666666666667,
+          "support": 150,
+          "tp": 142
+        },
+        "no_relation": {
+          "f1": 0.9576623228816935,
+          "fn": 1322,
+          "fp": 166,
+          "precision": 0.9902324213003825,
+          "recall": 0.9271665472976696,
+          "support": 18151,
+          "tp": 16829
+        }
+      },
+      "rotulo": "Pair-Aware linear (BioBERTpt-clin)",
+      "sha256_predicoes": "a176dfbacf379024289933ba52c2029246f8eb4b887ec5dae5329d0e1bab2a00",
+      "weighted_f1": 0.9364702415785431
+    },
+    "two_stage|BERTimbau": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "diagnostico_estagios": {
+        "acuracia_do_tipo_nos_roteados_com_relacao": 0.9855769230769231,
+        "n_roteados_ao_estagio2": 1494,
+        "recall_estagio1_nos_pares_com_relacao": 0.683461117196057,
+        "recall_estagio1_nos_pares_negation_of": 0.9266666666666666,
+        "roteados_sem_relacao_anotada": 870,
+        "rotulo": "diagnóstico por estágio no fluxo real (não é resultado da arquitetura)"
+      },
+      "encoder": "BERTimbau",
+      "estrategia": "two_stage",
+      "macro_f1": 0.7511927320715914,
+      "matriz_confusao": [
+        [
+          137,
+          2,
+          11
+        ],
+        [
+          7,
+          478,
+          278
+        ],
+        [
+          38,
+          832,
+          17281
+        ]
+      ],
+      "mcc": 0.5048584677807072,
+      "micro_f1": 0.9387326898866974,
+      "n": 19064,
+      "n_roteados_estagio2": 1494,
+      "papel": "estratégia experimental",
+      "pasta": "twostage_bertimbau_seed42",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.46072289156626506,
+          "fn": 285,
+          "fp": 834,
+          "precision": 0.3643292682926829,
+          "recall": 0.6264744429882044,
+          "support": 763,
+          "tp": 478
+        },
+        "negation_of": {
+          "f1": 0.8253012048192772,
+          "fn": 13,
+          "fp": 45,
+          "precision": 0.7527472527472527,
+          "recall": 0.9133333333333333,
+          "support": 150,
+          "tp": 137
+        },
+        "no_relation": {
+          "f1": 0.9675540998292321,
+          "fn": 870,
+          "fp": 289,
+          "precision": 0.9835515082527034,
+          "recall": 0.9520687565423392,
+          "support": 18151,
+          "tp": 17281
+        }
+      },
+      "rotulo": "Two-Stage (BERTimbau)",
+      "sha256_predicoes": "e5326e695d7af3a16d63f5d585b827575f33b605a4b6fb03b70f67d653f3e39d",
+      "tau": 0.85,
+      "weighted_f1": 0.9461498747895689
+    },
+    "two_stage|BioBERTpt-all": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "diagnostico_estagios": {
+        "acuracia_do_tipo_nos_roteados_com_relacao": 0.9802816901408451,
+        "n_roteados_ao_estagio2": 592,
+        "recall_estagio1_nos_pares_com_relacao": 0.3888280394304491,
+        "recall_estagio1_nos_pares_negation_of": 0.8866666666666667,
+        "roteados_sem_relacao_anotada": 237,
+        "rotulo": "diagnóstico por estágio no fluxo real (não é resultado da arquitetura)"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "two_stage",
+      "macro_f1": 0.7249116895182312,
+      "matriz_confusao": [
+        [
+          130,
+          3,
+          17
+        ],
+        [
+          4,
+          218,
+          541
+        ],
+        [
+          29,
+          208,
+          17914
+        ]
+      ],
+      "mcc": 0.46156770741852465,
+      "micro_f1": 0.9579311791859001,
+      "n": 19064,
+      "n_roteados_estagio2": 592,
+      "papel": "estratégia experimental",
+      "pasta": "two_stage_limiar_BioBERTpt-all",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.36577181208053694,
+          "fn": 545,
+          "fp": 211,
+          "precision": 0.5081585081585082,
+          "recall": 0.2857142857142857,
+          "support": 763,
+          "tp": 218
+        },
+        "negation_of": {
+          "f1": 0.8306709265175719,
+          "fn": 20,
+          "fp": 33,
+          "precision": 0.7975460122699386,
+          "recall": 0.8666666666666667,
+          "support": 150,
+          "tp": 130
+        },
+        "no_relation": {
+          "f1": 0.9782923299565847,
+          "fn": 237,
+          "fp": 558,
+          "precision": 0.9697921177999134,
+          "recall": 0.9869428681615338,
+          "support": 18151,
+          "tp": 17914
+        }
+      },
+      "rotulo": "Two-Stage (BioBERTpt-all)",
+      "sha256_predicoes": "1f45b0304b4c873f9685a881c6141912347b2b0b909c4eeeccab608f8adf4905",
+      "tau": 0.95,
+      "weighted_f1": 0.9526158525302691
+    },
+    "two_stage|BioBERTpt-clin": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "diagnostico_estagios": {
+        "acuracia_do_tipo_nos_roteados_com_relacao": 0.9842931937172775,
+        "n_roteados_ao_estagio2": 676,
+        "recall_estagio1_nos_pares_com_relacao": 0.4184008762322015,
+        "recall_estagio1_nos_pares_negation_of": 0.9066666666666666,
+        "roteados_sem_relacao_anotada": 294,
+        "rotulo": "diagnóstico por estágio no fluxo real (não é resultado da arquitetura)"
+      },
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "two_stage",
+      "macro_f1": 0.7298581065488259,
+      "matriz_confusao": [
+        [
+          136,
+          0,
+          14
+        ],
+        [
+          6,
+          240,
+          517
+        ],
+        [
+          35,
+          259,
+          17857
+        ]
+      ],
+      "mcc": 0.4644720433959834,
+      "micro_f1": 0.9564099874108267,
+      "n": 19064,
+      "n_roteados_estagio2": 676,
+      "papel": "estratégia experimental",
+      "pasta": "two_stage_limiar_BioBERTpt-clin",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.3803486529318542,
+          "fn": 523,
+          "fp": 259,
+          "precision": 0.48096192384769537,
+          "recall": 0.3145478374836173,
+          "support": 763,
+          "tp": 240
+        },
+        "negation_of": {
+          "f1": 0.8318042813455657,
+          "fn": 14,
+          "fp": 41,
+          "precision": 0.768361581920904,
+          "recall": 0.9066666666666666,
+          "support": 150,
+          "tp": 136
+        },
+        "no_relation": {
+          "f1": 0.9774213853690578,
+          "fn": 294,
+          "fp": 531,
+          "precision": 0.9711224711768545,
+          "recall": 0.9838025453143078,
+          "support": 18151,
+          "tp": 17857
+        }
+      },
+      "rotulo": "Two-Stage (BioBERTpt-clin)",
+      "sha256_predicoes": "01b84bda24fbd75bcbda3bd8d2610ad831e7cf845a57bd98fcdc21e54f1e9d68",
+      "tau": 0.95,
+      "weighted_f1": 0.9523789461929609
+    }
+  }
+}

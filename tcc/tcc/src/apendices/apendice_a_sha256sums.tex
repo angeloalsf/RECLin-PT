@@ -1,0 +1,17 @@
+\chapter[Hashes SHA-256 das partições congeladas]{Hashes SHA-256 das partições congeladas}
+\label{ap:sha256}
+
+As partições de treino, desenvolvimento e teste reconstruídas dos XML do SemClinBr
+foram congeladas após sua geração (semente $42$, estratificação pela presença de
+\texttt{negation\_of}, nível de documento). O Quadro~\ref{quad:sha256} apresenta os
+\emph{hashes} SHA-256 dos arquivos de partição versionados no repositório do projeto
+e do manifesto que os registra, junto com as contagens, a proveniência dos XML e as
+anomalias mantidas. Qualquer alteração nos arquivos altera o \emph{hash}, o que
+permite a verificação independente da integridade das partições. O código recusa
+combinar versões de dados numa mesma execução ou tabela, e cada execução registra os
+\emph{hashes} das partições que usou.
+
+\input{tabelas/sha256_particoes}
+
+As partições contêm, respectivamente, $800$, $100$ e $100$ documentos, com as
+contagens de relações e de pares candidatos da Tabela~\ref{tab:corpus}.

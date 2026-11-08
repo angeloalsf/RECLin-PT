@@ -1,0 +1,125 @@
+\chapter[Referencial Teórico]{Referencial Teórico}
+\label{cap:referencial}
+
+Este capítulo reúne os fundamentos em que se apoia o desenvolvimento do RECLin-PT. A
+sequência parte do domínio de aplicação, o processamento de linguagem natural de
+textos clínicos, passa pelas tarefas de reconhecimento de entidades e de extração de
+relações, situa a negação clínica nesse quadro e chega aos modelos baseados em
+\foreignlanguage{english}{transformers} e às formas de representar o par de entidades
+e de organizar a decisão, que são os elementos com que o RECLin-PT é construído.
+
+\section{Processamento de linguagem natural clínico}
+
+O PLN clínico ocupa-se da análise automática de textos produzidos no cuidado em
+saúde, como notas de evolução, sumários de alta e laudos. Esses textos apresentam características que os distinguem da linguagem geral, como o uso de vocabulário técnico, abreviações não padronizadas, construções telegráficas, marcadas pela omissão de elementos gramaticais, e a prevalência de expressões de negação e incerteza. Tais
+propriedades tornam a transferência direta de ferramentas treinadas em domínio
+aberto pouco eficaz, motivando recursos e modelos específicos do domínio. Entre as
+aplicações do PLN clínico, a extração de informação busca converter esse texto em
+registros estruturados, e é nela que se insere este trabalho.
+
+\section{Extração de entidades e de relações}
+\label{sec:re_tarefa}
+
+A extração de informação em texto clínico costuma ser decomposta em duas
+tarefas encadeadas. A primeira, reconhecimento de entidades nomeadas
+(\foreignlanguage{english}{Named Entity Recognition}, NER), delimita trechos do
+texto que mencionam conceitos de interesse e lhes atribui um tipo semântico. A
+segunda, extração de relações (RE), parte das entidades já delimitadas e determina
+se um par delas mantém uma relação e de que tipo. Formalmente, dado um par ordenado
+de entidades $(e_1, e_2)$ em um documento, a RE pode ser modelada como um problema
+de classificação que associa ao par um rótulo dentro de um conjunto pré-definido.
+
+A diferença entre as duas tarefas fica clara em um exemplo construído com as
+categorias do SemClinBr, como ``Paciente sem sinais flogísticos''. O NER identifica
+``sem'' como uma entidade da categoria \texttt{Negation}, isto é, uma expressão que
+indica negação, e ``sinais flogísticos'' como uma entidade clínica da categoria
+\texttt{Sign or Symptom}. A RE, por sua vez, considera o par ordenado formado pelas
+duas entidades e atribui a ele a relação \texttt{negation\_of}, que liga a expressão
+de negação ($e_1$) ao achado negado ($e_2$). A \autoref{fig:exemplo_anotacao}, no
+Capítulo~\ref{cap:metodologia}, mostra esse mesmo padrão em um trecho real do corpus.
+
+Reconhecer uma entidade \texttt{Negation} e identificar uma relação
+\texttt{negation\_of} são, portanto, decisões distintas. A primeira diz que um
+trecho expressa negação; a segunda diz \emph{o que} está sendo negado. A
+correspondência entre elas não é automática: uma expressão de negação pode não
+participar de nenhuma relação anotada, e, quando há vários conceitos próximos, só a
+relação indica qual deles é o alvo (Seção~\ref{sec:controles_tipo}). Este trabalho aborda apenas a segunda tarefa, na qual as entidades são obtidas a partir das anotações do corpus, enquanto o RECLin-PT é responsável por identificar as relações entre elas.
+
+Neste trabalho o espaço de rótulos é \texttt{negation\_of},
+\texttt{associated\_with} e \texttt{no\_relation}. O rótulo
+\texttt{no\_relation} é fundamental. Como a anotação de corpora registra apenas
+relações positivas, todo par de entidades não anotado deve ser tratado como
+ausência de relação, o que introduz um forte desbalanceamento de classes.
+
+\section{Abordagens baseadas em regras e a negação clínica}
+
+A negação recebeu, antes dos modelos aprendidos, tratamento por regras, que
+codificam conhecimento linguístico explícito. Em detecção de negação clínica, o
+algoritmo NegEx \cite{chapman_2001_negex} tornou-se referência. A partir de um léxico
+de gatilhos de negação e de janelas de contexto, ele classifica achados como negados
+ou afirmados, o que equivale a ligar um gatilho aos conceitos dentro de seu alcance.
+Sua simplicidade e eficácia derivam do fato de a negação clínica ser altamente
+lexicalizada. Em português, gatilhos como ``não'', ``sem'', ``nega'' e ``ausência
+de'', além de adjetivos que embutem negação morfologicamente (``afebril'',
+``anictérico''), sustentam estratégias análogas. A alta lexicalização sugere que o
+sinal de negação possa estar acessível mesmo a modelos não especializados no domínio
+clínico, hipótese relevante para a escolha do \emph{encoder} do RECLin-PT e que a
+comparação entre \emph{encoders} examina.
+
+\section{Modelos baseados em \emph{transformers}}
+
+Regras dependem de léxicos e janelas fixadas à mão, e métodos aprendidos clássicos,
+que representam as palavras como unidades independentes, não capturam dependências
+de longo alcance nem contexto. Essas limitações motivaram a transição da área para
+modelos contextuais. A arquitetura \foreignlanguage{english}{Transformer}
+\cite{vaswani_2017_attention}, baseada em mecanismos de atenção, viabilizou modelos
+de linguagem pré-treinados que produzem representações contextuais das palavras. O
+BERT \cite{devlin_2019_bert} popularizou o paradigma de pré-treinamento seguido de
+ajuste fino (\foreignlanguage{english}{fine-tuning}) para tarefas específicas. Nesse
+paradigma, a parte do modelo que produz as representações é um
+\emph{encoder}\footnote{\emph{Encoder} é a metade codificadora da arquitetura
+\foreignlanguage{english}{Transformer}, que recebe a sequência de entrada e devolve
+uma representação vetorial contextual de cada \emph{token}, sem gerar texto novo. É o
+tipo de modelo do BERT e de suas variantes.}, distribuído publicamente na forma de um
+\emph{checkpoint}\footnote{\emph{Checkpoint} é o arquivo com os pesos de um modelo já
+pré-treinado, distribuído publicamente e usado como ponto de partida do ajuste fino.}
+e adaptado à tarefa com o acréscimo de uma camada de classificação.
+
+Para o português, os candidatos naturais à extração de relações clínicas dividem-se
+entre modelos de domínio geral e modelos adaptados ao domínio clínico. No primeiro
+grupo está o BERTimbau \cite{souza_2020_bertimbau}, pré-treinado no corpus
+brWaC\footnote{O brWaC (\foreignlanguage{english}{Brazilian Portuguese Web as
+Corpus}) é um corpus de larga escala construído a partir de páginas web em português
+brasileiro, sem restrição de domínio.} e hoje a referência de domínio geral para a
+língua. Nele também se enquadram modelos multilíngues como o XLM-R
+\cite{conneau_2020_xlmr}, que trocam especialização por cobertura ampla de idiomas.
+No segundo grupo está o BioBERTpt \cite{schneider_2020_biobertpt},
+adaptado a narrativas clínicas e textos biomédicos em português brasileiro e
+distribuído em variantes conforme o corpus de adaptação, entre elas a
+\emph{clin} (narrativas clínicas) e a \emph{all} (clínico e biomédico). É o
+contraste entre esses dois grupos que orienta a escolha do \emph{encoder} do
+RECLin-PT. O XLM-R permanece como alternativa de base ampla, fora do escopo
+experimental aqui delimitado.
+
+\section{Representação do par e decomposição da decisão}
+\label{sec:ref_par}
+
+Escolhido o \emph{encoder}, resta definir como o par de entidades lhe é apresentado e
+como suas representações levam a um rótulo. Em extração de relações com modelos do
+tipo BERT, o par costuma ser
+indicado por marcadores inseridos no próprio texto, como
+\texttt{[E1]}\ldots\texttt{[/E1]} e \texttt{[E2]}\ldots\texttt{[/E2]}, de modo
+que a atenção condicione a codificação de toda a sequência ao par sob análise
+\cite{soares_2019_markers}. A partir da sequência marcada, a classificação pode
+usar apenas a representação agregada da sequência (o \emph{token} \texttt{[CLS]})
+ou ler explicitamente os estados ocultos nas posições dos marcadores de início das
+entidades, variante que \citeonline{soares_2019_markers} denominam \emph{entity
+start} e que concentra a decisão no par em vez de no contexto inteiro.
+
+Quando a maioria dos pares de entidades não apresenta uma relação, como ocorre ao considerar todos os pares próximos em um documento, um único classificador precisa responder simultaneamente a duas questões distintas. A primeira consiste em determinar se existe uma relação entre as entidades, enquanto a segunda envolve identificar qual é essa relação. Uma alternativa é decompor a decisão em estágios encadeados,
+em que um primeiro classificador binário filtra os pares com relação e um segundo
+decide o tipo apenas entre eles. Em decomposições desse tipo, a passagem de um estágio ao outro depende de um limiar aplicado à probabilidade estimada pelo primeiro estágio. Valores mais altos para esse limiar favorecem a precisão, mas podem reduzir o \emph{recall} das relações que não são encaminhadas ao segundo estágio. Da mesma forma, em um classificador direto, a aplicação de um limiar à probabilidade de uma classe permite ajustar o equilíbrio entre precisão e \emph{recall} dessa classe sem a necessidade de realizar um novo treinamento. Essas
+alternativas fundamentam a arquitetura do RECLin-PT e as estratégias investigadas em
+seu desenvolvimento (Capítulo~\ref{cap:prototipo}). A forma de escolher esses
+limiares e suas consequências para a avaliação são tratadas no protocolo experimental
+(Seção~\ref{sec:protocolo}).

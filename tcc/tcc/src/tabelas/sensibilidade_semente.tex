@@ -1,0 +1,19 @@
+%% GERADO por analise/gerar_tabelas_diagnosticos.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Relações anotadas por partição com outras sementes do particionamento e posição da semente 42.}
+  \label{tab:sensibilidade_semente}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llrrrrrrr}
+  \toprule
+  Relação & Partição & mín. & p5 & mediana & p95 & máx. & semente 42 & percentil \\
+  \midrule
+\texttt{negation\_of} & DEV & 127 & 137 & 157 & 186 & 201 & 155 & 47{,}0\% \\
+\texttt{negation\_of} & Teste & 118 & 138 & 159 & 191 & 202 & 152 & 28{,}0\% \\
+\texttt{associated\_with} & DEV & 765 & 841 & 979 & 1\,117 & 1\,211 & 832 & 4{,}5\% \\
+\texttt{associated\_with} & Teste & 812 & 875 & 984 & 1\,103 & 1\,153 & 1\,098 & 94{,}0\% \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Mesmo algoritmo de partição, sementes 0 a 199 (200 sementes); a partição congelada não foi alterada.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

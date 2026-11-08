@@ -15,6 +15,17 @@ função de fora — quem chama (os scripts) passa `negacao.lexico.e_pista`.
 * `falsos_positivos` — auditoria dos falsos positivos de `negation_of` de uma
   execução.
 
+Diagnósticos da Etapa 2 (linha de comando em `codigo/diagnosticos/`):
+
+* `controles_anotacao` — controles **informados pelas anotações** (tipo
+  semântico `Negation`; tipo + posição). Não são configurações do RECLin-PT e
+  recusam o TEST;
+* `quase_duplicatas` — detector de documentos quase duplicados (só registra);
+* `sensibilidade_semente` — a divisão 800/100/100 com outras sementes (só
+  contagens; as partições congeladas não mudam);
+* `exclusao_documentos` — métricas de um sidecar já gravado sem alguns
+  documentos (preparada para o TEST; nele, só com autorização explícita).
+
 Nenhuma análise treina, escolhe parâmetros ou lê resultados do legado. As que
 poderiam orientar uma escolha (`max_gap`) usam TRAIN e DEV por padrão; o TEST
 só entra quando pedido explicitamente, como descrição.

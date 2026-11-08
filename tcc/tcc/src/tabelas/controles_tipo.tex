@@ -1,0 +1,21 @@
+%% GERADO por analise/gerar_tabelas_diagnosticos.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Controles diagnósticos com o tipo semântico \texttt{Negation} anotado, no treino e no DEV.}
+  \label{tab:controles_tipo}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{llrrrrrr}
+  \toprule
+  Controle & Partição & TP & FP & FN & P & R & F1 \\
+  \midrule
+Tipo \texttt{Negation} $\rightarrow$ pista (entidades) & Treino & 1\,125 & 716 & 42 & 0{,}611 & 0{,}964 & 0{,}748 \\
+ & DEV & 136 & 94 & 5 & 0{,}591 & 0{,}965 & 0{,}733 \\
+Tipo \texttt{Negation} $\rightarrow$ \texttt{negation\_of} (pares) & Treino & 1\,213 & 6\,191 & 42 & 0{,}164 & 0{,}967 & 0{,}280 \\
+ & DEV & 145 & 751 & 5 & 0{,}162 & 0{,}967 & 0{,}277 \\
+Tipo \texttt{Negation} + posição (pares) & Treino & 1\,089 & 684 & 166 & 0{,}614 & 0{,}868 & 0{,}719 \\
+ & DEV & 130 & 92 & 20 & 0{,}586 & 0{,}867 & 0{,}699 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Controles diagnósticos informados pelas anotações, sem treino; não são configurações do RECLin-PT. Pares: os candidatos da tarefa (\texttt{max\_gap}$=25$). Teste não avaliado.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

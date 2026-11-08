@@ -1,0 +1,3813 @@
+{
+  "amostragem": {
+    "contexto_caracteres": 250,
+    "controles_fn": 9,
+    "controles_vp": 49,
+    "semente": 42,
+    "vp_disponiveis": 141
+  },
+  "casos": [
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C001",
+      "distancia": 1,
+      "doc_id": "9612",
+      "documento_neutro": "D01",
+      "e1": {
+        "end": 187,
+        "id": "30405",
+        "start": 184,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 199,
+        "id": "30406",
+        "start": 188,
+        "text": "DIFICULDADE",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 12955,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9994,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "373261b0959caf792e74d83bca76c70cd31b4c617952bcd0a34941d69f84676b",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧DIFICULDADE⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C002",
+      "distancia": 11,
+      "doc_id": "9590",
+      "documento_neutro": "D02",
+      "e1": {
+        "end": 266,
+        "id": "29154",
+        "start": 263,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 287,
+        "id": "29155",
+        "start": 277,
+        "text": "EXPECTORAR",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 11733,
+      "probabilidades": {
+        "associated_with": 0.0358,
+        "negation_of": 0.9371,
+        "no_relation": 0.0272
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "0f9aa1ffaa88911b58b7d0dca93d10f68266b65db62b6abfd57a8bf267cb5deb",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ CONSEGUIR ⟦E2⟧EXPECTORAR⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C003",
+      "distancia": 1,
+      "doc_id": "9590",
+      "documento_neutro": "D02",
+      "e1": {
+        "end": 354,
+        "id": "29163",
+        "start": 351,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 357,
+        "id": "29164",
+        "start": 355,
+        "text": "HX",
+        "type": "Abbreviation|Abbreviation"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 11785,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9912,
+        "no_relation": 0.0087
+      },
+      "rotulo_anotado": "associated_with",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a608ba0588c0d4c6257c97db44f6800f598b2fbde68efa11da41ae01c63231a3",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧HX⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C004",
+      "distancia": 1,
+      "doc_id": "9590",
+      "documento_neutro": "D02",
+      "e1": {
+        "end": 357,
+        "id": "29164",
+        "start": 355,
+        "text": "HX",
+        "type": "Abbreviation|Abbreviation"
+      },
+      "e2": {
+        "end": 362,
+        "id": "29165",
+        "start": 358,
+        "text": "ASMA",
+        "type": "Disease or Syndrome"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 11792,
+      "probabilidades": {
+        "associated_with": 0.0076,
+        "negation_of": 0.985,
+        "no_relation": 0.0075
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "8f5fed49ccc903c476c17db21347409b14477a472d130ea0b2742190391ae091",
+      "trecho_marcado": "⟦E1⟧HX⟦/E1⟧ ⟦E2⟧ASMA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C005",
+      "distancia": 8,
+      "doc_id": "9498",
+      "documento_neutro": "D03",
+      "e1": {
+        "end": 12,
+        "id": "24810",
+        "start": 9,
+        "text": "NAÕ",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 27,
+        "id": "24811",
+        "start": 20,
+        "text": "RECEITA",
+        "type": "Intellectual Product"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 10428,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9683,
+        "no_relation": 0.0315
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "cc96f1ea660d4fba51fbcfd9bde952b27c7b5ded8cc9f4f0cf3b088e82a931e0",
+      "trecho_marcado": "⟦E1⟧NAÕ⟦/E1⟧ TROUXE ⟦E2⟧RECEITA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C006",
+      "distancia": 1,
+      "doc_id": "9498",
+      "documento_neutro": "D03",
+      "e1": {
+        "end": 72,
+        "id": "24818",
+        "start": 69,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 80,
+        "id": "24819",
+        "start": 73,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 10490,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "2d31f3f3ba7533270dd293179984f077ddb459182c9ec6edd073347196f9a94b",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C007",
+      "distancia": 1,
+      "doc_id": "9930",
+      "documento_neutro": "D04",
+      "e1": {
+        "end": 368,
+        "id": "45160",
+        "start": 364,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 372,
+        "id": "45161",
+        "start": 369,
+        "text": "HMF",
+        "type": "Abbreviation"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 18854,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9959,
+        "no_relation": 0.0041
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "2e0266b4051d7dd8f8966c5333587384f73c651df707e0ddd7e8760a2c8e1b53",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ ⟦E2⟧HMF⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C008",
+      "distancia": 1,
+      "doc_id": "9703",
+      "documento_neutro": "D05",
+      "e1": {
+        "end": 264,
+        "id": "34929",
+        "start": 261,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 272,
+        "id": "34930",
+        "start": 265,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom|Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 13951,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "063af3bb7efb60db64597cdb6d6c75944ff03d1129c55cae6cacaec28cad8ad8",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C009",
+      "distancia": 12,
+      "doc_id": "9229",
+      "documento_neutro": "D06",
+      "e1": {
+        "end": 267,
+        "id": "14925",
+        "start": 264,
+        "text": "Não",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 294,
+        "id": "14926",
+        "start": 279,
+        "text": "intercorrências",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 6699,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "associated_with",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "ac4befedd597d10d34e05bf8e1a0ad28d902ed4304c36d01e36fe64d37c89e28",
+      "trecho_marcado": "⟦E1⟧Não⟦/E1⟧ apresentou ⟦E2⟧intercorrências⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C010",
+      "distancia": 1,
+      "doc_id": "9813",
+      "documento_neutro": "D07",
+      "e1": {
+        "end": 691,
+        "id": "39752",
+        "start": 675,
+        "text": "eliminação fecal",
+        "type": "Organism Function"
+      },
+      "e2": {
+        "end": 699,
+        "id": "39725",
+        "start": 692,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17153,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9902,
+        "no_relation": 0.0097
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a1af74941352cc3e002f9e97d7c6a7eb1c4cfb1e5127d743a2a423f6d25c509b",
+      "trecho_marcado": "⟦E1⟧eliminação fecal⟦/E1⟧ ⟦E2⟧ausente⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C011",
+      "distancia": 3,
+      "doc_id": "9295",
+      "documento_neutro": "D08",
+      "e1": {
+        "end": 357,
+        "id": "17639",
+        "start": 351,
+        "text": "negado",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 365,
+        "id": "17640",
+        "start": 360,
+        "text": "exame",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 7728,
+      "probabilidades": {
+        "associated_with": 0.0009,
+        "negation_of": 0.9973,
+        "no_relation": 0.0018
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "138d6ee2f43a187a4a969c56c512ef377bc8e95d940086384809e4ece31109c2",
+      "trecho_marcado": "⟦E1⟧negado⟦/E1⟧ o ⟦E2⟧exame⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C012",
+      "distancia": 12,
+      "doc_id": "9295",
+      "documento_neutro": "D08",
+      "e1": {
+        "end": 373,
+        "id": "17641",
+        "start": 370,
+        "text": "não",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 392,
+        "id": "17642",
+        "start": 385,
+        "text": "peresal",
+        "type": "Substance"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 7735,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9954,
+        "no_relation": 0.0045
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "4fb0a9bee8d2ba42122ecc093ff17204cc4b0b5dafcc8f360d287c6e713688c6",
+      "trecho_marcado": "⟦E1⟧não⟦/E1⟧ ter levado ⟦E2⟧peresal⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C013",
+      "distancia": 1,
+      "doc_id": "9295",
+      "documento_neutro": "D08",
+      "e1": {
+        "end": 748,
+        "id": "17654",
+        "start": 745,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 757,
+        "id": "17655",
+        "start": 749,
+        "text": "realizar",
+        "type": "Health Care Activity"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7772,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9964,
+        "no_relation": 0.0036
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "9fd6c1ed5e7dfbdedd4725b4c10ab16db552edb98226e52ceabc9b9dd4724c23",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧realizar⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C014",
+      "distancia": 1,
+      "doc_id": "9295",
+      "documento_neutro": "D08",
+      "e1": {
+        "end": 757,
+        "id": "17655",
+        "start": 749,
+        "text": "realizar",
+        "type": "Health Care Activity"
+      },
+      "e2": {
+        "end": 763,
+        "id": "17656",
+        "start": 758,
+        "text": "exame",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7778,
+      "probabilidades": {
+        "associated_with": 0.0179,
+        "negation_of": 0.85,
+        "no_relation": 0.1321
+      },
+      "rotulo_anotado": "associated_with",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "c9f53f9ada476afa4b68a0121f04c4abf09bd5aefd14ad999eae755b7eba51e1",
+      "trecho_marcado": "⟦E1⟧realizar⟦/E1⟧ ⟦E2⟧exame⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C015",
+      "distancia": 1,
+      "doc_id": "9391",
+      "documento_neutro": "D09",
+      "e1": {
+        "end": 521,
+        "id": "19921",
+        "start": 518,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 529,
+        "id": "19922",
+        "start": 522,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 8582,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9981,
+        "no_relation": 0.0019
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "9bcfe179683fbf44193ac492fb0f89c0ef43107e9f07a84f231b665c82beae1b",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C016",
+      "distancia": 1,
+      "doc_id": "9256",
+      "documento_neutro": "D10",
+      "e1": {
+        "end": 270,
+        "id": "17020",
+        "start": 267,
+        "text": "não",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 296,
+        "id": "17064",
+        "start": 271,
+        "text": "apresentou novos sintomas",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7422,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9982,
+        "no_relation": 0.0018
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b11f11a81d9b01adc52b1f58e9fdab43fa654d79255a330b8d9fb927b099f50e",
+      "trecho_marcado": "⟦E1⟧não⟦/E1⟧ ⟦E2⟧apresentou novos sintomas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C017",
+      "distancia": 15,
+      "doc_id": "9256",
+      "documento_neutro": "D10",
+      "e1": {
+        "end": 1159,
+        "id": "17042",
+        "start": 1156,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1191,
+        "id": "17043",
+        "start": 1174,
+        "text": "eletrocardiograma",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7572,
+      "probabilidades": {
+        "associated_with": 0.0004,
+        "negation_of": 0.8612,
+        "no_relation": 0.1383
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "d38839e8273cc738d00b7dd493f002d29c021ce74b0c6e99cbacaa47a04950fb",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ alterações de ⟦E2⟧eletrocardiograma⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C018",
+      "distancia": 1,
+      "doc_id": "9256",
+      "documento_neutro": "D10",
+      "e1": {
+        "end": 1289,
+        "id": "17047",
+        "start": 1286,
+        "text": "nem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1302,
+        "id": "17089",
+        "start": 1290,
+        "text": "aos esforços",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7599,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.998,
+        "no_relation": 0.0019
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "0791b12bff1ba04a6b2a877afead4431e6afe0644cd56cedef413513dc88f338",
+      "trecho_marcado": "⟦E1⟧nem⟦/E1⟧ ⟦E2⟧aos esforços⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C019",
+      "distancia": 1,
+      "doc_id": "9117",
+      "documento_neutro": "D11",
+      "e1": {
+        "end": 759,
+        "id": "11376",
+        "start": 752,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 751,
+        "id": "11437",
+        "start": 735,
+        "text": "eliminação fecal",
+        "type": "Finding|Physiologic Function"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 4994,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9945,
+        "no_relation": 0.0054
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a890c6869a68db71505876215732def209c4b8a3b801465470faf825fef0defb",
+      "trecho_marcado": "⟦E2⟧eliminação fecal⟦/E2⟧ ⟦E1⟧ausente⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C020",
+      "distancia": 1,
+      "doc_id": "9117",
+      "documento_neutro": "D11",
+      "e1": {
+        "end": 1277,
+        "id": "11401",
+        "start": 1274,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1296,
+        "id": "11446",
+        "start": 1278,
+        "text": "sinais flogisticos",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 5123,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b2a59a9dfe63301030e0f86bca953634ea3c44bbee4ae8b2134cf237b4390589",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧sinais flogisticos⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C021",
+      "distancia": 3,
+      "doc_id": "9117",
+      "documento_neutro": "D11",
+      "e1": {
+        "end": 1358,
+        "id": "11405",
+        "start": 1351,
+        "text": "indolor",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1369,
+        "id": "11406",
+        "start": 1361,
+        "text": "palpação",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 5140,
+      "probabilidades": {
+        "associated_with": 0.1122,
+        "negation_of": 0.6974,
+        "no_relation": 0.1905
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "8f1ed97dc5c4a3cac95f155135a25055bac11e60bfc7c04b0b420b90442f210e",
+      "trecho_marcado": "⟦E1⟧indolor⟦/E1⟧ a ⟦E2⟧palpação⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C022",
+      "distancia": 1,
+      "doc_id": "9285",
+      "documento_neutro": "D12",
+      "e1": {
+        "end": 92,
+        "id": "17547",
+        "start": 89,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 100,
+        "id": "17548",
+        "start": 93,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 7678,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b6c054dde7d58ccc75e1272635797eba9bdd474cbd73b008565c26540fecdd3b",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C023",
+      "distancia": 1,
+      "doc_id": "9084",
+      "documento_neutro": "D13",
+      "e1": {
+        "end": 361,
+        "id": "9057",
+        "start": 355,
+        "text": "EXCETO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 367,
+        "id": "9058",
+        "start": 362,
+        "text": "LOBOS",
+        "type": "Body Part, Organ, or Organ Component"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 4146,
+      "probabilidades": {
+        "associated_with": 0.9539,
+        "negation_of": 0.0047,
+        "no_relation": 0.0414
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "associated_with",
+      "sha256_caso_cego": "87ceeb5737a50ef55962b6c475f7e9a49df211e39fb64eb8084d45c6f5df89c5",
+      "trecho_marcado": "⟦E1⟧EXCETO⟦/E1⟧ ⟦E2⟧LOBOS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C024",
+      "distancia": 9,
+      "doc_id": "9084",
+      "documento_neutro": "D13",
+      "e1": {
+        "end": 361,
+        "id": "9057",
+        "start": 355,
+        "text": "EXCETO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 381,
+        "id": "9059",
+        "start": 370,
+        "text": "VENTRICULOS",
+        "type": "Body Part, Organ, or Organ Component"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 4147,
+      "probabilidades": {
+        "associated_with": 0.9405,
+        "negation_of": 0.0017,
+        "no_relation": 0.0578
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "associated_with",
+      "sha256_caso_cego": "d0f571f9f8f51560b9242d8ef466bd8577ffb84565929c06f5a48ce2e5c00d98",
+      "trecho_marcado": "⟦E1⟧EXCETO⟦/E1⟧ LOBOS E ⟦E2⟧VENTRICULOS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C025",
+      "distancia": 1,
+      "doc_id": "9084",
+      "documento_neutro": "D13",
+      "e1": {
+        "end": 427,
+        "id": "9060",
+        "start": 424,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 435,
+        "id": "9061",
+        "start": 428,
+        "text": "sucesso",
+        "type": "Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 4154,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9993,
+        "no_relation": 0.0007
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "fe713ade725b59d54d95dc1e264d8beee06bb054c2d7899848a60c2492861ed7",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧sucesso⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C026",
+      "distancia": 1,
+      "doc_id": "9084",
+      "documento_neutro": "D13",
+      "e1": {
+        "end": 856,
+        "id": "9071",
+        "start": 853,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 872,
+        "id": "9102",
+        "start": 857,
+        "text": "QUEIXAS ÁLGICAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4213,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9977,
+        "no_relation": 0.0023
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b9f99b58f2383dfc814d6e5cb51e6747a1971f04bf4d3f67b73fae5e93645240",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS ÁLGICAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C027",
+      "distancia": 1,
+      "doc_id": "9084",
+      "documento_neutro": "D13",
+      "e1": {
+        "end": 1025,
+        "id": "9079",
+        "start": 1022,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1044,
+        "id": "9106",
+        "start": 1026,
+        "text": "SINAIS FLOGÍSTICOS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4263,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "298cfd61ff6d808965d33e50556fc7f666741b4c931486653793f8368c6d58b9",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧SINAIS FLOGÍSTICOS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C028",
+      "distancia": 1,
+      "doc_id": "9204",
+      "documento_neutro": "D14",
+      "e1": {
+        "end": 530,
+        "id": "13225",
+        "start": 527,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 546,
+        "id": "13226",
+        "start": 531,
+        "text": "INTERCORRÊNCIAS",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 5507,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f95de488aeacfbc5ab27e92552966c46811f63342ec926079aaa8418ba4b9934",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧INTERCORRÊNCIAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C029",
+      "distancia": 1,
+      "doc_id": "9204",
+      "documento_neutro": "D14",
+      "e1": {
+        "end": 645,
+        "id": "13229",
+        "start": 642,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 652,
+        "id": "13230",
+        "start": 646,
+        "text": "DÉBITO",
+        "type": "Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 5524,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "4e647bff07a0bb155128c24ca04a9920e77b8b1f07c49284caa18c597cb925ae",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧DÉBITO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C030",
+      "distancia": 1,
+      "doc_id": "9204",
+      "documento_neutro": "D14",
+      "e1": {
+        "end": 885,
+        "id": "13233",
+        "start": 877,
+        "text": "evacução",
+        "type": "Physiologic Function|Finding"
+      },
+      "e2": {
+        "end": 893,
+        "id": "13234",
+        "start": 886,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 5558,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9835,
+        "no_relation": 0.0163
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "4be0fd1740eb1cea1cea2100b0974af7d4fedae86ccfb0c5f177008f842d0807",
+      "trecho_marcado": "⟦E1⟧evacução⟦/E1⟧ ⟦E2⟧ausente⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C031",
+      "distancia": 1,
+      "doc_id": "9204",
+      "documento_neutro": "D14",
+      "e1": {
+        "end": 893,
+        "id": "13234",
+        "start": 886,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 885,
+        "id": "13233",
+        "start": 877,
+        "text": "evacução",
+        "type": "Physiologic Function|Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 5561,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9771,
+        "no_relation": 0.0227
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "fd188f335569077567b328d5eb3eb3946f75f70594478f3a97a6afe23cf92280",
+      "trecho_marcado": "⟦E2⟧evacução⟦/E2⟧ ⟦E1⟧ausente⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C032",
+      "distancia": 1,
+      "doc_id": "9738",
+      "documento_neutro": "D15",
+      "e1": {
+        "end": 782,
+        "id": "36337",
+        "start": 779,
+        "text": "não",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 816,
+        "id": "36391",
+        "start": 783,
+        "text": "atrapalha suas atividades diárias",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 14759,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9991,
+        "no_relation": 0.0008
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "634e4dfbddb5fb510c77dfcb6380fc8102531f29836e4e4c8b1f3c0819ebabfb",
+      "trecho_marcado": "⟦E1⟧não⟦/E1⟧ ⟦E2⟧atrapalha suas atividades diárias⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C033",
+      "distancia": 1,
+      "doc_id": "9738",
+      "documento_neutro": "D15",
+      "e1": {
+        "end": 1026,
+        "id": "36353",
+        "start": 1025,
+        "text": "S",
+        "type": "Abbreviation|Negation"
+      },
+      "e2": {
+        "end": 1029,
+        "id": "36354",
+        "start": 1027,
+        "text": "RA",
+        "type": "Abbreviation|Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 14884,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "037ed46ded03cde7fffc45d7ce6bb88536957f8e9f710e63cc01ffacc4959bd9",
+      "trecho_marcado": "⟦E1⟧S⟦/E1⟧ ⟦E2⟧RA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C034",
+      "distancia": 1,
+      "doc_id": "9467",
+      "documento_neutro": "D16",
+      "e1": {
+        "end": 198,
+        "id": "23524",
+        "start": 195,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 214,
+        "id": "23525",
+        "start": 199,
+        "text": "INTERCORRÊNCIAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9946,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "0eac2cc06f2ef4c28b5d77b785d23f44651642e142c6873681160535155061dd",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧INTERCORRÊNCIAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C035",
+      "distancia": 14,
+      "doc_id": "9252",
+      "documento_neutro": "D17",
+      "e1": {
+        "end": 502,
+        "id": "16758",
+        "start": 499,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 527,
+        "id": "16759",
+        "start": 516,
+        "text": "ULTRAPASSAR",
+        "type": "Therapeutic or Preventive Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7259,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9987,
+        "no_relation": 0.0012
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "7868f24ed2519c2bbbba2804f5fcb9aa9b28a3a48517a42d89b0a777e361c67a",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ FOI POSSÍVEL ⟦E2⟧ULTRAPASSAR⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C036",
+      "distancia": 13,
+      "doc_id": "8971",
+      "documento_neutro": "D18",
+      "e1": {
+        "end": 1392,
+        "id": "4138",
+        "start": 1389,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1421,
+        "id": "4173",
+        "start": 1405,
+        "text": "TECIDO NECROSADO",
+        "type": "Pathologic Function|Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 2485,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9985,
+        "no_relation": 0.0015
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "3093968a729b1b9a71f44532eccecaf35dd1d0d1dfd7d7c824dce55957da1f36",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ PRESENÇA DE ⟦E2⟧TECIDO NECROSADO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C037",
+      "distancia": 1,
+      "doc_id": "9426",
+      "documento_neutro": "D19",
+      "e1": {
+        "end": 331,
+        "id": "21452",
+        "start": 327,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 354,
+        "id": "21509",
+        "start": 332,
+        "text": "dor toracica associada",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 9436,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "43d0bde84e930d65099a8466fc493209862c8a0a9ed446abbba53c5b9c12dc23",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ ⟦E2⟧dor toracica associada⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C038",
+      "distancia": 9,
+      "doc_id": "9426",
+      "documento_neutro": "D19",
+      "e1": {
+        "end": 435,
+        "id": "21461",
+        "start": 431,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 453,
+        "id": "21463",
+        "start": 444,
+        "text": "urinarias",
+        "type": "Body System"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 9508,
+      "probabilidades": {
+        "associated_with": 0.0013,
+        "negation_of": 0.5466,
+        "no_relation": 0.4521
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "e3fc7c5d01af042b7b52c816dec70149c2b23f749d7b3d8b2995e855f740d67c",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ queixas ⟦E2⟧urinarias⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C039",
+      "distancia": 21,
+      "doc_id": "9426",
+      "documento_neutro": "D19",
+      "e1": {
+        "end": 435,
+        "id": "21461",
+        "start": 431,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 473,
+        "id": "21464",
+        "start": 456,
+        "text": "gastrointestinais",
+        "type": "Body System"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 9509,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9992,
+        "no_relation": 0.0007
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "56cd5538d5679d33006538269c51dd5657ef4b912375a9423df5dac60d3ae55c",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ queixas urinarias e ⟦E2⟧gastrointestinais⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C040",
+      "distancia": 1,
+      "doc_id": "9426",
+      "documento_neutro": "D19",
+      "e1": {
+        "end": 480,
+        "id": "21465",
+        "start": 476,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 490,
+        "id": "21466",
+        "start": 481,
+        "text": "tabagismo",
+        "type": "Disease or Syndrome"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9528,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "c3cd266ab0337239148783117aba4d3c84918b727ed759e6a7aa570199507672",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ ⟦E2⟧tabagismo⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C041",
+      "distancia": 1,
+      "doc_id": "9426",
+      "documento_neutro": "D19",
+      "e1": {
+        "end": 1083,
+        "id": "21485",
+        "start": 1080,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1086,
+        "id": "21486",
+        "start": 1084,
+        "text": "RA",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 9752,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "c96d5cd2d45d953c0d4a696dc137a883ab9a6cbc36e655db325bdf7f6874a2e9",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧RA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C042",
+      "distancia": 11,
+      "doc_id": "9425",
+      "documento_neutro": "D20",
+      "e1": {
+        "end": 142,
+        "id": "21383",
+        "start": 138,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 163,
+        "id": "21385",
+        "start": 153,
+        "text": "polidipsia",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9093,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9992,
+        "no_relation": 0.0008
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "01f29f7bb1059973ef91e4258b043effb51fea1e11977a2bebe8fce547213301",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ poliuria, ⟦E2⟧polidipsia⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C043",
+      "distancia": 8,
+      "doc_id": "9425",
+      "documento_neutro": "D20",
+      "e1": {
+        "end": 181,
+        "id": "21387",
+        "start": 177,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 196,
+        "id": "21388",
+        "start": 189,
+        "text": "queixas",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9112,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "999b9f16badf9aface0b493db00b9c2fb40a2a5fb8f527f52687312371a4263b",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ outras ⟦E2⟧queixas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C044",
+      "distancia": 1,
+      "doc_id": "9773",
+      "documento_neutro": "D21",
+      "e1": {
+        "end": 238,
+        "id": "37929",
+        "start": 235,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 246,
+        "id": "37930",
+        "start": 239,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 16682,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a9043102406de2b521575f4cf79431ffd1eac164762c7f96f44b617e1ee1ff53",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C045",
+      "distancia": 1,
+      "doc_id": "9394",
+      "documento_neutro": "D22",
+      "e1": {
+        "end": 218,
+        "id": "20010",
+        "start": 215,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 226,
+        "id": "20011",
+        "start": 219,
+        "text": "sucesso",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 8594,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9993,
+        "no_relation": 0.0007
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "ee14044f8dfaf25c48f56cc16f6112103ef31b215c2af8f9234a3d307fb90379",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧sucesso⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C046",
+      "distancia": 1,
+      "doc_id": "8953",
+      "documento_neutro": "D23",
+      "e1": {
+        "end": 702,
+        "id": "2687",
+        "start": 696,
+        "text": "EXCETO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 708,
+        "id": "2688",
+        "start": 703,
+        "text": "LOBOS",
+        "type": "Body Part, Organ, or Organ Component"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 926,
+      "probabilidades": {
+        "associated_with": 0.9093,
+        "negation_of": 0.0108,
+        "no_relation": 0.08
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "associated_with",
+      "sha256_caso_cego": "09a69305b301fa4c7a84814c9bd13996575f4023169680e0160a8d101c84f5ae",
+      "trecho_marcado": "⟦E1⟧EXCETO⟦/E1⟧ ⟦E2⟧LOBOS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C047",
+      "distancia": 1,
+      "doc_id": "9716",
+      "documento_neutro": "D24",
+      "e1": {
+        "end": 81,
+        "id": "35457",
+        "start": 78,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 89,
+        "id": "35458",
+        "start": 82,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom|Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 14161,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "545e6f9538175b190e91661459cedfe8e927681b96040ef0972e896d072b2234",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C048",
+      "distancia": 1,
+      "doc_id": "9515",
+      "documento_neutro": "D25",
+      "e1": {
+        "end": 103,
+        "id": "25528",
+        "start": 100,
+        "text": "Sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 122,
+        "id": "25545",
+        "start": 104,
+        "text": "queixas miccionais",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 10700,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "26660ea60780e687c83c8072968e80768982c3e13ae090137a2bf47d6893f190",
+      "trecho_marcado": "⟦E1⟧Sem⟦/E1⟧ ⟦E2⟧queixas miccionais⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C049",
+      "distancia": 1,
+      "doc_id": "8956",
+      "documento_neutro": "D26",
+      "e1": {
+        "end": 365,
+        "id": "2812",
+        "start": 362,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 378,
+        "id": "2813",
+        "start": 366,
+        "text": "VERBALIZANDO",
+        "type": "Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 1291,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "82514742a99913fd6b6ffeb9262d55928087dc05cd2dbdad01b82bbc91c7642f",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ ⟦E2⟧VERBALIZANDO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C050",
+      "distancia": 16,
+      "doc_id": "8956",
+      "documento_neutro": "D26",
+      "e1": {
+        "end": 365,
+        "id": "2812",
+        "start": 362,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 398,
+        "id": "2850",
+        "start": 381,
+        "text": "RESTRITO AO LEITO",
+        "type": "Finding|Therapeutic or Preventive Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 1292,
+      "probabilidades": {
+        "associated_with": 0.0003,
+        "negation_of": 0.7445,
+        "no_relation": 0.2552
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "0ae311b55c4b9aa89bca4b1073bcf7309442fa5d24e1dacb0235d4f2db80234e",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ VERBALIZANDO E ⟦E2⟧RESTRITO AO LEITO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C051",
+      "distancia": 4,
+      "doc_id": "8956",
+      "documento_neutro": "D26",
+      "e1": {
+        "end": 682,
+        "id": "2825",
+        "start": 675,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 692,
+        "id": "2826",
+        "start": 686,
+        "text": "debito",
+        "type": "Physiologic Function|Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 1363,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9988,
+        "no_relation": 0.0011
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "46261f11cfbdda36947e6f54e69a7985c3f96b31c4f3fbe37693dbb8d9746283",
+      "trecho_marcado": "⟦E1⟧ausente⟦/E1⟧ de ⟦E2⟧debito⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C052",
+      "distancia": 4,
+      "doc_id": "8956",
+      "documento_neutro": "D26",
+      "e1": {
+        "end": 692,
+        "id": "2826",
+        "start": 686,
+        "text": "debito",
+        "type": "Physiologic Function|Finding"
+      },
+      "e2": {
+        "end": 682,
+        "id": "2825",
+        "start": 675,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 1365,
+      "probabilidades": {
+        "associated_with": 0.0003,
+        "negation_of": 0.0265,
+        "no_relation": 0.9732
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "9a942bf94149fc7662573e47d677cf0e512657273dab2c770781b42e08afd826",
+      "trecho_marcado": "⟦E2⟧ausente⟦/E2⟧ de ⟦E1⟧debito⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C053",
+      "distancia": 1,
+      "doc_id": "9242",
+      "documento_neutro": "D27",
+      "e1": {
+        "end": 392,
+        "id": "16019",
+        "start": 389,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 401,
+        "id": "16020",
+        "start": 393,
+        "text": "seqüelas",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 6959,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a8c9584fcf27ed7e37bec60c18459ee135e5872a46e220271afc2c5e59bb35b9",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧seqüelas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C054",
+      "distancia": 1,
+      "doc_id": "9242",
+      "documento_neutro": "D27",
+      "e1": {
+        "end": 1272,
+        "id": "16034",
+        "start": 1269,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1299,
+        "id": "16083",
+        "start": 1273,
+        "text": "instabilidade hemodinâmica",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7020,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9994,
+        "no_relation": 0.0006
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "967f74408fcc4e7e04c78b7b97f3f2d3a397d57af80d03cca85ccf0f0805b9ef",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧instabilidade hemodinâmica⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C055",
+      "distancia": 1,
+      "doc_id": "9242",
+      "documento_neutro": "D27",
+      "e1": {
+        "end": 2075,
+        "id": "16046",
+        "start": 2072,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 2082,
+        "id": "16047",
+        "start": 2076,
+        "text": "queixa",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7084,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9991,
+        "no_relation": 0.0009
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "1bc70e65caeaca2a2edcf6ae9bf4a3ecbe9b2dc70b59d9770137b41d4192346e",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧queixa⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C056",
+      "distancia": 11,
+      "doc_id": "9242",
+      "documento_neutro": "D27",
+      "e1": {
+        "end": 2075,
+        "id": "16046",
+        "start": 2072,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 2100,
+        "id": "16097",
+        "start": 2086,
+        "text": "dor precordial",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7085,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9929,
+        "no_relation": 0.007
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "3b062fd7d1b6feabde8c2b64ecb0dbd3f840a1c592c3a88aa3804b9a9d450462",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ queixa de ⟦E2⟧dor precordial⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C057",
+      "distancia": 13,
+      "doc_id": "9242",
+      "documento_neutro": "D27",
+      "e1": {
+        "end": 2105,
+        "id": "16048",
+        "start": 2102,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 2159,
+        "id": "16098",
+        "start": 2118,
+        "text": "sinais clínicos de insuficiência cardíaca",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7100,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.937,
+        "no_relation": 0.0629
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "86362f912707cd5322e98ee89aea2257f3e58e9d46f9f562885134da52370755",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ dispnéia ou ⟦E2⟧sinais clínicos de insuficiência cardíaca⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C058",
+      "distancia": 8,
+      "doc_id": "9411",
+      "documento_neutro": "D28",
+      "e1": {
+        "end": 107,
+        "id": "20667",
+        "start": 103,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 132,
+        "id": "20715",
+        "start": 115,
+        "text": "QUEIXAS URINARIAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 8627,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.999,
+        "no_relation": 0.0009
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "8d6d66dc4fa108137470e2f6e0ca4c70efad5caaa53753de7d0ff74c4a8b2ec6",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ DEMAIS ⟦E2⟧QUEIXAS URINARIAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C059",
+      "distancia": 1,
+      "doc_id": "9626",
+      "documento_neutro": "D29",
+      "e1": {
+        "end": 43,
+        "id": "31030",
+        "start": 40,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 74,
+        "id": "31043",
+        "start": 44,
+        "text": "SABE INFORMAR MAIORES DETALHES",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 13301,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9982,
+        "no_relation": 0.0018
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "5721c1aac681a123a77894fa57107bbfb66b5e0ec8d0f095b2893898b52c1846",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ ⟦E2⟧SABE INFORMAR MAIORES DETALHES⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C060",
+      "distancia": 1,
+      "doc_id": "9626",
+      "documento_neutro": "D29",
+      "e1": {
+        "end": 80,
+        "id": "31031",
+        "start": 77,
+        "text": "sEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 88,
+        "id": "31032",
+        "start": 81,
+        "text": "QUEIXAS",
+        "type": "Sign or Symptom|Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 13308,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "e0a1ca21f5cf79f1aceef3961b66cc642c12cd46ef0fb70cb68e1fc84598382d",
+      "trecho_marcado": "⟦E1⟧sEM⟦/E1⟧ ⟦E2⟧QUEIXAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C061",
+      "distancia": 1,
+      "doc_id": "9472",
+      "documento_neutro": "D30",
+      "e1": {
+        "end": 63,
+        "id": "23694",
+        "start": 60,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 59,
+        "id": "23693",
+        "start": 47,
+        "text": "PROCEDIMENTO",
+        "type": "Therapeutic or Preventive Procedure|Diagnostic Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 10068,
+      "probabilidades": {
+        "associated_with": 0.0086,
+        "negation_of": 0.8569,
+        "no_relation": 0.1345
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "2cbb09dee7bd9971f32950def36d15292cb1d97002a3294e3b2e9a9907fe37ac",
+      "trecho_marcado": "⟦E2⟧PROCEDIMENTO⟦/E2⟧ ⟦E1⟧NÃO⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C062",
+      "distancia": 15,
+      "doc_id": "9472",
+      "documento_neutro": "D30",
+      "e1": {
+        "end": 95,
+        "id": "23697",
+        "start": 92,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 115,
+        "id": "23698",
+        "start": 110,
+        "text": "LESÃO",
+        "type": "Injury or Poisoning"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 10083,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9899,
+        "no_relation": 0.0101
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "7da8572be2fb1cfc332d9916f400e35782cb6b642a38d24c0d82fc3025801f0c",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ ULTRAPASSOU A ⟦E2⟧LESÃO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C063",
+      "distancia": 1,
+      "doc_id": "9730",
+      "documento_neutro": "D31",
+      "e1": {
+        "end": 129,
+        "id": "36029",
+        "start": 126,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 137,
+        "id": "36030",
+        "start": 130,
+        "text": "CAPTURA",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 14551,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9994,
+        "no_relation": 0.0006
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "380b27fdeb5da1987d16ed74b1aa0e082d84b3c15b270ae30358352a2a754a3a",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧CAPTURA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C064",
+      "distancia": 1,
+      "doc_id": "9730",
+      "documento_neutro": "D31",
+      "e1": {
+        "end": 196,
+        "id": "36032",
+        "start": 193,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 211,
+        "id": "36043",
+        "start": 197,
+        "text": "CAPTURA ATRIAL",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 14588,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.999,
+        "no_relation": 0.001
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "0615f23cb17f70cec5fc60b919ba2fe8a997218ca555da20066e8f4f92895f3f",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧CAPTURA ATRIAL⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C065",
+      "distancia": 1,
+      "doc_id": "9600",
+      "documento_neutro": "D32",
+      "e1": {
+        "end": 945,
+        "id": "29767",
+        "start": 942,
+        "text": "sem",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 951,
+        "id": "29768",
+        "start": 946,
+        "text": "piora",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 12595,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f06392dc65436080a1b70811bd1c947e7b75b4f58afb162c335880ab513ff797",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧piora⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C066",
+      "distancia": 1,
+      "doc_id": "9757",
+      "documento_neutro": "D33",
+      "e1": {
+        "end": 345,
+        "id": "37182",
+        "start": 342,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 352,
+        "id": "37183",
+        "start": 346,
+        "text": "ANEMIA",
+        "type": "Disease or Syndrome"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 15768,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "ae825b258d217ebe58ac666d38673dd22d28f626e2e16fc716be17fe3fa41c99",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧ANEMIA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C067",
+      "distancia": 1,
+      "doc_id": "9881",
+      "documento_neutro": "D34",
+      "e1": {
+        "end": 173,
+        "id": "42754",
+        "start": 170,
+        "text": "Nao",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 201,
+        "id": "42801",
+        "start": 174,
+        "text": "relacionada com alimentaçao",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 18206,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9992,
+        "no_relation": 0.0007
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "dcb949455b89b32fd7a69aae6c0c7daf2cffa7ed3c5fab7b30ff0c6cc8c89b4c",
+      "trecho_marcado": "⟦E1⟧Nao⟦/E1⟧ ⟦E2⟧relacionada com alimentaçao⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C068",
+      "distancia": 1,
+      "doc_id": "9352",
+      "documento_neutro": "D35",
+      "e1": {
+        "end": 52,
+        "id": "19612",
+        "start": 49,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 68,
+        "id": "19632",
+        "start": 53,
+        "text": "MOTIVO APARENTE",
+        "type": "Functional Concept|Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 8246,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9989,
+        "no_relation": 0.001
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "e4efdb1328b77fce920c4f79af59ecd45b7ce686fb09d8fc63a00ce1a310b6f4",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧MOTIVO APARENTE⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C069",
+      "distancia": 1,
+      "doc_id": "9352",
+      "documento_neutro": "D35",
+      "e1": {
+        "end": 334,
+        "id": "19618",
+        "start": 331,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 343,
+        "id": "19619",
+        "start": 335,
+        "text": "DISPNEIA",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 8280,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "c8ec7158792a9b1e4317adafa991a48c947787b0daf062721640ef76fd88c49e",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧DISPNEIA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C070",
+      "distancia": 1,
+      "doc_id": "9352",
+      "documento_neutro": "D35",
+      "e1": {
+        "end": 349,
+        "id": "19620",
+        "start": 346,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 356,
+        "id": "19621",
+        "start": 350,
+        "text": "ANGINA",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 8291,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "3e35c8ffc2c5f2cc98e91d6b3488a2f93ffd3128dc83332c0d721583eb60a399",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧ANGINA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C071",
+      "distancia": 1,
+      "doc_id": "9596",
+      "documento_neutro": "D36",
+      "e1": {
+        "end": 661,
+        "id": "29509",
+        "start": 658,
+        "text": "SEM",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 664,
+        "id": "29510",
+        "start": 662,
+        "text": "RA",
+        "type": "Abbreviation|Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 12313,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "fe1b1475d3943ef35c5c3646503365dcea4288c68338325aec6d5171561047c8",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧RA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C072",
+      "distancia": 8,
+      "doc_id": "9867",
+      "documento_neutro": "D37",
+      "e1": {
+        "end": 61,
+        "id": "42157",
+        "start": 57,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 85,
+        "id": "42204",
+        "start": 69,
+        "text": "QUEIXAS OCULARES",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17735,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9987,
+        "no_relation": 0.0013
+      },
+      "rotulo_anotado": "associated_with",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "4d417013b69a1cead57d0df58f20a688d664aeae9d0ff629363c84dc79f68bba",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ OUTRAS ⟦E2⟧QUEIXAS OCULARES⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C073",
+      "distancia": 1,
+      "doc_id": "9867",
+      "documento_neutro": "D37",
+      "e1": {
+        "end": 144,
+        "id": "42162",
+        "start": 140,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 148,
+        "id": "42163",
+        "start": 145,
+        "text": "HAS",
+        "type": "Abbreviation|Disease or Syndrome"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17781,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.998,
+        "no_relation": 0.0019
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "bb8272666a1e219a60928c8ebf489d80ac0b9e7ff2d12b1ef07452b90d42c67e",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ ⟦E2⟧HAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C074",
+      "distancia": 7,
+      "doc_id": "9867",
+      "documento_neutro": "D37",
+      "e1": {
+        "end": 144,
+        "id": "42162",
+        "start": 140,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 159,
+        "id": "42164",
+        "start": 151,
+        "text": "CIRURGIA",
+        "type": "Therapeutic or Preventive Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17782,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9983,
+        "no_relation": 0.0017
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b219ed86e9a07db10c67a03e3a9a199797d939e36b36c1d52f3973245e14309e",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ HAS / ⟦E2⟧CIRURGIA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C075",
+      "distancia": 18,
+      "doc_id": "9867",
+      "documento_neutro": "D37",
+      "e1": {
+        "end": 144,
+        "id": "42162",
+        "start": 140,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 175,
+        "id": "42207",
+        "start": 162,
+        "text": "TRAUMA OCULAR",
+        "type": "Injury or Poisoning"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17783,
+      "probabilidades": {
+        "associated_with": 0.0001,
+        "negation_of": 0.9976,
+        "no_relation": 0.0023
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "c6a9eb962552c11a73abe23c29c3238544635a84de8afcdb11ac6f8eceb79080",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ HAS / CIRURGIA E ⟦E2⟧TRAUMA OCULAR⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C076",
+      "distancia": 1,
+      "doc_id": "9867",
+      "documento_neutro": "D37",
+      "e1": {
+        "end": 183,
+        "id": "42165",
+        "start": 179,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 186,
+        "id": "42166",
+        "start": 184,
+        "text": "HF",
+        "type": "Abbreviation"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 17805,
+      "probabilidades": {
+        "associated_with": 0.0006,
+        "negation_of": 0.9769,
+        "no_relation": 0.0224
+      },
+      "rotulo_anotado": "associated_with",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "786ae5c9daa62fb96e9183a070f18014732b57d5c2c0fa44ed0c7e6525c88507",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ ⟦E2⟧HF⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C077",
+      "distancia": 1,
+      "doc_id": "8981",
+      "documento_neutro": "D38",
+      "e1": {
+        "end": 302,
+        "id": "4887",
+        "start": 298,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 311,
+        "id": "4888",
+        "start": 303,
+        "text": "CEFALEIA",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 2741,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "6c3f5510d2117ca8a28a855b39bf0dbf2dea30f0b7bd78411752ba8b291e4e7f",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ ⟦E2⟧CEFALEIA⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C078",
+      "distancia": 11,
+      "doc_id": "8981",
+      "documento_neutro": "D38",
+      "e1": {
+        "end": 302,
+        "id": "4887",
+        "start": 298,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 318,
+        "id": "4889",
+        "start": 313,
+        "text": "EMESE",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 2742,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "bcdd44538db58cf4506cd367de6b12bf0ec2728962c32c7925be7f648be6c472",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ CEFALEIA, ⟦E2⟧EMESE⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C079",
+      "distancia": 1,
+      "doc_id": "8981",
+      "documento_neutro": "D38",
+      "e1": {
+        "end": 1061,
+        "id": "4918",
+        "start": 1050,
+        "text": "eliminações",
+        "type": "Physiologic Function"
+      },
+      "e2": {
+        "end": 1070,
+        "id": "4919",
+        "start": 1062,
+        "text": "ausentes",
+        "type": "Negation"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 2911,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9903,
+        "no_relation": 0.0095
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "5e58204d5087cd65eae10e4405dc663fdf8f3a3f3b510464d63e3cf0ecc383d9",
+      "trecho_marcado": "⟦E1⟧eliminações⟦/E1⟧ ⟦E2⟧ausentes⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C080",
+      "distancia": 1,
+      "doc_id": "8981",
+      "documento_neutro": "D38",
+      "e1": {
+        "end": 1070,
+        "id": "4919",
+        "start": 1062,
+        "text": "ausentes",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1061,
+        "id": "4918",
+        "start": 1050,
+        "text": "eliminações",
+        "type": "Physiologic Function"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 2914,
+      "probabilidades": {
+        "associated_with": 0.0004,
+        "negation_of": 0.9255,
+        "no_relation": 0.0741
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "be130539de84537eafe883ad56b0b6b4d1aa16a6b3926f26c55375d99500fcfb",
+      "trecho_marcado": "⟦E2⟧eliminações⟦/E2⟧ ⟦E1⟧ausentes⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C081",
+      "distancia": 3,
+      "doc_id": "9305",
+      "documento_neutro": "D39",
+      "e1": {
+        "end": 385,
+        "id": "17978",
+        "start": 378,
+        "text": "indolor",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 396,
+        "id": "17979",
+        "start": 388,
+        "text": "palpação",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 7965,
+      "probabilidades": {
+        "associated_with": 0.0852,
+        "negation_of": 0.6987,
+        "no_relation": 0.2161
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f41fecee47e2e9839339a2b9a004d85f6cb6919a1640faa5c6457305ea9fcc83",
+      "trecho_marcado": "⟦E1⟧indolor⟦/E1⟧ a ⟦E2⟧palpação⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C082",
+      "distancia": 1,
+      "doc_id": "9305",
+      "documento_neutro": "D39",
+      "e1": {
+        "end": 449,
+        "id": "17982",
+        "start": 442,
+        "text": "ausente",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 441,
+        "id": "17981",
+        "start": 432,
+        "text": "evacuação",
+        "type": "Finding|Physiologic Function"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 7987,
+      "probabilidades": {
+        "associated_with": 0.0002,
+        "negation_of": 0.9769,
+        "no_relation": 0.0229
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "640f838768a23d949c180ededbcc62bc5106119fedbd632c683cce77242ae1c1",
+      "trecho_marcado": "⟦E2⟧evacuação⟦/E2⟧ ⟦E1⟧ausente⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C083",
+      "distancia": 4,
+      "doc_id": "8918",
+      "documento_neutro": "D40",
+      "e1": {
+        "end": 78,
+        "id": "949",
+        "start": 67,
+        "text": "SEM QUEIXAS",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 85,
+        "id": "916",
+        "start": 82,
+        "text": "DOR",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 568,
+      "probabilidades": {
+        "associated_with": 0.0045,
+        "negation_of": 0.9475,
+        "no_relation": 0.048
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "61a13c315bc2f60300afc7796be1b1780675acdc1708a97b07484b85a459bf93",
+      "trecho_marcado": "⟦E1⟧SEM QUEIXAS⟦/E1⟧ DE ⟦E2⟧DOR⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C084",
+      "distancia": 4,
+      "doc_id": "8918",
+      "documento_neutro": "D40",
+      "e1": {
+        "end": 85,
+        "id": "916",
+        "start": 82,
+        "text": "DOR",
+        "type": "Sign or Symptom"
+      },
+      "e2": {
+        "end": 78,
+        "id": "949",
+        "start": 67,
+        "text": "SEM QUEIXAS",
+        "type": "Negation"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 572,
+      "probabilidades": {
+        "associated_with": 0.0286,
+        "negation_of": 0.0452,
+        "no_relation": 0.9262
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "5f3110bfa70836aee15260ce893722b3f5e0644d68f856a28de8af09f6159689",
+      "trecho_marcado": "⟦E2⟧SEM QUEIXAS⟦/E2⟧ DE ⟦E1⟧DOR⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C085",
+      "distancia": 1,
+      "doc_id": "9877",
+      "documento_neutro": "D41",
+      "e1": {
+        "end": 279,
+        "id": "42592",
+        "start": 275,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 288,
+        "id": "42593",
+        "start": 280,
+        "text": "sintomas",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 18040,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "7679302b663190fafcd4f67790f4dd265883efe11acfab889423363447eb24bd",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ ⟦E2⟧sintomas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C086",
+      "distancia": 1,
+      "doc_id": "9110",
+      "documento_neutro": "D42",
+      "e1": {
+        "end": 734,
+        "id": "10860",
+        "start": 724,
+        "text": "não refere",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 750,
+        "id": "10861",
+        "start": 735,
+        "text": "queixas algicas",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4617,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "445d6f90dfc49a1d46161d5ab83a9d0ac96c426cf9a37ffe4a707195a66c2623",
+      "trecho_marcado": "⟦E1⟧não refere⟦/E1⟧ ⟦E2⟧queixas algicas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C087",
+      "distancia": 1,
+      "doc_id": "9110",
+      "documento_neutro": "D42",
+      "e1": {
+        "end": 755,
+        "id": "10809",
+        "start": 752,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 760,
+        "id": "10810",
+        "start": 756,
+        "text": "inte",
+        "type": "Finding|Abbreviation"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4627,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9978,
+        "no_relation": 0.0022
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "2d5708a299f0779907fd1bea9501efd9dfbe45e09490453c4f38ab36b7e870c3",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧inte⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C088",
+      "distancia": 1,
+      "doc_id": "9110",
+      "documento_neutro": "D42",
+      "e1": {
+        "end": 951,
+        "id": "10817",
+        "start": 948,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 967,
+        "id": "10818",
+        "start": 952,
+        "text": "INTERCORRENCIAS",
+        "type": "Finding"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4646,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "7af08e7ece01bc60de9815a9b5c69178a1e1af18a2e5b903ef4e533aa1cdc078",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧INTERCORRENCIAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C089",
+      "distancia": 3,
+      "doc_id": "9110",
+      "documento_neutro": "D42",
+      "e1": {
+        "end": 1159,
+        "id": "10829",
+        "start": 1152,
+        "text": "indolor",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1170,
+        "id": "10830",
+        "start": 1162,
+        "text": "palpação",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 4698,
+      "probabilidades": {
+        "associated_with": 0.0799,
+        "negation_of": 0.3618,
+        "no_relation": 0.5583
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "a3d898caf0db1cf70817492ad8c1cfc44aec3d6dd0b69c1c4746c6e92f35a2d7",
+      "trecho_marcado": "⟦E1⟧indolor⟦/E1⟧ à ⟦E2⟧palpação⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C090",
+      "distancia": 1,
+      "doc_id": "9213",
+      "documento_neutro": "D43",
+      "e1": {
+        "end": 208,
+        "id": "13845",
+        "start": 204,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 215,
+        "id": "13846",
+        "start": 209,
+        "text": "algias",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 6135,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "258ce804ae4ba5efb3c86e0515c54b97d25448ddd465df7326a96aa1063b8e7b",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ ⟦E2⟧algias⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C091",
+      "distancia": 1,
+      "doc_id": "9469",
+      "documento_neutro": "D44",
+      "e1": {
+        "end": 164,
+        "id": "23614",
+        "start": 161,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 180,
+        "id": "23615",
+        "start": 165,
+        "text": "intercorrências",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9976,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "8f9246db67e769457be2bf3158ec1b974c6989db2c91594f906eb8f0d536d21e",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧intercorrências⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C092",
+      "distancia": 11,
+      "doc_id": "9469",
+      "documento_neutro": "D44",
+      "e1": {
+        "end": 384,
+        "id": "23620",
+        "start": 381,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 403,
+        "id": "23621",
+        "start": 395,
+        "text": "hematoma",
+        "type": "Pathologic Function"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 10011,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9991,
+        "no_relation": 0.0009
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "7238ebd0c5105e59b057cf0d136b95d78157122b26c7b88535f8356e43006df6",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ sinais de ⟦E2⟧hematoma⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C093",
+      "distancia": 1,
+      "doc_id": "9125",
+      "documento_neutro": "D45",
+      "e1": {
+        "end": 60,
+        "id": "11704",
+        "start": 56,
+        "text": "Nega",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 73,
+        "id": "11705",
+        "start": 61,
+        "text": "comorbidades",
+        "type": "Disease or Syndrome"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 5206,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "086a7a2626e777a8505e8cdcc6eda1a8a2ad2eb885ec6112e5b4aa6e04e1fa13",
+      "trecho_marcado": "⟦E1⟧Nega⟦/E1⟧ ⟦E2⟧comorbidades⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C094",
+      "distancia": 1,
+      "doc_id": "9228",
+      "documento_neutro": "D46",
+      "e1": {
+        "end": 474,
+        "id": "14864",
+        "start": 471,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 503,
+        "id": "14902",
+        "start": 475,
+        "text": "alterações isquêmicas agudas",
+        "type": "Laboratory or Test Result"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 6571,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f91972fa6adcce7743bfcd40b94226c2b19e6115a0f54d8466d0fde96fd858f9",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧alterações isquêmicas agudas⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C095",
+      "distancia": 1,
+      "doc_id": "9228",
+      "documento_neutro": "D46",
+      "e1": {
+        "end": 1378,
+        "id": "14888",
+        "start": 1375,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 1393,
+        "id": "14889",
+        "start": 1379,
+        "text": "ANTICOAGULAÇÃO",
+        "type": "Therapeutic or Preventive Procedure"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 6660,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9995,
+        "no_relation": 0.0005
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "105d8ae9449dabea5c5845e469b4c3ba7b3f28ee4a6be467febb01bd02ea47c1",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧ANTICOAGULAÇÃO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C096",
+      "distancia": 12,
+      "doc_id": "9327",
+      "documento_neutro": "D47",
+      "e1": {
+        "end": 223,
+        "id": "18683",
+        "start": 220,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 247,
+        "id": "18685",
+        "start": 235,
+        "text": "angioplastia",
+        "type": "Therapeutic or Preventive Procedure|Diagnostic Procedure"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 8044,
+      "probabilidades": {
+        "associated_with": 0.0355,
+        "negation_of": 0.1371,
+        "no_relation": 0.8274
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "cbc44790790a2b6fa3d208bbe4b55005475e074cd3d4a27406526d5b33c014dd",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ sucesso de ⟦E2⟧angioplastia⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C097",
+      "distancia": 1,
+      "doc_id": "8966",
+      "documento_neutro": "D48",
+      "e1": {
+        "end": 413,
+        "id": "3648",
+        "start": 410,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 417,
+        "id": "3649",
+        "start": 414,
+        "text": "AVP",
+        "type": "Therapeutic or Preventive Procedure|Abbreviation|Medical Device"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 1571,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "a0941a131103e11d7b6c7c05262426987968b4af5e2e0c1cadea92b7d07fd258",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧AVP⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C098",
+      "distancia": 1,
+      "doc_id": "9418",
+      "documento_neutro": "D49",
+      "e1": {
+        "end": 187,
+        "id": "21088",
+        "start": 184,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 203,
+        "id": "21089",
+        "start": 188,
+        "text": "intercorrências",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 9030,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "73fd7b5938d6e8cff0f615195aca589cf963894389697d697bcac1bf9833105f",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧intercorrências⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C099",
+      "distancia": 3,
+      "doc_id": "9093",
+      "documento_neutro": "D50",
+      "e1": {
+        "end": 125,
+        "id": "9636",
+        "start": 118,
+        "text": "INDOLOR",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 136,
+        "id": "9637",
+        "start": 128,
+        "text": "PALPAÇÃO",
+        "type": "Diagnostic Procedure"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 4353,
+      "probabilidades": {
+        "associated_with": 0.049,
+        "negation_of": 0.0306,
+        "no_relation": 0.9204
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "20db8f091069c5e1d8b1f09ffebd96a7f0773b15ce1405108910095bdddc36d9",
+      "trecho_marcado": "⟦E1⟧INDOLOR⟦/E1⟧ A ⟦E2⟧PALPAÇÃO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C100",
+      "distancia": 1,
+      "doc_id": "9093",
+      "documento_neutro": "D50",
+      "e1": {
+        "end": 184,
+        "id": "9639",
+        "start": 181,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 200,
+        "id": "9662",
+        "start": 185,
+        "text": "QUEIXAS ALGICAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 4371,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9992,
+        "no_relation": 0.0008
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "2633f8a93982e1ad1bd2aae3ce00e109e56eebbfcdbbba46b4fe0b3ec978ab61",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS ALGICAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C101",
+      "distancia": 1,
+      "doc_id": "9093",
+      "documento_neutro": "D50",
+      "e1": {
+        "end": 615,
+        "id": "9647",
+        "start": 612,
+        "text": "Sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 623,
+        "id": "9648",
+        "start": 616,
+        "text": "sucesso",
+        "type": "Finding"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 4404,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9987,
+        "no_relation": 0.0013
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "b2c7aa921ae05e5953665db74606a73f4d6dbc4510534c2677dd1c56716647f9",
+      "trecho_marcado": "⟦E1⟧Sem⟦/E1⟧ ⟦E2⟧sucesso⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C102",
+      "distancia": 1,
+      "doc_id": "9093",
+      "documento_neutro": "D50",
+      "e1": {
+        "end": 623,
+        "id": "9648",
+        "start": 616,
+        "text": "sucesso",
+        "type": "Finding"
+      },
+      "e2": {
+        "end": 615,
+        "id": "9647",
+        "start": 612,
+        "text": "Sem",
+        "type": "Negation"
+      },
+      "grupo": "controle_falso_negativo",
+      "indice_candidato": 4408,
+      "probabilidades": {
+        "associated_with": 0.0003,
+        "negation_of": 0.0182,
+        "no_relation": 0.9814
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "no_relation",
+      "sha256_caso_cego": "c2f4f33d7674d2a36313e799c6fe60173ff0c44e2534f06fc4aa3e07829aa806",
+      "trecho_marcado": "⟦E2⟧Sem⟦/E2⟧ ⟦E1⟧sucesso⟦/E1⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C103",
+      "distancia": 1,
+      "doc_id": "9177",
+      "documento_neutro": "D51",
+      "e1": {
+        "end": 25,
+        "id": "12219",
+        "start": 21,
+        "text": "NEGA",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 38,
+        "id": "12220",
+        "start": 26,
+        "text": "COMORBIDADES",
+        "type": "Disease or Syndrome"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 5327,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9998,
+        "no_relation": 0.0002
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "fb58a6b4bc5b1d0e228d60424870e23cd8639756e0e671fed7728ea296caccb8",
+      "trecho_marcado": "⟦E1⟧NEGA⟦/E1⟧ ⟦E2⟧COMORBIDADES⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C104",
+      "distancia": 1,
+      "doc_id": "9220",
+      "documento_neutro": "D52",
+      "e1": {
+        "end": 144,
+        "id": "14294",
+        "start": 141,
+        "text": "SEM",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 160,
+        "id": "14332",
+        "start": 145,
+        "text": "QUEIXAS ALGICAS",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 6275,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9996,
+        "no_relation": 0.0004
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f252c64c135a00c3425190114b99470731b543f5a7d7cd7484820ab2dab284ad",
+      "trecho_marcado": "⟦E1⟧SEM⟦/E1⟧ ⟦E2⟧QUEIXAS ALGICAS⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C105",
+      "distancia": 4,
+      "doc_id": "9220",
+      "documento_neutro": "D52",
+      "e1": {
+        "end": 645,
+        "id": "14306",
+        "start": 642,
+        "text": "NÃO",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 657,
+        "id": "14307",
+        "start": 649,
+        "text": "OXIMETRO",
+        "type": "Medical Device"
+      },
+      "grupo": "falso_positivo",
+      "indice_candidato": 6359,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9993,
+        "no_relation": 0.0006
+      },
+      "rotulo_anotado": "no_relation",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f44dca98ba1b0901ac669c25d9e7dbb200e6dca48732e7c5d88154d092e1e49f",
+      "trecho_marcado": "⟦E1⟧NÃO⟦/E1⟧ HÁ ⟦E2⟧OXIMETRO⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C106",
+      "distancia": 1,
+      "doc_id": "9220",
+      "documento_neutro": "D52",
+      "e1": {
+        "end": 942,
+        "id": "14317",
+        "start": 939,
+        "text": "sem",
+        "type": "Negation"
+      },
+      "e2": {
+        "end": 950,
+        "id": "14318",
+        "start": 943,
+        "text": "auxilio",
+        "type": "Health Care Activity"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 6421,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.9997,
+        "no_relation": 0.0003
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "291fa8a189881fb20ea7c5d936e2832be970da4d1ffc43c53b207f8e239ce5c5",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧auxilio⟦/E2⟧"
+    },
+    {
+      "alinhamento": [
+        "exato",
+        "exato"
+      ],
+      "caso": "C107",
+      "distancia": 1,
+      "doc_id": "9863",
+      "documento_neutro": "D53",
+      "e1": {
+        "end": 774,
+        "id": "42033",
+        "start": 771,
+        "text": "sem",
+        "type": "Negation|Negation"
+      },
+      "e2": {
+        "end": 792,
+        "id": "42051",
+        "start": 775,
+        "text": "sinais de flogose",
+        "type": "Sign or Symptom"
+      },
+      "grupo": "controle_verdadeiro_positivo",
+      "indice_candidato": 17712,
+      "probabilidades": {
+        "associated_with": 0.0,
+        "negation_of": 0.999,
+        "no_relation": 0.001
+      },
+      "rotulo_anotado": "negation_of",
+      "rotulo_predito": "negation_of",
+      "sha256_caso_cego": "f0cc1c86f785c98376b712dc37346d55f97ffbf31b7ee8ccd6907cc03de28850",
+      "trecho_marcado": "⟦E1⟧sem⟦/E1⟧ ⟦E2⟧sinais de flogose⟦/E2⟧"
+    }
+  ],
+  "contagens": {
+    "casos_por_grupo": {
+      "controle_falso_negativo": 9,
+      "controle_verdadeiro_positivo": 49,
+      "falso_positivo": 49
+    },
+    "documentos_com_fp": 26,
+    "fn": 9,
+    "fp": 49,
+    "fp_por_rotulo_anotado": {
+      "associated_with": 5,
+      "no_relation": 44
+    },
+    "tp": 141
+  },
+  "esquema": "reclin-adjudicacao-negation-of/1",
+  "metricas_oficiais_negation_of": {
+    "f1": 0.8294117647058824,
+    "fn": 9,
+    "fp": 49,
+    "precision": 0.7421052631578947,
+    "recall": 0.94,
+    "support": 150,
+    "tp": 141
+  },
+  "natureza": "rastreabilidade restrita à análise; não entregar a quem adjudica",
+  "origem": {
+    "arquivos_sha256": {
+      "config.json": "4d5d1ba0158cf798ff6c6777d6e28ec9895d81405392d62c1ec306adf9a2e409",
+      "experimento.json": "0d0ff1c0188ebfd6bc0ce5531fabd940aae7a7f3a5e5e35fe36ef24cd382d320",
+      "metricas.json": "c1e1ff06ad944ab5bd8f1ee51e6d0b1488f3b9e03db6edce40db79a6f47c0679",
+      "predicoes_dev.json": "017cee17142390e68295eb6b985e198d6c9359ffbd890ffcd43c8bb602ea4e44",
+      "treino.json": "ad2753d8c9e3020b1aee13d9534b741b7b8fa6f44a129bb68af666d633a8ab08"
+    },
+    "conjunto_avaliacao": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "max_gap": 25,
+      "n_candidatos": 19064,
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "encoder": "biobertpt",
+    "estrategia": "pair_aware",
+    "execucao": "pairaware_biobertpt_seed42",
+    "identidade_codigo": "ecbb98cae7bcdcd8f895e0bf8d9d3380a704b3471a15fd08df4e526220d85e8d",
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "particao": "dev",
+    "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+    "registro_origem": "branch resultados-colab @ 995c57dd119eb89c2024c9d30fb867e9442988e5; ultima alteracao da pasta codigo/resultados/execucoes/pairaware_biobertpt_seed42: d1d809f597641f24dce913ea308bcc97a97bb07b (2026-10-14); lido por exportacao somente-leitura autorizada em 2026-10-20",
+    "seed": 42,
+    "versao_dados": "v2-texto-fonte"
+  },
+  "planilha": {
+    "arquivo": "cega/planilha_adjudicacao.xlsx",
+    "n_casos": 107,
+    "sha256_casos_cegos": "74f3eda76570d8b85a9dfaec474ae8b5faff3eaf410afc047ae910cb79b2a8b0",
+    "sha256_notas_cegas": "d3cebc891b6d0d52699fba2669e8f97c3208293fba7d9ca39d602fce63e63f61"
+  }
+}

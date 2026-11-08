@@ -1,0 +1,18 @@
+%% GERADO por analise/gerar_artefatos_tcc.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Two-Stage, estágio 1 (relação $\times$ \texttt{no\_relation}) no DEV completo: perdas, AP, precisão e \emph{recall} de \texttt{relacao}, \emph{recall} nos pares \texttt{negation\_of} e duração. $\ast$ época selecionada (maior AP).}
+  \label{tab:dev_estagio1}
+\resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrrr}
+  \toprule
+  Época & Perda (treino) & Perda (DEV) & AP & P & R & R nos pares neg & Duração (min) \\
+  \midrule
+1 & 0{,}4349 & 0{,}3506 & 0{,}506 & 0{,}315 & 0{,}778 & 0{,}973 & 59{,}9$^{\ddagger}$ \\
+2$\ast$ & 0{,}2830 & 0{,}3392 & 0{,}544 & 0{,}321 & 0{,}820 & 0{,}947 & 60{,}8$^{\ddagger}$ \\
+3 & 0{,}2252 & 0{,}3597 & 0{,}533 & 0{,}339 & 0{,}798 & 0{,}960 & 37{,}1$^{\dagger}$ \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize $^{\dagger}$ Época interrompida e retomada a partir de um \emph{checkpoint}; a duração cobre apenas a sessão final (estágio 1, época 3: 1\,158 dos 2\,386 passos). $^{\ddagger}$ Época concluída em sessão anterior, sem registro de sessão preservado; a duração consta do histórico de treino, mas não pode ser conferida com o registro da sessão. As durações não são comparáveis entre execuções como medida de custo.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

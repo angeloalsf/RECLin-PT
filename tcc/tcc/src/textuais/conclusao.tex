@@ -1,0 +1,141 @@
+\chapter[Conclusão]{Conclusão}
+\label{cap:conclusao}
+
+Este trabalho teve como objetivo desenvolver o RECLin-PT, modelo de extração de
+relações em notas clínicas em português sobre o corpus SemClinBr, com ênfase na
+relação \texttt{negation\_of}. A resposta à pergunta de pesquisa, sobre como
+desenvolver esse modelo, tem três componentes. O primeiro é a cadeia de dados: a
+reconstrução do corpus a partir dos XML com o texto alinhado às anotações, as
+partições congeladas e o gerador de pares candidatos, que tornam a tarefa definida e
+comparável. O segundo é o modelo: a representação do par por marcadores de entidade e
+a arquitetura Pair-Aware linear, que lê explicitamente as representações do par e é
+ajustada junto com o \emph{encoder}. O terceiro é o procedimento de definição da
+configuração: a comparação de \emph{encoders} e de estratégias de modelagem, sob os
+mesmos dados e o mesmo protocolo, como base para escolher a configuração do modelo.
+
+Os quatro primeiros objetivos específicos foram cumpridos: os dados foram preparados,
+as relações foram caracterizadas e os pares candidatos gerados, o RECLin-PT foi
+desenvolvido com a Pair-Aware linear e comparado com estratégias alternativas, e as
+configurações foram avaliadas no DEV com três \emph{encoders}. O quinto foi cumprido
+em parte: a configuração de referência atual é a Pair-Aware linear com o
+BioBERTpt-all e a semente $42$, e o congelamento e a avaliação única no teste estão
+previstos no protocolo e na emenda proposta, mas o critério de seleção da
+configuração final continua em aberto, e essa configuração, inclusive o
+\emph{encoder}, ainda não foi selecionada, congelada nem avaliada no teste. Os
+resultados que orientaram essas decisões são provisórios e delimitados ao DEV e a uma
+semente: na classe-alvo, nem a troca de \emph{encoder} nem a troca entre a Pair-Aware
+linear e o Two-Stage produziram diferença detectável; a estratégia influenciou
+sobretudo as outras classes, e o \emph{encoder}, sobretudo \texttt{associated\_with}.
+
+\section{Principais resultados}
+
+Nos três \emph{encoders}, a Pair-Aware linear tem F1 de \texttt{negation\_of} maior
+que o do baseline ($0{,}829$, $0{,}826$ e $0{,}818$ com o BioBERTpt-all, o
+BioBERTpt-clin e o BERTimbau-base, contra $0{,}802$, $0{,}814$ e $0{,}800$), com
+diferença detectada só com o BioBERTpt-all, e macro-F1 e F1 de
+\texttt{associated\_with} maiores, com diferença detectada nos três, inclusive quando
+se reamostram documentos inteiros. O Two-Stage alcança F1 de \texttt{negation\_of}
+equivalente ($0{,}825$ a $0{,}832$), sem diferença detectada para a Pair-Aware
+linear, mas depende de um limiar escolhido no DEV, que, com os dois BioBERTpt, ficou
+no extremo da grade e sacrificou a classe \texttt{associated\_with}. Entre
+\emph{encoders}, nenhuma das nove comparações no F1 de \texttt{negation\_of} detectou
+diferença. O BioBERTpt-clin teve F1 de \texttt{associated\_with} maior na Pair-Aware
+linear e no baseline, e o BERTimbau-base, com cerca de 61\% dos parâmetros, ficou
+equivalente na classe-alvo. A análise dos falsos positivos de
+\texttt{associated\_with} mostrou que cerca de um quarto deles são pares cuja
+direção inversa está anotada. Para o desenvolvimento do RECLin-PT, esses resultados
+são compatíveis com a Pair-Aware linear como arquitetura, sem a demonstrar superior
+na classe-alvo, e não justificam trocar o BioBERTpt-all, o \emph{encoder} do
+protocolo, que segue como referência.
+
+\section{Limitações}
+
+Essas conclusões não podem ser tomadas como definitivas. Do ponto de vista
+experimental, todos os números são de DEV, o mesmo conjunto usado nas escolhas de
+época e de limiar; há uma única semente; a designação da Pair-Aware linear como
+arquitetura oficial não é confirmatória; as variantes de \emph{encoder} estão fora do
+pré-registro; e a configuração final do RECLin-PT não foi congelada nem avaliada no
+teste. Se a emenda proposta for aprovada, o teste avaliará só o modelo final, de modo
+que as diferenças entre estratégias e \emph{encoders} continuarão apoiadas apenas no
+DEV. Somam-se a isso limitações arquiteturais (três classes e modelos de porte
+\emph{base}), dos dados (inconsistências de anotação e uma única partição), de escopo
+(entidades previamente anotadas, sem reconhecimento automático) e de reprodutibilidade
+(pontos de procedência das execuções). Essas categorias são detalhadas na
+Seção~\ref{sec:limitacoes}, e as ameaças à validade, na seção seguinte a ela.
+
+\section{Contribuições}
+
+As principais contribuições são: (i) o desenvolvimento do RECLin-PT, com a
+Pair-Aware linear como arquitetura oficial e a comparação, sob o mesmo protocolo e
+com três \emph{encoders}, de estratégias de modelagem para a extração de relações
+clínicas em português, do classificador direto a uma arquitetura em dois estágios;
+(ii) a comparação, sob configuração idêntica e em três estratégias, entre
+\emph{encoders} clínicos e um geral na extração de relações sobre o SemClinBr, que
+subsidia a escolha do \emph{encoder} do modelo e oferece evidência inicial sobre a
+lacuna descrita no Capítulo~\ref{cap:relacionados}; (iii) a cadeia de dados que
+sustenta essas comparações, com os dados reconstruídos dos XML e o texto alinhado aos
+offsets de anotação, partições em nível de documento congeladas por \emph{hashes} e um
+gerador determinístico de pares candidatos compartilhado por todas as estratégias,
+com o teto de \emph{recall} quantificado; (iv) uma caracterização do corpus que
+evidencia o desbalanceamento das relações e a quase adjacência dos pares de negação;
+e (v) um protocolo pré-registrado e uma matriz de rastreabilidade que ligam cada
+escolha e cada número do texto ao artefato de origem, complementados por diagnósticos
+reproduzíveis dos dados e das execuções: a sensibilidade da partição à semente, a
+detecção de documentos quase duplicados, controles informados pelas anotações, que
+medem o atalho oferecido pelo tipo semântico \texttt{Negation}, e a auditoria das
+execuções, que recalcula as métricas a partir das predições gravadas e confere os
+vínculos entre elas. No contexto do campus, o trabalho dá continuidade às pesquisas
+em reconhecimento de entidades clínicas de \citeonline{torres_2024_ner} e
+\citeonline{ramos_2025_clinpthyb}, que apontavam a extração de relações como
+possibilidade de continuidade.
+
+\section{Trabalhos futuros}
+
+Os trabalhos futuros dividem-se em dois grupos. O primeiro reúne as etapas
+necessárias para concluir a avaliação do RECLin-PT, que decorrem diretamente das
+limitações experimentais e de reprodutibilidade:
+
+\begin{itemize}
+  \item aprovar e registrar, antes de qualquer avaliação no teste, a emenda ao
+        protocolo redigida como proposta (E3), depois de definidos os critérios
+        estatísticos das comparações e o critério de seleção da configuração final,
+        ambos ainda em aberto;
+  \item conduzir os experimentos de aprimoramento só com treino e DEV, registrando
+        todas as tentativas, e comparar cada uma com a configuração de referência e
+        com os baselines do mesmo \emph{encoder};
+  \item selecionar e congelar a configuração final, conferir a proveniência do modelo
+        final, inclusive o \emph{checkpoint}, e registrar a identidade do código;
+  \item avaliar no teste, uma única vez, apenas o modelo final congelado, e relatar
+        essa avaliação também sem as três notas do teste que têm cópia no treino, como
+        análise secundária pré-registrada;
+  \item repetir os experimentos com mais sementes, para separar o efeito das
+        estratégias e dos \emph{encoders} da variação do treino;
+  \item calcular os controles do protocolo (baseline calibrado e filtro léxico) também
+        para o BioBERTpt-clin e o BERTimbau-base.
+\end{itemize}
+
+O segundo grupo reúne possibilidades de evolução do modelo e de pesquisa futura:
+
+\begin{itemize}
+  \item integrar NER e RE em um fluxo completo, com uma etapa automática de
+        reconhecimento de entidades, como as investigadas por
+        \citeonline{torres_2024_ner} e \citeonline{ramos_2025_clinpthyb}, à frente do
+        RECLin-PT, e avaliar a extração de relações nesse cenário fim a fim, em que
+        os erros de reconhecimento se propagam para as relações;
+  \item investigar outras relações clínicas, além das duas anotadas no SemClinBr,
+        o que exigiria outros corpora ou anotação adicional, e examinar, para
+        \texttt{associated\_with}, o efeito da direção anotada, por exemplo avaliando
+        a classe sem direção, em protocolo próprio;
+  \item aprimorar a identificação das relações de negação, analisando os erros por
+        tipo de gatilho e por distância entre os argumentos e realizando a adjudicação
+        cega dos falsos positivos cuja pista não tem relação anotada, para separar
+        erros do modelo de possíveis omissões da anotação;
+  \item investigar estratégias adicionais de modelagem e de representação: executar
+        o \emph{fine-tuning} restrito previsto no protocolo; testar, em novo
+        protocolo, critérios de limiar que considerem as três classes, grades que não
+        terminem no valor escolhido e orçamentos de treino maiores, já que a melhor
+        época coincidiu com o teto; e avaliar, em uma variante experimental separada e
+        com protocolo próprio, tipos semânticos agregados na entrada, com o tipo
+        \texttt{Negation} mascarado, já que esse tipo, sozinho, recupera quase todas
+        as pistas (Seção~\ref{sec:controles_tipo}).
+\end{itemize}

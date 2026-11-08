@@ -1,0 +1,31 @@
+%% GERADO por analise/gerar_tabelas_etapa3.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Falsos positivos de \texttt{associated\_with} no DEV: origem e precisão por faixa de distância entre os argumentos.}
+  \label{tab:dev_assoc_fp}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{llrrrrrrrr}
+  \toprule
+  & & & \multicolumn{3}{c}{Origem dos FP} & \multicolumn{4}{c}{Precisão por distância} \\
+  \cmidrule(lr){4-6}\cmidrule(lr){7-10}
+  Estratégia & \emph{Encoder} & FP & \begin{tabular}[b]{@{}c@{}}direção\\invertida\end{tabular} & \begin{tabular}[b]{@{}c@{}}sem\\relação\end{tabular} & \begin{tabular}[b]{@{}c@{}}é\\\texttt{negation\_of}\end{tabular} & 0--1 & 2--5 & 6--10 & 11--25 \\
+  \midrule
+Pair-Aware linear & BioBERTpt-all & 1\,326 & 25{,}7\% & 74{,}1\% & 0{,}2\% & 0{,}38 & 0{,}32 & 0{,}25 & 0{,}15 \\
+ & BioBERTpt-clin & 1\,276 & 26{,}2\% & 73{,}7\% & 0{,}1\% & 0{,}39 & 0{,}32 & 0{,}30 & 0{,}17 \\
+ & BERTimbau-base & 1\,340 & 25{,}4\% & 74{,}6\% & 0{,}1\% & 0{,}37 & 0{,}31 & 0{,}25 & 0{,}17 \\
+\midrule
+Baseline & BioBERTpt-all & 1\,696 & 25{,}3\% & 74{,}5\% & 0{,}2\% & 0{,}35 & 0{,}28 & 0{,}22 & 0{,}15 \\
+ & BioBERTpt-clin & 1\,453 & 25{,}8\% & 74{,}0\% & 0{,}2\% & 0{,}37 & 0{,}29 & 0{,}26 & 0{,}16 \\
+ & BERTimbau-base & 1\,501 & 25{,}5\% & 74{,}2\% & 0{,}3\% & 0{,}38 & 0{,}29 & 0{,}24 & 0{,}14 \\
+\midrule
+Two-Stage & BioBERTpt-all ($\tau=0{,}95$) & 211 & 25{,}1\% & 73{,}5\% & 1{,}4\% & 0{,}52 & 0{,}52 & 0{,}46 & 0{,}41 \\
+ & BioBERTpt-clin ($\tau=0{,}95$) & 259 & 30{,}9\% & 69{,}1\% & 0{,}0\% & 0{,}49 & 0{,}46 & 0{,}61 & 0{,}34 \\
+ & BERTimbau-base ($\tau=0{,}85$) & 834 & 28{,}1\% & 71{,}7\% & 0{,}2\% & 0{,}41 & 0{,}37 & 0{,}35 & 0{,}21 \\
+\midrule
+Pair-Aware MLP & BioBERTpt-all & 1\,305 & 26{,}7\% & 73{,}2\% & 0{,}2\% & 0{,}38 & 0{,}32 & 0{,}25 & 0{,}17 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize Direção invertida: o par $(e_2, e_1)$ tem \texttt{associated\_with} anotada, e o par $(e_1, e_2)$, não. Das 763 relações \texttt{associated\_with} candidatas do DEV, só 4 têm o par inverso também anotado. Distância: caracteres entre os dois \emph{spans} (a mesma do \texttt{max\_gap}).}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}
