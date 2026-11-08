@@ -1,0 +1,186 @@
+{
+  "concluido": true,
+  "config": {
+    "batch_size": 64,
+    "class_weight": "none",
+    "ctx_chars": 128,
+    "encoder": "biobertpt",
+    "epochs": 3,
+    "head_dropout": null,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "pucpr/biobertpt-all",
+    "seed": 42,
+    "tipo": "ConfigPairAware",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "descricao": {
+    "cabeca": {
+      "arquitetura": "concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Dropout(p) -> Linear(3d, C) (sem MLP)",
+      "dropout": 0.1,
+      "e1_token_id": 119547,
+      "e2_token_id": 119549,
+      "encoder_class": "BertModel",
+      "fallback_marcador_ausente": "posicao 0 (h_cls)",
+      "formato": 2,
+      "hidden_size": 768,
+      "id2label": {
+        "0": "negation_of",
+        "1": "associated_with",
+        "2": "no_relation"
+      },
+      "initializer_range": 0.02,
+      "label2id": {
+        "associated_with": 1,
+        "negation_of": 0,
+        "no_relation": 2
+      },
+      "num_labels": 3,
+      "tem_pooler": false
+    },
+    "marcadores_ausentes": {
+      "dev": {
+        "E1_ausente": 0,
+        "E1_fora_do_texto": 0,
+        "E1_truncado": 0,
+        "E2_ausente": 0,
+        "E2_fora_do_texto": 0,
+        "E2_truncado": 0,
+        "algum_ausente": 0,
+        "max_length": 128,
+        "n": 19064
+      },
+      "train": {
+        "E1_ausente": 8,
+        "E1_fora_do_texto": 8,
+        "E1_truncado": 0,
+        "E2_ausente": 8,
+        "E2_fora_do_texto": 8,
+        "E2_truncado": 0,
+        "algum_ausente": 16,
+        "max_length": 128,
+        "n": 152686
+      }
+    },
+    "n_params_cabeca": 6915
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.11541573455164228,
+      "dev_macro_f1": 0.7281645581140731,
+      "dev_negation_of_f1": 0.8012048192771084,
+      "duration_s": 3697.4,
+      "epoch": 1,
+      "train_loss": 0.1524257643176797
+    },
+    {
+      "dev_loss": 0.10929711367007625,
+      "dev_macro_f1": 0.7469984002005047,
+      "dev_negation_of_f1": 0.8275862068965517,
+      "duration_s": 3899.0,
+      "epoch": 2,
+      "train_loss": 0.096712186247343
+    },
+    {
+      "dev_loss": 0.126733500511089,
+      "dev_macro_f1": 0.7517401877481006,
+      "dev_negation_of_f1": 0.8317460317460318,
+      "duration_s": 3769.2,
+      "epoch": 3,
+      "train_loss": 0.07174063752757275
+    }
+  ],
+  "dispositivo": "cuda",
+  "estrategia": "pair_aware",
+  "identidade_modelo": {
+    "classe": "PairAwareClassifier",
+    "config_sha256": "3d22a405d50b89c79180272e2b891b2f17e37f086fbe985a1882fc8151177ee1",
+    "ids_marcadores": [
+      119547,
+      119548,
+      119549,
+      119550
+    ],
+    "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+    "n_parametros": 177272835,
+    "tokenizer": "BertTokenizer",
+    "vocabulario": 119551,
+    "vocabulario_sha256": "0f2b80fdf264aa2020da11a8f4768708f63d48914eb82128bec4738c32c5b42c"
+  },
+  "melhor_dev_macro_f1": 0.7517401877481006,
+  "melhor_epoca": 3,
+  "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+  "n_candidatos": {
+    "dev": 19064,
+    "train": 152686
+  },
+  "n_params": 177272835,
+  "nome": "pair_aware__a3ac671a77e2__t2",
+  "passos": {
+    "aquecimento": 715,
+    "por_epoca": 2386,
+    "total": 7158
+  },
+  "pesos_classe": null,
+  "posicao": {
+    "epoca": 3,
+    "epoca_concluida": true,
+    "epocas": 3,
+    "passo_global": 7158,
+    "passo_na_epoca": 2386,
+    "passos_por_epoca": 2386
+  },
+  "restaurou_melhor_estado": true,
+  "seed": 42,
+  "sessoes": [
+    {
+      "a_partir_de": null,
+      "ambiente": {
+        "cuda": "13.0",
+        "cudnn": 91900,
+        "gpu": "Tesla T4",
+        "plataforma": "Linux-6.6.159+-x86_64-with-glibc2.39",
+        "python": "3.13.16",
+        "pythonhashseed_valeu_no_processo": false,
+        "threads_torch": 1,
+        "variaveis": {
+          "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+          "MKL_NUM_THREADS": null,
+          "OMP_NUM_THREADS": null,
+          "PYTHONHASHSEED": "0",
+          "TOKENIZERS_PARALLELISM": null
+        },
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "ate": {
+        "epoca": 3,
+        "epoca_concluida": true,
+        "epocas": 3,
+        "passo_global": 7158,
+        "passo_na_epoca": 2386,
+        "passos_por_epoca": 2386
+      },
+      "avisos": [
+        "UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)"
+      ],
+      "checkpoints_gravados": 17,
+      "codigo": "0526d9123eccfebace39bf072343d254d1bab650530d43c84d6cd022c0a6ef3c",
+      "fim": "2026-11-08T19:43:08+0000",
+      "inicio": "2026-11-08T16:28:43+0000",
+      "status": "concluido",
+      "tipo": "nova"
+    }
+  ],
+  "test_avaliado": false
+}
