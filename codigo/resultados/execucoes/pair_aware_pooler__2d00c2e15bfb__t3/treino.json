@@ -1,0 +1,199 @@
+{
+  "concluido": true,
+  "config": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "encoder": "biobertpt",
+    "epochs": 3,
+    "head_dropout": null,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "pucpr/biobertpt-all",
+    "seed": 42,
+    "tipo": "ConfigAblacao",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "descricao": {
+    "cabeca": {
+      "arquitetura": "concat[pooler(h_cls) [dense + tanh do encoder] ; h_[E1] ; h_[E2]] -> Dropout(p) -> Linear(3d, C)",
+      "dropout": 0.1,
+      "e1_token_id": 119547,
+      "e2_token_id": 119549,
+      "encoder_class": "BertModel",
+      "fallback_marcador_ausente": "posicao 0 (estado de [CLS] da ultima camada)",
+      "formato": 1,
+      "hidden_size": 768,
+      "id2label": {
+        "0": "negation_of",
+        "1": "associated_with",
+        "2": "no_relation"
+      },
+      "initializer_range": 0.02,
+      "label2id": {
+        "associated_with": 1,
+        "negation_of": 0,
+        "no_relation": 2
+      },
+      "ler_marcadores": true,
+      "num_labels": 3,
+      "pooler_do_checkpoint": true,
+      "usar_pooler": true
+    },
+    "marcadores_ausentes": {
+      "dev": {
+        "E1_ausente": 0,
+        "E1_fora_do_texto": 0,
+        "E1_truncado": 0,
+        "E2_ausente": 0,
+        "E2_fora_do_texto": 0,
+        "E2_truncado": 0,
+        "algum_ausente": 0,
+        "max_length": 128,
+        "n": 19064
+      },
+      "train": {
+        "E1_ausente": 8,
+        "E1_fora_do_texto": 8,
+        "E1_truncado": 0,
+        "E2_ausente": 8,
+        "E2_fora_do_texto": 8,
+        "E2_truncado": 0,
+        "algum_ausente": 16,
+        "max_length": 128,
+        "n": 152686
+      }
+    },
+    "n_params_cabeca": 6915
+  },
+  "dev_history": [
+    {
+      "dev_loss": 0.37586663856595715,
+      "dev_macro_f1": 0.7150046338736727,
+      "dev_negation_of_f1": 0.8034188034188035,
+      "duration_s": 3445.2,
+      "epoch": 1,
+      "train_loss": 0.40552822585012344
+    },
+    {
+      "dev_loss": 0.34252053640277713,
+      "dev_macro_f1": 0.7332121411968898,
+      "dev_negation_of_f1": 0.8197674418604651,
+      "duration_s": 3522.3,
+      "epoch": 2,
+      "train_loss": 0.2451506298461231
+    },
+    {
+      "dev_loss": 0.3905069739372974,
+      "dev_macro_f1": 0.7498251983794736,
+      "dev_negation_of_f1": 0.8367952522255193,
+      "duration_s": 1284.6,
+      "epoch": 3,
+      "train_loss": 0.18214283970673315
+    }
+  ],
+  "dispositivo": "cuda",
+  "estrategia": "pair_aware_pooler",
+  "identidade_modelo": {
+    "classe": "CabecaAblacao",
+    "config_sha256": "3d22a405d50b89c79180272e2b891b2f17e37f086fbe985a1882fc8151177ee1",
+    "ids_marcadores": [
+      119547,
+      119548,
+      119549,
+      119550
+    ],
+    "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+    "n_parametros": 177863427,
+    "tokenizer": "BertTokenizer",
+    "vocabulario": 119551,
+    "vocabulario_sha256": "0f2b80fdf264aa2020da11a8f4768708f63d48914eb82128bec4738c32c5b42c"
+  },
+  "melhor_dev_macro_f1": 0.7498251983794736,
+  "melhor_epoca": 3,
+  "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+  "n_candidatos": {
+    "dev": 19064,
+    "train": 152686
+  },
+  "n_params": 177863427,
+  "nome": "pair_aware_pooler__2d00c2e15bfb__t3",
+  "passos": {
+    "aquecimento": 715,
+    "por_epoca": 2386,
+    "total": 7158
+  },
+  "pesos_classe": [
+    40.55405046480744,
+    7.17239759488914,
+    0.3526194847634554
+  ],
+  "posicao": {
+    "epoca": 3,
+    "epoca_concluida": true,
+    "epocas": 3,
+    "passo_global": 7158,
+    "passo_na_epoca": 2386,
+    "passos_por_epoca": 2386
+  },
+  "restaurou_melhor_estado": true,
+  "seed": 42,
+  "sessoes": [
+    {
+      "a_partir_de": {
+        "epoca": 3,
+        "epoca_concluida": false,
+        "epocas": 3,
+        "passo_global": 6500,
+        "passo_na_epoca": 1728,
+        "passos_por_epoca": 2386
+      },
+      "ambiente": {
+        "cuda": "13.0",
+        "cudnn": 91900,
+        "gpu": "Tesla T4",
+        "plataforma": "Linux-6.6.159+-x86_64-with-glibc2.39",
+        "python": "3.13.16",
+        "pythonhashseed_valeu_no_processo": false,
+        "threads_torch": 1,
+        "variaveis": {
+          "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+          "MKL_NUM_THREADS": null,
+          "OMP_NUM_THREADS": null,
+          "PYTHONHASHSEED": "0",
+          "TOKENIZERS_PARALLELISM": null
+        },
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0+cu130",
+          "transformers": "5.16.1"
+        }
+      },
+      "ate": {
+        "epoca": 3,
+        "epoca_concluida": true,
+        "epocas": 3,
+        "passo_global": 7158,
+        "passo_na_epoca": 2386,
+        "passos_por_epoca": 2386
+      },
+      "avisos": [
+        "UserWarning: Memory Efficient attention defaults to a non-deterministic algorithm. To explicitly enable determinism call torch.use_deterministic_algorithms(True, warn_only=False). (Triggered internally at /pytorch/aten/src/ATen/native/transformers/cuda/attention_backward.cu:900.)"
+      ],
+      "checkpoints_gravados": 2,
+      "codigo": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+      "fim": "2026-11-20T20:52:19+0000",
+      "inicio": "2026-11-20T20:27:00+0000",
+      "status": "concluido",
+      "tipo": "retomada"
+    }
+  ],
+  "test_avaliado": false
+}

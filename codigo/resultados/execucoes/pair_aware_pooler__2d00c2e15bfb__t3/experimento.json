@@ -1,0 +1,174 @@
+{
+  "alias_oficial": null,
+  "ambiente": {
+    "colab": true,
+    "cuda": "13.0",
+    "cudnn": 91900,
+    "gpu": "Tesla T4",
+    "gpus": [
+      {
+        "driver": "580.82.07",
+        "memoria_mib": 15360,
+        "nome": "Tesla T4"
+      }
+    ],
+    "plataforma": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "python": "3.13.16",
+    "versoes": {
+      "huggingface_hub": "1.29.0",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0",
+      "scipy": "1.16.3",
+      "tokenizers": "0.23.2",
+      "torch": "2.11.0",
+      "transformers": "5.16.1"
+    }
+  },
+  "atualizado_em": "2026-11-20T20:53:52+0000",
+  "chave_configuracao": {
+    "codigo": {
+      "algoritmo": "sha256-manifesto-v1",
+      "escopo": "global-v1",
+      "identidade": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26"
+    },
+    "config": {
+      "batch_size": 64,
+      "class_weight": "balanced",
+      "ctx_chars": 128,
+      "encoder": "biobertpt",
+      "epochs": 3,
+      "head_dropout": null,
+      "lr": 2e-05,
+      "max_gap": 25,
+      "max_grad_norm": 1.0,
+      "max_length": 128,
+      "seed": 42,
+      "tipo": "ConfigAblacao",
+      "warmup_ratio": 0.1,
+      "weight_decay": 0.01
+    },
+    "dados": {
+      "particoes": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "versao": "v2-texto-fonte"
+    },
+    "estrategia": "pair_aware_pooler",
+    "estrategia_config": {
+      "ablacao": "fatorial 2x2 marcadores x pooler (com `baseline` e `pair_aware`)",
+      "cabeca": {
+        "arquitetura": "concat[pooler(h_cls) [dense + tanh do encoder] ; h_[E1] ; h_[E2]] -> Dropout(p) -> Linear(3d, C)",
+        "fallback_marcador_ausente": "h_cls",
+        "ler_marcadores": true,
+        "lr_cabeca": "a mesma do encoder",
+        "mlp": false,
+        "usar_pooler": true
+      },
+      "espaco": "completo: todos os pares candidatos elegiveis, sem filtro lexical",
+      "filtro_lexical": "desativado",
+      "lexico": "nao utilizado (nem como filtro, nem como feature)",
+      "selecao_melhor_epoca": "dev_macro_f1 no DEV completo",
+      "versao": "v1: pooler(h_cls) + marcadores, cabeca linear, sem lexico"
+    },
+    "pesos": {
+      "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+      "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+      "repositorio": "pucpr/biobertpt-all"
+    }
+  },
+  "checkpoints": {
+    "drive": {
+      "copiados": 10,
+      "destino": "/content/drive/MyDrive/RECLin-PT/execucoes/pair_aware_pooler__2d00c2e15bfb__t3",
+      "inalterados": 5,
+      "incluiu_ultimo": true,
+      "n_arquivos": 15,
+      "sincronizado_em": "2026-11-20T20:53:52+0000"
+    },
+    "hf": null,
+    "local": "checkpoints"
+  },
+  "codigo": {
+    "branch": "main",
+    "identidade_global": {
+      "algoritmo": "sha256-manifesto-v1",
+      "identidade": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26"
+    },
+    "infraestrutura": {
+      "algoritmo": "sha256-manifesto-v1",
+      "componente": "infraestrutura",
+      "identidade": "671b559dbf11a1c228513c5e99245893ed4692c1b853bfa664a3b79576df83a9",
+      "n_arquivos": 17
+    },
+    "origem": "git",
+    "repositorio": "angeloalsf/RECLin-PT",
+    "revisao": "24596718b570c2a72dec08142d0e685a983c7b4c",
+    "tarball_sha256": null
+  },
+  "config_id": "2d00c2e15bfb",
+  "criado_em": "2026-11-20T15:05:45+0000",
+  "estado": "concluida",
+  "estrategia": "pair_aware_pooler",
+  "historico_de_estados": [
+    {
+      "em": "2026-11-20T15:05:45+0000",
+      "estado": "planejada",
+      "nota": "natureza=protocolo"
+    },
+    {
+      "em": "2026-11-20T15:05:45+0000",
+      "estado": "iniciada",
+      "nota": "início do treino"
+    },
+    {
+      "em": "2026-11-20T20:52:25+0000",
+      "estado": "concluida",
+      "nota": "treino concluído"
+    }
+  ],
+  "metricas": {
+    "metricas_json": {
+      "particoes": [
+        "dev"
+      ],
+      "sha256": "59b6e1413fedda803a15824db0f5b936b631fff762f6711e9a414e4f5274c3fc"
+    },
+    "treino": {
+      "concluido": true,
+      "epocas_no_historico": 3,
+      "melhor_dev_macro_f1": 0.7498251983794736,
+      "melhor_epoca": 3,
+      "n_sessoes": 1
+    }
+  },
+  "nome": "pair_aware_pooler__2d00c2e15bfb__t3",
+  "parametros_de_treinamento": {
+    "batch_size": 64,
+    "class_weight": "balanced",
+    "ctx_chars": 128,
+    "encoder": "biobertpt",
+    "epochs": 3,
+    "head_dropout": null,
+    "lr": 2e-05,
+    "max_gap": 25,
+    "max_grad_norm": 1.0,
+    "max_length": 128,
+    "modelo": "pucpr/biobertpt-all",
+    "seed": 42,
+    "tipo": "ConfigAblacao",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01
+  },
+  "pesos_pretreinados": {
+    "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+    "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+    "repositorio": "pucpr/biobertpt-all"
+  },
+  "publicacoes": [],
+  "run_id": "pair_aware_pooler__2d00c2e15bfb__t3",
+  "schema": "reclin-experimento/1",
+  "seed": 42,
+  "sha256_config": "5e6bdc4fd4d13d7ad829336a4a12a343949a13b9328d2c0d61eff855c815edee",
+  "tentativa": 3
+}
