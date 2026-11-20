@@ -66,7 +66,7 @@ pequenas e verificáveis. Cada etapa é validada contra o projeto anterior (o
 | Pasta | Conteúdo | Situação |
 | --- | --- | --- |
 | `codigo/` | Implementação nova: núcleo, especialização em `negation_of`, estratégias experimentais e modelo final | Em construção. Etapas 1 a 6 concluídas: tarefa, partições congeladas, configuração base, formato das execuções, avaliação (métricas, significância e agregação), o léxico de pistas de negação, as estratégias sem GPU (filtro de pistas e regra pura, com a calibração no DEV), a infraestrutura de treino (entrada, modelos, laço com retomada exata, avaliação do TEST em comando separado) e as estratégias treinadas (baseline, fine-tuning restrito, Pair-Aware), validados contra o legado. Etapa 6.1 implementada e validada em CPU: Two-Stage, baseline calibrado, proveniência dos pesos e o protocolo pré-registrado da fase científica (BioBERTpt, seed 42; nada rodado em GPU ainda). Etapa 7: análises, relatórios, inventário de proveniência, `Makefile` e notebook único, sem nenhum dado ou resultado do legado (ver a nota da etapa). Antes da etapa 8: dados reconstruídos dos XML (versão `v2-texto-fonte`, correção do desalinhamento de offsets do D9), agora a versão da fase. Fase científica (etapa 8): execuções no DEV registradas; a Pair-Aware linear ainda não foi avaliada no TEST. Diagnósticos dos dados e controles por tipo semântico em `codigo/diagnosticos/` (Etapa 2 da auditoria). Ver [`codigo/README.md`](codigo/README.md) |
-| `tcc/` | Texto do TCC em LaTeX | Ainda não incluída. Entra quando uma etapa precisar dela (tabelas, figuras e texto); até lá o texto está no repositório original |
+| `tcc/` | Texto do TCC em LaTeX (`tcc/tcc/src/`, modelo do IFES) e scripts que geram suas tabelas e figuras a partir dos resultados gravados (`tcc/analise/`) | Incluída. O texto é mantido em sincronia com o código, o protocolo e os resultados do DEV |
 
 O que cada etapa entregou está em [`codigo/docs/entregas/`](codigo/docs/entregas/).
 
@@ -104,18 +104,26 @@ O pacote depende de numpy, scipy, torch e transformers; o `-c` fixa as versões
 dos experimentos (detalhes, o tamanho do torch no Linux e a exceção do Python
 3.10 em [`codigo/README.md`](codigo/README.md)).
 
-**Corpus SemClinBr.** Não é distribuído aqui: é de **acesso restrito** e precisa
-ser solicitado aos autores do corpus (Oliveira et al.). Os arquivos `.xml` vão
-em `codigo/SemClinBr-xml-public-v1/` (ou `codigo/dados/brutos/`, com `--xml`),
-pastas que estão no `.gitignore` — dados clínicos nunca devem ser versionados.
+**Corpus SemClinBr.** É de **acesso restrito** e precisa ser solicitado aos
+autores do corpus (Oliveira et al.). Os arquivos `.xml` originais vão em
+`codigo/SemClinBr-xml-public-v1/` (ou `codigo/dados/brutos/`, com `--xml`), pastas
+que estão no `.gitignore` e nunca são versionadas.
 
-Você **não precisa do corpus** para reproduzir os experimentos: as partições
-derivadas são versionadas — as da fase em `codigo/dados/particoes-v2/`
-(`v2-texto-fonte`) e as do legado em `codigo/dados/particoes/` (v1, só para a
-regressão técnica) —, cada uma com o `MANIFEST.json` com o SHA-256 de cada
-partição, para conferir que são os mesmos arquivos que produziram os
-resultados. O corpus só é necessário para regerar as partições
-(`codigo/scripts/reconstruir_dados.py`).
+**Este repositório contém texto do corpus e não pode ser público nem
+redistribuído.** As partições derivadas são versionadas de propósito, para
+congelar treino, DEV e teste entre todos os modelos — as da fase em
+`codigo/dados/particoes-v2/` (`v2-texto-fonte`) e as do legado em
+`codigo/dados/particoes/` (v1, só para a regressão técnica) —, cada uma com o
+`MANIFEST.json` com o SHA-256 de cada partição. Elas trazem o texto das notas
+clínicas, assim como alguns arquivos de referência dos testes e de análise
+(por exemplo, a planilha de adjudicação em `codigo/resultados/analises/`). O
+acesso ao repositório deve ficar restrito a quem tem autorização para usar o
+SemClinBr; o que fazer com o histórico já publicado está em
+[`codigo/docs/repositorio-privado.md`](codigo/docs/repositorio-privado.md).
+
+Quem tem acesso ao repositório **não precisa do XML do corpus** para reproduzir
+os experimentos: bastam as partições versionadas. O XML só é necessário para
+regerar as partições (`codigo/scripts/reconstruir_dados.py`).
 
 **Hardware e tempo (etapas de treino).** O treino do legado foi validado em
 **GPU NVIDIA T4** (Google Colab, ~16 GB VRAM): cada época levou ≈48 min, cada
@@ -162,12 +170,17 @@ python codigo/scripts/regra_pura.py --calibracao $REF/CALIBRACAO_filtro.json \
     --saida reproducao/execucoes --conferir $REF
 ```
 
-O treino e a avaliação do TEST, em comandos separados (detalhes, checkpoints e
-retomada em [`codigo/README.md`](codigo/README.md)):
+O treino e a avaliação do TEST são comandos separados (detalhes, checkpoints e
+retomada em [`codigo/README.md`](codigo/README.md)). **A avaliação do TEST
+científico é travada**: só roda para a execução registrada no congelamento da
+configuração final, com o código de liberação desse registro, e uma única vez
+([`codigo/docs/protocolo/congelamento-e-test-final.md`](codigo/docs/protocolo/congelamento-e-test-final.md)).
 
 ```bash
 python codigo/scripts/treinar.py --estrategia baseline --encoder biobertpt --seed 42      # ou restrito, pair_aware
-python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/baseline_biobertpt_seed42
+# só depois da decisão do autor: congelar a configuração final (não lê o TEST) e avaliar uma vez
+python codigo/scripts/congelar.py --execucao <pasta da execução final> --responsavel "<nome>" --justificativa "<motivo>"
+python codigo/scripts/avaliar_test.py --execucao <pasta da execução final> --liberacao <código impresso pelo congelar.py>
 ```
 
 Two-Stage, baseline calibrado e pesos com proveniência (etapa 6.1; comandos em

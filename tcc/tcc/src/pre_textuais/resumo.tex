@@ -4,34 +4,31 @@
 
   O registro eletrônico em saúde concentra grande parte da informação clínica em
   texto livre, no qual a relação entre conceitos, em especial a negação de
-  achados, é determinante para a correta interpretação. Este trabalho desenvolve o
-  RECLin-PT, um modelo de extração de relações em notas clínicas em português sobre o
-  corpus SemClinBr, com ênfase na relação \texttt{negation\_of}, no espaço de rótulos
-  \texttt{negation\_of}, \texttt{associated\_with} e \texttt{no\_relation}. A
-  definição de sua configuração é orientada por experimentos controlados, que
-  investigam como a escolha do \emph{encoder} pré-treinado e da estratégia de
-  modelagem influencia o desempenho, com todas as alternativas avaliadas sobre os
-  mesmos dados e pares candidatos e sob um protocolo
-  pré-registrado que fixa os critérios de seleção no conjunto de desenvolvimento (DEV)
-  e reserva o conjunto de teste para uma avaliação única, posterior ao congelamento da
-  configuração. A arquitetura oficial do RECLin-PT é a Pair-Aware linear, que
-  classifica o par a partir das representações do \texttt{[CLS]} e dos marcadores das
-  duas entidades. Os resultados apresentados são preliminares, todos no DEV, com
-  semente 42, e cruzam três \emph{encoders} (BioBERTpt-all, BioBERTpt-clin e
-  BERTimbau-base) com três estratégias (baseline, Pair-Aware linear e Two-Stage). Com
-  os três \emph{encoders}, a Pair-Aware linear alcança F1 de \texttt{negation\_of}
-  de 0,829, 0,826 e 0,818, acima do baseline, e tem macro-F1 maior que o do baseline
-  com diferença detectada pelo \emph{bootstrap} pareado nos três, inclusive por
-  documento. No F1 de \texttt{negation\_of}, a diferença só é detectada com o
-  BioBERTpt-all. O Two-Stage, que detecta a existência de relação antes de decidir o
-  tipo, alcança F1 de \texttt{negation\_of} equivalente (0,825 a 0,832), sem
-  diferença detectada para a Pair-Aware linear, mas depende de um limiar escolhido no
-  DEV que, com os dois BioBERTpt, sacrificou a classe \texttt{associated\_with}.
-  Nenhuma comparação entre \emph{encoders} detectou diferença no F1 de
-  \texttt{negation\_of}. A configuração de referência atual é a Pair-Aware linear
-  com o BioBERTpt-all, \emph{encoder} do protocolo, e a semente 42, mas não é
-  definitiva: novos experimentos seguem permitidos no DEV, e o teste será usado uma
-  única vez, só para o modelo final, após o congelamento.
+  achados, é determinante para a interpretação correta. Este trabalho desenvolve o
+  RECLin-PT, um modelo de extração de relações em notas clínicas em português sobre
+  o corpus SemClinBr, com ênfase na relação \texttt{negation\_of}. A tarefa é
+  formulada como a classificação de pares ordenados de entidades já anotadas em três
+  rótulos: \texttt{negation\_of}, \texttt{associated\_with} e \texttt{no\_relation}.
+  Os dados foram reconstruídos a partir dos arquivos originais do corpus e
+  particionados por documento, e os pares candidatos são gerados por um
+  procedimento determinístico comum a todos os modelos. A arquitetura adotada,
+  denominada Pair-Aware Linear, classifica o par a partir das representações do
+  \texttt{[CLS]} e dos marcadores das duas entidades. Ela foi comparada, sob o mesmo
+  protocolo, com um classificador de sequência (baseline) e com uma decomposição em
+  dois estágios (Two-Stage), sobre três \emph{encoders}: BioBERTpt-all,
+  BioBERTpt-clin e BERTimbau-base. Os resultados são do conjunto de desenvolvimento,
+  com uma semente. A Pair-Aware Linear alcança F1 de \texttt{negation\_of} de 0,829,
+  0,826 e 0,818 com os três \emph{encoders}, acima do baseline em todos eles, com
+  diferença detectada pelo \emph{bootstrap} pareado apenas com o BioBERTpt-all, e
+  macro-F1 maior que o do baseline nos três. O Two-Stage alcança F1 equivalente na
+  classe-alvo (0,825 a 0,832), mas depende de um limiar ajustado que, com os dois
+  BioBERTpt, penaliza a classe \texttt{associated\_with}. Nenhuma comparação entre
+  \emph{encoders} detectou diferença na classe-alvo, o que não confirma, nesta
+  tarefa, a vantagem esperada do pré-treinamento clínico. Um experimento adicional,
+  sem ponderação de classes na perda, elevou a precisão de \texttt{negation\_of} de
+  0,742 para 0,794 e reduziu o \emph{recall} de 0,940 para 0,873, sem diferença
+  detectada no F1. O conjunto de teste permanece reservado para a avaliação única
+  da configuração final do modelo.
 
   \vspace{\onelineskip}
 
@@ -47,32 +44,29 @@
   Electronic health records store much clinical information as free text, in which
   the relationship between concepts, particularly the negation of findings, is
   decisive for correct interpretation. This work develops RECLin-PT, a relation
-  extraction model for Portuguese clinical notes on the SemClinBr corpus, with emphasis
-  on the \texttt{negation\_of} relation, in the label space \texttt{negation\_of},
-  \texttt{associated\_with} and \texttt{no\_relation}. The definition of its
-  configuration is informed by controlled experiments that investigate how the
-  choice of pre-trained encoder and of modelling strategy influences performance,
-  with all alternatives evaluated on the
-  same data and candidate pairs and under a pre-registered protocol that fixes
-  selection criteria on the development set (DEV) and reserves the test set for a
-  single evaluation after the configuration is frozen. The official RECLin-PT
-  architecture is the linear Pair-Aware model, which classifies the pair from the
-  representations of \texttt{[CLS]} and of the two entity markers. The results
-  reported here are preliminary, all on DEV, with seed 42, and cross three encoders
-  (BioBERTpt-all, BioBERTpt-clin and BERTimbau-base) with three strategies (baseline,
-  linear Pair-Aware and Two-Stage). With the three encoders, linear Pair-Aware reaches
-  \texttt{negation\_of} F1 of 0.829, 0.826 and 0.818, above the baseline, and has a
-  higher macro-F1 than the baseline, with a difference detected by the paired
-  bootstrap for all three, including at document level. In \texttt{negation\_of}
-  F1, the difference is detected only with BioBERTpt-all. Two-Stage, which detects
-  whether a relation exists before deciding its type, reaches an equivalent
-  \texttt{negation\_of} F1 (0.825 to 0.832), with no difference detected from linear
-  Pair-Aware, but it depends on a threshold chosen on DEV that, with both BioBERTpt
-  models, sacrificed the \texttt{associated\_with} class. No encoder comparison
-  detected a difference in \texttt{negation\_of} F1. The current reference
-  configuration is linear Pair-Aware with BioBERTpt-all, the protocol encoder, and seed
-  42, but it is not final: further experiments remain allowed on DEV, and the test set
-  will be used only once, for the final model only, after freezing.
+  extraction model for Portuguese clinical notes on the SemClinBr corpus, with
+  emphasis on the \texttt{negation\_of} relation. The task is framed as the
+  classification of ordered pairs of gold entities into three labels:
+  \texttt{negation\_of}, \texttt{associated\_with} and \texttt{no\_relation}. The
+  data were rebuilt from the original corpus files and split at document level, and
+  candidate pairs are generated by a deterministic procedure shared by all models.
+  The adopted architecture, called Pair-Aware Linear, classifies each pair from the
+  representations of \texttt{[CLS]} and of the two entity markers. It was compared,
+  under the same protocol, with a sequence classifier (baseline) and with a
+  two-stage decomposition (Two-Stage), on three encoders: BioBERTpt-all,
+  BioBERTpt-clin and BERTimbau-base. Results are reported on the development set,
+  with a single seed. Pair-Aware Linear reaches \texttt{negation\_of} F1 of 0.829,
+  0.826 and 0.818 with the three encoders, above the baseline in all of them, with a
+  difference detected by the paired bootstrap only with BioBERTpt-all, and a higher
+  macro-F1 than the baseline with all three. Two-Stage reaches an equivalent F1 on
+  the target class (0.825 to 0.832), but depends on a tuned threshold that, with
+  both BioBERTpt models, penalises the \texttt{associated\_with} class. No encoder
+  comparison detected a difference on the target class, which does not confirm, for
+  this task, the expected advantage of clinical pre-training. An additional
+  experiment without class weighting in the loss raised \texttt{negation\_of}
+  precision from 0.742 to 0.794 and lowered recall from 0.940 to 0.873, with no
+  difference detected in F1. The test set remains reserved for a single evaluation
+  of the final model configuration.
 
   \vspace{\onelineskip}
 

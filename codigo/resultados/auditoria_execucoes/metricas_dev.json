@@ -1,7 +1,11 @@
 {
   "proveniencia": {
     "derivadas": [
+      "baseline_calibrado_BERTimbau",
+      "baseline_calibrado_BioBERTpt-clin",
       "baseline_calibrado_biobertpt_seed42",
+      "filtro_BERTimbau",
+      "filtro_BioBERTpt-clin",
       "filtro_biobertpt_seed42"
     ],
     "dev": {
@@ -11,11 +15,80 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "resultados-colab@ad7c2a20d9dd78133f1781d646654fbc28f8cbc8",
+    "execucoes": "execucoes",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },
   "sistemas": {
+    "baseline_calibrado|BERTimbau": {
+      "ap": {
+        "associated_with": 0.39551983374622474,
+        "negation_of": 0.8743595548464531,
+        "no_relation": 0.9970319675102395
+      },
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BERTimbau",
+      "estrategia": "baseline_calibrado",
+      "macro_f1": 0.7298907440689396,
+      "matriz_confusao": [
+        [
+          136,
+          5,
+          9
+        ],
+        [
+          4,
+          597,
+          162
+        ],
+        [
+          41,
+          1499,
+          16611
+        ]
+      ],
+      "mcc": 0.4803481896364584,
+      "micro_f1": 0.9097775912715065,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "baseline_calibrado_BERTimbau",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4168994413407821,
+          "fn": 166,
+          "fp": 1504,
+          "precision": 0.2841504045692527,
+          "recall": 0.7824377457404981,
+          "support": 763,
+          "tp": 597
+        },
+        "negation_of": {
+          "f1": 0.8217522658610272,
+          "fn": 14,
+          "fp": 45,
+          "precision": 0.7513812154696132,
+          "recall": 0.9066666666666666,
+          "support": 150,
+          "tp": 136
+        },
+        "no_relation": {
+          "f1": 0.9510205250050096,
+          "fn": 1540,
+          "fp": 171,
+          "precision": 0.9898105112620665,
+          "recall": 0.9151561897416121,
+          "support": 18151,
+          "tp": 16611
+        }
+      },
+      "rotulo": "Baseline calibrado (BERTimbau)",
+      "sha256_predicoes": "79079df81411f29d5b839418b109bc56f87d9419b1f03a62a4d765bbb7728994",
+      "t": 0.95,
+      "weighted_f1": 0.9286262412394092
+    },
     "baseline_calibrado|BioBERTpt-all": {
       "ap": {
         "associated_with": 0.42484544965087445,
@@ -84,6 +157,75 @@
       "sha256_predicoes": "c6a442863ea2aa5f727d2f1d5709788bfb3f680cb04b1a1234a7fd44f2c860c0",
       "t": 0.9,
       "weighted_f1": 0.9234080083822594
+    },
+    "baseline_calibrado|BioBERTpt-clin": {
+      "ap": {
+        "associated_with": 0.41619589528436474,
+        "negation_of": 0.8536547031784498,
+        "no_relation": 0.9971849853637529
+      },
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "baseline_calibrado",
+      "macro_f1": 0.7344429425822213,
+      "matriz_confusao": [
+        [
+          137,
+          3,
+          10
+        ],
+        [
+          6,
+          599,
+          158
+        ],
+        [
+          39,
+          1451,
+          16661
+        ]
+      ],
+      "mcc": 0.4885415405331848,
+      "micro_f1": 0.9125577003776753,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "baseline_calibrado_BioBERTpt-clin",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.42542613636363635,
+          "fn": 164,
+          "fp": 1454,
+          "precision": 0.2917681441792499,
+          "recall": 0.7850589777195282,
+          "support": 763,
+          "tp": 599
+        },
+        "negation_of": {
+          "f1": 0.8253012048192772,
+          "fn": 13,
+          "fp": 45,
+          "precision": 0.7527472527472527,
+          "recall": 0.9133333333333333,
+          "support": 150,
+          "tp": 137
+        },
+        "no_relation": {
+          "f1": 0.9526014865637508,
+          "fn": 1490,
+          "fp": 168,
+          "precision": 0.9900172321587736,
+          "recall": 0.9179108589058455,
+          "support": 18151,
+          "tp": 16661
+        }
+      },
+      "rotulo": "Baseline calibrado (BioBERTpt-clin)",
+      "sha256_predicoes": "acf836c7548a7ca7620b24bd72b50c63eaa5e9f743c2de443351b9e9fd0b27d1",
+      "t": 0.95,
+      "weighted_f1": 0.9305006769506392
     },
     "baseline|BERTimbau": {
       "ap": {
@@ -292,6 +434,69 @@
       "sha256_predicoes": "421d91c644625873afd55e3128cb137f50e08be1448f27b69dffe57d089ff986",
       "weighted_f1": 0.9302671071575799
     },
+    "filtro_pistas|BERTimbau": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BERTimbau",
+      "estrategia": "filtro_pistas",
+      "macro_f1": 0.7313802893963558,
+      "matriz_confusao": [
+        [
+          135,
+          4,
+          11
+        ],
+        [
+          4,
+          597,
+          162
+        ],
+        [
+          38,
+          1497,
+          16616
+        ]
+      ],
+      "mcc": 0.48009139983101556,
+      "micro_f1": 0.9099874108266891,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "filtro_BERTimbau",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4173365955959455,
+          "fn": 166,
+          "fp": 1501,
+          "precision": 0.28455672068636795,
+          "recall": 0.7824377457404981,
+          "support": 763,
+          "tp": 597
+        },
+        "negation_of": {
+          "f1": 0.8256880733944955,
+          "fn": 15,
+          "fp": 42,
+          "precision": 0.7627118644067796,
+          "recall": 0.9,
+          "support": 150,
+          "tp": 135
+        },
+        "no_relation": {
+          "f1": 0.9511161991986262,
+          "fn": 1535,
+          "fp": 173,
+          "precision": 0.9896956340461016,
+          "recall": 0.9154316566580354,
+          "support": 18151,
+          "tp": 16616
+        }
+      },
+      "rotulo": "Filtro léxico (BERTimbau)",
+      "sha256_predicoes": "d99e3ac0c22e022a9285ae74e5962e4f4fe9e71d1b360aa6ab55fbe2b7aae0bd",
+      "weighted_f1": 0.9287657975819947
+    },
     "filtro_pistas|BioBERTpt-all": {
       "confere_matriz_gravada": true,
       "confere_metricas_json": true,
@@ -354,6 +559,69 @@
       "rotulo": "Filtro léxico (BioBERTpt-all)",
       "sha256_predicoes": "9eb8193ec29f82c740b70675f6d75448ee454f7007cfe302b6aebad690c3a4b9",
       "weighted_f1": 0.9234931136203955
+    },
+    "filtro_pistas|BioBERTpt-clin": {
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-clin",
+      "estrategia": "filtro_pistas",
+      "macro_f1": 0.73172431501078,
+      "matriz_confusao": [
+        [
+          134,
+          3,
+          13
+        ],
+        [
+          5,
+          599,
+          159
+        ],
+        [
+          39,
+          1450,
+          16662
+        ]
+      ],
+      "mcc": 0.48653048466636123,
+      "micro_f1": 0.9124527906000839,
+      "n": 19064,
+      "papel": "controle",
+      "pasta": "filtro_BioBERTpt-clin",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4255772646536412,
+          "fn": 164,
+          "fp": 1453,
+          "precision": 0.2919103313840156,
+          "recall": 0.7850589777195282,
+          "support": 763,
+          "tp": 599
+        },
+        "negation_of": {
+          "f1": 0.8170731707317073,
+          "fn": 16,
+          "fp": 44,
+          "precision": 0.7528089887640449,
+          "recall": 0.8933333333333333,
+          "support": 150,
+          "tp": 134
+        },
+        "no_relation": {
+          "f1": 0.9525225096469916,
+          "fn": 1489,
+          "fp": 172,
+          "precision": 0.9897825828680052,
+          "recall": 0.91796595228913,
+          "support": 18151,
+          "tp": 16662
+        }
+      },
+      "rotulo": "Filtro léxico (BioBERTpt-clin)",
+      "sha256_predicoes": "14aec0bffdc2e80418f6cd24fd4c251fee17c1635255dc4eab2d826d0695cbe4",
+      "weighted_f1": 0.9303667908698608
     },
     "pair_aware_mlp|BioBERTpt-all": {
       "ap": {
@@ -423,6 +691,75 @@
       "rotulo": "Pair-Aware MLP (BioBERTpt-all)",
       "sha256_predicoes": "4177351fe3f74d1097a6926d218324e96f91588a79963f10c8c0cc836999f0d0",
       "weighted_f1": 0.9344415799363021
+    },
+    "pair_aware_sem_pesos|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.4348311887942985,
+        "negation_of": 0.8872844642280369,
+        "no_relation": 0.9972047682479332
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware_sem_pesos",
+      "macro_f1": 0.7517401877481006,
+      "matriz_confusao": [
+        [
+          131,
+          3,
+          16
+        ],
+        [
+          3,
+          349,
+          411
+        ],
+        [
+          31,
+          442,
+          17678
+        ]
+      ],
+      "mcc": 0.49486236870665473,
+      "micro_f1": 0.952475870751154,
+      "n": 19064,
+      "papel": "experimento de aprimoramento (exploratório)",
+      "pasta": "pair_aware__a3ac671a77e2__t2",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4482980089916506,
+          "fn": 414,
+          "fp": 445,
+          "precision": 0.43954659949622166,
+          "recall": 0.45740498034076016,
+          "support": 763,
+          "tp": 349
+        },
+        "negation_of": {
+          "f1": 0.8317460317460318,
+          "fn": 19,
+          "fp": 34,
+          "precision": 0.793939393939394,
+          "recall": 0.8733333333333333,
+          "support": 150,
+          "tp": 131
+        },
+        "no_relation": {
+          "f1": 0.9751765225066196,
+          "fn": 473,
+          "fp": 427,
+          "precision": 0.976415354874344,
+          "recall": 0.9739408297063523,
+          "support": 18151,
+          "tp": 17678
+        }
+      },
+      "rotulo": "Pair-Aware linear, sem pesos de classe (BioBERTpt-all)",
+      "sha256_predicoes": "cf0fbda088cfa4f81806ea3f2ec25eb166ea99a8f294fb121342a03eae8ba558",
+      "weighted_f1": 0.9529606769639207
     },
     "pair_aware|BERTimbau": {
       "ap": {

@@ -1,0 +1,479 @@
+{
+  "configuracao_busca": {
+    "comparacao": "exata, por frações das contagens",
+    "criterio": "maior F1 de negation_of (contagens) da saída final no DEV",
+    "desempates": [
+      "maior macro-F1 (contagens)",
+      "menor |limiar - 0,5|",
+      "maior limiar"
+    ],
+    "grade": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "regra": "baseline_calibrado: P(negation_of) >= t -> negation_of; senão argmax entre associated_with e no_relation (empate -> associated_with); probabilidades de 4 casas do sidecar da base",
+    "versao": 1
+  },
+  "congelado_em": "2026-11-16T10:00:58-0300",
+  "hash_configuracao_busca": "758cae5bc1bdf1f814d3d3e509dcb81c4fe1bc999c9934d568425dd48a7a8baa",
+  "hash_registro": "afec3d4099b4ce5b3033734e1777ebb19a583094b3067589884e3327bfc1bfd9",
+  "limiar": 0.95,
+  "tabela": [
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1495,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 7,
+          "fp": 90,
+          "tp": 143
+        },
+        "no_relation": {
+          "fn": 1578,
+          "fp": 166,
+          "tp": 16573
+        }
+      },
+      "f1_negation_of": 0.7467362924281984,
+      "limiar": 0.05,
+      "macro_f1": 0.7049880944757266
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1498,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 8,
+          "fp": 75,
+          "tp": 142
+        },
+        "no_relation": {
+          "fn": 1565,
+          "fp": 166,
+          "tp": 16586
+        }
+      },
+      "f1_negation_of": 0.773841961852861,
+      "limiar": 0.1,
+      "macro_f1": 0.7140073462432402
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1499,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 10,
+          "fp": 69,
+          "tp": 140
+        },
+        "no_relation": {
+          "fn": 1560,
+          "fp": 168,
+          "tp": 16591
+        }
+      },
+      "f1_negation_of": 0.7799442896935933,
+      "limiar": 0.15,
+      "macro_f1": 0.7160247067235279
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1499,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 10,
+          "fp": 64,
+          "tp": 140
+        },
+        "no_relation": {
+          "fn": 1555,
+          "fp": 168,
+          "tp": 16596
+        }
+      },
+      "f1_negation_of": 0.7909604519774012,
+      "limiar": 0.2,
+      "macro_f1": 0.7197468586132983
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1499,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 11,
+          "fp": 64,
+          "tp": 139
+        },
+        "no_relation": {
+          "fn": 1555,
+          "fp": 169,
+          "tp": 16596
+        }
+      },
+      "f1_negation_of": 0.7875354107648725,
+      "limiar": 0.25,
+      "macro_f1": 0.7185961026030732
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1501,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 60,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1552,
+          "fp": 169,
+          "tp": 16599
+        }
+      },
+      "f1_negation_of": 0.7931034482758621,
+      "limiar": 0.3,
+      "macro_f1": 0.7203848515322093
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1501,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 60,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1552,
+          "fp": 169,
+          "tp": 16599
+        }
+      },
+      "f1_negation_of": 0.7931034482758621,
+      "limiar": 0.35,
+      "macro_f1": 0.7203848515322093
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1501,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 59,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1551,
+          "fp": 169,
+          "tp": 16600
+        }
+      },
+      "f1_negation_of": 0.7953890489913544,
+      "limiar": 0.4,
+      "macro_f1": 0.7211567345264273
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1502,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 57,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1550,
+          "fp": 169,
+          "tp": 16601
+        }
+      },
+      "f1_negation_of": 0.8,
+      "limiar": 0.45,
+      "macro_f1": 0.7226551270731855
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1502,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 55,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1548,
+          "fp": 169,
+          "tp": 16603
+        }
+      },
+      "f1_negation_of": 0.8046647230320699,
+      "limiar": 0.5,
+      "macro_f1": 0.7242300640606332
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1502,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 55,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1548,
+          "fp": 169,
+          "tp": 16603
+        }
+      },
+      "f1_negation_of": 0.8046647230320699,
+      "limiar": 0.55,
+      "macro_f1": 0.7242300640606332
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1502,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 12,
+          "fp": 52,
+          "tp": 138
+        },
+        "no_relation": {
+          "fn": 1545,
+          "fp": 169,
+          "tp": 16606
+        }
+      },
+      "f1_negation_of": 0.8117647058823529,
+      "limiar": 0.6,
+      "macro_f1": 0.7266267646747753
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 52,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1545,
+          "fp": 170,
+          "tp": 16606
+        }
+      },
+      "f1_negation_of": 0.8047337278106509,
+      "limiar": 0.65,
+      "macro_f1": 0.7242254572789951
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 51,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1544,
+          "fp": 170,
+          "tp": 16607
+        }
+      },
+      "f1_negation_of": 0.8071216617210683,
+      "limiar": 0.7,
+      "macro_f1": 0.7250314472969049
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 50,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1543,
+          "fp": 170,
+          "tp": 16608
+        }
+      },
+      "f1_negation_of": 0.8095238095238095,
+      "limiar": 0.75,
+      "macro_f1": 0.7258421747056428
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 50,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1543,
+          "fp": 170,
+          "tp": 16608
+        }
+      },
+      "f1_negation_of": 0.8095238095238095,
+      "limiar": 0.8,
+      "macro_f1": 0.7258421747056428
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 49,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1542,
+          "fp": 170,
+          "tp": 16609
+        }
+      },
+      "f1_negation_of": 0.8119402985074626,
+      "limiar": 0.85,
+      "macro_f1": 0.7266576819347873
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1503,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 48,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1541,
+          "fp": 170,
+          "tp": 16610
+        }
+      },
+      "f1_negation_of": 0.8143712574850299,
+      "limiar": 0.9,
+      "macro_f1": 0.7274780119220549
+    },
+    {
+      "contagens": {
+        "associated_with": {
+          "fn": 166,
+          "fp": 1504,
+          "tp": 597
+        },
+        "negation_of": {
+          "fn": 14,
+          "fp": 45,
+          "tp": 136
+        },
+        "no_relation": {
+          "fn": 1540,
+          "fp": 171,
+          "tp": 16611
+        }
+      },
+      "f1_negation_of": 0.8217522658610272,
+      "limiar": 0.95,
+      "macro_f1": 0.7298907440689396
+    }
+  ],
+  "vinculos": {
+    "base": {
+      "nome": "baseline_BERTimbau",
+      "sha256_config": "8bc3b22f9d40241fe43605b921809a361319cf094e4818b3c074291386696f07",
+      "sha256_predicoes_dev": "8c36e6ee5afc42cae4c447258e3ca9953b7a5bbce4babf241c96b0fa4a53b754"
+    },
+    "dev": {
+      "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+      "max_gap": 25,
+      "n_candidatos": 19064,
+      "particao": "dev",
+      "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+      "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "proveniencia_pesos": {
+      "commit": "94d69c95f98f7d5b2a8700c420230ae10def0baa",
+      "hash_manifesto": "ecdcf4ef267fc87c45c5c4e7d811db2400de5512afe2060c970cbcb85f2442c0",
+      "repositorio": "neuralmind/bert-base-portuguese-cased"
+    },
+    "seed": 42
+  }
+}

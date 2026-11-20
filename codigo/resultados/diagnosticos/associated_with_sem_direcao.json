@@ -1,0 +1,299 @@
+{
+  "definicao": "(por par não ordenado {a, b} do mesmo documento):\n\n* referência positiva: algum dos sentidos é `associated_with` na anotação;\n* predição positiva: o modelo previu `associated_with` em algum dos sentidos.\n\nSó entram pares em que os dois sentidos são candidatos (o gerador enumera pares\nordenados dentro da mesma janela, então isso vale para todos; a função confere\ne conta os que não tiverem o inverso). `negation_of` não é avaliada aqui: a\ndireção faz parte da sua definição (pista → conceito negado).",
+  "descricao": "associated_with avaliada sobre pares não ordenados (análise secundária, DEV)",
+  "proveniencia": {
+    "codigo": "f73b43a7c5dd6ec8969667a6043938c093140816a2ee51fc22203dadd6e98efb",
+    "n_candidatos": 19064,
+    "particao": "dev",
+    "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+    "test_lido": false
+  },
+  "sistemas": {
+    "baseline|BERTimbau": {
+      "com_direcao": {
+        "f1": 0.4173365955959455,
+        "fn": 166,
+        "fp": 1501,
+        "n_pares_ordenados": 19064,
+        "precision": 0.28455672068636795,
+        "recall": 0.7824377457404981,
+        "suporte": 763,
+        "tp": 597
+      },
+      "diferenca_f1": 0.15280323300125798,
+      "pasta": "baseline_BERTimbau",
+      "predicoes_sha256": "8c36e6ee5afc42cae4c447258e3ca9953b7a5bbce4babf241c96b0fa4a53b754",
+      "sem_direcao": {
+        "f1": 0.5701398285972035,
+        "fn": 129,
+        "fp": 824,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.4340659340659341,
+        "recall": 0.8304862023653088,
+        "suporte": 761,
+        "tp": 632
+      }
+    },
+    "baseline|BioBERTpt-all": {
+      "com_direcao": {
+        "f1": 0.40789899643897704,
+        "fn": 133,
+        "fp": 1696,
+        "n_pares_ordenados": 19064,
+        "precision": 0.2708512467755804,
+        "recall": 0.8256880733944955,
+        "suporte": 763,
+        "tp": 630
+      },
+      "diferenca_f1": 0.16426595201463118,
+      "pasta": "baseline_biobertpt_seed42",
+      "predicoes_sha256": "57a3847ce7011b12332acf554718d8bf4c0023e3ef8882b8f6575e0c484e0f38",
+      "sem_direcao": {
+        "f1": 0.5721649484536082,
+        "fn": 95,
+        "fp": 901,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.4250159540523293,
+        "recall": 0.8751642575558476,
+        "suporte": 761,
+        "tp": 666
+      }
+    },
+    "baseline|BioBERTpt-clin": {
+      "com_direcao": {
+        "f1": 0.4255772646536412,
+        "fn": 164,
+        "fp": 1453,
+        "n_pares_ordenados": 19064,
+        "precision": 0.2919103313840156,
+        "recall": 0.7850589777195282,
+        "suporte": 763,
+        "tp": 599
+      },
+      "diferenca_f1": 0.15619217234367788,
+      "pasta": "baseline_BioBERTpt-clin",
+      "predicoes_sha256": "421d91c644625873afd55e3128cb137f50e08be1448f27b69dffe57d089ff986",
+      "sem_direcao": {
+        "f1": 0.5817694369973191,
+        "fn": 110,
+        "fp": 826,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.44075829383886256,
+        "recall": 0.8554533508541393,
+        "suporte": 761,
+        "tp": 651
+      }
+    },
+    "pair_aware_mlp|BioBERTpt-all": {
+      "com_direcao": {
+        "f1": 0.4380664652567976,
+        "fn": 183,
+        "fp": 1305,
+        "n_pares_ordenados": 19064,
+        "precision": 0.3076923076923077,
+        "recall": 0.7601572739187418,
+        "suporte": 763,
+        "tp": 580
+      },
+      "diferenca_f1": 0.15404490365271517,
+      "pasta": "pair_aware_mlp_BioBERTpt-all",
+      "predicoes_sha256": "4177351fe3f74d1097a6926d218324e96f91588a79963f10c8c0cc836999f0d0",
+      "sem_direcao": {
+        "f1": 0.5921113689095128,
+        "fn": 123,
+        "fp": 756,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.45767575322812054,
+        "recall": 0.8383705650459922,
+        "suporte": 761,
+        "tp": 638
+      }
+    },
+    "pair_aware_sem_pesos|BioBERTpt-all": {
+      "com_direcao": {
+        "f1": 0.4482980089916506,
+        "fn": 414,
+        "fp": 445,
+        "n_pares_ordenados": 19064,
+        "precision": 0.43954659949622166,
+        "recall": 0.45740498034076016,
+        "suporte": 763,
+        "tp": 349
+      },
+      "diferenca_f1": 0.10990134792153261,
+      "pasta": "pair_aware__a3ac671a77e2__t2",
+      "predicoes_sha256": "cf0fbda088cfa4f81806ea3f2ec25eb166ea99a8f294fb121342a03eae8ba558",
+      "sem_direcao": {
+        "f1": 0.5581993569131832,
+        "fn": 327,
+        "fp": 360,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.5465994962216625,
+        "recall": 0.5703022339027596,
+        "suporte": 761,
+        "tp": 434
+      }
+    },
+    "pair_aware|BERTimbau": {
+      "com_direcao": {
+        "f1": 0.4346855228879792,
+        "fn": 179,
+        "fp": 1340,
+        "n_pares_ordenados": 19064,
+        "precision": 0.30353430353430355,
+        "recall": 0.765399737876802,
+        "suporte": 763,
+        "tp": 584
+      },
+      "diferenca_f1": 0.14236065909647438,
+      "pasta": "pair_aware__f7a5acb7f500__t1",
+      "predicoes_sha256": "8a28511d01fe2dc20b70889e93175bd2affd127f512bc68c80e7ed592f520f63",
+      "sem_direcao": {
+        "f1": 0.5770461819844536,
+        "fn": 130,
+        "fp": 795,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.4424964936886395,
+        "recall": 0.8291721419185283,
+        "suporte": 761,
+        "tp": 631
+      }
+    },
+    "pair_aware|BioBERTpt-all": {
+      "com_direcao": {
+        "f1": 0.43637724550898205,
+        "fn": 180,
+        "fp": 1326,
+        "n_pares_ordenados": 19064,
+        "precision": 0.30539549502357255,
+        "recall": 0.7640891218872871,
+        "suporte": 763,
+        "tp": 583
+      },
+      "diferenca_f1": 0.15564451333054652,
+      "pasta": "pairaware_biobertpt_seed42",
+      "predicoes_sha256": "017cee17142390e68295eb6b985e198d6c9359ffbd890ffcd43c8bb602ea4e44",
+      "sem_direcao": {
+        "f1": 0.5920217588395286,
+        "fn": 108,
+        "fp": 792,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.4519031141868512,
+        "recall": 0.8580814717477004,
+        "suporte": 761,
+        "tp": 653
+      }
+    },
+    "pair_aware|BioBERTpt-clin": {
+      "com_direcao": {
+        "f1": 0.4541319181197877,
+        "fn": 164,
+        "fp": 1276,
+        "n_pares_ordenados": 19064,
+        "precision": 0.3194666666666667,
+        "recall": 0.7850589777195282,
+        "suporte": 763,
+        "tp": 599
+      },
+      "diferenca_f1": 0.15343964236036,
+      "pasta": "pair_aware__6d11685f9cdb__t1",
+      "predicoes_sha256": "a176dfbacf379024289933ba52c2029246f8eb4b887ec5dae5329d0e1bab2a00",
+      "sem_direcao": {
+        "f1": 0.6075715604801477,
+        "fn": 103,
+        "fp": 747,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.46832740213523133,
+        "recall": 0.8646517739816032,
+        "suporte": 761,
+        "tp": 658
+      }
+    },
+    "two_stage|BERTimbau": {
+      "com_direcao": {
+        "f1": 0.46072289156626506,
+        "fn": 285,
+        "fp": 834,
+        "n_pares_ordenados": 19064,
+        "precision": 0.3643292682926829,
+        "recall": 0.6264744429882044,
+        "suporte": 763,
+        "tp": 478
+      },
+      "diferenca_f1": 0.13993717444033565,
+      "pasta": "twostage_bertimbau_seed42",
+      "predicoes_sha256": "e5326e695d7af3a16d63f5d585b827575f33b605a4b6fb03b70f67d653f3e39d",
+      "sem_direcao": {
+        "f1": 0.6006600660066007,
+        "fn": 215,
+        "fp": 511,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.5165562913907285,
+        "recall": 0.7174770039421814,
+        "suporte": 761,
+        "tp": 546
+      }
+    },
+    "two_stage|BioBERTpt-all": {
+      "com_direcao": {
+        "f1": 0.36577181208053694,
+        "fn": 545,
+        "fp": 211,
+        "n_pares_ordenados": 19064,
+        "precision": 0.5081585081585082,
+        "recall": 0.2857142857142857,
+        "suporte": 763,
+        "tp": 218
+      },
+      "diferenca_f1": 0.08709014078141591,
+      "pasta": "two_stage_limiar_BioBERTpt-all",
+      "predicoes_sha256": "1f45b0304b4c873f9685a881c6141912347b2b0b909c4eeeccab608f8adf4905",
+      "sem_direcao": {
+        "f1": 0.45286195286195285,
+        "fn": 492,
+        "fp": 158,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.629976580796253,
+        "recall": 0.35348226018396844,
+        "suporte": 761,
+        "tp": 269
+      }
+    },
+    "two_stage|BioBERTpt-clin": {
+      "com_direcao": {
+        "f1": 0.3803486529318542,
+        "fn": 523,
+        "fp": 259,
+        "n_pares_ordenados": 19064,
+        "precision": 0.48096192384769537,
+        "recall": 0.3145478374836173,
+        "suporte": 763,
+        "tp": 240
+      },
+      "diferenca_f1": 0.11441363554518041,
+      "pasta": "two_stage_limiar_BioBERTpt-clin",
+      "predicoes_sha256": "01b84bda24fbd75bcbda3bd8d2610ad831e7cf845a57bd98fcdc21e54f1e9d68",
+      "sem_direcao": {
+        "f1": 0.49476228847703463,
+        "fn": 454,
+        "fp": 173,
+        "n_pares_nao_ordenados": 9532,
+        "pares_sem_o_sentido_inverso": 0,
+        "precision": 0.6395833333333333,
+        "recall": 0.40341655716162944,
+        "suporte": 761,
+        "tp": 307
+      }
+    }
+  }
+}

@@ -25,6 +25,9 @@ descrita por uma `treino.montagem.Montagem`:
   léxico, com a cabeça linear `[h_cls ; h_[E1] ; h_[E2]] → Linear` (sem MLP);
 * `pair_aware_mlp` (pacote, com `cabeca`) — estratégia independente: como a `pair_aware`, mas
   com a cabeça `[h_cls ; h_[E1] ; h_[E2]] → MLP`; fora do protocolo pré-registrado da fase.
+* `ablacao_pooler` (pacote, com `cabeca`) — duas estratégias exploratórias que completam o
+  fatorial marcadores × pooler entre o `baseline` e a `pair_aware`: `cls_direto` (só o `[CLS]`,
+  sem pooler) e `pair_aware_pooler` (`[CLS]` com pooler + marcadores); fora do protocolo da fase.
 
 Etapa 6.1:
 

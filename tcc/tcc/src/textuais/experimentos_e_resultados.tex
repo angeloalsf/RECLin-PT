@@ -2,22 +2,12 @@
 \label{cap:experimentos}
 
 Neste capítulo são descritos os experimentos conduzidos no desenvolvimento do
-RECLin-PT, com foco na classe \texttt{negation\_of}, bem como os resultados obtidos
-até o momento, todos no conjunto de desenvolvimento. Os experimentos cruzam as duas
-dimensões do desenvolvimento: três \emph{encoders} (BioBERTpt-all, BioBERTpt-clin e
-BERTimbau-base) e três estratégias de modelagem (baseline, Pair-Aware linear e
-Two-Stage), além da variante exploratória Pair-Aware MLP e dos controles do
-protocolo, todos descritos no Capítulo~\ref{cap:prototipo}. Como a Pair-Aware linear é
-a arquitetura oficial do RECLin-PT (Seção~\ref{sec:pairaware}), os resultados são
-organizados em torno dela: como se compara às demais estratégias e como varia com o
-\emph{encoder}. Este capítulo reporta o que foi observado; a interpretação desses
-resultados para o RECLin-PT está no Capítulo~\ref{cap:discussao}.
+RECLin-PT, com foco na classe \texttt{negation\_of}, bem como os resultados obtidos, todos no conjunto de desenvolvimento. Os experimentos combinam duas dimensões do desenvolvimento do RECLin-PT. A primeira corresponde aos três \emph{encoders} considerados (BioBERTpt-all, BioBERTpt-clin e BERTimbau-base), enquanto a segunda compreende as três estratégias de modelagem avaliadas (baseline, Pair-Aware Linear e Two-Stage). Além dessas configurações, são apresentados a variante exploratória Pair-Aware MLP e os controles previstos no protocolo experimental. Todas essas configurações são descritas no Capítulo~\ref{cap:prototipo}. Como a Pair-Aware Linear é a arquitetura adotada no RECLin-PT (Seção~\ref{sec:pairaware}), os resultados são organizados em torno dela, considerando sua comparação com as demais estratégias e seu comportamento diante dos diferentes \emph{encoders}. Este capítulo apresenta os resultados obtidos nos experimentos, enquanto sua interpretação no contexto do RECLin-PT é desenvolvida no Capítulo~\ref{cap:discussao}.
 
 A \autoref{fig:ciclo} situa esses resultados no ciclo de desenvolvimento. A preparação
 dos dados, a geração de pares candidatos, o \emph{fine-tuning} das nove combinações de
 \emph{encoder} e estratégia e a seleção de épocas e de limiares no DEV estão
-concluídos. Permanecem pendentes os experimentos de aprimoramento, a seleção e o
-congelamento da configuração final e a avaliação única desse modelo final no conjunto
+concluídos, e um primeiro experimento de aprimoramento é relatado na Seção~\ref{sec:resultados_sem_pesos}. Permanecem pendentes a seleção e o congelamento da configuração final e a avaliação única desse modelo final no conjunto
 de teste. A seta de retorno indica que novos \emph{encoders}, hiperparâmetros ou
 estratégias voltam à etapa de \emph{fine-tuning} antes de entrar na comparação,
 sempre no DEV.
@@ -35,15 +25,11 @@ mesmo DEV, são otimistas por construção (Seção~\ref{sec:protocolo}).
 \section{Execuções e conferência dos registros}
 \label{sec:inventario}
 
-Antes da análise, todas as execuções disponíveis foram inventariadas e conferidas a
-partir dos próprios arquivos gravados (Apêndice~\ref{ap:inventario}): $7$ execuções
-treinadas de três rótulos (baseline e Pair-Aware linear com os três
-\emph{encoders} e a Pair-Aware MLP com o BioBERTpt-all), $6$ estágios do Two-Stage
-(dois por \emph{encoder}), $3$ composições do Two-Stage, cada uma com o seu limiar
-$\tau$ congelado, e as $2$ execuções derivadas do baseline BioBERTpt-all (baseline
-calibrado e filtro léxico). Todas as execuções treinadas estão concluídas, usam a
-semente $42$, as mesmas partições (os mesmos \emph{hashes} de treino e de DEV) e a
-mesma revisão de pesos por \emph{encoder}. As execuções de três rótulos registram que
+Antes da análise, todas as execuções disponíveis foram inventariadas e conferidas com base nos próprios arquivos registrados (Apêndice~\ref{ap:inventario}). O inventário contempla sete execuções treinadas com três rótulos, correspondentes ao baseline e à Pair-Aware Linear, cada um avaliado com os três \emph{encoders}, além da Pair-Aware MLP, treinada exclusivamente com o BioBERTpt-all. Também foram registrados os seis estágios do Two-Stage, dois para cada \emph{encoder}, as três composições dessa arquitetura, cada uma com seu respectivo limiar $\tau$ previamente fixado, e as duas execuções derivadas do baseline com BioBERTpt-all, correspondentes ao baseline calibrado e ao filtro léxico. Todas as execuções de treinamento foram concluídas com a semente $42$ e utilizaram as mesmas partições, identificadas pelos mesmos \emph{hashes} dos conjuntos de treinamento e DEV, bem como a mesma revisão dos pesos pré-treinados de cada \emph{encoder}. Depois da fase, a auditoria passou a incluir mais cinco registros, que
+não constam do Apêndice~\ref{ap:inventario}: a execução da Pair-Aware Linear sem
+pesos de classe (Seção~\ref{sec:resultados_sem_pesos}) e o baseline calibrado e o
+filtro léxico derivados dos baselines do BioBERTpt-clin e do BERTimbau-base
+(Seção~\ref{sec:resultados_encoders}). As execuções de três rótulos registram que
 o teste não foi avaliado. Os estágios do Two-Stage não têm esse campo, e nenhuma
 execução ou composição tem métrica de teste gravada.
 
@@ -51,9 +37,7 @@ As métricas foram recalculadas a partir das predições gravadas e coincidem, v
 valor, com as registradas por cada execução. Os rótulos de referência das predições
 coincidem com os do DEV reconstruído da partição congelada. Cada composição do
 Two-Stage foi ligada aos seus dois estágios pelos \emph{hashes} da configuração e do
-melhor modelo. Na composição com o BERTimbau-base, os nomes dos estágios registrados
-no arquivo do limiar diferem dos nomes das pastas, mas os dois \emph{hashes}
-coincidem, o que identifica os mesmos estágios. Os \emph{checkpoints} e os registros
+melhor modelo. Na composição com o BERTimbau-base, os dois \emph{hashes} coincidem, confirmando a correspondência entre os estágios registrados. Os \emph{checkpoints} e os registros
 de console das sessões ficam fora do repositório e não foram verificados. Sete
 execuções foram interrompidas e retomadas a partir de um \emph{checkpoint} e
 registram apenas a sessão final (Apêndice~\ref{ap:historico}).
@@ -63,7 +47,7 @@ registram apenas a sessão final (Apêndice~\ref{ap:historico}).
 
 Nas sete execuções de três rótulos, a época selecionada foi sempre a terceira, a
 última permitida pelo protocolo, e o macro-F1 do DEV ainda subia entre a segunda e a
-terceira época em todas elas (na Pair-Aware linear com o BioBERTpt-all, de $0{,}727$
+terceira época em todas elas (na Pair-Aware Linear com o BioBERTpt-all, de $0{,}727$
 para $0{,}741$). A evolução completa por época, com perdas e duração, está no
 Apêndice~\ref{ap:historico}. Em todas, a perda do DEV foi menor na segunda época do
 que na terceira, de modo que perda e macro-F1 não apontaram a mesma época. A
@@ -85,34 +69,29 @@ A Tabela~\ref{tab:dev_sistemas} reúne os doze sistemas com resultado no DEV. Na
 classe-alvo, os F1 ficam entre $0{,}800$ e $0{,}832$, faixa que corresponde a poucas
 predições: com $150$ pares \texttt{negation\_of} no DEV, os sistemas diferem em no
 máximo $14$ verdadeiros positivos e $29$ falsos positivos. Em todos os
-\emph{encoders}, a Pair-Aware linear tem F1 de \texttt{negation\_of} maior que o do
+\emph{encoders}, a Pair-Aware Linear tem F1 de \texttt{negation\_of} maior que o do
 baseline (de $0{,}829$, $0{,}826$ e $0{,}818$, contra $0{,}802$, $0{,}814$ e $0{,}800$,
 para o BioBERTpt-all, o BioBERTpt-clin e o BERTimbau-base), com \emph{recall} entre
 $0{,}940$ e $0{,}960$. O Two-Stage tem os dois maiores F1 de \texttt{negation\_of}, com
 os dois BioBERTpt ($0{,}831$ e $0{,}832$), e as três maiores precisões, mas com
-\emph{recall} menor. No macro-F1, a Pair-Aware linear com o BioBERTpt-clin
+\emph{recall} menor. No macro-F1, a Pair-Aware Linear com o BioBERTpt-clin
 ($0{,}746$) só fica abaixo do Two-Stage com o BERTimbau-base ($0{,}751$), e tem o
-maior MCC ($0{,}514$). Entre os controles, o filtro léxico e o baseline calibrado
-elevam a precisão do baseline ao custo de parte do \emph{recall}: o filtro rebaixou
-$24$ das $204$ predições \texttt{negation\_of} do baseline, e o limiar escolhido para
-o calibrado foi $t=0{,}90$.
+maior MCC ($0{,}514$). Entre os controles, o filtro léxico e o baseline calibrado aumentam a precisão do baseline, embora isso implique uma redução parcial do \emph{recall}. No caso do filtro léxico, $24$ das $204$ predições da classe \texttt{negation\_of} foram reclassificadas como \texttt{no\_relation}, enquanto o limiar selecionado para o baseline calibrado foi $t=0{,}90$.
 
 \input{tabelas/dev_sistemas}
 
 As outras duas classes completam o quadro (Tabela~\ref{tab:dev_classes}). Em
 \texttt{associated\_with}, todas as estratégias treinadas de três rótulos têm \emph{recall}
-entre $0{,}760$ e $0{,}826$ e precisão entre $0{,}271$ e $0{,}319$. A Pair-Aware linear
-tem precisão maior que a do baseline nos três \emph{encoders}. O Two-Stage com os dois
-BioBERTpt inverte esse perfil: precisão de cerca de $0{,}5$ e \emph{recall} de cerca
-de $0{,}3$. Com o BERTimbau-base, cujo limiar é menor, o Two-Stage fica entre os dois
+entre $0{,}760$ e $0{,}826$ e precisão entre $0{,}271$ e $0{,}319$. A Pair-Aware Linear
+tem precisão maior que a do baseline nos três \emph{encoders}. O Two-Stage, por sua vez, apresenta um comportamento distinto com ambos os \emph{encoders} BioBERTpt, registrando precisão próxima de $0{,}5$ e \emph{recall} próximo de $0{,}3$. Com o BERTimbau-base, cujo limiar é menor, o Two-Stage fica entre os dois
 perfis e tem o maior F1 da classe ($0{,}461$). A AP de \texttt{associated\_with}, que
 não depende de limiar, vai de $0{,}396$ a $0{,}446$ nas estratégias de três rótulos e é
-maior na Pair-Aware linear do que no baseline nos três \emph{encoders}.
+maior na Pair-Aware Linear do que no baseline nos três \emph{encoders}.
 
 \input{tabelas/dev_classes}
 
 A \autoref{fig:confusao} mostra para onde vão os erros, com o BioBERTpt-all. No
-baseline e na Pair-Aware linear, a classe \texttt{negation\_of} é quase toda
+baseline e na Pair-Aware Linear, a classe \texttt{negation\_of} é quase toda
 recuperada, e o erro dominante é a confusão de \texttt{no\_relation} com
 \texttt{associated\_with} ($1\,693$ e $1\,323$ pares). No Two-Stage, essa confusão
 quase desaparece ($208$ pares), mas o erro se desloca para o sentido inverso: $541$
@@ -121,17 +100,16 @@ das $763$ relações \texttt{associated\_with} são classificadas como
 
 \begin{figure}[htbp]
   \centering
-  \caption{Matrizes de confusão no DEV (normalizadas por linha, contagens entre parênteses): baseline, Pair-Aware linear e Two-Stage, BioBERTpt-all, seed 42.}
+  \caption{Matrizes de confusão no DEV (normalizadas por linha, contagens entre parênteses): baseline, Pair-Aware Linear e Two-Stage, BioBERTpt-all, seed 42.}
   \label{fig:confusao}
   \includegraphics[width=\textwidth]{resultados/matrizes_confusao_dev.png}\\[4pt]
   {\footnotesize Fonte: elaborado pelo autor.}
 \end{figure}
 
-\section{A Pair-Aware linear frente às demais estratégias}
+\section{A Pair-Aware Linear frente às demais estratégias}
 \label{sec:resultados_comparacoes}
 
-A Tabela~\ref{tab:dev_comparacoes_pa} aplica ao DEV, de forma descritiva, os testes
-pareados da Seção~\ref{sec:avaliacao}, com dois níveis de reamostragem: por candidato,
+A Tabela~\ref{tab:dev_comparacoes_pa} apresenta, de forma descritiva, a aplicação ao DEV dos testes pareados definidos na Seção~\ref{sec:avaliacao}, considerando dois níveis de reamostragem: por candidato,
 como prevê o protocolo, e por documento, que reamostra inteiros os $98$ documentos do
 DEV que têm pares candidatos e leva em conta que pares de um mesmo documento não são
 independentes. Os resultados estão organizados em um bloco por métrica, cada um com
@@ -140,7 +118,7 @@ largos.
 
 \input{tabelas/dev_comparacoes_pa}
 
-Contra o baseline do mesmo \emph{encoder}, a Pair-Aware linear tem diferença
+Contra o baseline do mesmo \emph{encoder}, a Pair-Aware Linear tem diferença
 detectada no macro-F1 e no F1 de \texttt{associated\_with} nos três
 \emph{encoders}, nos dois níveis de reamostragem. No F1 de \texttt{negation\_of},
 a diferença só é detectada com o BioBERTpt-all ($+0{,}027$, com IC95\% de
@@ -149,26 +127,18 @@ o BioBERTpt-clin ($+0{,}012$) e o BERTimbau-base ($+0{,}018$), os intervalos con
 zero.
 
 Contra o Two-Stage do mesmo \emph{encoder}, nenhuma diferença no F1 de
-\texttt{negation\_of} é detectada (de $-0{,}001$ a $-0{,}007$). As diferenças nas
-outras classes dependem do \emph{encoder}, porque dependem do limiar do Two-Stage:
-com os dois BioBERTpt ($\tau=0{,}95$), a Pair-Aware linear tem F1 de
-\texttt{associated\_with} maior ($+0{,}071$ e $+0{,}074$, detectado nos dois níveis), e
-a diferença no macro-F1 ($+0{,}016$) só é detectada por candidato com o
-BioBERTpt-clin; com o BERTimbau-base ($\tau=0{,}85$), o Two-Stage tem F1 de
-\texttt{associated\_with} e macro-F1 maiores, com diferença detectada por candidato,
-mas não por documento.
+\texttt{negation\_of} é detectada (de $-0{,}001$ a $-0{,}007$). As diferenças observadas nas demais classes variam conforme o \emph{encoder}, uma vez que estão relacionadas aos limiares selecionados para o Two-Stage. Com os dois \emph{encoders} BioBERTpt ($\tau=0{,}95$), a Pair-Aware Linear apresenta F1-score superior na classe \texttt{associated\_with}, com diferenças de $+0{,}071$ e $+0{,}074$, detectadas nos dois níveis de reamostragem. Já a diferença no macro-F1 ($+0{,}016$) é detectada apenas no nível por candidato, especificamente com o BioBERTpt-clin.
 
-Com o BioBERTpt-all, a Pair-Aware linear também foi comparada à variante MLP e aos
+Com o BERTimbau-base ($\tau=0{,}85$), o Two-Stage apresenta F1-score superior tanto na classe \texttt{associated\_with} quanto no macro-F1. Nesse caso, a diferença é detectada no nível por candidato, mas não no nível por documento.
+
+Com o BioBERTpt-all, a Pair-Aware Linear também foi comparada à variante MLP e aos
 controles. Com a MLP, nenhuma diferença é detectada. Contra o baseline calibrado, a
 diferença no F1 de \texttt{negation\_of} é de $+0{,}020$, com limite inferior do
 IC95\% igual a zero por candidato e abaixo de zero por documento, e contra o filtro
 léxico, de $+0{,}011$, também não detectada. No macro-F1 e em
 \texttt{associated\_with}, a diferença é detectada contra os dois controles, que
-praticamente não alteram essas classes. O McNemar, apresentado à parte no
-Quadro~\ref{quad:mcnemar}, rejeita a igualdade em quase todas as comparações, mas
-responde a outra pergunta: ele incide sobre o acerto global, dominado pela classe
-\texttt{no\_relation}, e não é específico de nenhuma classe. Entre as comparações da
-Pair-Aware linear, a exceção é a comparação com a variante MLP ($b/c$ de $249/261$).
+praticamente não alteram essas classes. O teste de McNemar, apresentado separadamente no Quadro~\ref{quad:mcnemar}, rejeita a hipótese de igualdade em quase todas as comparações. No entanto, ele responde a uma questão distinta, pois avalia diferenças no acerto global, fortemente influenciado pela classe \texttt{no\_relation}, e não permite uma análise específica por classe. Entre as comparações da
+Pair-Aware Linear, a exceção é a comparação com a variante MLP ($b/c$ de $249/261$).
 
 \input{tabelas/mcnemar_comparacoes}
 
@@ -178,7 +148,7 @@ Pair-Aware linear, a exceção é a comparação com a variante MLP ($b/c$ de $2
 A Tabela~\ref{tab:dev_comparacoes_encoders} compara os três \emph{encoders} dentro de
 cada estratégia, com a mesma configuração e apenas o \emph{checkpoint} de pré-treino
 trocado. No F1 de \texttt{negation\_of}, nenhuma das nove comparações tem diferença
-detectada. As diferenças vão de $-0{,}011$ a $+0{,}014$. Na Pair-Aware linear, o
+detectada. As diferenças vão de $-0{,}011$ a $+0{,}014$. Na Pair-Aware Linear, o
 BioBERTpt-all tem o maior F1 da classe-alvo ($0{,}829$), o BioBERTpt-clin, o maior
 macro-F1 ($0{,}746$), e o BERTimbau-base, o maior \emph{recall} ($0{,}960$) e a menor
 precisão ($0{,}713$).
@@ -186,31 +156,56 @@ precisão ($0{,}713$).
 \input{tabelas/dev_comparacoes_encoders}
 
 As diferenças detectadas aparecem nas outras classes. O BioBERTpt-clin tem F1 de
-\texttt{associated\_with} maior que o do BioBERTpt-all na Pair-Aware linear e no
-baseline, e maior que o do BERTimbau-base na Pair-Aware linear, nos dois níveis de
+\texttt{associated\_with} maior que o do BioBERTpt-all na Pair-Aware Linear e no
+baseline, e maior que o do BERTimbau-base na Pair-Aware Linear, nos dois níveis de
 reamostragem. No baseline, ele também tem macro-F1 maior que o do BioBERTpt-all. No
 Two-Stage, o BERTimbau-base tem F1 de \texttt{associated\_with} e macro-F1 maiores
 que os dos dois BioBERTpt, mas essas diferenças acompanham a diferença de limiar
 ($\tau=0{,}85$ contra $0{,}95$) e não isolam o \emph{encoder}. O BERTimbau-base tem
 cerca de 61\% dos parâmetros dos dois BioBERTpt.
 
+Os controles do protocolo, previstos apenas para o BioBERTpt-all, foram calculados
+depois da fase também para os outros dois \emph{encoders}, a partir das predições já
+gravadas dos respectivos baselines, sem novo treino
+(Tabela~\ref{tab:dev_controles_encoders}). No F1 de \texttt{negation\_of}, a
+diferença entre a Pair-Aware Linear e cada controle não é detectada em nenhum dos
+três \emph{encoders}. Com o BioBERTpt-clin, ela é nula contra o baseline calibrado
+e de $+0{,}009$ contra o filtro léxico. Com o BERTimbau-base, os dois controles
+têm F1 observado maior que o da Pair-Aware Linear ($-0{,}004$ e $-0{,}008$), com
+precisão maior e \emph{recall} menor. No macro-F1, a vantagem da Pair-Aware Linear
+sobre os controles é detectada com o BioBERTpt-all e com o BioBERTpt-clin, e não
+com o BERTimbau-base. Nos dois \emph{encoders} acrescentados, o limiar escolhido
+para o baseline calibrado foi $0{,}95$, o extremo da grade.
+
+\input{tabelas/dev_controles_encoders}
+
 \section{A classe \texttt{associated\_with}}
 \label{sec:resultados_assoc}
 
 A precisão de \texttt{associated\_with} é a mais baixa das três classes em todos os
 sistemas. A Tabela~\ref{tab:dev_assoc_fp} decompõe os falsos positivos dessa classe.
-Em todas as estratégias e \emph{encoders}, entre $25\%$ e $31\%$ deles são pares cuja
-direção inversa está anotada como \texttt{associated\_with}: o modelo reconhece a
-associação entre as duas entidades, mas não a direção anotada. Os demais são, quase
+Em todas as estratégias e \emph{encoders}, entre $25\%$ e $31\%$ dos pares correspondem a casos em que a direção inversa está anotada como \texttt{associated\_with}. Isso indica que o modelo reconhece a associação entre as duas entidades, mas não reproduz a direção registrada na anotação. Os demais são, quase
 todos, pares sem relação anotada em nenhuma direção. No máximo $1{,}4\%$ são pares
 \texttt{negation\_of}. No DEV, só $4$ das $763$ relações \texttt{associated\_with}
 candidatas têm o par inverso também anotado, de modo que a direção é, na prática,
-sempre uma escolha exclusiva. A precisão também cai com a distância entre os
-argumentos: nas estratégias de três rótulos, fica entre $0{,}35$ e $0{,}39$ quando os
-argumentos estão a até um caractere e entre $0{,}14$ e $0{,}17$ na faixa de $11$ a $25$
-caracteres.
+sempre uma escolha exclusiva. A precisão também diminui à medida que aumenta a distância entre os argumentos. Nas estratégias de três rótulos, ela varia de $0{,}35$ a $0{,}39$ para pares cujos argumentos estão separados por até um caractere e de $0{,}14$ a $0{,}17$ para aqueles cuja distância está entre $11$ e $25$ caracteres.
 
 \input{tabelas/dev_assoc_fp}
+
+Para medir quanto do erro dessa classe se deve apenas à direção, a classe foi
+reavaliada sobre pares não ordenados, como análise secundária
+(Tabela~\ref{tab:dev_assoc_sem_direcao}). Os dois sentidos de cada par de entidades
+são fundidos: o par é positivo na referência se algum dos sentidos está anotado como
+\texttt{associated\_with} e é positivo na predição se o modelo previu a classe em
+algum dos sentidos. Sem a direção, o F1 sobe entre $0{,}09$ e $0{,}16$ em todos os
+sistemas. Na Pair-Aware Linear com o BioBERTpt-all, passa de $0{,}436$ para
+$0{,}592$, com a precisão subindo de $0{,}305$ para $0{,}452$ e o \emph{recall}, de
+$0{,}764$ para $0{,}858$. A direção responde, portanto, por uma parte relevante do
+erro, mas não pela maior parte: mesmo sem ela, o maior F1 observado é $0{,}608$, e a
+precisão das estratégias de três rótulos treinadas com ponderação fica abaixo de
+$0{,}47$.
+
+\input{tabelas/dev_assoc_sem_direcao}
 
 \section{O Two-Stage em detalhe}
 \label{sec:resultados_twostage}
@@ -259,19 +254,62 @@ prevê para o teste, estendidas aos três \emph{encoders}. No F1 de
 nenhuma dessas diferenças é distinguível de zero. Em \texttt{associated\_with}, o
 Two-Stage tem F1 menor que o do baseline com os dois BioBERTpt e que o do baseline
 calibrado, com diferença detectada só por candidato, e maior com o BERTimbau-base,
-com diferença detectada nos dois níveis. O baseline calibrado e o baseline diferem em
-apenas $12$ pares; a diferença de $-0{,}0005$ em \texttt{associated\_with} entre eles
-é detectada nos dois níveis, mas corresponde a esses poucos pares.
+com diferença detectada nos dois níveis. O baseline calibrado e o baseline diferem em apenas $12$ pares. A diferença de $-0{,}0005$ no F1-score da classe \texttt{associated\_with} é detectada nos dois níveis de reamostragem, embora corresponda a uma variação de pequena magnitude.
 
 \input{tabelas/dev_comparacoes_ts}
 
-\section{Resultado exploratório}
+\section{Experimento de aprimoramento: perda sem ponderação de classes}
+\label{sec:resultados_sem_pesos}
+
+Os resultados anteriores indicam que o \emph{recall} de \texttt{negation\_of} da
+Pair-Aware Linear já é alto e que o espaço de melhoria está na precisão. A ponderação da perda (Seção~\ref{sec:finetuning}) atribui a essa classe um peso cerca de 115 vezes maior que o de \texttt{no\_relation} ($40{,}6$ contra $0{,}35$), o que
+leva o modelo a prevê-la com mais frequência. Para medir esse efeito, a Pair-Aware
+Linear foi treinada novamente com o BioBERTpt-all, a mesma semente e a mesma
+configuração, alterando apenas a perda, que passou a ser a entropia cruzada sem
+pesos de classe. O experimento é exploratório e usa apenas o treino e o DEV.
+
+\input{tabelas/dev_sem_pesos}
+
+Sem a ponderação (Tabela~\ref{tab:dev_sem_pesos}), a precisão de
+\texttt{negation\_of} sobe de $0{,}742$ para $0{,}794$, com os falsos positivos
+caindo de $49$ para $34$, e o \emph{recall} cai de $0{,}940$ para $0{,}873$, com os
+falsos negativos subindo de $9$ para $19$. O F1 da classe-alvo praticamente não
+muda ($0{,}832$ contra $0{,}829$), e o macro-F1 sobe de $0{,}741$ para $0{,}752$.
+Nenhuma dessas duas diferenças de F1 é detectada, nem por candidato nem por documento
+(Tabela~\ref{tab:dev_sem_pesos_comparacoes}). A troca entre precisão e \emph{recall},
+ao contrário, é detectada nos dois níveis: por documento, a precisão varia
+$+0{,}052$ (IC95\% de $+0{,}026$ a $+0{,}079$) e o \emph{recall}, $-0{,}067$ (de
+$-0{,}113$ a $-0{,}029$). Os $34$
+falsos positivos da execução sem pesos estão todos entre os $49$ da execução
+ponderada, e os $9$ falsos negativos da execução ponderada estão todos entre os $19$
+da execução sem pesos. Retirar a ponderação, portanto, não corrigiu erros de outra
+natureza: deslocou o ponto de operação do modelo em direção à precisão. O mesmo
+deslocamento ocorre em \texttt{associated\_with}, cuja precisão sobe de $0{,}305$
+para $0{,}440$ enquanto o \emph{recall} cai de $0{,}764$ para $0{,}457$.
+
+O ponto de operação resultante é próximo ao do Two-Stage com o mesmo \emph{encoder}
+(precisão de $0{,}798$ e \emph{recall} de $0{,}867$), mas é obtido com um único
+modelo, sem limiar escolhido no DEV, e com F1 de \texttt{associated\_with} de
+$0{,}448$ contra $0{,}366$. Como nas demais execuções de três rótulos, a época
+selecionada foi a terceira.
+
+\input{tabelas/dev_sem_pesos_comparacoes}
+
+Frente às demais configurações com o BioBERTpt-all
+(Tabela~\ref{tab:dev_sem_pesos_comparacoes}), a execução sem pesos não tem diferença
+detectada no F1 de \texttt{negation\_of} contra nenhuma delas. No macro-F1, a
+diferença é detectada, nos dois níveis de reamostragem, contra o baseline
+($+0{,}033$), o Two-Stage ($+0{,}027$) e o baseline calibrado ($+0{,}031$). Em
+\texttt{associated\_with}, é detectada nos dois níveis apenas contra o Two-Stage e,
+só por candidato, contra o baseline e o baseline calibrado.
+
+\section{Resultado exploratório: Pair-Aware MLP}
 \label{sec:resultados_exploratorios}
 
-A variante Pair-Aware MLP, fora do protocolo, foi treinada com a mesma entrada, os
-mesmos dados e a mesma seleção da Pair-Aware linear, mudando apenas a cabeça, e só com
+A variante Pair-Aware MLP, posterior ao protocolo, foi treinada com a mesma entrada, os
+mesmos dados e a mesma seleção da Pair-Aware Linear, mudando apenas a cabeça, e só com
 o BioBERTpt-all. Ela teve \emph{recall} de \texttt{negation\_of} um pouco maior
 ($0{,}953$) e precisão menor ($0{,}715$), e terminou com F1 de $0{,}817$ e macro-F1 de
-$0{,}737$, ambos abaixo da Pair-Aware linear, sem diferença detectada em nenhuma
+$0{,}737$, ambos abaixo da Pair-Aware Linear, sem diferença detectada em nenhuma
 métrica (Tabela~\ref{tab:dev_comparacoes_pa}). Por ser exploratório, esse resultado
 não é evidência confirmatória.

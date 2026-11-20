@@ -89,9 +89,7 @@ formulário de requisição de acesso em
 primeiro corpus clínico em português do Brasil anotado semanticamente. Ele reúne mil
 documentos provenientes de múltiplas instituições e especialidades, redigidos por
 profissionais de saúde no registro do cuidado, e é distribuído mediante solicitação
-formal, para uso não comercial. Neste trabalho, o SemClinBr é a única fonte de dados:
-dele saem os exemplos de treino, a escolha de modelos no DEV e o conjunto de teste
-reservado para a avaliação final.
+formal, para uso não comercial. Neste trabalho, o SemClinBr é a única fonte de dados, da qual são obtidos os exemplos de treinamento, os dados utilizados na seleção de modelos no DEV e o conjunto de teste, reservado para a avaliação final.
 
 O texto do corpus é típico do prontuário. As frases são curtas e telegráficas, com
 omissão de verbos e artigos, abreviações frequentes e não padronizadas (como MSE,
@@ -103,8 +101,7 @@ entre \emph{encoders}.
 
 Cada documento traz anotações de entidades, trechos do texto delimitados
 por posições de caractere (\emph{offsets}) e associados a tipos semânticos da UMLS,
-além de categorias próprias como \texttt{Abbreviation} e \texttt{Negation}. Uma
-mesma entidade pode receber vários tipos, separados por ``|''. Entre as entidades,
+além de categorias próprias como \texttt{Abbreviation} e \texttt{Negation}. Uma mesma entidade pode receber vários tipos, separados pelo caractere ``|''. Entre as entidades,
 são anotadas relações dirigidas, de um primeiro argumento ($e_1$) para um
 segundo ($e_2$), de dois tipos: \texttt{associated\_with}, que liga conceitos
 relacionados, como um dispositivo e a região do corpo em que está, e
@@ -114,10 +111,7 @@ as entidades e as relações anotadas.
 
 \input{imagens/figuras/exemplo-anotacao}
 
-No trecho, a entidade ``sem'' (tipo \texttt{Negation}) é o primeiro argumento de uma
-relação \texttt{negation\_of} cujo segundo argumento é ``sinais flogisticos'': o
-registro afirma a \emph{ausência} de sinais inflamatórios no acesso venoso, e um
-sistema que perdesse essa relação leria o achado como presente. As outras três
+No trecho, a entidade ``sem'', do tipo \texttt{Negation}, é o primeiro argumento de uma relação \texttt{negation\_of}, cujo segundo argumento é ``sinais flogisticos''. O registro expressa a \emph{ausência} de sinais inflamatórios no acesso venoso, e um sistema que não identificasse essa relação poderia interpretar o achado como presente. As outras três
 relações, do tipo \texttt{associated\_with}, ligam a localização (``MSE''), o achado
 negado e o estado (``salinizado'') ao dispositivo descrito.
 
@@ -136,10 +130,7 @@ pode carregar a relação anotada.
 \label{sec:ambiente}
 
 Os experimentos foram organizados em um pacote Python próprio, versionado em um
-repositório Git\footnote{Código e resultados em
-\href{https://github.com/angeloalsf/RECLin-PT}{github.com/angeloalsf/RECLin-PT}
-(branch \texttt{resultados-colab}). O corpus SemClinBr não é redistribuído, por ter
-acesso restrito.}, que reúne a leitura do corpus, as partições, a geração de
+repositório Git\footnote{O código e os registros das execuções são mantidos em repositório Git do projeto. O corpus SemClinBr tem acesso restrito e deve ser solicitado aos seus autores.}, que reúne a leitura do corpus, as partições, a geração de
 candidatos, as estratégias, o treino, a avaliação e os relatórios. O
 Quadro~\ref{quad:ambiente} resume os ambientes utilizados e as versões registradas
 pelo próprio código em cada execução.
@@ -156,7 +147,7 @@ pelo próprio código em cada execução.
   Treino e avaliação no DEV & Google Colab, GPU NVIDIA Tesla T4 (15 GB), CUDA 13.0 \\
   Python & 3.13 (treino); 3.10 (reconstrução dos dados, no computador do autor) \\
   Bibliotecas & PyTorch 2.11.0, Transformers 5.16.1, Tokenizers 0.23.2, Hugging Face Hub 1.29.0, Safetensors 0.8.0, NumPy 2.1.3, SciPy 1.16.3 \\
-  Pesos pré-treinados & \texttt{pucpr/biobertpt-all} (revisão \texttt{36b11cf}) e \texttt{neuralmind/\allowbreak bert-base-portuguese-cased} (revisão \texttt{94d69c9}), baixados por revisão exata e conferidos por \emph{hash} \\
+  Pesos pré-treinados & \texttt{pucpr/biobertpt-all} (revisão \texttt{36b11cf}), \texttt{pucpr/biobertpt-clin} (revisão \texttt{b59beec}) e \texttt{neuralmind/\allowbreak bert-base-portuguese-cased} (revisão \texttt{94d69c9}), baixados por revisão exata e conferidos por \emph{hash} \\
   Determinismo & \texttt{PYTHONHASHSEED=0}, \texttt{CUBLAS\_WORKSPACE\_CONFIG=:4096:8}, sementes fixas e algoritmos determinísticos do PyTorch \\
   \bottomrule
   \end{tabular}\\[4pt]
@@ -192,10 +183,7 @@ Nesta seção são apresentadas as métricas utilizadas para avaliar o desempenh
 modelos de extração de relações. As métricas centrais são a precisão
 (\emph{precision}), o \emph{recall} e o F1-\emph{Score}, calculadas para cada uma das
 três classes da tarefa, \texttt{negation\_of}, \texttt{associated\_with} e
-\texttt{no\_relation}. Para uma classe, um par conta como verdadeiro positivo (TP)
-quando é dessa classe e o modelo o atribui a ela; como falso positivo (FP) quando o
-modelo o atribui à classe sem que ele pertença a ela; e como falso negativo (FN)
-quando pertence à classe e o modelo o atribui a outra.
+\texttt{no\_relation}. Para uma determinada classe, um par é considerado verdadeiro positivo (TP) quando pertence a essa classe e o modelo o classifica corretamente. É considerado falso positivo (FP) quando o modelo o atribui à classe, embora ele não pertença a ela, e falso negativo (FN) quando pertence à classe, mas o modelo o classifica como outra.
 
 A precisão (\emph{precision}) é calculada pela razão entre o número de verdadeiros
 positivos e o total de previsões positivas realizadas pelo modelo. Essa métrica indica
@@ -264,10 +252,7 @@ substitui cada quebra por dois espaços, de modo que o texto passe a ter o compr
 pressuposto pelos offsets. A regra transformou 421 dos 1.000 documentos. Nos demais, o
 texto foi mantido sem alteração.
 
-O resultado foi verificado por auditoria: nenhuma entidade das três partições
-apresenta divergência entre o trecho recortado pelo offset e o texto anotado, e a
-reconstrução preserva os documentos de cada partição, as entidades, as relações, os
-pares candidatos e os rótulos de referência. As 26 anomalias de anotação encontradas
+A integridade dos dados reconstruídos foi verificada por meio da conferência dos offsets e da comparação com os textos anotados. Não foram identificadas divergências entre os trechos delimitados pelos offsets e os respectivos textos anotados em nenhuma entidade das três partições. Além disso, a reconstrução preservou os documentos de cada partição, as entidades, as relações, os pares candidatos e os rótulos de referência. As 26 anomalias de anotação encontradas
 (por exemplo, um offset inválido) foram mantidas como estão e registradas em arquivo
 próprio. Um manifesto (\texttt{MANIFEST.json}) registra o SHA-256 de cada partição,
 as contagens e a proveniência da fonte (Apêndice~\ref{ap:sha256}).
@@ -314,10 +299,7 @@ do corpus completo, inclusive as das partições de desenvolvimento e de teste.
 A partição segue a razão 80/10/10 em nível de documento, e não de relação.
 Essa escolha previne o vazamento de dados, pois relações de um mesmo documento
 compartilham vocabulário e trechos repetidos, e dividi-las entre partições inflaria
-artificialmente as métricas. A partição é estratificada pela presença de
-\texttt{negation\_of}: os documentos com ao menos uma relação de negação e os demais
-são embaralhados separadamente, com semente $42$, e divididos 80/10/10 dentro de cada
-grupo, o que garante exemplos da classe rara nas três partições. O resultado são
+artificialmente as métricas. A partição dos dados é estratificada pela presença de relações \texttt{negation\_of}. Para isso, os documentos são separados em dois grupos, aqueles que contêm ao menos uma relação de negação e os demais. Em seguida, cada grupo é embaralhado separadamente, com a semente $42$, e dividido na proporção de 80/10/10 entre TRAIN, DEV e TEST. Esse procedimento permite distribuir exemplos da classe minoritária entre as três partições. O resultado são
 $800$ documentos de treino, $100$ de DEV e $100$ de teste, congelados e verificados
 por SHA-256 (Apêndice~\ref{ap:sha256}). A Tabela~\ref{tab:corpus} apresenta as
 contagens por partição.
@@ -330,10 +312,7 @@ usual entre o tamanho do treino e o das partições de avaliação. A estratific
 binária fixa o número de documentos com negação em cada partição ($533$, $67$ e
 $67$), mas não o número de relações. Para dimensionar esse efeito, o mesmo
 algoritmo de partição foi executado com $200$ sementes, sem alterar a partição
-congelada (Tabela~\ref{tab:sensibilidade_semente}). Para \texttt{negation\_of},
-a semente $42$ é típica: o DEV tem $155$ relações (percentil $47$) e o teste,
-$152$ (percentil $28$), enquanto entre as sementes o teste teria de $138$ a $191$
-negações (percentis $5$ e $95$). Para \texttt{associated\_with}, a semente $42$
+congelada (Tabela~\ref{tab:sensibilidade_semente}). Para a relação \texttt{negation\_of}, a semente $42$ produz uma distribuição próxima à observada entre as demais sementes. O DEV contém $155$ relações (percentil $47$), enquanto o TEST contém $152$ (percentil $28$). Considerando as diferentes sementes, a quantidade de relações de negação no TEST varia de $138$ a $191$ nos percentis $5$ e $95$, respectivamente. Para \texttt{associated\_with}, a semente $42$
 produziu um DEV com poucas associações ($832$, percentil $4{,}5$) e um teste com
 muitas ($1\,098$, percentil $94$). Por isso, as métricas de
 \texttt{associated\_with} e o macro-F1 medidos no DEV antecipam com menos
@@ -351,11 +330,15 @@ uma única entidade, sem relações). Os outros seis correspondem a notas que ap
 duas vezes no corpus, com anotações diferentes. Em três deles, uma cópia está no
 treino e a outra no teste (documentos de teste $9534$, $9535$ e $9536$). Essas três
 notas somam $5$ das $152$ relações \texttt{negation\_of} do teste e $1\,118$ dos
-$19\,210$ pares candidatos. A partição congelada foi mantida, e o protocolo registra,
-antes de qualquer avaliação no teste, uma análise de sensibilidade secundária: as
-métricas do teste são recalculadas a partir das mesmas predições, sem os pares
-desses três documentos, e relatadas ao lado da análise principal, feita sobre o
-teste completo (Seção~\ref{sec:protocolo}).
+$19\,210$ pares candidatos. A partição congelada foi mantida, e o protocolo estabeleceu, antes de qualquer avaliação no TEST, uma análise de sensibilidade secundária. Nessa análise, as métricas são recalculadas a partir das mesmas predições, mas sem considerar os pares dos três documentos em questão. Os resultados são apresentados em conjunto com os da análise principal, realizada sobre o TEST completo (Seção~\ref{sec:protocolo}).
+
+As seis notas repetidas permitem, além disso, uma estimativa da consistência da
+anotação, porque cada uma foi anotada duas vezes. Comparando as duas anotações pelo
+texto e pelo tipo das entidades e, nas relações, pelos textos dos argumentos e pelo
+tipo, a concordância (F1) é de $0{,}57$ nas entidades e de $0{,}57$ nas relações
+\texttt{associated\_with}, e as $7$ relações \texttt{negation\_of} coincidem nas duas
+anotações. A amostra é pequena, mas indica que a referência é menos estável para
+\texttt{associated\_with} do que para \texttt{negation\_of}.
 
 \input{tabelas/quase_duplicatas}
 
@@ -426,18 +409,9 @@ macro-F1 na seleção de modelos (Seção~\ref{sec:metricas}).
 \subsection{Teto de recall imposto pela janela}
 \label{sec:teto_recall}
 
-A janela \texttt{max\_gap}$=25$ impõe um teto de recall: toda relação \emph{gold}
-cujo par fique a mais de $25$ caracteres jamais é gerada como candidato e é
-irrecuperável por qualquer classificador. A Tabela~\ref{tab:teto_recall} quantifica a
+A janela definida por \texttt{max\_gap}$=25$ impõe um limite superior ao recall, pois toda relação \emph{gold} cujo par de entidades esteja separado por mais de $25$ caracteres deixa de ser gerado como candidato e, consequentemente, não pode ser recuperado por nenhum classificador. A Tabela~\ref{tab:teto_recall} quantifica a
 cobertura das relações anotadas por partição (além da janela, pares com \emph{span}
-idêntico e relações repetidas sobre o mesmo par contam como não cobertos). O limite
-não se distribui igualmente entre as classes: a cobertura é maior na classe-alvo
-\texttt{negation\_of} do que em \texttt{associated\_with}, coerente com a
-distância menor entre os argumentos da negação. A Tabela~\ref{tab:max_gap} mostra o
-custo de ampliar a janela, que é de outra natureza: a partir de $25$, os ganhos de
-cobertura de \texttt{negation\_of} são pequenos, enquanto o número de pares
-candidatos e de exemplos \texttt{no\_relation} por relação coberta continua a crescer
-quase linearmente (com $50$, cerca de 76\% mais candidatos). Como o teto é idêntico
+idêntico e relações repetidas sobre o mesmo par contam como não cobertos). O limite não afeta igualmente as duas classes. A cobertura é maior para a classe-alvo \texttt{negation\_of} do que para \texttt{associated\_with}, o que é coerente com a menor distância entre os argumentos nas relações de negação. A Tabela~\ref{tab:max_gap} apresenta os custos associados à ampliação da janela, que se tornam mais evidentes a partir de \texttt{max\_gap}$=25$. Nesse ponto, os ganhos adicionais de cobertura de \texttt{negation\_of} são pequenos, enquanto o número de pares candidatos e de exemplos \texttt{no\_relation} por relação coberta continua a crescer quase linearmente. Com \texttt{max\_gap}$=50$, por exemplo, o número de candidatos aumenta cerca de 76\%. Como o teto é idêntico
 para todas as estratégias, que recebem exatamente os mesmos candidatos, ele limita o
 desempenho absoluto, mas não afeta a comparação entre elas.
 
@@ -459,23 +433,14 @@ precisa ser considerado ao comparar o DEV com o teste.
 O valor $25$ foi fixado antes do registro do protocolo, com base na análise das
 distâncias entre as entidades de todas as relações \emph{gold} do SemClinBr, isto é,
 do corpus completo, incluindo as anotações das partições de treino, de
-desenvolvimento e de teste. A contagem de cobertura que acompanhou essa escolha,
-citada no código do projeto, foi feita sobre essas mesmas anotações: com $20$
-caracteres, $1\,324$ das $11\,458$ relações ($11{,}6\%$), quase todas
-\texttt{associated\_with} ($1\,272$), ficariam fora dos candidatos; com $25$, ficam
-fora $1\,004$ ($8{,}8\%$). A decisão diz respeito à geração de pares candidatos e à
-cobertura das relações anotadas, e não à seleção de modelos: não envolveu predições
-nem métricas de desempenho de nenhum modelo. Ela não foi, portanto, uma escolha feita
+desenvolvimento e de teste. A contagem de cobertura que fundamentou essa escolha, mencionada no código do projeto, foi realizada sobre as mesmas anotações. Com uma janela de $20$ caracteres, $1\,324$ das $11\,458$ relações ($11{,}6\%$) ficariam fora do conjunto de candidatos, sendo $1\,272$ delas da classe \texttt{associated\_with}. Com uma janela de $25$ caracteres, esse número cai para $1\,004$ relações ($8{,}8\%$). Essa decisão diz respeito exclusivamente à geração de pares candidatos e à cobertura das relações anotadas, não à seleção de modelos. Portanto, não foram utilizadas predições nem métricas de desempenho de qualquer modelo nesse processo. Ela não foi, portanto, uma escolha feita
 só no DEV, e as anotações \emph{gold} do teste participaram da definição da janela,
 o que fica registrado.
 
 \subsection{Tipos semânticos e controles diagnósticos}
 \label{sec:controles_tipo}
 
-Os tipos semânticos anotados pelo SemClinBr são preservados nas partições, no campo
-de tipo de cada entidade, mas não são usados como entrada por nenhuma das
-configurações experimentais: os marcadores de entidade são apenas posicionais
-(Seção~\ref{sec:markers}). Para medir o quanto essa informação antecipa a tarefa, e,
+Os tipos semânticos anotados pelo SemClinBr são preservados nas partições, no campo correspondente a cada entidade, mas não são utilizados como informação de entrada em nenhuma das configurações experimentais. Os marcadores de entidade têm apenas função posicional (Seção~\ref{sec:markers}). Para medir o quanto essa informação antecipa a tarefa, e,
 portanto, o atalho que um modelo teria se a recebesse, foram definidos controles
 diagnósticos informados pelas anotações. Eles não são configurações do RECLin-PT,
 não envolvem treino, não entram nas comparações do protocolo e foram calculados
@@ -494,11 +459,7 @@ apenas no treino e no DEV, sobre os mesmos pares candidatos dos modelos:
 
 \input{tabelas/controles_tipo}
 
-Os resultados estão na Tabela~\ref{tab:controles_tipo}. O tipo \texttt{Negation}
-identifica $96\%$ das pistas anotadas. As que ele não identifica correspondem às
-relações cujo $e_1$ não tem esse tipo: no treino, $38$ relações com a direção
-invertida, em que a expressão de negação é o segundo argumento, e $4$ sem nenhuma
-entidade \texttt{Negation}; no DEV, $5$ invertidas. A precisão em torno de $0{,}6$
+Os resultados estão na Tabela~\ref{tab:controles_tipo}. O tipo \texttt{Negation} identifica $96\%$ das pistas de negação anotadas. As pistas não identificadas por esse tipo correspondem a relações cujo primeiro argumento ($e_1$) não apresenta essa classificação. No TRAIN, foram encontradas $38$ relações com a direção invertida, nas quais a expressão de negação ocupa a posição de segundo argumento, além de $4$ relações sem nenhuma entidade do tipo \texttt{Negation}. No DEV, foram identificadas $5$ relações com a direção invertida. A precisão em torno de $0{,}6$
 decorre de cerca de $37\%$ das entidades \texttt{Negation} não participarem de
 nenhuma \texttt{negation\_of} anotada. No nível do par, o tipo sozinho mantém
 \emph{recall} de $0{,}967$ com precisão de $0{,}16$, e a regra de tipo e posição
@@ -511,55 +472,37 @@ restante da tarefa está na escolha do alvo. Por isso, os tipos semânticos fica
 da entrada das configurações. Os controles servem apenas como diagnóstico do atalho e
 não são tratados como sistemas concorrentes.
 
-\section{Protocolo pré-registrado e comparações estatísticas}
+\section{Protocolo experimental e comparações estatísticas}
 \label{sec:protocolo}
 
-As decisões experimentais desta fase foram fixadas em um protocolo registrado antes
-de qualquer treino, rotulado ``validação inicial, seed 42''. Ele define o escopo
-(\emph{encoder} BioBERTpt-all, semente $42$ e as partições congeladas), a revisão
-exata dos pesos pré-treinados, os critérios de seleção e de parada de cada
-estratégia, os limiares escolhidos no DEV, a sequência de execução e a forma de
-interpretar os resultados. Alterações posteriores ao registro dependem de aprovação
-explícita do autor e ficam documentadas. A mais relevante para este texto é a decisão
-que fixou a configuração atual da Pair-Aware (Seção~\ref{sec:pairaware}), aprovada
-antes de seu treino. As execuções com o BioBERTpt-clin e o BERTimbau-base, nas três
-estratégias, estendem a comparação de \emph{encoders} e estão fora do escopo
-pré-registrado, que fixa o BioBERTpt-all. Usam, porém, a mesma configuração, os mesmos
-critérios de seleção e o mesmo limiar de busca, trocando apenas o \emph{checkpoint}.
-A variante Pair-Aware MLP também está fora do escopo e é exploratória.
+As decisões experimentais foram fixadas em um protocolo escrito antes de qualquer
+treino. Ele define o \emph{encoder} de referência (BioBERTpt-all), a semente ($42$),
+as partições congeladas, a revisão exata dos pesos pré-treinados, os critérios de
+seleção de época de cada estratégia, a forma de escolher os limiares no DEV e a
+forma de interpretar os resultados. O que foi executado além desse escopo é
+identificado como tal ao longo do texto, para que se distinga o que foi planejado
+do que foi explorado depois:
 
-A Pair-Aware linear (Seção~\ref{sec:pairaware}) é a arquitetura oficial do RECLin-PT,
-por decisão do autor. Essa designação não faz parte do protocolo pré-registrado, que
-toma o Two-Stage como objeto das duas comparações principais previstas para o teste
-(contra o baseline e contra o baseline calibrado) e trata a comparação com a
-Pair-Aware como exploratória. A designação também não consta dos registros do projeto
-até 22/10/2026, quando terminou o último treino no DEV: até então, os registros e o
-próprio texto tratavam o Two-Stage como referência preliminar, e os primeiros
-registros da designação são de 01/11/2026. Ela foi, portanto, registrada com os
-resultados do DEV já conhecidos e não constitui evidência confirmatória.
-
-Uma emenda ao protocolo (E3), redigida como proposta e ainda não aprovada, registra as
-decisões do autor para a etapa seguinte. Pela proposta:
 \begin{itemize}
-  \item a Pair-Aware linear é a arquitetura principal;
-  \item o BioBERTpt-all continua sendo o \emph{encoder} de referência, como no
-        protocolo, e os demais \emph{encoders} seguem como variantes experimentais;
-  \item a configuração de referência atual (Pair-Aware linear, BioBERTpt-all, semente
-        $42$) não é definitiva, e novos experimentos de aprimoramento, só com treino e
-        DEV, continuam permitidos;
-  \item o modelo final é definido depois desses experimentos e do congelamento da
-        configuração;
-  \item o conjunto de teste é avaliado uma única vez, só para o modelo final, sem
-        comparar sistemas.
+  \item as execuções com o BioBERTpt-clin e o BERTimbau-base, nas três estratégias,
+        estendem a comparação de \emph{encoders}. Usam a mesma configuração, os
+        mesmos critérios de seleção e a mesma grade de limiares, trocando apenas o
+        \emph{checkpoint};
+  \item a variante Pair-Aware MLP (Seção~\ref{sec:pa_mlp}) e o treino sem
+        ponderação de classes (Seção~\ref{sec:resultados_sem_pesos}) são
+        exploratórios;
+  \item uma estratégia de \emph{fine-tuning} restrito aos pares cujo primeiro
+        argumento é pista do léxico de negação estava prevista e não foi executada
+        (Seção~\ref{sec:limitacoes}).
 \end{itemize}
-Os critérios estatísticos e o critério de seleção da configuração final continuam em
-aberto. Enquanto a emenda não for aprovada, vale o protocolo registrado, e as
-comparações deste texto entre a Pair-Aware linear e as demais estratégias são
-descritivas.
-O protocolo prevê ainda uma estratégia de \emph{fine-tuning} restrito, treinada apenas
-sobre os pares cujo primeiro argumento é pista do léxico de negação, que não foi
-executada até o momento e, por isso, não é descrita no Capítulo~\ref{cap:prototipo}
-(Seção~\ref{sec:limitacoes}).
+
+A escolha da Pair-Aware Linear como arquitetura do RECLin-PT
+(Seção~\ref{sec:pairaware}) também é posterior ao protocolo. No plano inicial, a
+estratégia em foco era o Two-Stage, e a Pair-Aware entrava como comparação
+exploratória. A escolha foi feita depois de conhecidos os resultados do DEV. Por
+isso, as comparações entre a Pair-Aware Linear e as demais estratégias são tratadas
+neste trabalho como descritivas, e não como teste confirmatório de uma hipótese
+fixada de antemão.
 
 É preciso distinguir duas decisões que não usaram a mesma fonte de informação. A
 definição da janela de candidatos (\texttt{max\_gap}$=25$) é uma decisão de
@@ -582,23 +525,28 @@ usam somente o DEV, com a exceção do léxico, induzido só do treino:
         da fase, por validação cruzada só no treino (Seção~\ref{sec:filtro}).
 \end{itemize}
 
-O protocolo registrado prevê que cada sistema seja avaliado no teste uma única vez,
-depois que todas as escolhas do DEV estiverem congeladas. Pela emenda proposta (E3),
-só o modelo final será avaliado nele. Em ambos os casos, nenhuma predição ou métrica
-de desempenho de modelos no teste é usada para selecionar a configuração. Isso não
-significa que a partição de teste tenha ficado isolada de toda decisão de
-pré-processamento: suas anotações \emph{gold} participaram da definição de
-\texttt{max\_gap}, como descrito acima. Até o momento deste texto, nenhuma das configurações
-deste trabalho, entre elas a Pair-Aware linear, foi avaliada no teste, porque a
-configuração final não foi congelada. O conjunto de teste, contudo,
-não é inédito: seus documentos e rótulos foram usados em avaliações anteriores do
-projeto, cujos números não são utilizados neste trabalho. Quando o teste for avaliado,
-a análise principal será feita sobre o teste completo, e a análise sem os três
-documentos com cópia no treino (Seção~\ref{sec:particao}) será relatada como
-secundária. Por isso, todos os resultados do Capítulo~\ref{cap:experimentos} são
-de DEV. Os do Two-Stage e do baseline calibrado são, além disso, otimistas
-por construção, porque seus limiares foram escolhidos no mesmo DEV em que são
-medidos.
+O conjunto de teste é reservado para uma avaliação única, feita depois que todas
+as escolhas estiverem congeladas e somente para a configuração final do modelo.
+Nenhuma predição ou métrica de desempenho no teste é usada para selecionar a
+configuração. Essa regra é também imposta pelo código: a avaliação no teste é
+recusada sem um registro de congelamento que identifique a execução, pelos
+\emph{hashes} de sua configuração, de suas predições no DEV e de seus pesos. Cada
+avaliação fica registrada em trilha própria, e uma segunda avaliação é recusada,
+salvo pedido explícito, que também fica registrado. Até a conclusão deste texto, a configuração final não havia sido
+congelada, e nenhuma das configurações apresentadas foi avaliada no teste. Por
+isso, todos os resultados do Capítulo~\ref{cap:experimentos} são de DEV. Os do
+Two-Stage e do baseline calibrado são, além disso, otimistas por construção, porque
+seus limiares foram escolhidos no mesmo DEV em que são medidos.
+
+Duas ressalvas sobre o conjunto de teste ficam registradas. A primeira é que suas
+anotações \emph{gold} participaram da definição de \texttt{max\_gap}, como descrito
+acima. A segunda é que ele não é inédito para o projeto: em uma fase anterior, com
+outra versão do código e dos dados, modelos preliminares foram avaliados sobre os
+mesmos documentos. Nenhum número dessa fase é utilizado aqui, mas decisões gerais
+do trabalho foram tomadas depois dela, o que recomenda cautela ao tratar o teste
+como estimativa plenamente independente. Quando o teste for avaliado, a análise
+principal usará o conjunto completo, e a análise sem os três documentos com cópia
+no treino (Seção~\ref{sec:particao}) será relatada como secundária.
 
 \label{sec:avaliacao}
 Para as comparações estatísticas entre sistemas, empregam-se dois testes pareados, calculados sobre o
@@ -633,10 +581,7 @@ calculados e gravados nos dois níveis, a partir das mesmas predições
 candidato era previsto só para o F1 de \texttt{negation\_of}; nessa métrica, a
 implementação usada aqui reproduz exatamente a do protocolo.
 
-O protocolo registrado prevê esses testes no conjunto de teste. Neste trabalho eles
-são aplicados ao DEV apenas de forma descritiva, para dimensionar a incerteza das
-diferenças observadas, e não corrigem o otimismo dos sistemas com limiar escolhido no
-DEV. Se a emenda proposta for aprovada, o teste não terá comparações entre sistemas,
-e as diferenças entre estratégias e \emph{encoders} ficarão apoiadas só no DEV. Com uma única semente,
-eles medem a incerteza sobre os exemplos, dados os modelos treinados, e não a
-variação do treino.
+Neste trabalho, os testes são aplicados ao DEV de forma descritiva, para dimensionar
+a incerteza das diferenças observadas. Eles não corrigem o otimismo dos sistemas
+cujo limiar foi escolhido no próprio DEV e, com uma única semente, medem a incerteza
+sobre os exemplos, dados os modelos treinados, e não a variação entre treinos.

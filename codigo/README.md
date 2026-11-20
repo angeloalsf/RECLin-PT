@@ -142,9 +142,23 @@ python codigo/scripts/treinar.py --estrategia pair_aware --encoder biobertpt --s
 # Pair-Aware com MLP (estratégia independente, exploratória; execução pairawaremlp_biobertpt_seed42)
 python codigo/scripts/treinar.py --estrategia pair_aware_mlp --encoder biobertpt --seed 42
 
-# depois de concluído o treino: avaliação do TEST com o melhor modelo (uma vez)
-python codigo/scripts/avaliar_test.py --execucao codigo/resultados/execucoes/baseline_biobertpt_seed42
+# avaliação do TEST com o melhor modelo: travada (ver abaixo); só a execução congelada, uma vez
+python codigo/scripts/congelar.py --execucao <pasta da execução final> --responsavel "<nome>" --justificativa "<motivo>"
+python codigo/scripts/avaliar_test.py --execucao <pasta da execução final> --liberacao <código do congelamento>
 ```
+
+**Trava do TEST (Etapa 5, G2).** `avaliar_test.py`, `two_stage.py avaliar-test` e
+`baseline_calibrado.py aplicar-test` recusam o TEST das partições científicas (v1
+e v2, reconhecidas pelo caminho ou pelo SHA-256 do MANIFEST) sem um registro de
+congelamento em `resultados/congelamento/configuracao_final.json`, criado por
+`scripts/congelar.py`. O registro guarda os SHA-256 de `config.json`,
+`predicoes_dev.json`, `limiar.json` (quando existe) e do melhor modelo; a
+avaliação exige o código de liberação derivado dele, confere que a execução não
+mudou desde o congelamento e é recusada se já houver avaliação registrada em
+`resultados/congelamento/avaliacoes_test_final.jsonl` (salvo `--reavaliar`, que
+também fica registrado). Partições técnicas (subconjuntos com MANIFEST próprio,
+usados nos testes) não são travadas. O procedimento completo está em
+[`docs/protocolo/congelamento-e-test-final.md`](docs/protocolo/congelamento-e-test-final.md).
 
 | Estratégia | Exemplos | Modelo | Época escolhida por | Padrões próprios |
 | --- | --- | --- | --- | --- |
@@ -234,9 +248,10 @@ python codigo/scripts/baseline_calibrado.py calibrar-dev --base codigo/resultado
 # antes da comparação final: mesmo commit, mesmo manifesto, configuração do protocolo, nenhuma validação
 python codigo/scripts/pretreino.py conferir --execucoes codigo/resultados/execucoes/*_biobertpt_seed42
 
-# TEST, uma vez cada, só depois de tudo congelado no DEV
-python codigo/scripts/two_stage.py avaliar-test --execucao codigo/resultados/execucoes/twostage_biobertpt_seed42
-python codigo/scripts/baseline_calibrado.py aplicar-test --execucao codigo/resultados/execucoes/baseline_calibrado_biobertpt_seed42
+# TEST: travado. Só a execução registrada no congelamento da configuração final, uma vez,
+# com --liberacao <código> (o TEST é reservado ao modelo final e não compara experimentos)
+python codigo/scripts/two_stage.py avaliar-test --execucao <composição congelada> --liberacao <código>
+python codigo/scripts/baseline_calibrado.py aplicar-test --execucao <calibração congelada> --liberacao <código>
 ```
 
 | Estratégia | Exemplos | Modelo | Escolhido no DEV por | Épocas |
@@ -385,7 +400,8 @@ mexem em `sys.path` ao serem importados; isso fica com os scripts.
 | `scripts/filtro_pistas.py` | Execuções do filtro de pistas sobre execuções de base |
 | `scripts/regra_pura.py` | Execução da regra pura |
 | `scripts/treinar.py` | Treino (e retomada) de uma estratégia treinada (`--estrategia` baseline, restrito ou pair_aware); não lê o TEST |
-| `scripts/avaliar_test.py` | Avaliação do TEST de uma execução de treino concluída (recusa execuções de validação técnica) |
+| `scripts/congelar.py` | Registra o congelamento da configuração final (execução, hashes, responsável, justificativa) e imprime o código de liberação; não lê o TEST |
+| `scripts/avaliar_test.py` | Avaliação do TEST da execução congelada, com `--liberacao` (recusa o TEST científico sem congelamento, execuções de validação técnica e uma segunda avaliação) |
 | `scripts/two_stage.py` | `verificar-inicializacao`, `treinar --estagio {1,2}`, `compor-dev`, `avaliar-test` |
 | `scripts/baseline_calibrado.py` | `calibrar-dev` e `aplicar-test` |
 | `scripts/pretreino.py` | `baixar` (commit exato) e `conferir` (`--pasta` ou `--execucoes`) |

@@ -3,14 +3,14 @@
 \setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\setlength{\LTcapwidth}{\textwidth}
 \Needspace*{0.3\textheight}
 \begin{longtable}{@{\extracolsep{\fill}}llrcc}
-\caption{Comparações pareadas descritivas da Pair-Aware linear, no DEV, por métrica: diferenças e intervalos de confiança de F1 de \texttt{negation\_of}, de F1 de \texttt{associated\_with} e de macro-F1.}\label{tab:dev_comparacoes_pa} \\
+\caption{Comparações pareadas descritivas da Pair-Aware Linear, no DEV, por métrica: diferenças e intervalos de confiança de F1 de \texttt{negation\_of}, de F1 de \texttt{associated\_with} e de macro-F1.}\label{tab:dev_comparacoes_pa} \\
 \toprule
-B (A = Pair-Aware linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+B (A = Pair-Aware Linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
 \midrule
 \endfirsthead
 \multicolumn{5}{l}{\footnotesize Tabela~\thetable{} -- continuação} \\
 \toprule
-B (A = Pair-Aware linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
+B (A = Pair-Aware Linear) & \emph{Encoder} & $\Delta$ & IC95\% (candidato) & IC95\% (documento) \\
 \midrule
 \endhead
 \midrule
@@ -53,7 +53,7 @@ Filtro léxico & BioBERTpt-all & $+0{,}0165$ & $[+0{,}007;\,+0{,}026]$$^{\ast}$ 
 \end{longtable}
 \vspace{-\baselineskip}
 \nopagebreak\noindent\begin{minipage}{\linewidth}
-{\footnotesize Descritivas, no DEV: as épocas, $\tau$ e $t$ foram escolhidos neste mesmo conjunto; não substituem as comparações pré-registradas no teste. A é a Pair-Aware linear; A e B usam o mesmo \emph{encoder}. $\Delta$: diferença observada A $-$ B no DEV completo. IC95\% (candidato): \emph{bootstrap} pareado que reamostra com reposição os 19\,064 pares candidatos, o do protocolo (10.000 reamostras, semente 42). IC95\% (documento): \emph{bootstrap} pareado que reamostra com reposição os 98 documentos do DEV que têm pares candidatos, cada um com todos os seus pares (10.000 reamostras, semente 42). As três métricas são calculadas sobre as mesmas reamostras de cada nível. Intervalos: percentis 2,5 e 97,5 das diferenças reamostradas. $^{\ast}$: intervalo que exclui o zero. Limites que arredondariam a zero com três casas aparecem com mais casas. O teste de McNemar dessas comparações está no Quadro~\ref{quad:mcnemar}.\par}\vspace{4pt}
+{\footnotesize Descritivas, no DEV: as épocas, $\tau$ e $t$ foram escolhidos neste mesmo conjunto; não são resultados de teste. A é a Pair-Aware Linear; A e B usam o mesmo \emph{encoder}. $\Delta$: diferença observada A $-$ B no DEV completo. IC95\% (candidato): \emph{bootstrap} pareado que reamostra com reposição os 19\,064 pares candidatos, o do protocolo (10.000 reamostras, semente 42). IC95\% (documento): \emph{bootstrap} pareado que reamostra com reposição os 98 documentos do DEV que têm pares candidatos, cada um com todos os seus pares (10.000 reamostras, semente 42). As três métricas são calculadas sobre as mesmas reamostras de cada nível. Intervalos: percentis 2,5 e 97,5 das diferenças reamostradas. $^{\ast}$: intervalo que exclui o zero. Limites que arredondariam a zero com três casas aparecem com mais casas. O teste de McNemar dessas comparações está no Quadro~\ref{quad:mcnemar}.\par}\vspace{4pt}
 {\footnotesize Fonte: elaborado pelo autor.}
 \end{minipage}\par
 \endgroup

@@ -1,7 +1,11 @@
 {
   "proveniencia": {
     "derivadas": [
+      "baseline_calibrado_BERTimbau",
+      "baseline_calibrado_BioBERTpt-clin",
       "baseline_calibrado_biobertpt_seed42",
+      "filtro_BERTimbau",
+      "filtro_BioBERTpt-clin",
       "filtro_biobertpt_seed42"
     ],
     "dev": {
@@ -11,7 +15,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "resultados-colab@ad7c2a20d9dd78133f1781d646654fbc28f8cbc8",
+    "execucoes": "execucoes",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },

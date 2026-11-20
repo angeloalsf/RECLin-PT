@@ -51,6 +51,7 @@ from reclin.avaliacao import limiar as busca_limiar
 from reclin.avaliacao import metricas
 from reclin.estrategias.two_stage import (CASAS_ROTEAMENTO, CONFIGS, ESTRATEGIA_ESTAGIO, NEG_E2, NOME,
                                          RELACAO)
+from reclin.execucao import congelamento as congelamento_final
 from reclin.execucao import diretorio, predicoes, trilha, validacao
 from reclin.tarefa import ASSOC, NEG, NOREL
 from reclin.treino import checkpoint, laco, reprodutibilidade
@@ -259,9 +260,14 @@ def compor_dev(estagio1: str | Path, estagio2: str | Path, raiz: str | Path, nom
 
 def avaliar_test(pasta: str | Path, *, estagio1: str | Path | None = None, estagio2: str | Path | None = None,
                  pasta_particoes: str | Path = caminhos.PARTICOES, reavaliar: bool = False,
-                 dispositivo: Any = "cpu") -> dict[str, Any]:
-    """Aplica o τ congelado ao TEST, uma vez, depois de conferir os vínculos."""
+                 dispositivo: Any = "cpu", congelamento: str | Path | None = None,
+                 liberacao: str | None = None) -> dict[str, Any]:
+    """Aplica o τ congelado ao TEST, uma vez, depois de conferir os vínculos.
+    No TEST científico, exige a configuração final congelada e o código de
+    liberação (`reclin.execucao.congelamento`), antes de qualquer leitura."""
     pasta, pasta_particoes = Path(pasta), Path(pasta_particoes)
+    registro_final = congelamento_final.exigir_liberacao(
+        pasta, pasta_particoes, congelamento=congelamento, liberacao=liberacao, reavaliar=reavaliar)
     if not (pasta / diretorio.CONFIG).is_file():
         raise ErroExecucao(f"{pasta} não é uma execução do Two-Stage (sem config.json)")
     try:
@@ -304,6 +310,8 @@ def avaliar_test(pasta: str | Path, *, estagio1: str | Path | None = None, estag
     m = metricas.avaliar(test.rotulos, y_pred)
     diretorio.gravar_metricas(pasta, "test", m)
     diretorio.gravar_metricas(pasta, "test_diagnostico_estagios", _diagnostico(test.rotulos, roteados, preds2))
+    congelamento_final.registrar_avaliacao(registro_final, macro_f1=m["macro_f1"],
+                                           negation_of_f1=m["f1_per_class"]["negation_of"], n_test=len(test))
     linha = trilha.registrar(pasta / diretorio.TRILHA, execucao=pasta.name, model=sidecar["model"],
                              seed=config["seed"], config_sha1=trilha.sha1_config(registro),
                              n_test=len(test), macro_f1=m["macro_f1"],

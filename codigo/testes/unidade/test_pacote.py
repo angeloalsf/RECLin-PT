@@ -116,7 +116,7 @@ def _importacoes_reclin(arquivo) -> set[str]:
 PACOTE = caminhos.CODIGO / "reclin"
 MODULOS = sorted(p for p in PACOTE.rglob("*.py") if "__pycache__" not in p.parts)
 
-# Única exceção à regra "uma estratégia não importa outra": a Pair-Aware MLP
+# Exceções à regra "uma estratégia não importa outra" (cada uma listada e estreita). A Pair-Aware MLP
 # (variante experimental) reutiliza da Pair-Aware linear (oficial) só as funções
 # auxiliares que não dependem da cabeça — carga do encoder sem pooler, ids e
 # posições dos marcadores e contagem dos marcadores ausentes —, para que as duas
@@ -129,6 +129,14 @@ COMPARTILHADAS_ENTRE_ESTRATEGIAS: dict[str, dict[str, frozenset[str]]] = {
         "reclin.estrategias.pair_aware.cabeca": frozenset({
             "_carregar_encoder", "contar_marcadores_ausentes", "ids_dos_marcadores",
             "posicoes_dos_marcadores"}),
+    },
+    # Ablação do pooler (Etapa 5, M3): as duas variantes existem para ser comparadas
+    # com a Pair-Aware linear mudando um fator por vez; por isso leem os marcadores
+    # com as mesmas funções dela (ids, posições e contagem dos ausentes). A carga do
+    # encoder, a cabeça, a configuração e os arquivos do modelo são próprios.
+    "ablacao_pooler": {
+        "reclin.estrategias.pair_aware.cabeca": frozenset({
+            "contar_marcadores_ausentes", "ids_dos_marcadores", "posicoes_dos_marcadores"}),
     },
 }
 

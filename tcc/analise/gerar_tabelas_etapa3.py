@@ -199,9 +199,9 @@ def t_sistemas(met):
                            f(m["mcc"])])
     nota = ("DEV, $n=19\\,064$ pares candidatos (150 \\texttt{negation\\_of}, 763 \\texttt{associated\\_with}), "
             "semente 42. Não são resultados de teste. A época de cada modelo, $\\tau$ (Two-Stage) e $t$ "
-            "(baseline calibrado) foram escolhidos neste mesmo DEV. O protocolo pré-registrado fixa o "
+            "(baseline calibrado) foram escolhidos neste mesmo DEV. O protocolo fixa o "
             "BioBERTpt-all; as execuções com o BioBERTpt-clin e o BERTimbau-base são variantes de "
-            "\\emph{encoder} fora do pré-registro, e a Pair-Aware MLP é exploratória.")
+            "\\emph{encoder} além do escopo inicial, e a Pair-Aware MLP é exploratória.")
     return tabela("tab:dev_sistemas",
                   "Resultados no DEV das três estratégias com os três \\emph{encoders}, da variante MLP e dos "
                   "controles: precisão (P), \\emph{recall} (R) e F1 de \\texttt{negation\\_of}, VP/FP/FN, F1 das "
@@ -279,8 +279,8 @@ def _faltam_ic_candidato(itens):
 CAB_COMP = ("Comparação (A $-$ B) & \\emph{Encoder} & $\\Delta$ & IC95\\% (candidato) & "
             "IC95\\% (documento)")
 CAB_PA = ("B (A = Pair-Aware linear) & \\emph{Encoder} & $\\Delta$ & IC95\\% (candidato) & IC95\\% (documento)")
-NOTA_COMP = ("Descritivas, no DEV: as épocas, $\\tau$ e $t$ foram escolhidos neste mesmo conjunto; não substituem "
-             "as comparações pré-registradas no teste. A e B usam o mesmo \\emph{encoder}. $\\Delta$: diferença "
+NOTA_COMP = ("Descritivas, no DEV: as épocas, $\\tau$ e $t$ foram escolhidos neste mesmo conjunto; não são resultados de teste. "
+             "A e B usam o mesmo \\emph{encoder}. $\\Delta$: diferença "
              "observada A $-$ B no DEV completo. IC95\\% (candidato): \\emph{bootstrap} pareado que reamostra com reposição os "
              "{ncand} pares candidatos, o do protocolo ({nboot} reamostras, semente {seed}). IC95\\% (documento): "
              "\\emph{bootstrap} pareado que reamostra com reposição os {ndoc} documentos do DEV que têm pares candidatos, "
@@ -478,7 +478,7 @@ def t_exploratoria(met):
         linhas.append([nome, f(n["precision"]), f(n["recall"]), f(n["f1"]), f"{n['tp']}/{n['fp']}/{n['fn']}",
                        f(m["macro_f1"]), f(m["mcc"])])
     return tabela("tab:dev_exploratoria",
-                  "Resultado exploratório no DEV (fora do protocolo pré-registrado): Pair-Aware MLP ao lado da "
+                  "Resultado exploratório no DEV (posterior ao protocolo): Pair-Aware MLP ao lado da "
                   "Pair-Aware linear, BioBERTpt-all, semente 42.",
                   "lrrrrrr", "Sistema & P neg & R neg & F1 neg & VP/FP/FN & Macro-F1 & MCC", linhas,
                   resize=True, nota="P, R e F1 neg: precisão, \\emph{recall} e F1 de \\texttt{negation\\_of}; VP/FP/FN da mesma "

@@ -19,8 +19,11 @@ SemClinBr-xml-public-v1/
 data/processed/
 codigo/dados/brutos/
 codigo/dados/processados/
-# NOTA: codigo/dados/particoes/ E versionado de proposito (congela o test entre
-# os modelos; conferido pelo SHA-256 do MANIFEST.json).
+# NOTA: codigo/dados/particoes/ e codigo/dados/particoes-v2/ SAO versionados de
+# proposito (congelam treino, dev e test entre os modelos; conferidos pelo
+# SHA-256 do MANIFEST.json). Eles contem texto do SemClinBr: por isso o
+# repositorio tem de ser PRIVADO e nao pode ser redistribuido
+# (codigo/docs/repositorio-privado.md).
 
 # --- Modelos e checkpoints (centenas de MB) ---
 checkpoints/
@@ -65,3 +68,6 @@ desktop.ini
 # NOTA: os resultados (codigo/resultados/, quando existirem) NAO sao ignorados.
 # Custam horas de GPU e sustentam os numeros do TCC. Apenas pesos eventualmente
 # salvos la sao excluidos pelas regras de *.pt / *.safetensors acima.
+# Atencao: codigo/resultados/analises/ (planilha e rastreabilidade da
+# adjudicacao) contem trechos de notas clinicas do DEV. Vale a mesma regra das
+# particoes: so em repositorio privado.

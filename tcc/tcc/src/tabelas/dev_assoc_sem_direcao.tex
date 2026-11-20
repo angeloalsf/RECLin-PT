@@ -1,0 +1,31 @@
+%% GERADO por analise/gerar_tabelas_etapa5.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Classe \texttt{associated\_with} avaliada com e sem a direção do par, no DEV.}
+  \label{tab:dev_assoc_sem_direcao}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{llrrrrrrr}
+  \toprule
+  Estratégia & \emph{Encoder} & P & R & F1 & P s/ dir. & R s/ dir. & F1 s/ dir. & $\Delta$ F1 \\
+  \midrule
+Pair-Aware Linear & BioBERTpt-all & 0{,}305 & 0{,}764 & 0{,}436 & 0{,}452 & 0{,}858 & 0{,}592 & $+0{,}156$ \\
+ & BioBERTpt-clin & 0{,}319 & 0{,}785 & 0{,}454 & 0{,}468 & 0{,}865 & 0{,}608 & $+0{,}153$ \\
+ & BERTimbau-base & 0{,}304 & 0{,}765 & 0{,}435 & 0{,}442 & 0{,}829 & 0{,}577 & $+0{,}142$ \\
+\midrule
+Pair-Aware Linear, sem pesos & BioBERTpt-all & 0{,}440 & 0{,}457 & 0{,}448 & 0{,}547 & 0{,}570 & 0{,}558 & $+0{,}110$ \\
+\midrule
+Baseline & BioBERTpt-all & 0{,}271 & 0{,}826 & 0{,}408 & 0{,}425 & 0{,}875 & 0{,}572 & $+0{,}164$ \\
+ & BioBERTpt-clin & 0{,}292 & 0{,}785 & 0{,}426 & 0{,}441 & 0{,}855 & 0{,}582 & $+0{,}156$ \\
+ & BERTimbau-base & 0{,}285 & 0{,}782 & 0{,}417 & 0{,}434 & 0{,}830 & 0{,}570 & $+0{,}153$ \\
+\midrule
+Two-Stage & BioBERTpt-all & 0{,}508 & 0{,}286 & 0{,}366 & 0{,}630 & 0{,}353 & 0{,}453 & $+0{,}087$ \\
+ & BioBERTpt-clin & 0{,}481 & 0{,}315 & 0{,}380 & 0{,}640 & 0{,}403 & 0{,}495 & $+0{,}114$ \\
+ & BERTimbau-base & 0{,}364 & 0{,}626 & 0{,}461 & 0{,}517 & 0{,}717 & 0{,}601 & $+0{,}140$ \\
+\midrule
+Pair-Aware MLP & BioBERTpt-all & 0{,}308 & 0{,}760 & 0{,}438 & 0{,}458 & 0{,}838 & 0{,}592 & $+0{,}154$ \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize DEV. Com direção: os $19\,064$ pares ordenados da tarefa ($763$ \texttt{associated\_with}). Sem direção: os $9\,532$ pares não ordenados; um par é positivo na referência se algum dos sentidos está anotado como \texttt{associated\_with} ($761$ pares) e é positivo na predição se o modelo previu a classe em algum dos sentidos. Análise secundária e descritiva: não altera a tarefa nem as métricas principais. Não são resultados de teste.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

@@ -1816,11 +1816,963 @@
         }
       },
       "seed": 42
+    },
+    {
+      "a": "pair_aware_sem_pesos|BioBERTpt-all",
+      "b": "pair_aware|BioBERTpt-all",
+      "grupo": "Pair-Aware sem pesos × Pair-Aware ponderada",
+      "mcnemar": {
+        "b_only_a_correct": 906,
+        "c_only_b_correct": 256,
+        "n_discordant": 1162,
+        "p_value": 1.5866787832945248e-85
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.011920763482668573,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.01472180713247782,
+            0.03833291323560002
+          ],
+          "media_bootstrap": 0.011646008411395832,
+          "p_bilateral": 0.3932
+        },
+        "f1_negation_of": {
+          "diferenca": 0.002334267040149385,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02751518792825187,
+            0.031019579183017065
+          ],
+          "media_bootstrap": 0.0021213413432827535,
+          "p_bilateral": 0.8748
+        },
+        "macro_f1": {
+          "diferenca": 0.011171340852998868,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.002627408847836299,
+            0.024571361508589566
+          ],
+          "media_bootstrap": 0.011004467398075127,
+          "p_bilateral": 0.1068
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.011920763482668573,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.023618462310606395,
+            0.04834290176363223
+          ],
+          "media_bootstrap": 0.01183839066530101,
+          "p_bilateral": 0.5266
+        },
+        "f1_negation_of": {
+          "diferenca": 0.002334267040149385,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02470141638288237,
+            0.02786114501702959
+          ],
+          "media_bootstrap": 0.002240402404380884,
+          "p_bilateral": 0.8558
+        },
+        "macro_f1": {
+          "diferenca": 0.011171340852998868,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.005142453908734149,
+            0.02747832019051559
+          ],
+          "media_bootstrap": 0.011120244333816878,
+          "p_bilateral": 0.1836
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware_sem_pesos|BioBERTpt-all",
+      "b": "baseline|BioBERTpt-all",
+      "grupo": "Pair-Aware sem pesos × demais",
+      "mcnemar": {
+        "b_only_a_correct": 1308,
+        "c_only_b_correct": 325,
+        "n_discordant": 1633,
+        "p_value": 1.4363804864764406e-139
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.040399012552673585,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.011826818178473579,
+            0.0684696172366717
+          ],
+          "media_bootstrap": 0.040087823141678885,
+          "p_bilateral": 0.0048
+        },
+        "f1_negation_of": {
+          "diferenca": 0.029486144740382025,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.004379108247451818,
+            0.06347342515084449
+          ],
+          "media_bootstrap": 0.02929551743238804,
+          "p_bilateral": 0.0922
+        },
+        "macro_f1": {
+          "diferenca": 0.03307831784971138,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.01789076695303032,
+            0.04838984911157652
+          ],
+          "media_bootstrap": 0.032904131814105904,
+          "p_bilateral": 0.0
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.040399012552673585,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0038814124784992405,
+            0.08235884589975713
+          ],
+          "media_bootstrap": 0.04010773801294854,
+          "p_bilateral": 0.0742
+        },
+        "f1_negation_of": {
+          "diferenca": 0.029486144740382025,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.008731975567019079,
+            0.06985679511368796
+          ],
+          "media_bootstrap": 0.02912377028538503,
+          "p_bilateral": 0.1316
+        },
+        "macro_f1": {
+          "diferenca": 0.03307831784971138,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.011742685874446681,
+            0.05410539647340658
+          ],
+          "media_bootstrap": 0.03286747531783673,
+          "p_bilateral": 0.0022
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware_sem_pesos|BioBERTpt-all",
+      "b": "two_stage|BioBERTpt-all",
+      "grupo": "Pair-Aware sem pesos × demais",
+      "mcnemar": {
+        "b_only_a_correct": 239,
+        "c_only_b_correct": 343,
+        "n_discordant": 582,
+        "p_value": 1.8677527146967134e-05
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.08252619691111368,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.04840542921946127,
+            0.11616124576140054
+          ],
+          "media_bootstrap": 0.08233106897034172,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.0010751052284598828,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.024364254449375747,
+            0.026347309572028545
+          ],
+          "media_bootstrap": 0.0009799038454669066,
+          "p_bilateral": 0.957
+        },
+        "macro_f1": {
+          "diferenca": 0.026828498229869435,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.012167549290691188,
+            0.04136888289817655
+          ],
+          "media_bootstrap": 0.026729744946207314,
+          "p_bilateral": 0.0002
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.08252619691111368,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.03847601343247832,
+            0.12728556588146278
+          ],
+          "media_bootstrap": 0.08291883324104868,
+          "p_bilateral": 0.0002
+        },
+        "f1_negation_of": {
+          "diferenca": 0.0010751052284598828,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.025292458886394933,
+            0.024435048430859366
+          ],
+          "media_bootstrap": 0.0006835090636087631,
+          "p_bilateral": 0.9574
+        },
+        "macro_f1": {
+          "diferenca": 0.026828498229869435,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.008522862313030066,
+            0.04426131921113452
+          ],
+          "media_bootstrap": 0.026828092875898574,
+          "p_bilateral": 0.0048
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware_sem_pesos|BioBERTpt-all",
+      "b": "baseline_calibrado|BioBERTpt-all",
+      "grupo": "Pair-Aware sem pesos × demais",
+      "mcnemar": {
+        "b_only_a_correct": 1301,
+        "c_only_b_correct": 322,
+        "n_discordant": 1623,
+        "p_value": 2.4549360931561197e-139
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.040926524995530345,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.01247433710729207,
+            0.0689001500040445
+          ],
+          "media_bootstrap": 0.0406125917691783,
+          "p_bilateral": 0.0044
+        },
+        "f1_negation_of": {
+          "diferenca": 0.02236186752315794,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.00635462563731643,
+            0.05174389811940826
+          ],
+          "media_bootstrap": 0.02221306842064232,
+          "p_bilateral": 0.135
+        },
+        "macro_f1": {
+          "diferenca": 0.03080745721534961,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.016847977385894337,
+            0.04476852802882294
+          ],
+          "media_bootstrap": 0.030646821060100773,
+          "p_bilateral": 0.0
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.040926524995530345,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.003414654252189397,
+            0.08282879678281493
+          ],
+          "media_bootstrap": 0.040633683630009694,
+          "p_bilateral": 0.07
+        },
+        "f1_negation_of": {
+          "diferenca": 0.02236186752315794,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.006090434643714803,
+            0.052179399082510056
+          ],
+          "media_bootstrap": 0.022030759060595886,
+          "p_bilateral": 0.127
+        },
+        "macro_f1": {
+          "diferenca": 0.03080745721534961,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.011808301687837943,
+            0.04896021169534782
+          ],
+          "media_bootstrap": 0.030606532666112914,
+          "p_bilateral": 0.0012
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware|BioBERTpt-clin",
+      "b": "baseline_calibrado|BioBERTpt-clin",
+      "grupo": "Pair-Aware linear × controles",
+      "mcnemar": {
+        "b_only_a_correct": 429,
+        "c_only_b_correct": 256,
+        "n_discordant": 685,
+        "p_value": 3.940341232274518e-11
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.02870578175615135,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.01596341707781334,
+            0.041766808549503445
+          ],
+          "media_bootstrap": 0.02867343229500317,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.00028019052956007595,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.021154146283210655,
+            0.022967724508178737
+          ],
+          "media_bootstrap": 0.0004129059282868556,
+          "p_bilateral": 0.9818
+        },
+        "macro_f1": {
+          "diferenca": 0.01134893620121813,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.002617789211554345,
+            0.020208535507402536
+          ],
+          "media_bootstrap": 0.011380638633494866,
+          "p_bilateral": 0.0096
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.02870578175615135,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.014154224072849162,
+            0.04213180678682321
+          ],
+          "media_bootstrap": 0.02857113667561973,
+          "p_bilateral": 0.0002
+        },
+        "f1_negation_of": {
+          "diferenca": 0.00028019052956007595,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.024446957625405927,
+            0.023033644689875878
+          ],
+          "media_bootstrap": 0.00014444753394913374,
+          "p_bilateral": 0.977
+        },
+        "macro_f1": {
+          "diferenca": 0.01134893620121813,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0028084539623632527,
+            0.019535631883497124
+          ],
+          "media_bootstrap": 0.011259398376765463,
+          "p_bilateral": 0.0132
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware|BioBERTpt-clin",
+      "b": "filtro_pistas|BioBERTpt-clin",
+      "grupo": "Pair-Aware linear × controles",
+      "mcnemar": {
+        "b_only_a_correct": 434,
+        "c_only_b_correct": 259,
+        "n_discordant": 693,
+        "p_value": 3.043720457595527e-11
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.028554653466146496,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.015731226296002168,
+            0.041624302100421715
+          ],
+          "media_bootstrap": 0.028521990490926068,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.008508224617129967,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02017223590788645,
+            0.03828008596151015
+          ],
+          "media_bootstrap": 0.008560116863786495,
+          "p_bilateral": 0.5614
+        },
+        "macro_f1": {
+          "diferenca": 0.014067563772659497,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0031734062549540064,
+            0.025124390368668887
+          ],
+          "media_bootstrap": 0.014071802704840241,
+          "p_bilateral": 0.0102
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.028554653466146496,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.013956040319860677,
+            0.04204511346011349
+          ],
+          "media_bootstrap": 0.028419322942141275,
+          "p_bilateral": 0.0002
+        },
+        "f1_negation_of": {
+          "diferenca": 0.008508224617129967,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0218202578822622,
+            0.03720350755198525
+          ],
+          "media_bootstrap": 0.008236879046717724,
+          "p_bilateral": 0.5816
+        },
+        "macro_f1": {
+          "diferenca": 0.014067563772659497,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.003135242124145352,
+            0.02412333114436508
+          ],
+          "media_bootstrap": 0.013933071683392615,
+          "p_bilateral": 0.009
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "two_stage|BioBERTpt-clin",
+      "b": "baseline_calibrado|BioBERTpt-clin",
+      "grupo": "Two-Stage × controles",
+      "mcnemar": {
+        "b_only_a_correct": 1208,
+        "c_only_b_correct": 372,
+        "n_discordant": 1580,
+        "p_value": 5.084339075259356e-103
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": -0.04507748343178214,
+          "diferenca_na_seed42": "negativa",
+          "ic95": [
+            -0.07926582741096194,
+            -0.011210080777194022
+          ],
+          "media_bootstrap": -0.045259848387255816,
+          "p_bilateral": 0.0084
+        },
+        "f1_negation_of": {
+          "diferenca": 0.006503076526288565,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02556513894545754,
+            0.03764019732390671
+          ],
+          "media_bootstrap": 0.006323900990506909,
+          "p_bilateral": 0.7042
+        },
+        "macro_f1": {
+          "diferenca": -0.004584836033395434,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02072196887484356,
+            0.011053099892479275
+          ],
+          "media_bootstrap": -0.004710045828076973,
+          "p_bilateral": 0.5602
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": -0.04507748343178214,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.10193052923293612,
+            0.009568074468870903
+          ],
+          "media_bootstrap": -0.04534039699546006,
+          "p_bilateral": 0.1056
+        },
+        "f1_negation_of": {
+          "diferenca": 0.006503076526288565,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.024335552461367278,
+            0.0378127376907865
+          ],
+          "media_bootstrap": 0.006648797497421538,
+          "p_bilateral": 0.672
+        },
+        "macro_f1": {
+          "diferenca": -0.004584836033395434,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.02625854984160566,
+            0.016778859299437166
+          ],
+          "media_bootstrap": -0.004619568832759794,
+          "p_bilateral": 0.676
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "baseline_calibrado|BioBERTpt-clin",
+      "b": "baseline|BioBERTpt-clin",
+      "grupo": "Baseline calibrado × Baseline",
+      "mcnemar": {
+        "b_only_a_correct": 8,
+        "c_only_b_correct": 3,
+        "n_discordant": 11,
+        "p_value": 0.2265625
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": -0.00015112829000485384,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.00046940658533593387,
+            0.0
+          ],
+          "media_bootstrap": -0.00015144180407710155,
+          "p_bilateral": 0.7312
+        },
+        "f1_negation_of": {
+          "diferenca": 0.01134771644718413,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0068580862735001915,
+            0.030026126479748866
+          ],
+          "media_bootstrap": 0.01139999169321744,
+          "p_bilateral": 0.2212
+        },
+        "macro_f1": {
+          "diferenca": 0.0037848272747880163,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.002335425405678959,
+            0.01006539585254619
+          ],
+          "media_bootstrap": 0.0038022146656576453,
+          "p_bilateral": 0.2216
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": -0.00015112829000485384,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0005179100097925021,
+            0.0
+          ],
+          "media_bootstrap": -0.00015181373347845358,
+          "p_bilateral": 0.7384
+        },
+        "f1_negation_of": {
+          "diferenca": 0.01134771644718413,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.01040317959083878,
+            0.034774393194273105
+          ],
+          "media_bootstrap": 0.0113025779402816,
+          "p_bilateral": 0.3204
+        },
+        "macro_f1": {
+          "diferenca": 0.0037848272747880163,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.003493777319511723,
+            0.011565940281677775
+          ],
+          "media_bootstrap": 0.0037699932953688055,
+          "p_bilateral": 0.3214
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware|BERTimbau",
+      "b": "baseline_calibrado|BERTimbau",
+      "grupo": "Pair-Aware linear × controles",
+      "mcnemar": {
+        "b_only_a_correct": 421,
+        "c_only_b_correct": 275,
+        "n_discordant": 696,
+        "p_value": 3.473153468817938e-08
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.017786081547197075,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.005852169745637568,
+            0.02948912213353289
+          ],
+          "media_bootstrap": 0.0177717180159636,
+          "p_bilateral": 0.0044
+        },
+        "f1_negation_of": {
+          "diferenca": -0.003570447679208999,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.033934153426740665,
+            0.026945192354570626
+          ],
+          "media_bootstrap": -0.0037844672572782826,
+          "p_bilateral": 0.8088
+        },
+        "macro_f1": {
+          "diferenca": 0.006198078931602957,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.005148395659929897,
+            0.017595657082426233
+          ],
+          "media_bootstrap": 0.006120740616128759,
+          "p_bilateral": 0.2894
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.017786081547197075,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.005677422300245485,
+            0.030609102897393478
+          ],
+          "media_bootstrap": 0.01784091036393161,
+          "p_bilateral": 0.0038
+        },
+        "f1_negation_of": {
+          "diferenca": -0.003570447679208999,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.039174673386092804,
+            0.030881697399062887
+          ],
+          "media_bootstrap": -0.0037213528703594896,
+          "p_bilateral": 0.8438
+        },
+        "macro_f1": {
+          "diferenca": 0.006198078931602957,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.006031176823426132,
+            0.018245459977408455
+          ],
+          "media_bootstrap": 0.00617061146604543,
+          "p_bilateral": 0.3098
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware|BERTimbau",
+      "b": "filtro_pistas|BERTimbau",
+      "grupo": "Pair-Aware linear × controles",
+      "mcnemar": {
+        "b_only_a_correct": 423,
+        "c_only_b_correct": 281,
+        "n_discordant": 704,
+        "p_value": 9.739088807190318e-08
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.01734892729203369,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.005428142344931119,
+            0.029083854530096525
+          ],
+          "media_bootstrap": 0.017335353609217275,
+          "p_bilateral": 0.0054
+        },
+        "f1_negation_of": {
+          "diferenca": -0.007506255212677226,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.04075652763227656,
+            0.025104517677781428
+          ],
+          "media_bootstrap": -0.007696689566541245,
+          "p_bilateral": 0.6418
+        },
+        "macro_f1": {
+          "diferenca": 0.004708533604186771,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.007449071812154933,
+            0.016631758131536604
+          ],
+          "media_bootstrap": 0.004639472403677299,
+          "p_bilateral": 0.4416
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.01734892729203369,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.005181143486945285,
+            0.03019494968539916
+          ],
+          "media_bootstrap": 0.017403605054465903,
+          "p_bilateral": 0.0048
+        },
+        "f1_negation_of": {
+          "diferenca": -0.007506255212677226,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.050281613359506094,
+            0.031724785944938085
+          ],
+          "media_bootstrap": -0.008103474320707477,
+          "p_bilateral": 0.7156
+        },
+        "macro_f1": {
+          "diferenca": 0.004708533604186771,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.009774789115448861,
+            0.018216831756718597
+          ],
+          "media_bootstrap": 0.004531591368379644,
+          "p_bilateral": 0.5216
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "two_stage|BERTimbau",
+      "b": "baseline_calibrado|BERTimbau",
+      "grupo": "Two-Stage × controles",
+      "mcnemar": {
+        "b_only_a_correct": 732,
+        "c_only_b_correct": 180,
+        "n_discordant": 912,
+        "p_value": 1.40822569518294e-79
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.04382345022548295,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.025332295683801794,
+            0.06120998254775439
+          ],
+          "media_bootstrap": 0.0436406370252361,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.0035489389582499253,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.026522334747871513,
+            0.03333340220954899
+          ],
+          "media_bootstrap": 0.0032883936052361114,
+          "p_bilateral": 0.8408
+        },
+        "macro_f1": {
+          "diferenca": 0.021301988002651817,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.009396250411174525,
+            0.033152012385141476
+          ],
+          "media_bootstrap": 0.021147983402983194,
+          "p_bilateral": 0.0002
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.04382345022548295,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0137174757785395,
+            0.07179196147471902
+          ],
+          "media_bootstrap": 0.04392808083913521,
+          "p_bilateral": 0.0058
+        },
+        "f1_negation_of": {
+          "diferenca": 0.0035489389582499253,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.026554093732485243,
+            0.03579959445722115
+          ],
+          "media_bootstrap": 0.003999437289724088,
+          "p_bilateral": 0.8216
+        },
+        "macro_f1": {
+          "diferenca": 0.021301988002651817,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.006343864627859384,
+            0.03725743505224351
+          ],
+          "media_bootstrap": 0.021498504519046845,
+          "p_bilateral": 0.0058
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "baseline_calibrado|BERTimbau",
+      "b": "baseline|BERTimbau",
+      "grupo": "Baseline calibrado × Baseline",
+      "mcnemar": {
+        "b_only_a_correct": 9,
+        "c_only_b_correct": 2,
+        "n_discordant": 11,
+        "p_value": 0.0654296875
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": -0.0004371542551633856,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.001019759081949566,
+            0.0
+          ],
+          "media_bootstrap": -0.00043636440674632305,
+          "p_bilateral": 0.1024
+        },
+        "f1_negation_of": {
+          "diferenca": 0.021752265861027187,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0033577989772857874,
+            0.04115414480419335
+          ],
+          "media_bootstrap": 0.021862755328317846,
+          "p_bilateral": 0.0194
+        },
+        "macro_f1": {
+          "diferenca": 0.007176995415735243,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0009627159651145553,
+            0.013671108364061204
+          ],
+          "media_bootstrap": 0.007214360004248986,
+          "p_bilateral": 0.0232
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": -0.0004371542551633856,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0009956477760920054,
+            0.0
+          ],
+          "media_bootstrap": -0.00043730530946570906,
+          "p_bilateral": 0.0986
+        },
+        "f1_negation_of": {
+          "diferenca": 0.021752265861027187,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.001106190813462662,
+            0.04807070303589119
+          ],
+          "media_bootstrap": 0.021547687117112996,
+          "p_bilateral": 0.0646
+        },
+        "macro_f1": {
+          "diferenca": 0.007176995415735243,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0005040504804820794,
+            0.015968808106110646
+          ],
+          "media_bootstrap": 0.007108861608189491,
+          "p_bilateral": 0.0686
+        }
+      },
+      "seed": 42
     }
   ],
   "proveniencia": {
     "derivadas": [
+      "baseline_calibrado_BERTimbau",
+      "baseline_calibrado_BioBERTpt-clin",
       "baseline_calibrado_biobertpt_seed42",
+      "filtro_BERTimbau",
+      "filtro_BioBERTpt-clin",
       "filtro_biobertpt_seed42"
     ],
     "dev": {
@@ -1830,7 +2782,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "resultados-colab@ad7c2a20d9dd78133f1781d646654fbc28f8cbc8",
+    "execucoes": "execucoes",
     "n_boot": 10000,
     "seed_bootstrap": 42
   }

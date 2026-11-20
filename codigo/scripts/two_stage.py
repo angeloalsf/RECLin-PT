@@ -107,6 +107,8 @@ def montar_parser(estagio: int = 1) -> argparse.ArgumentParser:
     p.add_argument("--estagio2", type=Path, default=None, help="pasta do estágio 2, se tiver mudado de lugar")
     p.add_argument("--particoes", type=Path, default=caminhos.PARTICOES)
     p.add_argument("--reavaliar", action="store_true")
+    p.add_argument("--congelamento", type=Path, default=None, help="registro da configuração final")
+    p.add_argument("--liberacao", default=None, help="código de liberação (só após autorização do autor)")
     p.add_argument("--dispositivo", choices=("auto", "cpu", "cuda"), default="auto")
     p.add_argument("--threads", type=int, default=None)
     return ap
@@ -218,7 +220,7 @@ def cmd_avaliar(args) -> int:
     from reclin.estrategias.two_stage import composicao, treino
     resultado = composicao.avaliar_test(
         args.execucao, estagio1=args.estagio1, estagio2=args.estagio2, pasta_particoes=args.particoes,
-        reavaliar=args.reavaliar,
+        reavaliar=args.reavaliar, congelamento=args.congelamento, liberacao=args.liberacao,
         dispositivo=treino.dispositivo(None if args.dispositivo == "auto" else args.dispositivo))
     if resultado["trilha"]["eval_index_for_config"] > 1:
         log.warning("Esta é a avaliação %d do TEST para esta configuração: declare a multiplicidade.",

@@ -22,14 +22,25 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from reclin.config import Config
-from reclin.estrategias.pair_aware_mlp.cabeca import (ARQUITETURA, PairAwareMLPClassifier,
-                                                      contar_marcadores_ausentes)
 from reclin.tarefa import ID2LABEL, LABEL2ID, LABELS
 from reclin.treino.montagem import Montagem
 
 NOME = "pair_aware_mlp"
 ESPACO = "completo: todos os pares candidatos elegiveis, sem filtro lexical"
 VERSAO = "v1: cabeca MLP, sem filtro lexical, sem lexico"
+
+
+# As classes e funções abaixo dependem do torch e só são carregadas quando usadas:
+# quem importa o pacote para ler NOME, VERSAO ou a classe de configuração (relatórios,
+# protocolo, testes sem GPU) não precisa do torch instalado.
+_PREGUICOSOS = ("ARQUITETURA", "PairAwareMLPClassifier", "contar_marcadores_ausentes")
+
+
+def __getattr__(nome: str) -> Any:
+    if nome in _PREGUICOSOS:
+        from reclin.estrategias.pair_aware_mlp import cabeca
+        return getattr(cabeca, nome)
+    raise AttributeError(f"module {__name__!r} has no attribute {nome!r}")
 
 
 @dataclass(frozen=True)
@@ -50,12 +61,15 @@ def nome_execucao(config: Config) -> str:
 
 
 def criar_modelo(modelo_id: str, tokenizer: Any, config: ConfigPairAwareMLP) -> PairAwareMLPClassifier:
+    from reclin.estrategias.pair_aware_mlp.cabeca import PairAwareMLPClassifier
     return PairAwareMLPClassifier.from_encoder_pretrained(
         modelo_id, tokenizer=tokenizer, num_labels=len(LABELS), mlp_hidden=config.mlp_hidden,
         dropout=config.head_dropout, id2label=dict(ID2LABEL), label2id=dict(LABEL2ID))
 
 
 def montagem(config: ConfigPairAwareMLP | None = None, **_: Any) -> Montagem:
+    from reclin.estrategias.pair_aware_mlp.cabeca import (ARQUITETURA, PairAwareMLPClassifier,
+                                                          contar_marcadores_ausentes)
     config = config or ConfigPairAwareMLP()
 
     def descrever(tokenizer: Any, modelo: PairAwareMLPClassifier, exemplos: Mapping[str, Any]) -> dict:

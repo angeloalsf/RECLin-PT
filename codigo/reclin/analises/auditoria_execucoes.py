@@ -59,6 +59,9 @@ ROTULO_ESTRATEGIA = {
     "baseline": "Baseline",
     "pair_aware": "Pair-Aware linear",
     "pair_aware_mlp": "Pair-Aware MLP",
+    "pair_aware_sem_pesos": "Pair-Aware linear, sem pesos de classe",
+    "cls_direto": "Baseline sem pooler ([CLS] direto)",
+    "pair_aware_pooler": "Pair-Aware linear com pooler",
     "two_stage": "Two-Stage",
     "two_stage_e1": "Two-Stage, estágio 1",
     "two_stage_e2": "Two-Stage, estágio 2",
@@ -71,6 +74,9 @@ PAPEL = {
     "baseline": "referência experimental",
     "two_stage": "estratégia experimental",
     "pair_aware_mlp": "variante experimental",
+    "pair_aware_sem_pesos": "experimento de aprimoramento (exploratório)",
+    "cls_direto": "ablação do pooler (exploratória)",
+    "pair_aware_pooler": "ablação do pooler (exploratória)",
     "baseline_calibrado": "controle",
     "filtro_pistas": "controle",
 }
@@ -79,6 +85,18 @@ PAPEL = {
 # --------------------------------------------------------------------------- #
 # Leitura                                                                     #
 # --------------------------------------------------------------------------- #
+def chave_estrategia(registro: Mapping[str, Any]) -> str:
+    """A estratégia de um registro de inventário, distinguindo as variantes de perda.
+
+    Uma execução treinada sem pesos de classe (`class_weight="none"`) é outro
+    sistema, mesmo com a estratégia, o encoder e a semente de uma execução
+    ponderada: recebe o sufixo `_sem_pesos`. As demais mantêm o nome gravado."""
+    estrategia = registro.get("estrategia") or ""
+    if (registro.get("hiperparametros") or {}).get("class_weight") == "none":
+        return f"{estrategia}_sem_pesos"
+    return estrategia
+
+
 def _ler(pasta: Path, nome: str) -> Any:
     caminho = pasta / nome
     return json.loads(caminho.read_text(encoding="utf-8")) if caminho.is_file() else None

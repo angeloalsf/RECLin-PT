@@ -61,7 +61,7 @@ import sys
 from pathlib import Path
 
 from reclin.config import CLASS_WEIGHTS, ENCODERS
-from reclin.estrategias import baseline, pair_aware, pair_aware_mlp, restrito
+from reclin.estrategias import ablacao_pooler, baseline, pair_aware, pair_aware_mlp, restrito
 from reclin.util import caminhos
 from reclin.util.log import configurar
 
@@ -74,6 +74,8 @@ ESTRATEGIAS = {
     restrito.NOME: (restrito, restrito.ConfigRestrito),
     pair_aware.NOME: (pair_aware, pair_aware.ConfigPairAware),
     pair_aware_mlp.NOME: (pair_aware_mlp, pair_aware_mlp.ConfigPairAwareMLP),
+    # ablação do pooler (exploratória): as duas células novas do fatorial marcadores × pooler
+    **{v.NOME: (v, ablacao_pooler.ConfigAblacao) for v in ablacao_pooler.VARIANTES},
 }
 
 
@@ -169,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.threads:
         torch.set_num_threads(args.threads)
     try:
-        if modulo in (baseline, pair_aware, pair_aware_mlp):    # todos os candidatos; sem léxico
+        if modulo in (baseline, pair_aware, pair_aware_mlp, *ablacao_pooler.VARIANTES):    # todos os candidatos; sem léxico
             montagem = modulo.montagem(config)
         else:     # restrito: o léxico congelado, induzido do TRAIN
             divergencias = particoes.conferir_particoes(args.particoes, ("train",))

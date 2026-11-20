@@ -216,3 +216,43 @@ confirmam que a exportação é a mesma.
 2. O versionamento de `codigo/resultados/analises/adjudicacao_negation_of/`, que contém
    texto do SemClinBr. Talvez convenha manter `cega/` e `restrito/` fora do controle de versão.
 3. O número de adjudicadores e quem faz o consenso.
+
+## Etapa 5 (M1): ordem de trabalho em dois lotes e outros pontos de operação
+
+A planilha cega continua a mesma (107 casos; SHA-256 conferido contra a
+rastreabilidade em 16/11/2026). Os 34 falsos positivos da Pair-Aware Linear sem
+pesos (`pair_aware__a3ac671a77e2__t2`) estão todos entre os 49 da execução
+adjudicada, de modo que a planilha cobre os dois pontos de operação.
+
+**Lotes.** Para revisar primeiro os 34 falsos positivos comuns sem revelar o
+grupo dos casos, `reclin/analises/adjudicacao_lotes.py` divide os casos em dois
+lotes com a mesma proporção de falsos positivos (semente 42):
+
+| Lote | Casos | FP | Controles VP | Controles FN |
+| --- | --- | --- | --- | --- |
+| 1 | 74 | 34 (os comuns) | 34 | 6 |
+| 2 | 33 | 15 | 15 | 3 |
+
+- `cega/ordem_de_trabalho.csv` — lote, ordem, caso e documento neutro. É o único
+  arquivo novo que o adjudicador abre.
+- `restrito/lotes.json` — o vínculo entre casos, lotes e grupos. **Não abrir
+  antes de congelar as decisões.**
+
+O adjudicador segue a ordem do lote 1 e depois a do lote 2, registrando as
+decisões na planilha, como antes.
+
+**Depois de congelar e reconciliar**, a projeção sobre os dois pontos de
+operação:
+
+```bash
+python -m reclin.analises.adjudicacao_ponto_de_operacao \
+    --rastreabilidade <...>/restrito/rastreabilidade.json \
+    --congeladas <...>/restrito/decisoes_congeladas.json \
+    --execucao codigo/resultados/execucoes/pairaware_biobertpt_seed42 \
+    --execucao codigo/resultados/execucoes/pair_aware__a3ac671a77e2__t2 \
+    --saida <...>/restrito/pontos_de_operacao.json
+```
+
+A referência adjudicada é parcial (só corrige omissões encontradas entre os
+falsos positivos revisados); os valores são secundários e não substituem as
+métricas oficiais.

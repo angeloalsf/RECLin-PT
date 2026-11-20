@@ -52,6 +52,7 @@ from transformers import get_linear_schedule_with_warmup
 from reclin import entrada, modelos, particoes, pretreino, tarefa, versao_dados
 from reclin.avaliacao import metricas
 from reclin.config import Config
+from reclin.execucao import congelamento as congelamento_final
 from reclin.execucao import diretorio, predicoes, subconjunto, trilha, validacao
 from reclin.treino import checkpoint, laco, reprodutibilidade
 from reclin.treino.montagem import CLASSIFICADOR, Montagem
@@ -316,13 +317,20 @@ def _predicoes_dev(pasta: Path, rede: Any, resultado: laco.ResultadoTreino, load
 
 def avaliar_test(pasta: str | Path, *, pasta_particoes: str | Path = caminhos.PARTICOES,
                  dispositivo: str | None = None, reavaliar: bool = False,
-                 montagem: Montagem = CLASSIFICADOR) -> dict[str, Any]:
+                 montagem: Montagem = CLASSIFICADOR, congelamento: str | Path | None = None,
+                 liberacao: str | None = None) -> dict[str, Any]:
     """Avalia o TEST com o `melhor_modelo/` de uma execução concluída: grava
     `predicoes_test.json`, as métricas do TEST e uma linha na trilha. Uma
     segunda avaliação exige `reavaliar=True` e fica registrada na trilha.
     `montagem` é a da estratégia que treinou a execução (conferida contra
-    `config.json`)."""
+    `config.json`).
+
+    No TEST científico, exige a configuração final congelada e o código de
+    liberação (`reclin.execucao.congelamento`); a recusa acontece antes de
+    qualquer leitura da partição."""
     pasta, pasta_particoes = Path(pasta), Path(pasta_particoes)
+    registro_final = congelamento_final.exigir_liberacao(
+        pasta, pasta_particoes, congelamento=congelamento, liberacao=liberacao, reavaliar=reavaliar)
     if not (pasta / ARQUIVO_TREINO).is_file():
         raise ErroExecucao(f"{pasta} não é uma execução de treino (sem {ARQUIVO_TREINO})")
     treino = ler_json(pasta / ARQUIVO_TREINO)
@@ -378,6 +386,8 @@ def avaliar_test(pasta: str | Path, *, pasta_particoes: str | Path = caminhos.PA
     diretorio.gravar_metricas(pasta, "test", m)
     if m_sub is not None:
         diretorio.gravar_metricas(pasta, "test_restrito", m_sub)
+    congelamento_final.registrar_avaliacao(registro_final, macro_f1=m["macro_f1"],
+                                           negation_of_f1=m["f1_per_class"]["negation_of"], n_test=len(test))
     linha = trilha.registrar(pasta / diretorio.TRILHA, execucao=pasta.name, model=modelo_id,
                              seed=config.seed, config_sha1=trilha.sha1_config(registro),
                              n_test=len(test), macro_f1=m["macro_f1"],

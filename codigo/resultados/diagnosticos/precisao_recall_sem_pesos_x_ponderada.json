@@ -1,0 +1,84 @@
+{
+  "a": {
+    "f1": 0.8317460317460318,
+    "precision": 0.793939393939394,
+    "recall": 0.8733333333333333
+  },
+  "a_contagens": {
+    "fn": 19,
+    "fp": 34,
+    "tp": 131
+  },
+  "a_execucao": "pair_aware__a3ac671a77e2__t2",
+  "a_predicoes_sha256": "cf0fbda088cfa4f81806ea3f2ec25eb166ea99a8f294fb121342a03eae8ba558",
+  "b": {
+    "f1": 0.8294117647058824,
+    "precision": 0.7421052631578947,
+    "recall": 0.94
+  },
+  "b_contagens": {
+    "fn": 9,
+    "fp": 49,
+    "tp": 141
+  },
+  "b_execucao": "pairaware_biobertpt_seed42",
+  "b_predicoes_sha256": "017cee17142390e68295eb6b985e198d6c9359ffbd890ffcd43c8bb602ea4e44",
+  "descricao": "A − B em precisão, recall e F1 de negation_of (DEV, descritivo)",
+  "n_boot": 10000,
+  "por_candidato": {
+    "f1": {
+      "diferenca": 0.002334267040149385,
+      "ic95": [
+        -0.02751518792825187,
+        0.031019579183017065
+      ],
+      "leitura": "não detectada"
+    },
+    "n_unidades": 19064,
+    "precision": {
+      "diferenca": 0.05183413078149923,
+      "ic95": [
+        0.020279350734004314,
+        0.0847574603330871
+      ],
+      "leitura": "positiva"
+    },
+    "recall": {
+      "diferenca": -0.06666666666666665,
+      "ic95": [
+        -0.10919989224137934,
+        -0.02993788542318353
+      ],
+      "leitura": "negativa"
+    }
+  },
+  "por_documento": {
+    "f1": {
+      "diferenca": 0.002334267040149385,
+      "ic95": [
+        -0.02470141638288237,
+        0.02786114501702959
+      ],
+      "leitura": "não detectada"
+    },
+    "n_unidades": 98,
+    "precision": {
+      "diferenca": 0.05183413078149923,
+      "ic95": [
+        0.02569929712480161,
+        0.0789268092105263
+      ],
+      "leitura": "positiva"
+    },
+    "recall": {
+      "diferenca": -0.06666666666666665,
+      "ic95": [
+        -0.11321069182389934,
+        -0.02857142857142858
+      ],
+      "leitura": "negativa"
+    }
+  },
+  "seed": 42,
+  "test_lido": false
+}

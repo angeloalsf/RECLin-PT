@@ -173,3 +173,47 @@ def test_tabela_tau():
                                      "no_relation": {"tp": 9, "fp": 1, "fn": 1}}}]}
     (linha,) = aud.tabela_tau(lim)
     assert linha["assoc_precision"] == 0.75 and linha["assoc_recall"] == pytest.approx(1 / 3)
+
+
+def test_chave_estrategia_separa_a_variante_sem_pesos():
+    assert aud.chave_estrategia({"estrategia": "pair_aware", "hiperparametros": {"class_weight": "balanced"}}) == "pair_aware"
+    assert aud.chave_estrategia({"estrategia": "pair_aware", "hiperparametros": {"class_weight": "none"}}) == "pair_aware_sem_pesos"
+    assert aud.chave_estrategia({"estrategia": "two_stage"}) == "two_stage"        # composição: sem hiperparâmetros
+    assert aud.chave_estrategia({"estrategia": None, "hiperparametros": None}) == ""
+    for chave in ("pair_aware_sem_pesos", "cls_direto", "pair_aware_pooler"):       # rótulo e papel nos relatórios
+        assert chave in aud.ROTULO_ESTRATEGIA and "explorat" in aud.PAPEL[chave]
+
+
+def _script_da_auditoria():
+    import importlib.util
+    from reclin.util.caminhos import CODIGO
+    spec = importlib.util.spec_from_file_location("auditar_execucoes", CODIGO / "diagnosticos" / "auditar_execucoes.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def test_registros_gravados_sao_mantidos_e_divergencia_interrompe():
+    script = _script_da_auditoria()
+    antigos = {"a": {"f1": 0.8290598290598291, "ic": [0.1, 0.2], "leitura": "positiva"}}
+    novos = {"a": {"f1": 0.8290598290598292, "ic": [0.1, 0.2 + 1e-15], "leitura": "positiva"}, "b": {"f1": 0.5}}
+    saida = script.preservar_registrados(novos, antigos, "métricas")
+    assert saida["a"] is antigos["a"] and saida["b"] == {"f1": 0.5} and list(saida) == ["a", "b"]
+    with pytest.raises(SystemExit, match="diverge do registro gravado"):
+        script.preservar_registrados({"a": {**novos["a"], "f1": 0.83}}, antigos, "métricas")
+    with pytest.raises(SystemExit, match="diverge do registro gravado"):            # texto e estrutura também contam
+        script.preservar_registrados({"a": {**novos["a"], "leitura": "negativa"}}, antigos, "métricas")
+    with pytest.raises(SystemExit, match="não foi recalculado"):
+        script.preservar_registrados({"b": {"f1": 0.5}}, antigos, "métricas")
+    assert script.preservar_registrados(novos, {}, "métricas") == novos
+
+
+def test_comparacoes_da_etapa_5_estao_previstas():
+    script = _script_da_auditoria()
+    grupos = {g for _, _, g in script.COMPARACOES}
+    assert {"Pair-Aware sem pesos × Pair-Aware ponderada", "Pair-Aware linear × controles",
+            "Ablação: efeito dos marcadores, sem pooler", "Ablação: efeito dos marcadores, com pooler",
+            "Ablação: efeito de retirar o pooler, sem marcadores",
+            "Ablação: efeito de retirar o pooler, com marcadores"} <= grupos
+    pares = [(a, b) for a, b, _ in script.COMPARACOES]
+    assert len(pares) == len(set(pares))                                            # nenhuma comparação repetida

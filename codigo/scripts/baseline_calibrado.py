@@ -45,6 +45,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--execucao", type=Path, required=True)
     p.add_argument("--base", type=Path, default=None, help="pasta da base, se tiver mudado de lugar")
     p.add_argument("--reavaliar", action="store_true")
+    p.add_argument("--congelamento", type=Path, default=None, help="registro da configuração final")
+    p.add_argument("--liberacao", default=None, help="código de liberação (só após autorização do autor)")
     args = ap.parse_args(argv)
     configurar()
     try:
@@ -65,7 +67,8 @@ def main(argv: list[str] | None = None) -> int:
                      " | VALIDAÇÃO TÉCNICA (não avalia desempenho)" if resultado["validacao"] else "")
             log.info("Gravado em %s", args.saida / nome)
         else:
-            resultado = baseline_calibrado.aplicar_test(args.execucao, base=args.base, reavaliar=args.reavaliar)
+            resultado = baseline_calibrado.aplicar_test(args.execucao, base=args.base, reavaliar=args.reavaliar,
+                                                        congelamento=args.congelamento, liberacao=args.liberacao)
             m = resultado["metricas"]
             log.info("TEST calibrado (t=%.2f): F1 negation_of=%.4f | macro-F1=%.4f", resultado["t"],
                      m["f1_per_class"]["negation_of"], m["macro_f1"])

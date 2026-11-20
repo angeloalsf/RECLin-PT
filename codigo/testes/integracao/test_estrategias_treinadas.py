@@ -250,24 +250,27 @@ def pelos_comandos(tmp_path_factory):
 
 def test_comandos_de_ponta_a_ponta(pelos_comandos):
     raiz, saidas = pelos_comandos
-    assert [s.returncode for s in saidas] == [3, 0, 0, 0, 0], [s.stdout[-1500:] for s in saidas]
+    # As partições completas são as científicas. Sem configuração final congelada, a avaliação do
+    # TEST é recusada pela trava (`reclin.execucao.congelamento`) antes de qualquer leitura, e nada
+    # do TEST é gravado. Até a Etapa 5 este teste avaliava o TEST científico com o modelo minúsculo.
+    assert [s.returncode for s in saidas] == [3, 0, 0, 1, 1], [s.stdout[-1500:] for s in saidas]
+    for s in saidas[3:]:
+        assert "avaliação do TEST recusada" in s.stdout
     for nome in ("restrito_biobertpt_seed42", "pairaware_biobertpt_seed42"):
-        assert (raiz / nome / "predicoes_test.json").is_file()
-        assert len(predicoes.ler(raiz / nome / "predicoes_test.json")["y_true"]) == 19210
-    restr = predicoes.ler(raiz / "restrito_biobertpt_seed42/predicoes_test.json")
-    # o espaço restrito do TEST com o léxico da fase (D4: min_freq=10, 8 formas): pares cujo e1 é pista,
-    # contagem estrutural (sem rótulos); com o léxico do legado eram 800 (dados.json)
-    assert restr["n_restrito"] == 774
+        assert not (raiz / nome / "predicoes_test.json").exists()
+        assert len(predicoes.ler(raiz / nome / "predicoes_dev.json")["y_true"]) == 19064
 
 
 def test_avaliacao_e_comparacao_das_etapas_anteriores(pelos_comandos, tmp_path):
     raiz, _ = pelos_comandos
     assert rodar("avaliar.py", "--execucao", raiz / "pairaware_biobertpt_seed42").returncode == 0
-    r = rodar("comparar.py", "par", "--a", raiz / "pairaware_biobertpt_seed42/predicoes_test.json",
-              "--b", raiz / "restrito_biobertpt_seed42/predicoes_test.json", "--saida", tmp_path / "c.json",
+    # com as predições do DEV: as do TEST não existem (a trava recusa a avaliação); o campo do
+    # resultado chama-se `n_test` por herança do legado e conta os pares do arquivo comparado
+    r = rodar("comparar.py", "par", "--a", raiz / "pairaware_biobertpt_seed42/predicoes_dev.json",
+              "--b", raiz / "restrito_biobertpt_seed42/predicoes_dev.json", "--saida", tmp_path / "c.json",
               "--n-boot", 20)
     assert r.returncode == 0, r.stdout + r.stderr
-    assert json.loads((tmp_path / "c.json").read_text("utf-8"))["n_test"] == 19210
+    assert json.loads((tmp_path / "c.json").read_text("utf-8"))["n_test"] == 19064
 
 
 @pytest.mark.parametrize("argumentos,mensagem", [

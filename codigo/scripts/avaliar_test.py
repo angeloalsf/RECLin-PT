@@ -10,6 +10,16 @@ TRAIN) e grava `predicoes_test.json` (no conjunto completo), as métricas do TES
 uma linha em `avaliacoes_test.jsonl` (trilha das avaliações do TEST, com o
 `eval_index_for_config`). Recusa uma execução cujo treino não terminou.
 
+No TEST científico (partições congeladas do projeto), a avaliação exige a
+configuração final congelada por `scripts/congelar.py` e o código de liberação:
+
+    python codigo/scripts/avaliar_test.py --execucao <pasta> --liberacao <código>
+
+Sem o registro de congelamento, com outra execução ou com o código errado, a
+avaliação é recusada antes de carregar o modelo ou abrir a partição (a trava é a
+primeira instrução de `classificador.avaliar_test`). O código só deve
+ser usado depois da autorização explícita do autor.
+
 O TEST de uma execução é avaliado uma vez. Avaliar de novo exige
 `--reavaliar` e fica registrado na trilha como uma segunda avaliação da mesma
 configuração, que precisa ser declarada.
@@ -21,14 +31,14 @@ import logging
 import sys
 from pathlib import Path
 
-from reclin.estrategias import baseline, pair_aware, pair_aware_mlp, restrito
+from reclin.estrategias import ablacao_pooler, baseline, pair_aware, pair_aware_mlp, restrito
 from reclin.util import caminhos
 from reclin.util.io import ler_json
 from reclin.util.log import configurar
 
 log = logging.getLogger("reclin.scripts.avaliar_test")
 
-ESTRATEGIAS = {m.NOME: m for m in (baseline, restrito, pair_aware, pair_aware_mlp)}
+ESTRATEGIAS = {m.NOME: m for m in (baseline, restrito, pair_aware, pair_aware_mlp, *ablacao_pooler.VARIANTES)}
 
 
 def montagem_da_execucao(pasta: Path):
@@ -51,6 +61,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="avalia de novo um TEST já avaliado (registrado na trilha)")
     ap.add_argument("--dispositivo", choices=("auto", "cpu", "cuda"), default="auto")
     ap.add_argument("--threads", type=int, default=None, help="threads do torch em CPU")
+    ap.add_argument("--congelamento", type=Path, default=None,
+                    help="registro da configuração final (padrão: resultados/congelamento/configuracao_final.json)")
+    ap.add_argument("--liberacao", default=None,
+                    help="código de liberação do registro de congelamento (só após autorização do autor)")
     args = ap.parse_args(argv)
     configurar()
 
@@ -65,7 +79,8 @@ def main(argv: list[str] | None = None) -> int:
         resultado = classificador.avaliar_test(
             args.execucao, pasta_particoes=args.particoes, reavaliar=args.reavaliar,
             montagem=montagem_da_execucao(args.execucao),
-            dispositivo=None if args.dispositivo == "auto" else args.dispositivo)
+            dispositivo=None if args.dispositivo == "auto" else args.dispositivo,
+            congelamento=args.congelamento, liberacao=args.liberacao)
     except (classificador.ErroExecucao, ValueError) as erro:
         log.error("%s", erro)
         return 1

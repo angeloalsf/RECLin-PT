@@ -35,6 +35,7 @@ from typing import Any, Mapping, Sequence
 
 from reclin.avaliacao import limiar as busca_limiar
 from reclin.avaliacao import metricas
+from reclin.execucao import congelamento as congelamento_final
 from reclin.execucao import diretorio, predicoes, trilha, validacao
 from reclin.tarefa import ASSOC, NEG, NOREL
 from reclin.util import identidade_codigo
@@ -152,11 +153,16 @@ def _gravar(pasta: Path, particao: str, saida: dict[str, Any], conjunto: Mapping
     diretorio.gravar_predicoes(pasta, particao, saida, dict(conjunto), sobrescrever=sobrescrever)
 
 
-def aplicar_test(pasta: str | Path, *, base: str | Path | None = None, reavaliar: bool = False) -> dict[str, Any]:
-    """Aplica o t congelado às predições do TEST da base, uma vez."""
+def aplicar_test(pasta: str | Path, *, base: str | Path | None = None, reavaliar: bool = False,
+                 congelamento: str | Path | None = None, liberacao: str | None = None) -> dict[str, Any]:
+    """Aplica o t congelado às predições do TEST da base, uma vez. Quando a base
+    foi avaliada no TEST científico, exige a configuração final congelada e o
+    código de liberação (`reclin.execucao.congelamento`), antes de abrir as
+    predições do TEST."""
     pasta = Path(pasta)
     if not (pasta / diretorio.CONFIG).is_file():
         raise ErroCalibracao(f"{pasta} não é uma execução do baseline calibrado")
+
     validacao.recusar_execucao(pasta, "aplicação do limiar ao TEST")
     registro = diretorio.ler_config(pasta)["config"]
     if registro.get("estrategia") != NOME:
@@ -174,6 +180,10 @@ def aplicar_test(pasta: str | Path, *, base: str | Path | None = None, reavaliar
     if (pasta / diretorio.arquivo_predicoes("test")).exists() and not reavaliar:
         raise ErroCalibracao("o TEST desta execução já foi avaliado; uma nova avaliação exige reavaliar "
                              "e fica registrada na trilha como reavaliação")
+    conjunto_test = diretorio.ler_config(info["pasta"])["conjuntos"].get("test") or {}
+    registro_final = congelamento_final.exigir_liberacao(
+        pasta, None, congelamento=congelamento, liberacao=liberacao, reavaliar=reavaliar,
+        sha_test=conjunto_test.get("particao_sha256"))
     sidecar = predicoes.ler(origem)
     probs = _probs(sidecar, f"{info['nome']}/predicoes_test.json")
     y_pred = prever(probs, t)
@@ -184,6 +194,8 @@ def aplicar_test(pasta: str | Path, *, base: str | Path | None = None, reavaliar
     _gravar(pasta, "test", saida, conjunto, sobrescrever=reavaliar)
     m = metricas.avaliar(sidecar["y_true"], y_pred)
     diretorio.gravar_metricas(pasta, "test", m)
+    congelamento_final.registrar_avaliacao(registro_final, macro_f1=m["macro_f1"],
+                                           negation_of_f1=m["f1_per_class"]["negation_of"], n_test=len(y_pred))
     linha = trilha.registrar(pasta / diretorio.TRILHA, execucao=pasta.name, model=saida["model"],
                              seed=saida["seed"], config_sha1=trilha.sha1_config(registro),
                              n_test=len(y_pred), macro_f1=m["macro_f1"],

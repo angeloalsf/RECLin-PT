@@ -1,0 +1,18 @@
+%% GERADO por analise/gerar_tabelas_etapa5.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Pair-Aware Linear com o BioBERTpt-all no DEV, com e sem ponderação de classes na perda.}
+  \label{tab:dev_sem_pesos}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{lrrrrrrrrr}
+  \toprule
+  Perda & P neg & R neg & F1 neg & VP/FP/FN neg & P assoc & R assoc & F1 assoc & Macro-F1 & MCC \\
+  \midrule
+ponderada (\texttt{balanced}) & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & 0{,}305 & 0{,}764 & 0{,}436 & 0{,}741 & 0{,}497 \\
+sem pesos de classe & 0{,}794 & 0{,}873 & 0{,}832 & 131/34/19 & 0{,}440 & 0{,}457 & 0{,}448 & 0{,}752 & 0{,}495 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize DEV, $n=19\,064$ pares candidatos, semente 42, 3 épocas. Diferença (sem pesos $-$ ponderada) e IC95\% do \emph{bootstrap} pareado por documento ($98$ notas): precisão de \texttt{negation\_of} $+0{,}052$ [$+0{,}026$; $+0{,}079$]; \emph{recall} $-0{,}067$ [$-0{,}113$; $-0{,}029$]; F1 $+0{,}002$ [$-0{,}025$; $+0{,}028$]. As diferenças de F1 das outras classes e do macro-F1 estão na Tabela~\ref{tab:dev_sem_pesos_comparacoes}. Experimento exploratório; não é resultado de teste.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

@@ -21,6 +21,7 @@ ETAPA7 = sorted([*(CODIGO / "reclin" / "analises").glob("*.py"), *(CODIGO / "rec
                  CODIGO / "scripts" / "gerar_tcc.py", CODIGO / "scripts" / "conferir_tcc.py",
                  CODIGO / "scripts" / "analisar.py", MAKEFILE, NOTEBOOK])
 # o que só a reprodução técnica do legado (testes de equivalência, etapas 2 a 6) usa
+COMPONENTE_REFERENCIA = re.compile(r'/\s*"referencia"')
 PROIBIDOS = ("resultados_legado", "caminho_predicoes", "SUFIXOS_LEGADO", "RESULTADOS_LEGADO", "protocolo.comparacoes_tcc",
              "modelo_minusculo", "referencias.json")
 GIT = re.compile(r"(^|[\s;&|(\"'])git(\s|$)", re.M)
@@ -31,7 +32,10 @@ def test_sem_dependencia_do_legado_nem_de_git(arquivo):
     texto = arquivo.read_text(encoding="utf-8")
     assert not [p for p in PROIBIDOS if p in texto], arquivo
     if arquivo.name != "inventario.py":          # o inventário cita a pasta só para recusá-la
-        assert "testes/referencia" not in texto and '"referencia"' not in texto
+        # A pasta `testes/referencia` não pode ser usada pelo pacote, nem como texto nem como
+        # componente de caminho (`... / "referencia"`). Uma chave de dicionário com esse nome
+        # (como em `analises/sensibilidade_semente.py`) não é dependência do legado.
+        assert "testes/referencia" not in texto and not COMPONENTE_REFERENCIA.search(texto)
     assert not GIT.search(texto), "nenhum comando de controle de versão"
 
 

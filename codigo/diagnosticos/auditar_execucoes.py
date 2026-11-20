@@ -41,6 +41,8 @@ PASTA_PADRAO = CODIGO / "resultados" / "auditoria_execucoes"
 
 # Comparações descritivas no DEV: (A, B, grupo). Chaves: (estratégia, encoder).
 PA, BL, TS, MLP = "pair_aware", "baseline", "two_stage", "pair_aware_mlp"
+SP = "pair_aware_sem_pesos"     # Pair-Aware linear treinada sem pesos de classe (exploratório)
+CD, PP = "cls_direto", "pair_aware_pooler"     # ablação do pooler: as duas células novas do fatorial 2×2
 ALL, CLIN, BERT = "BioBERTpt-all", "BioBERTpt-clin", "BERTimbau"
 COMPARACOES = (
     [((PA, e), (BL, e), "Pair-Aware linear × Baseline (mesmo encoder)") for e in (ALL, CLIN, BERT)]
@@ -51,8 +53,23 @@ COMPARACOES = (
     + [((TS, e), (BL, e), "Two-Stage × Baseline (mesmo encoder)") for e in (ALL, CLIN, BERT)]
     + [((TS, ALL), ("baseline_calibrado", ALL), "Two-Stage × controles"),
        (("baseline_calibrado", ALL), (BL, ALL), "Baseline calibrado × Baseline")]
+    + [((SP, ALL), (PA, ALL), "Pair-Aware sem pesos × Pair-Aware ponderada"),
+       ((SP, ALL), (BL, ALL), "Pair-Aware sem pesos × demais"),
+       ((SP, ALL), (TS, ALL), "Pair-Aware sem pesos × demais"),
+       ((SP, ALL), ("baseline_calibrado", ALL), "Pair-Aware sem pesos × demais")]
     + [((s, a), (s, b), "Encoders (mesma estratégia)")
        for s in (PA, BL, TS) for a, b in ((CLIN, ALL), (BERT, ALL), (CLIN, BERT))]
+    # Ablação do pooler (Etapa 5, M3): os quatro efeitos simples do fatorial marcadores × pooler.
+    + [((PA, ALL), (CD, ALL), "Ablação: efeito dos marcadores, sem pooler"),
+       ((PP, ALL), (BL, ALL), "Ablação: efeito dos marcadores, com pooler"),
+       ((CD, ALL), (BL, ALL), "Ablação: efeito de retirar o pooler, sem marcadores"),
+       ((PA, ALL), (PP, ALL), "Ablação: efeito de retirar o pooler, com marcadores")]
+    # Controles calculados também para os outros dois encoders (Etapa 5, M4), só no DEV.
+    + [c for e in (CLIN, BERT) for c in (
+        ((PA, e), ("baseline_calibrado", e), "Pair-Aware linear × controles"),
+        ((PA, e), ("filtro_pistas", e), "Pair-Aware linear × controles"),
+        ((TS, e), ("baseline_calibrado", e), "Two-Stage × controles"),
+        (("baseline_calibrado", e), (BL, e), "Baseline calibrado × Baseline"))]
 )
 
 
@@ -72,7 +89,7 @@ def _sistemas(inventario: dict, derivadas: list[Path]) -> dict[tuple[str, str], 
         if r["tipo"] in ("execucao", "composicao_two_stage") and "predicoes_dev.json" in r["arquivos"]:
             if r.get("pasta") in {p.name for p in derivadas}:
                 continue
-            chave = (r["estrategia"], r["encoder"])
+            chave = (aud.chave_estrategia(r), r["encoder"])
             if chave in sistemas:
                 raise SystemExit(f"dois sistemas com a mesma chave {chave}: {sistemas[chave].name} e {r['pasta']}")
             sistemas[chave] = Path(r["_caminho"])
@@ -98,6 +115,44 @@ def _dev(pasta: Path) -> tuple[list[tarefa.Candidato], dict]:
     return cands, prov
 
 
+TOLERANCIA = 1e-9     # recálculo × registro: acima disso é divergência, não ruído numérico
+
+
+def _coincide(novo, antigo, tol: float = TOLERANCIA) -> bool:
+    """Mesmo conteúdo, com números iguais até `tol` (ruído de ponto flutuante entre ambientes)."""
+    if isinstance(novo, bool) or isinstance(antigo, bool) or novo is None or antigo is None:
+        return novo == antigo
+    if isinstance(novo, (int, float)) and isinstance(antigo, (int, float)):
+        return abs(novo - antigo) <= tol
+    if isinstance(novo, dict) and isinstance(antigo, dict):
+        return novo.keys() == antigo.keys() and all(_coincide(novo[k], antigo[k], tol) for k in novo)
+    if isinstance(novo, (list, tuple)) and isinstance(antigo, (list, tuple)):
+        return len(novo) == len(antigo) and all(_coincide(a, b, tol) for a, b in zip(novo, antigo))
+    return novo == antigo
+
+
+def preservar_registrados(novos: dict, antigos: dict, o_que: str) -> dict:
+    """Mantém, byte a byte, os registros já gravados e acrescenta os novos.
+
+    Todo registro antigo é recalculado e conferido: se coincide (até `TOLERANCIA`),
+    fica o valor gravado; se diverge, a auditoria para, porque um resultado
+    histórico não pode mudar em silêncio. Um registro antigo ausente do recálculo
+    também para a auditoria."""
+    saida = {}
+    for chave, antigo in antigos.items():
+        if chave not in novos:
+            raise SystemExit(f"{o_que}: o registro {chave!r} existe no arquivo gravado e não foi recalculado")
+        if not _coincide(novos[chave], antigo):
+            raise SystemExit(f"{o_que}: o recálculo de {chave!r} diverge do registro gravado (tolerância {TOLERANCIA})")
+        saida[chave] = antigo
+    acrescentados = [k for k in novos if k not in antigos]
+    saida.update({k: novos[k] for k in acrescentados})
+    if antigos:
+        log.info("%s: %d registros gravados conferidos e mantidos; %d acrescentados%s", o_que, len(antigos),
+                 len(acrescentados), f" ({', '.join(map(str, acrescentados))})" if acrescentados else "")
+    return saida
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--execucoes", type=Path, required=True)
@@ -107,6 +162,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--n-boot", type=int, default=aud.N_BOOT)
     ap.add_argument("--origem", default=None,
                     help="de onde vêm as execuções, para o registro (ex.: resultados-colab@<commit>)")
+    ap.add_argument("--recalcular-tudo", action="store_true",
+                    help="regrava todos os registros; por padrão, os já gravados em --saida são conferidos "
+                         "contra o recálculo e mantidos, e só os novos são acrescentados")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -174,6 +232,29 @@ def main(argv: list[str] | None = None) -> int:
         }
 
     args.saida.mkdir(parents=True, exist_ok=True)
+    if not args.recalcular_tudo:
+        def gravado(nome: str, campo: str):
+            return ler_json(args.saida / nome)[campo] if (args.saida / nome).is_file() else None
+        antigo = gravado("metricas_dev.json", "sistemas")
+        if antigo is not None:
+            metricas = preservar_registrados(metricas, antigo, "métricas do DEV")
+        antigo = gravado("comparacoes_dev.json", "comparacoes")
+        if antigo is not None:
+            par = lambda c: f"{c['a']} × {c['b']}"                                   # noqa: E731
+            mantidas = preservar_registrados({par(c): c for c in comparacoes}, {par(c): c for c in antigo},
+                                             "comparações do DEV")
+            comparacoes = list(mantidas.values())
+        antigo = gravado("associated_with_dev.json", "sistemas") if assoc else None
+        if antigo is not None:
+            assoc = preservar_registrados(assoc, antigo, "falsos positivos de associated_with")
+        antigo = gravado("two_stage_tau.json", "two_stage")
+        if antigo is not None:
+            taus = preservar_registrados(taus, antigo, "limiares do Two-Stage")
+        antigo = gravado("inventario.json", "execucoes")
+        if antigo is not None:
+            por_pasta_inv = preservar_registrados({r["pasta"]: r for r in inventario["execucoes"]},
+                                                  {r["pasta"]: r for r in antigo}, "inventário")
+            inventario = {**inventario, "execucoes": list(por_pasta_inv.values())}
     # Só os nomes das pastas: os caminhos absolutos dependem da máquina.
     prov = {"execucoes": args.origem or args.execucoes.name,
             "derivadas": [p.name for p in args.derivadas],

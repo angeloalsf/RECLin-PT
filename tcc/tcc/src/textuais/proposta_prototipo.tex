@@ -1,14 +1,7 @@
 \chapter[Proposta do RECLin-PT]{Proposta do RECLin-PT}
 \label{cap:prototipo}
 
-Este capítulo apresenta o RECLin-PT, modelo de extração de relações clínicas em
-português com ênfase em \texttt{negation\_of}. Primeiro descreve o problema que o
-modelo resolve e seu fluxo geral; em seguida, a representação dos pares de entidades,
-a arquitetura de classificação adotada, a Pair-Aware linear, e os \emph{encoders}
-sobre os quais ela é ajustada. Por fim, descreve as estratégias e os controles
-investigados durante o desenvolvimento, que servem de comparação para a arquitetura
-adotada. Os procedimentos de preparação dos dados, de treino e de avaliação estão no
-Capítulo~\ref{cap:metodologia}, e os resultados, no Capítulo~\ref{cap:experimentos}.
+Este capítulo apresenta o RECLin-PT, um modelo de extração de relações clínicas em português com ênfase na relação \texttt{negation\_of}. Inicialmente, são apresentados o problema abordado pelo modelo e seu fluxo geral. Em seguida, são detalhadas a representação dos pares de entidades, a arquitetura de classificação adotada, denominada Pair-Aware Linear, e os \emph{encoders} utilizados em seu ajuste fino. Por fim, são apresentadas as estratégias e os controles investigados durante o desenvolvimento, utilizados como referência para a comparação com a arquitetura adotada. Os procedimentos de preparação dos dados, treinamento e avaliação são apresentados no Capítulo~\ref{cap:metodologia}, enquanto os resultados são discutidos no Capítulo~\ref{cap:experimentos}.
 
 \section{Visão geral do RECLin-PT}
 \label{sec:visao_reclin}
@@ -16,10 +9,7 @@ Capítulo~\ref{cap:metodologia}, e os resultados, no Capítulo~\ref{cap:experime
 O RECLin-PT recebe uma nota clínica com suas entidades já delimitadas e tipadas e
 decide, para cada par ordenado de entidades próximas, se entre elas há uma relação
 \texttt{negation\_of}, uma relação \texttt{associated\_with} ou nenhuma relação
-(\texttt{no\_relation}). O problema central é o da negação: dada uma expressão de
-negação, identificar o conceito clínico que ela nega, em textos nos quais quase todos
-os pares de entidades vizinhas não mantêm relação. O modelo não reconhece entidades:
-elas vêm da anotação do SemClinBr (Seção~\ref{sec:re_tarefa}).
+(\texttt{no\_relation}). O problema central abordado é a identificação das relações de negação, isto é, determinar, dada uma expressão de negação, qual conceito clínico está sob seu escopo. Essa tarefa é realizada em textos nos quais a maioria dos pares de entidades vizinhas não apresenta uma relação. O modelo não realiza o reconhecimento de entidades, que são obtidas diretamente das anotações do SemClinBr (Seção~\ref{sec:re_tarefa}).
 
 O fluxo tem quatro passos. (i) Os pares candidatos de cada documento são gerados por
 uma função determinística, que considera apenas pares a até $25$ caracteres de
@@ -36,16 +26,11 @@ linguagem pré-treinado, fixado pelo seu \emph{checkpoint}. A estratégia é a f
 como esse \emph{encoder} é ajustado e como suas saídas são combinadas para produzir
 os três rótulos. O RECLin-PT é o modelo em desenvolvimento, formado por um
 \emph{encoder} e uma estratégia e apoiado pela cadeia de dados e pelo protocolo
-descritos no Capítulo~\ref{cap:metodologia}. Encoder e cabeça de classificação não
-são componentes independentes: são ajustados em conjunto, e o treino atualiza todos
-os pesos do \emph{encoder}, não apenas os da cabeça (Seção~\ref{sec:finetuning}).
+descritos no Capítulo~\ref{cap:metodologia}. O encoder e a cabeça de classificação não são componentes independentes, pois são ajustados conjuntamente. Durante o treinamento, todos os pesos do \emph{encoder} são atualizados, e não apenas os da camada de classificação (Seção~\ref{sec:finetuning}).
 
-A arquitetura adotada para o RECLin-PT é a Pair-Aware linear
+A arquitetura adotada para o RECLin-PT é a Pair-Aware Linear
 (Seção~\ref{sec:pairaware}), e a configuração de referência atual a combina com o
-BioBERTpt-all e a semente $42$. Essa configuração não é definitiva: a configuração
-final, inclusive o \emph{encoder}, será selecionada e congelada depois dos
-experimentos de aprimoramento, e só ela será avaliada no conjunto de teste
-(Seção~\ref{sec:protocolo}).
+BioBERTpt-all e a semente $42$. Essa configuração ainda não é definitiva. A versão final do modelo, incluindo o \emph{encoder}, será selecionada e fixada após os experimentos de aprimoramento. Somente essa versão será avaliada no conjunto de teste (Seção~\ref{sec:protocolo}).
 
 \section{Representação de entrada: marcadores de posição}
 \label{sec:markers}
@@ -74,12 +59,7 @@ Duas propriedades delimitam \emph{que informação} o modelo recebe:
         argumento. O tipo semântico anotado pelo SemClinBr
         (\texttt{Disease or Syndrome}, \texttt{Negation}, \texttt{Finding}\ldots)
         não é passado ao modelo, que precisa inferir a natureza de cada
-        entidade a partir da superfície textual e do contexto. A escolha é
-        deliberada: o tipo \texttt{Negation} marca a própria pista de negação, e
-        os controles diagnósticos da Seção~\ref{sec:controles_tipo} mostram que ele,
-        sozinho, recupera $96{,}7\%$ dos pares \texttt{negation\_of} candidatos,
-        um atalho indisponível quando as entidades vêm de um reconhecimento
-        automático.
+        entidade a partir da superfície textual e do contexto. Essa escolha é deliberada, pois o tipo \texttt{Negation} identifica a própria pista de negação. Os controles diagnósticos apresentados na Seção~\ref{sec:controles_tipo} mostram que esse tipo, isoladamente, permite recuperar $96{,}7\%$ dos pares candidatos à relação \texttt{negation\_of}. Trata-se de um atalho que não estaria disponível se as entidades fossem obtidas por meio de um sistema de reconhecimento automático.
   \item A direção vem da etiqueta, não da ordem. Quando $e_2$ precede
         $e_1$ no texto, a \emph{string} resultante começa por \texttt{[E2]}. A
         direção da relação, que importa para \texttt{negation\_of}, é preservada por
@@ -112,15 +92,10 @@ pois mede a capacidade de cada um de \emph{inferi-lo} do texto, exatamente onde 
 pré-treinamento de domínio deveria fazer diferença.
 \label{sec:markers_limitacao}
 
-\section{Arquitetura de classificação: a Pair-Aware linear}
+\section{Arquitetura de classificação: a Pair-Aware Linear}
 \label{sec:pairaware}
 
-A Pair-Aware linear é a arquitetura oficial do RECLin-PT. Sobre o mesmo
-\emph{encoder} e a mesma entrada marcada, ela substitui a cabeça de classificação
-de sequência, que usa apenas a representação agregada da janela, por uma cabeça que lê
-explicitamente o par: os estados ocultos da última camada nas posições do
-\texttt{[CLS]}, de \texttt{[E1]} e de \texttt{[E2]} são concatenados, passam por
-\emph{dropout} e são projetados nas três classes por uma camada linear,
+A Pair-Aware Linear é a arquitetura adotada no RECLin-PT. Sobre o mesmo \emph{encoder} e a mesma entrada marcada, ela substitui a cabeça de classificação de sequência, que usa apenas a representação agregada da janela, por uma cabeça que lê explicitamente o par, cujos estados ocultos da última camada nas posições do \texttt{[CLS]}, de \texttt{[E1]} e de \texttt{[E2]} são concatenados, passam por \emph{dropout} e são projetados nas três classes por uma camada linear,
 %
 \begin{center}
 $[\,h_{\texttt{CLS}} ; h_{\texttt{[E1]}} ; h_{\texttt{[E2]}}\,] \rightarrow
@@ -136,18 +111,21 @@ expressão de negação e qual é o conceito negado. O \emph{encoder} é ajustad
 integralmente junto com a cabeça, de modo que as representações nas posições dos
 marcadores também se especializam na tarefa durante o treino.
 
-A configuração em vigor foi fixada antes de seu treino, por decisão registrada no
-protocolo: todos os pares candidatos, sem filtro e sem uso do léxico, cabeça linear
-(sem camada oculta), 3 épocas e seleção pelo macro-F1 do DEV, como o baseline
-(Seção~\ref{sec:baseline}). Assim, todas as suas métricas são comparáveis às do
-baseline, e a única diferença entre os dois é a forma de ler a representação. A
-designação como arquitetura oficial foi feita pelo autor fora do protocolo
-pré-registrado (Seção~\ref{sec:protocolo}).
+A configuração foi fixada antes do treino: todos os pares candidatos, sem filtro e
+sem uso do léxico, cabeça linear (sem camada oculta), 3 épocas e seleção pelo
+macro-F1 do DEV, como no baseline (Seção~\ref{sec:baseline}). Assim, suas métricas
+são diretamente comparáveis às do baseline. Há, porém, duas diferenças entre as
+duas cabeças, e não uma. Além de ler os estados dos marcadores, a Pair-Aware Linear
+toma o vetor de \texttt{[CLS]} diretamente da última camada, enquanto a cabeça de
+classificação de sequência do baseline o faz passar antes por uma camada densa com
+tangente hiperbólica (o \emph{pooler} do BERT). O efeito observado não pode,
+portanto, ser atribuído apenas à leitura explícita do par
+(Seção~\ref{sec:limitacoes}).
 
 \section{Os \emph{encoders}}
 \label{sec:encoders}
 
-A Pair-Aware linear, assim como as estratégias da Seção~\ref{sec:estrategias}, é
+A Pair-Aware Linear, assim como as estratégias da Seção~\ref{sec:estrategias}, é
 ajustada sobre três \emph{encoders} pré-treinados para o português, dois de domínio
 clínico e um de domínio geral. O \emph{encoder} de domínio clínico de referência é o
 BioBERTpt-all
@@ -155,12 +133,11 @@ BioBERTpt-all
 \href{https://huggingface.co/pucpr/biobertpt-all}{huggingface.co/pucpr/biobertpt-all}.}
 \cite{schneider_2020_biobertpt}, adaptado a narrativas clínicas e textos
 biomédicos em português brasileiro, com $177{,}9$ milhões de parâmetros com a
-cabeça de classificação do baseline. É o \emph{encoder} fixado pelo protocolo desta
-fase, o \emph{encoder} de referência da configuração atual e o único com o qual a variante Pair-Aware MLP foi treinada e os controles foram
+cabeça de classificação do baseline. É o \emph{encoder} fixado no protocolo, o \emph{encoder} de referência da configuração atual e o único com o qual a variante Pair-Aware MLP foi treinada e os controles foram
 calculados.
 
 O \emph{encoder} de domínio geral é o BERTimbau-base
-\footnote{\emph{Checkpoint} público \texttt{neuralmind/bert-base-portuguese-cased}, em
+(\texttt{neuralmind/bert-base-portuguese-cased})\footnote{\emph{Checkpoint} público \texttt{neuralmind/bert-base-portuguese-cased}, em
 \href{https://huggingface.co/neuralmind/bert-base-portuguese-cased}{huggingface.co/neuralmind/bert-base-portuguese-cased}.}
 \cite{souza_2020_bertimbau}, referência de domínio geral para o português, com
 $108{,}9$ milhões de parâmetros (cerca de 61\% do BioBERTpt-all). Ele entra como o
@@ -174,21 +151,15 @@ público em
 \cite{schneider_2020_biobertpt}, adaptada só a narrativas clínicas, tem o mesmo número
 de parâmetros do BioBERTpt-all e permite distinguir, dentro do domínio clínico, o
 efeito do material de adaptação. O BERTimbau-base e o BioBERTpt-clin foram treinados
-nas três estratégias (baseline, Pair-Aware linear e Two-Stage), com a mesma
-configuração e os mesmos critérios do BioBERTpt-all, como variantes de
-\emph{encoder} fora do escopo pré-registrado desta fase.
+nas três estratégias (baseline, Pair-Aware Linear e Two-Stage), com a mesma
+configuração e os mesmos critérios do BioBERTpt-all, como extensão da comparação, prevista inicialmente apenas com o BioBERTpt-all.
 
-A delimitação a esses \emph{encoders} é deliberada. Para orientar a configuração do
-RECLin-PT, a influência do domínio de pré-treinamento e da estratégia de extração de
-relações é avaliada sob condições experimentais controladas, e por isso cada
-comparação muda um único fator: o \emph{checkpoint}, com a estratégia fixa, ou a
-estratégia, com o \emph{encoder} fixo. Os três \emph{encoders} têm a mesma
+A delimitação a esses \emph{encoders} é deliberada. Para orientar a configuração do RECLin-PT, são avaliadas, sob condições experimentais controladas, a influência do domínio de pré-treinamento e a influência da estratégia de extração de relações. Para isso, cada comparação altera um único fator, mantendo a estratégia fixa ao comparar os \emph{checkpoints} ou mantendo o \emph{encoder} fixo ao comparar as estratégias. Os três \emph{encoders} têm a mesma
 arquitetura de porte \emph{base}, e a diferença no número de parâmetros entre os
 BioBERTpt e o BERTimbau-base decorre inteiramente do tamanho do vocabulário, cerca de
 quatro vezes maior nos BioBERTpt
 ($119\,551$ contra $29\,798$ \emph{tokens}, incluídos os marcadores), que amplia a
-matriz de \emph{embeddings}. Variantes de maior porte, como os modelos \emph{large}, ficaram fora do
-escopo experimental: cada uma acrescentaria custos de treinamento e de avaliação a
+matriz de \emph{embeddings}. Variantes de maior porte, como os modelos \emph{large}, ficaram fora do escopo experimental, pois cada uma acrescentaria custos de treinamento e de avaliação a
 todas as estratégias e introduziria a escala como um fator adicional, o que tornaria
 a comparação menos viável e menos controlada nas condições deste trabalho. Modelos
 maiores podem apresentar vantagens, mas o porte, por si só, não garante ganhos na
@@ -200,28 +171,23 @@ a outros.
 \label{sec:estrategias}
 \label{sec:visao_baselines}
 
-Para orientar a configuração do RECLin-PT, a Pair-Aware linear foi comparada com
-estratégias alternativas e com controles. Elas não são versões do modelo proposto, e
-sim pontos de comparação: o baseline é a referência experimental, o Two-Stage é uma
+Para orientar a configuração do RECLin-PT, a Pair-Aware Linear foi comparada com
+estratégias alternativas e com controles. Elas não são versões do modelo proposto, mas pontos de comparação, enquanto o baseline constitui a referência experimental, o Two-Stage é uma
 estratégia experimental, a Pair-Aware MLP é uma variante exploratória, e o baseline
 calibrado e o filtro léxico são controles. As alternativas são descritas aqui sem
 antecipar resultados.
 
-A premissa metodológica central é a paridade. Todas as estratégias usam a
-mesma partição congelada, os mesmos pares candidatos (e, portanto, o mesmo teto de
-\emph{recall}), a mesma representação de entrada (Seção~\ref{sec:markers}), a mesma
+A premissa metodológica central é a paridade. Todas as estratégias utilizam a mesma partição congelada, os mesmos pares candidatos e, consequentemente, o mesmo teto de \emph{recall}, além da mesma representação de entrada (Seção~\ref{sec:markers}), a mesma
 configuração base de otimização (Quadro~\ref{quad:hiperparametros}), a mesma semente e
 critérios de seleção fixados no protocolo. Todas gravam predições no
 conjunto completo de candidatos, na mesma ordem e com os mesmos rótulos de
 referência, o que permite compará-las por todas as métricas e pelos mesmos testes
-pareados. Entre \emph{encoders}, a paridade é ainda mais estrita: em cada
-estratégia, os três modelos passam exatamente pelo mesmo código, e trocar um pelo
-outro consiste em mudar o \emph{checkpoint} carregado.
+pareados. Entre \emph{encoders}, a paridade é ainda mais estrita, pois, em cada estratégia, os três modelos passam exatamente pelo mesmo código. Assim, trocar um pelo outro consiste apenas em mudar o \emph{checkpoint} carregado.
 
 \subsection{Baseline}
 \label{sec:baseline}
 
-O baseline é o classificador direto da tarefa: todos os pares candidatos, a janela
+O baseline é o classificador direto da tarefa, no qual todos os pares candidatos, a janela
 marcada e o \emph{encoder} com a cabeça de classificação de sequência, que projeta a
 representação agregada (\texttt{[CLS]}) nas três classes. Usa a configuração comum
 de treino e de seleção de época (Seção~\ref{sec:finetuning} e
@@ -237,70 +203,38 @@ um com seu próprio ajuste fino a partir dos pesos originais do
 \emph{encoder}. Nenhum estágio parte de um modelo já ajustado.
 
 \begin{itemize}
-  \item Estágio 1, existe relação? Classifica \texttt{relacao} contra
-        \texttt{no\_relation} e é treinado com todos os pares candidatos do treino
-        ($8\,351$ com relação e $144\,335$ sem relação). Treina por 3 épocas, e a
+  \item Estágio 1 --- identificação da existência de uma relação. Nesse estágio, o classificador distingue os pares que apresentam uma relação daqueles que não apresentam (\texttt{no\_relation}). O treinamento utiliza todos os pares candidatos do conjunto de treinamento, sendo $8\,351$ com relação e $144\,335$ sem relação. Treina por 3 épocas, e a
         época escolhida é a de maior precisão média (AP) da classe \texttt{relacao}
         no DEV completo.
-  \item Estágio 2, qual o tipo? Classifica \texttt{negation\_of} contra
-        \texttt{associated\_with} e é treinado só com os pares do treino que têm
-        relação anotada ($1\,255$ e $7\,096$). Treina por 10 épocas, e a escolhida é
+  \item Estágio 2 --- classificação do tipo de relação. Nesse estágio, o classificador distingue as relações \texttt{negation\_of} das relações \texttt{associated\_with}. Seu treinamento utiliza apenas os pares candidatos do conjunto de treinamento que possuem uma relação anotada, sendo $1\,255$ da classe \texttt{negation\_of} e $7\,096$ da classe \texttt{associated\_with}. Treina por 10 épocas, e a escolhida é
         a de maior F1 de \texttt{negation\_of} nos 913 pares do DEV com relação
         anotada.
-  \item Composição (inferência). Um par segue para o estágio 2 quando a
-        probabilidade de relação estimada pelo estágio 1, arredondada a quatro
-        casas, é $\geq \tau$. Os demais ficam \texttt{no\_relation}, e o estágio 2
-        decide o tipo dos pares roteados pelo argmax. A saída tem os três rótulos da
-        tarefa sobre o conjunto completo.
+  \item Composição na inferência. Um par é encaminhado ao Estágio 2 quando a probabilidade de apresentar uma relação, estimada pelo Estágio 1 e arredondada para quatro casas decimais, é maior ou igual a $\tau$. Os demais pares recebem o rótulo \texttt{no\_relation}. Para os pares encaminhados, o Estágio 2 determina o tipo de relação por meio do \texttt{argmax}. Dessa forma, a saída final contempla os três rótulos da tarefa e abrange o conjunto completo de pares candidatos.
 \end{itemize}
 
-O limiar $\tau$ é o único parâmetro do \emph{pipeline} escolhido no DEV, pela busca
-do protocolo, executando para cada valor da grade o fluxo real (o estágio 2 só sobre
-os pares roteados). Como cada estágio é escolhido pela sua própria métrica, nada
+O limiar $\tau$ é o único parâmetro do \emph{pipeline} selecionado no DEV por meio da busca definida no protocolo. Para cada valor da grade, o fluxo completo de inferência é executado, de modo que o Estágio 2 recebe apenas os pares encaminhados pelo Estágio 1. Como cada estágio é escolhido pela sua própria métrica, nada
 garante que a combinação de épocas seja a melhor para o \emph{pipeline} completo, e
-não há otimização conjunta. O estágio 2 é treinado com os rótulos anotados, nunca
-com predições do estágio 1: os dois só se encontram na composição. A motivação da
-decomposição é a do Capítulo~\ref{cap:referencial}: separar a pergunta ``há
-relação?'', dominada pelo desbalanceamento, da pergunta ``qual relação?'', em que
-\texttt{negation\_of} deixa de competir com a massa de pares \texttt{no\_relation}.
+não há otimização conjunta. O Estágio 2 é treinado exclusivamente com os rótulos anotados, sem utilizar predições do Estágio 1 durante o treinamento. Os dois estágios são integrados apenas na etapa de composição da inferência. Essa decomposição segue a motivação apresentada no Capítulo~\ref{cap:referencial}, que consiste em separar a identificação da existência de uma relação de sua classificação. A primeira tarefa é marcada pelo desbalanceamento entre pares com e sem relação, enquanto a segunda permite que a classe \texttt{negation\_of} seja distinguida de \texttt{associated\_with} sem competir diretamente com a grande quantidade de pares \texttt{no\_relation}.
 
 \subsection{Pair-Aware MLP}
 \label{sec:pa_mlp}
 
-A variante exploratória Pair-Aware MLP é idêntica à Pair-Aware linear, exceto pela
-cabeça, que tem uma camada oculta, $\mathrm{Linear}(3d, d) \rightarrow
-\mathrm{GELU} \rightarrow \mathrm{Dropout} \rightarrow \mathrm{Linear}(d, 3)$. Ela
-foi criada depois do protocolo, está fora dele, foi treinada apenas com o
-BioBERTpt-all e é apresentada somente como resultado exploratório.
+A variante exploratória Pair-Aware MLP mantém a mesma configuração da Pair-Aware Linear, diferenciando-se apenas pela cabeça de classificação, que incorpora uma camada oculta. Sua arquitetura é composta pelas operações $\mathrm{Linear}(3d, d) \rightarrow \mathrm{GELU} \rightarrow \mathrm{Dropout} \rightarrow \mathrm{Linear}(d, 3)$. Essa variante foi desenvolvida após a definição do protocolo experimental e, portanto, não integra as comparações previstas nele. Foi treinada exclusivamente com o BioBERTpt-all e é apresentada neste trabalho apenas como resultado exploratório.
 
 \subsection{Baseline calibrado}
 \label{sec:calibrado}
 
-O baseline calibrado não treina nada: aplica às probabilidades já produzidas pelo
-baseline um limiar $t$ sobre a probabilidade de \texttt{negation\_of}. Se
-$P(\texttt{negation\_of}) \geq t$, o par recebe \texttt{negation\_of}; caso contrário,
-recebe a mais provável entre \texttt{associated\_with} e \texttt{no\_relation}. O
-limiar é escolhido no DEV pela busca do protocolo (Seção~\ref{sec:protocolo}). Seu
-papel é de controle: como o Two-Stage também depende de um limiar escolhido
-no DEV, só a comparação com o baseline calibrado permite separar o efeito da
-arquitetura do efeito de simplesmente recalibrar a decisão.
+O baseline calibrado não envolve uma nova etapa de treinamento. Ele aplica às probabilidades já produzidas pelo baseline um limiar $t$ sobre a probabilidade da classe \texttt{negation\_of}. Quando $P(\texttt{negation\_of}) \geq t$, o par recebe esse rótulo. Caso contrário, recebe o rótulo de maior probabilidade entre \texttt{associated\_with} e \texttt{no\_relation}. O limiar é selecionado no DEV por meio da busca definida no protocolo (Seção~\ref{sec:protocolo}).
+
+Essa configuração funciona como um controle experimental. Como o Two-Stage também utiliza um limiar selecionado no DEV, a comparação com o baseline calibrado permite distinguir os efeitos da arquitetura daqueles decorrentes exclusivamente do ajuste do limiar de decisão.
 
 \subsection{Filtro léxico}
 \label{sec:filtro}
 
-O filtro pós-processa as predições do baseline com um léxico de pistas de
-negação: toda predição \texttt{negation\_of} cujo primeiro argumento ($e_1$) não seja
-uma pista do léxico é rebaixada a \texttt{no\_relation}. Nenhuma predição é
+O filtro aplica um pós-processamento às predições do baseline com base em um léxico de pistas de negação. Toda predição da classe \texttt{negation\_of} cujo primeiro argumento ($e_1$) não corresponda a uma pista presente no léxico é reclassificada como \texttt{no\_relation}. Nenhuma predição é
 promovida, nenhuma outra classe é tocada e, por isso, o filtro só pode elevar a
 precisão da classe-alvo, nunca o seu \emph{recall}. As formas são comparadas após
 remoção de acentos, colapso de espaços e conversão para caixa baixa.
 
-O léxico é induzido exclusivamente do treino: são contadas as formas de
-$e_1$ nos pares candidatos \texttt{negation\_of}, e retêm-se as que atingem uma
-frequência mínima (\texttt{min\_freq}). O valor foi escolhido antes da fase, por
-validação cruzada em 5 partes só no treino, sem modelos, predições, DEV ou teste,
-pelo maior F1 do léxico como detector. A escolha recaiu sobre
-\texttt{min\_freq}$=10$, que retém 8 formas (Apêndice~\ref{ap:lexico}). Duas
-limitações registradas acompanham essa escolha: o valor escolhido é o maior da grade
-avaliada, e o critério favorece a precisão, porque os falsos positivos dominam o F1
-de um léxico usado como detector.
+O léxico é construído exclusivamente a partir dos dados de treinamento. Para isso, são contabilizadas as formas encontradas em $e_1$ nos pares candidatos à relação \texttt{negation\_of}, sendo mantidas apenas aquelas cuja frequência atinge o valor mínimo definido por \texttt{min\_freq}. O valor foi escolhido antes da fase, por validação cruzada em 5 partes só no treino, sem modelos, predições, DEV ou TEST, pelo maior F1 do léxico como detector. A escolha recaiu sobre
+\texttt{min\_freq}$=10$, que retém 8 formas (Apêndice~\ref{ap:lexico}). Essa escolha apresenta duas limitações. A primeira é que o valor selecionado corresponde ao maior valor da grade avaliada. A segunda está relacionada ao critério de seleção, que favorece a precisão, uma vez que os falsos positivos têm grande influência sobre o F1 de um léxico utilizado como detector de pistas de negação.

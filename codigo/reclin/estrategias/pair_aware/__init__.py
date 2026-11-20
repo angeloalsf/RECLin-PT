@@ -36,13 +36,25 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from reclin.config import Config
-from reclin.estrategias.pair_aware.cabeca import ARQUITETURA, PairAwareClassifier, contar_marcadores_ausentes
 from reclin.tarefa import ID2LABEL, LABEL2ID, LABELS
 from reclin.treino.montagem import Montagem
 
 NOME = "pair_aware"
 ESPACO = "completo: todos os pares candidatos elegiveis, sem filtro lexical"
 VERSAO = "v2: cabeca linear sem MLP, sem filtro lexical, sem lexico"
+
+
+# As classes e funções abaixo dependem do torch e só são carregadas quando usadas:
+# quem importa o pacote para ler NOME, VERSAO ou a classe de configuração (relatórios,
+# protocolo, testes sem GPU) não precisa do torch instalado.
+_PREGUICOSOS = ("ARQUITETURA", "PairAwareClassifier", "contar_marcadores_ausentes")
+
+
+def __getattr__(nome: str) -> Any:
+    if nome in _PREGUICOSOS:
+        from reclin.estrategias.pair_aware import cabeca
+        return getattr(cabeca, nome)
+    raise AttributeError(f"module {__name__!r} has no attribute {nome!r}")
 
 
 @dataclass(frozen=True)
@@ -61,12 +73,14 @@ def nome_execucao(config: Config) -> str:
 
 
 def criar_modelo(modelo_id: str, tokenizer: Any, config: ConfigPairAware) -> PairAwareClassifier:
+    from reclin.estrategias.pair_aware.cabeca import PairAwareClassifier
     return PairAwareClassifier.from_encoder_pretrained(
         modelo_id, tokenizer=tokenizer, num_labels=len(LABELS), dropout=config.head_dropout,
         id2label=dict(ID2LABEL), label2id=dict(LABEL2ID))
 
 
 def montagem(config: ConfigPairAware | None = None, **_: Any) -> Montagem:
+    from reclin.estrategias.pair_aware.cabeca import ARQUITETURA, PairAwareClassifier, contar_marcadores_ausentes
     config = config or ConfigPairAware()
 
     def descrever(tokenizer: Any, modelo: PairAwareClassifier, exemplos: Mapping[str, Any]) -> dict:

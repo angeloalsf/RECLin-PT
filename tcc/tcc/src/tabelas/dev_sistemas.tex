@@ -9,7 +9,7 @@
   \toprule
   Estratégia & \emph{Encoder} & \begin{tabular}[b]{@{}c@{}}P\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}R\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}VP/FP/FN\\neg\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\assoc\end{tabular} & \begin{tabular}[b]{@{}c@{}}F1\\no\_rel\end{tabular} & Macro-F1 & MCC \\
   \midrule
-Pair-Aware linear & BioBERTpt-all & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & 0{,}436 & 0{,}956 & 0{,}741 & 0{,}497 \\
+Pair-Aware Linear & BioBERTpt-all & 0{,}742 & 0{,}940 & 0{,}829 & 141/49/9 & 0{,}436 & 0{,}956 & 0{,}741 & 0{,}497 \\
  & BioBERTpt-clin & 0{,}732 & 0{,}947 & 0{,}826 & 142/52/8 & 0{,}454 & 0{,}958 & 0{,}746 & 0{,}514 \\
  & BERTimbau-base & 0{,}713 & 0{,}960 & 0{,}818 & 144/58/6 & 0{,}435 & 0{,}955 & 0{,}736 & 0{,}497 \\
 \midrule
@@ -28,6 +28,6 @@ Baseline calibrado & BioBERTpt-all ($t=0{,}90$) & 0{,}723 & 0{,}920 & 0{,}809 & 
 Filtro léxico & BioBERTpt-all & 0{,}750 & 0{,}900 & 0{,}818 & 135/45/15 & 0{,}408 & 0{,}946 & 0{,}724 & 0{,}477 \\
   \bottomrule
   \end{tabular}}\\[2pt]
-  {\footnotesize DEV, $n=19\,064$ pares candidatos (150 \texttt{negation\_of}, 763 \texttt{associated\_with}), semente 42. Não são resultados de teste. A época de cada modelo, $\tau$ (Two-Stage) e $t$ (baseline calibrado) foram escolhidos neste mesmo DEV. O protocolo pré-registrado fixa o BioBERTpt-all; as execuções com o BioBERTpt-clin e o BERTimbau-base são variantes de \emph{encoder} fora do pré-registro, e a Pair-Aware MLP é exploratória.}\\[4pt]
+  {\footnotesize DEV, $n=19\,064$ pares candidatos (150 \texttt{negation\_of}, 763 \texttt{associated\_with}), semente 42. Não são resultados de teste. A época de cada modelo, $\tau$ (Two-Stage) e $t$ (baseline calibrado) foram escolhidos neste mesmo DEV. O protocolo fixa o BioBERTpt-all; as execuções com o BioBERTpt-clin e o BERTimbau-base são variantes de \emph{encoder} além do escopo inicial, e a Pair-Aware MLP é exploratória.}\\[4pt]
   {\footnotesize Fonte: elaborado pelo autor.}
 \end{table}
