@@ -7,8 +7,9 @@ RECLin-PT, com foco na classe \texttt{negation\_of}, bem como os resultados obti
 A \autoref{fig:ciclo} situa esses resultados no ciclo de desenvolvimento. A preparação
 dos dados, a geração de pares candidatos, o \emph{fine-tuning} das nove combinações de
 \emph{encoder} e estratégia e a seleção de épocas e de limiares no DEV estão
-concluídos, e um primeiro experimento de aprimoramento é relatado na Seção~\ref{sec:resultados_sem_pesos}. Permanecem pendentes a seleção e o congelamento da configuração final e a avaliação única desse modelo final no conjunto
-de teste. A seta de retorno indica que novos \emph{encoders}, hiperparâmetros ou
+concluídos, e um primeiro experimento de aprimoramento é relatado na Seção~\ref{sec:resultados_sem_pesos}. A configuração final foi
+selecionada no DEV (Seção~\ref{sec:resultados_configuracao_final}). Permanecem
+pendentes o seu congelamento e a sua avaliação única no conjunto de teste. A seta de retorno indica que novos \emph{encoders}, hiperparâmetros ou
 estratégias voltam à etapa de \emph{fine-tuning} antes de entrar na comparação,
 sempre no DEV.
 
@@ -303,6 +304,44 @@ diferença é detectada, nos dois níveis de reamostragem, contra o baseline
 \texttt{associated\_with}, é detectada nos dois níveis apenas contra o Two-Stage e,
 só por candidato, contra o baseline e o baseline calibrado.
 
+\section{Configuração final: escolha do limiar}
+\label{sec:resultados_configuracao_final}
+
+A configuração final do RECLin-PT combina o modelo da seção anterior, a Pair-Aware
+Linear treinada sem ponderação de classes, com a regra de decisão por limiar sobre
+a probabilidade de \texttt{negation\_of} (Seção~\ref{sec:regra_final}). A
+Tabela~\ref{tab:dev_limiar_negation_of} mostra, para cada limiar da grade, as
+contagens e as métricas de \texttt{negation\_of} no DEV e o macro-F1. O
+\emph{recall} cai à medida que o limiar sobe, enquanto a precisão sobe de forma
+irregular, com patamares. Entre os limiares que mantêm o \emph{recall} em pelo menos
+$0{,}80$, o de maior precisão é $t=0{,}80$: $120$ verdadeiros positivos, $22$ falsos
+positivos e $30$ falsos negativos, com precisão de $0{,}845$, \emph{recall} de
+$0{,}800$ e F1 de $0{,}822$. Esse ponto concentra o ganho de precisão da curva. De
+$0{,}75$ para $0{,}80$, os falsos positivos caem de $28$ para $22$ com a perda de um
+único verdadeiro positivo; acima de $0{,}80$, a precisão permanece entre $0{,}846$
+e $0{,}848$ até $0{,}90$, e só o \emph{recall} continua a cair, já abaixo do piso.
+
+\input{tabelas/dev_limiar_negation_of}
+
+Frente às alternativas com o BioBERTpt-all
+(Tabela~\ref{tab:dev_configuracao_final}), a configuração final tem precisão de
+\texttt{negation\_of} maior e \emph{recall} menor que todas elas, com as duas
+diferenças detectadas nos dois níveis de reamostragem. Em relação à mesma execução
+com a regra \emph{argmax}, a precisão sobe $0{,}051$ (IC95\% por documento de
+$+0{,}016$ a $+0{,}094$) e o \emph{recall} cai $0{,}073$; em relação à Pair-Aware
+Linear ponderada, configuração de referência até então, a precisão sobe $0{,}103$ e
+o \emph{recall} cai $0{,}140$. Nenhuma diferença no F1 de \texttt{negation\_of} é
+detectada, e o macro-F1, de $0{,}748$, é maior que o do baseline e o do Two-Stage,
+com diferença detectada nos dois níveis, e não se distingue do das duas versões da
+Pair-Aware Linear com \emph{argmax}. Em termos absolutos, a configuração final
+reduz os falsos positivos de $49$, na referência anterior, para $22$, e passa de $9$
+para $30$ negações não reconhecidas entre as $150$ do DEV. O critério que fixa o
+limiar foi definido depois de conhecida a curva do DEV, e o limiar escolhido no
+mesmo conjunto em que é medido torna esses valores otimistas; a estimativa sem esse
+viés será a do teste.
+
+\input{tabelas/dev_configuracao_final}
+
 \section{Resultado exploratório: Pair-Aware MLP}
 \label{sec:resultados_exploratorios}
 
@@ -313,3 +352,40 @@ o BioBERTpt-all. Ela teve \emph{recall} de \texttt{negation\_of} um pouco maior
 $0{,}737$, ambos abaixo da Pair-Aware Linear, sem diferença detectada em nenhuma
 métrica (Tabela~\ref{tab:dev_comparacoes_pa}). Por ser exploratório, esse resultado
 não é evidência confirmatória.
+
+\section{Resultado exploratório: ablação do \emph{pooler}}
+\label{sec:resultados_ablacao}
+
+A cabeça da Pair-Aware Linear difere da do baseline em dois pontos: lê os estados
+dos marcadores e toma o vetor de \texttt{[CLS]} sem passar pelo \emph{pooler}
+(Seção~\ref{sec:pairaware}). Para separar os dois efeitos, foram treinadas duas
+cabeças que completam um fatorial $2 \times 2$. A \texttt{cls\_direto} lê só o
+\texttt{[CLS]}, sem o \emph{pooler}. A \texttt{pair\_aware\_pooler} lê
+\texttt{[CLS]}, \texttt{[E1]} e \texttt{[E2]}, com o \texttt{[CLS]} passando pelo
+\emph{pooler}, cujos pesos vieram do \emph{checkpoint} pré-treinado. As duas usam a
+mesma entrada, com os marcadores no texto, os mesmos dados, a mesma semente e os
+mesmos hiperparâmetros da Pair-Aware Linear, apenas com o BioBERTpt-all. O plano de
+análise foi fixado antes das execuções, e as duas cabeças são exploratórias: não
+participam da escolha da configuração final.
+
+\input{tabelas/dev_ablacao_pooler_sistemas}
+
+Ler os estados dos marcadores aumenta o macro-F1 e o F1 de
+\texttt{associated\_with} com e sem o \emph{pooler}, com diferenças detectadas nos
+dois níveis de reamostragem (Tabela~\ref{tab:dev_ablacao_pooler}). Com o
+\emph{pooler}, o aumento inclui o F1 de \texttt{negation\_of} ($+0{,}035$, com
+IC95\% por documento de $+0{,}007$ a $+0{,}064$); sem ele, a diferença nessa classe
+($+0{,}009$) não é detectada. Retirar o \emph{pooler} não trouxe ganho detectado no
+F1 de nenhuma classe. Com os marcadores, retirá-lo reduziu o macro-F1 em $0{,}009$ e o
+F1 de \texttt{associated\_with} em $0{,}017$, com diferença detectada nos dois
+níveis. Só com o \texttt{[CLS]}, o macro-F1 subiu $0{,}010$, diferença detectada por
+candidato e não por documento.
+
+\input{tabelas/dev_ablacao_pooler}
+
+A vantagem da Pair-Aware Linear sobre o baseline vem, portanto, da leitura dos
+marcadores, e não da retirada do \emph{pooler}. A cabeça que lê os marcadores e
+mantém o \emph{pooler} teve macro-F1 de $0{,}750$ e F1 de \texttt{negation\_of} de
+$0{,}837$, contra $0{,}741$ e $0{,}829$ da Pair-Aware Linear. Como essas diferenças
+são pequenas e vêm de uma única semente, o resultado não justifica trocar a cabeça
+da proposta e permanece exploratório.

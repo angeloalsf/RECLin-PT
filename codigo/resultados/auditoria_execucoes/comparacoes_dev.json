@@ -2764,6 +2764,322 @@
         }
       },
       "seed": 42
+    },
+    {
+      "a": "pair_aware|BioBERTpt-all",
+      "b": "cls_direto|BioBERTpt-all",
+      "grupo": "Ablação: efeito dos marcadores, sem pooler",
+      "mcnemar": {
+        "b_only_a_correct": 444,
+        "c_only_b_correct": 274,
+        "n_discordant": 718,
+        "p_value": 2.3581557139478997e-10
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.02099263012436664,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.008366087031790337,
+            0.0338148690164223
+          ],
+          "media_bootstrap": 0.02103893914774345,
+          "p_bilateral": 0.0016
+        },
+        "f1_negation_of": {
+          "diferenca": 0.009352767655734895,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.013567516581278083,
+            0.03251219343991522
+          ],
+          "media_bootstrap": 0.009441973742006142,
+          "p_bilateral": 0.4316
+        },
+        "macro_f1": {
+          "diferenca": 0.011825682774229573,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0028037921074907214,
+            0.020907826799391238
+          ],
+          "media_bootstrap": 0.01187200412513217,
+          "p_bilateral": 0.0098
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.02099263012436664,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.006150364488325748,
+            0.0348015749796408
+          ],
+          "media_bootstrap": 0.02089011386135132,
+          "p_bilateral": 0.0064
+        },
+        "f1_negation_of": {
+          "diferenca": 0.009352767655734895,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.01697716771016018,
+            0.03636580046754181
+          ],
+          "media_bootstrap": 0.009182450926470381,
+          "p_bilateral": 0.5188
+        },
+        "macro_f1": {
+          "diferenca": 0.011825682774229573,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0013834009500227396,
+            0.022115869115456353
+          ],
+          "media_bootstrap": 0.011733429290503625,
+          "p_bilateral": 0.0286
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware_pooler|BioBERTpt-all",
+      "b": "baseline|BioBERTpt-all",
+      "grupo": "Ablação: efeito dos marcadores, com pooler",
+      "mcnemar": {
+        "b_only_a_correct": 650,
+        "c_only_b_correct": 215,
+        "n_discordant": 865,
+        "p_value": 1.702454026292574e-51
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.045869457329476726,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.03167214377869902,
+            0.059622498336523985
+          ],
+          "media_bootstrap": 0.04585181768622052,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.03453536521986955,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.013662243293530985,
+            0.05738757675913619
+          ],
+          "media_bootstrap": 0.03458325764026035,
+          "p_bilateral": 0.0012
+        },
+        "macro_f1": {
+          "diferenca": 0.031163328481084385,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.022326473926300668,
+            0.040422209545862016
+          ],
+          "media_bootstrap": 0.03117176883871682,
+          "p_bilateral": 0.0
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.045869457329476726,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.028290930575306933,
+            0.06293644961597798
+          ],
+          "media_bootstrap": 0.04580246986528786,
+          "p_bilateral": 0.0
+        },
+        "f1_negation_of": {
+          "diferenca": 0.03453536521986955,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.007317870786387808,
+            0.06370255101181166
+          ],
+          "media_bootstrap": 0.03426550132588282,
+          "p_bilateral": 0.0104
+        },
+        "macro_f1": {
+          "diferenca": 0.031163328481084385,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.019982968959038474,
+            0.04316098398555727
+          ],
+          "media_bootstrap": 0.03105707552938581,
+          "p_bilateral": 0.0
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "cls_direto|BioBERTpt-all",
+      "b": "baseline|BioBERTpt-all",
+      "grupo": "Ablação: efeito de retirar o pooler, sem marcadores",
+      "mcnemar": {
+        "b_only_a_correct": 431,
+        "c_only_b_correct": 268,
+        "n_discordant": 699,
+        "p_value": 7.525260849168164e-10
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": 0.007485618945638373,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.004198252195446096,
+            0.018895696232284053
+          ],
+          "media_bootstrap": 0.007402875582539605,
+          "p_bilateral": 0.2184
+        },
+        "f1_negation_of": {
+          "diferenca": 0.017799110044497746,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0056381331659926944,
+            0.0420364919133042
+          ],
+          "media_bootstrap": 0.017732202347099137,
+          "p_bilateral": 0.135
+        },
+        "macro_f1": {
+          "diferenca": 0.01008129422248294,
+          "diferenca_na_seed42": "positiva",
+          "ic95": [
+            0.0009770599276409998,
+            0.01934702599259775
+          ],
+          "media_bootstrap": 0.010027660290898603,
+          "p_bilateral": 0.0268
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": 0.007485618945638373,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.007620966564385654,
+            0.021930455729631197
+          ],
+          "media_bootstrap": 0.007379233486296212,
+          "p_bilateral": 0.331
+        },
+        "f1_negation_of": {
+          "diferenca": 0.017799110044497746,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.012228928139156122,
+            0.04974869389010662
+          ],
+          "media_bootstrap": 0.017700916954533765,
+          "p_bilateral": 0.2566
+        },
+        "macro_f1": {
+          "diferenca": 0.01008129422248294,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.0001389822112360966,
+            0.020984801466182965
+          ],
+          "media_bootstrap": 0.010013801693516223,
+          "p_bilateral": 0.0528
+        }
+      },
+      "seed": 42
+    },
+    {
+      "a": "pair_aware|BioBERTpt-all",
+      "b": "pair_aware_pooler|BioBERTpt-all",
+      "grupo": "Ablação: efeito de retirar o pooler, com marcadores",
+      "mcnemar": {
+        "b_only_a_correct": 199,
+        "c_only_b_correct": 301,
+        "n_discordant": 500,
+        "p_value": 5.851556519806232e-06
+      },
+      "n": 19064,
+      "n_boot": 10000,
+      "n_documentos": 98,
+      "por_candidato": {
+        "f1_associated_with": {
+          "diferenca": -0.017391208259471713,
+          "diferenca_na_seed42": "negativa",
+          "ic95": [
+            -0.02878165384378198,
+            -0.005995114098632306
+          ],
+          "media_bootstrap": -0.017410002955937472,
+          "p_bilateral": 0.0044
+        },
+        "f1_negation_of": {
+          "diferenca": -0.007383487519636911,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.026129066113983905,
+            0.010899719833313467
+          ],
+          "media_bootstrap": -0.007409081551155073,
+          "p_bilateral": 0.4548
+        },
+        "macro_f1": {
+          "diferenca": -0.009256351484371872,
+          "diferenca_na_seed42": "negativa",
+          "ic95": [
+            -0.01689027888720387,
+            -0.001793972839885047
+          ],
+          "media_bootstrap": -0.009272104422686046,
+          "p_bilateral": 0.0156
+        }
+      },
+      "por_documento": {
+        "f1_associated_with": {
+          "diferenca": -0.017391208259471713,
+          "diferenca_na_seed42": "negativa",
+          "ic95": [
+            -0.030236225417770515,
+            -0.005189351620079647
+          ],
+          "media_bootstrap": -0.017533122517640325,
+          "p_bilateral": 0.003
+        },
+        "f1_negation_of": {
+          "diferenca": -0.007383487519636911,
+          "diferenca_na_seed42": "não detectada",
+          "ic95": [
+            -0.025600991647463447,
+            0.01148547834713013
+          ],
+          "media_bootstrap": -0.007382133444878679,
+          "p_bilateral": 0.4468
+        },
+        "macro_f1": {
+          "diferenca": -0.009256351484371872,
+          "diferenca_na_seed42": "negativa",
+          "ic95": [
+            -0.017466847366312103,
+            -0.0007962389185052465
+          ],
+          "media_bootstrap": -0.009309844545365964,
+          "p_bilateral": 0.0346
+        }
+      },
+      "seed": 42
     }
   ],
   "proveniencia": {
@@ -2782,7 +3098,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "execucoes",
+    "execucoes": "resultados-colab@0c08b746385b",
     "n_boot": 10000,
     "seed_bootstrap": 42
   }

@@ -109,3 +109,60 @@ def test_congelar_recusa_limiar_que_a_regra_nao_escolhe(tmp_path):
         limiar.congelar(tmp_path / limiar.ARQUIVO, limiar=outro, regra="r", vinculos={}, tabela=tabela)
     with pytest.raises(limiar.ErroLimiar, match="fora da grade"):
         limiar.congelar(tmp_path / limiar.ARQUIVO, limiar=0.33, regra="r", vinculos={}, tabela=tabela)
+
+
+# --------------------------------------------------------------------------- #
+# Critério alternativo: maior precisão com piso de recall (configuração final) #
+# --------------------------------------------------------------------------- #
+def _linha_neg(t, tp, fp, fn):
+    """Uma linha de tabela com as contagens de negation_of (as outras classes fixas)."""
+    return {"limiar": t, "contagens": {"negation_of": {"tp": tp, "fp": fp, "fn": fn},
+                                       "associated_with": {"tp": 5, "fp": 5, "fn": 5},
+                                       "no_relation": {"tp": 50, "fp": 5, "fn": 5}}}
+
+
+def test_configuracao_padrao_inalterada_pelo_criterio_opcional():
+    cfg = limiar.configuracao_busca("r")
+    assert "criterio_alternativo" not in cfg and cfg["criterio"] == limiar.CRITERIO
+    assert limiar.hash_configuracao("r") == limiar.hash_configuracao("r", limiar.GRADE, None)
+    alt = limiar.PrecisaoComPisoDeRecall(Fraction(4, 5))
+    assert limiar.hash_configuracao("r", criterio=alt) != limiar.hash_configuracao("r")
+    assert limiar.criterio_do_registro(limiar.configuracao_busca("r", criterio=alt)) == alt
+    assert limiar.criterio_do_registro(cfg) is None
+
+
+def test_precisao_com_piso_de_recall():
+    alt = limiar.PrecisaoComPisoDeRecall(Fraction(4, 5))
+    tabela = [_linha_neg(0.5, 131, 33, 19),      # R 0,873; P 0,799
+              _linha_neg(0.75, 121, 28, 29),     # R 0,807; P 0,812
+              _linha_neg(0.8, 120, 22, 30),      # R 0,800 (no piso); P 0,845
+              _linha_neg(0.85, 115, 21, 35),     # R 0,767 (abaixo do piso); P 0,846
+              _linha_neg(0.95, 95, 10, 55)]      # R 0,633; P 0,905
+    assert limiar.escolhido_da_tabela(tabela, alt) == 0.8
+    assert limiar.escolhido_da_tabela(tabela) == 0.5            # o critério padrão (F1) escolhe outro
+    with pytest.raises(limiar.ErroLimiar, match="piso de recall"):
+        limiar.escolhido_da_tabela([_linha_neg(0.9, 10, 0, 90)], alt)
+    # empate em precisão e F1 -> maior macro-F1 -> menor limiar
+    empate = [_linha_neg(0.6, 80, 20, 20), _linha_neg(0.4, 80, 20, 20)]
+    assert limiar.escolhido_da_tabela(empate, alt) == 0.4
+    with pytest.raises(ValueError, match="piso"):
+        limiar.PrecisaoComPisoDeRecall(Fraction(0))
+
+
+def test_congelar_e_conferir_com_o_criterio_alternativo(tmp_path):
+    alt = limiar.PrecisaoComPisoDeRecall(Fraction(1, 2))
+    y_true = [NEG, NEG, NEG, NEG, NOREL, NOREL, NOREL, ASSOC]
+    probs = [0.9, 0.7, 0.6, 0.3, 0.65, 0.2, 0.1, 0.05]
+
+    def prever(t):
+        return [NEG if p >= t else NOREL for p in probs]
+
+    t, tabela = limiar.buscar(y_true, prever, criterio=alt)
+    assert t == 0.7                       # recall 1/2 com precisão 1 (0,65 < 0,70 deixa de ser FP)
+    caminho = tmp_path / limiar.ARQUIVO
+    limiar.congelar(caminho, limiar=t, regra="r", vinculos={"v": 1}, tabela=tabela, criterio=alt)
+    gravado = ler_json(caminho)
+    assert gravado["configuracao_busca"]["criterio_alternativo"] == {"nome": alt.NOME, "piso_recall": "1/2"}
+    assert limiar.conferir_congelado(caminho, regra="r", vinculos={"v": 1}, criterio=alt) == 0.7
+    with pytest.raises(limiar.ErroLimiar, match="configuração da busca"):
+        limiar.conferir_congelado(caminho, regra="r", vinculos={"v": 1})          # sem o critério: recusa

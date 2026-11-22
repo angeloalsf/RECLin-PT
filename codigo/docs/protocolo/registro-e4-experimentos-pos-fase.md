@@ -39,7 +39,8 @@ nem as métricas principais.
 
 Estratégias `cls_direto` e `pair_aware_pooler`
 (`docs/estrategias/ablacao-pooler.md`), BioBERTpt-all, semente 42, mesmos
-hiperparâmetros. **Ainda não executadas.** Análise prevista, no DEV, com
+hiperparâmetros. **Executadas em 20/11/2026 e analisadas em 22/11/2026, conforme este
+plano; resultados em `docs/estrategias/ablacao-pooler.md`.** Análise prevista, no DEV, com
 `diagnosticos/auditar_execucoes.py` (comparações já declaradas):
 
 | Efeito | Comparação |

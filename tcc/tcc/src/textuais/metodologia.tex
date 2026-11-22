@@ -30,8 +30,12 @@ entropia cruzada. O gradiente dessa perda é propagado de volta por toda a rede
 \emph{encoder}. Como as classes são muito desbalanceadas, a perda de cada exemplo é
 ponderada pelo inverso da frequência de sua classe no treino, com peso
 $n/(K\cdot n_c)$, em que $n$ é o número de exemplos, $K$ o número de classes e $n_c$
-o número de exemplos da classe $c$. Sem essa ponderação, o modelo minimizaria o erro
-prevendo \texttt{no\_relation} para quase tudo.
+o número de exemplos da classe $c$. A ponderação compensa a tendência do modelo de
+favorecer \texttt{no\_relation}, a classe majoritária. Na Pair-Aware Linear, o
+efeito medido de retirá-la foi deslocar o ponto de operação de \texttt{negation\_of}
+em direção à precisão, sem colapso das classes minoritárias
+(Seção~\ref{sec:resultados_sem_pesos}), e a configuração final usa a perda sem
+ponderação.
 
 O procedimento de treino é o mesmo para todas as estratégias treinadas e segue a
 configuração do Quadro~\ref{quad:hiperparametros}. Os exemplos de treino são
@@ -64,7 +68,7 @@ interrompido exatamente do ponto em que parou.
   Otimizador & AdamW; taxa de aprendizado $2\times10^{-5}$; \emph{weight decay} $0{,}01$ \\
   Escalonador & linear, com aquecimento nos primeiros 10\% dos passos \\
   Norma máxima do gradiente & 1,0 \\
-  Perda & entropia cruzada ponderada (\texttt{class\_weight="balanced"}), com pesos calculados no treino de cada estratégia ou estágio \\
+  Perda & entropia cruzada ponderada (\texttt{class\_weight="balanced"}), com pesos calculados no treino de cada estratégia ou estágio; na configuração final, sem ponderação \\
   Épocas & 3 (estratégias de três rótulos e estágio 1 do Two-Stage); 10 (estágio 2) \\
   Seleção da época & maior macro-F1 no DEV (estratégias de três rótulos); critérios próprios nos estágios do Two-Stage \\
   Semente & 42 \\
@@ -520,7 +524,12 @@ usam somente o DEV, com a exceção do léxico, induzido só do treino:
         calibrado são escolhidos numa grade de $0{,}05$ a $0{,}95$, com passo de
         $0{,}05$, pelo maior F1 de \texttt{negation\_of} da saída final no DEV
         (desempates: maior macro-F1, menor distância de $0{,}5$, maior limiar) e
-        congelados em arquivo vinculado aos \emph{hashes} dos modelos e do DEV.
+        congelados em arquivo vinculado aos \emph{hashes} dos modelos e do DEV. O
+        limiar $t$ da configuração final usa a mesma grade e a mesma forma de
+        registro, mas outro critério: a maior precisão de \texttt{negation\_of}
+        entre os limiares com \emph{recall} de pelo menos $0{,}80$
+        (Seção~\ref{sec:regra_final}). Esse critério foi definido depois de
+        conhecidos os resultados do DEV.
   \item Léxico de pistas: o léxico usado pelo filtro foi congelado antes
         da fase, por validação cruzada só no treino (Seção~\ref{sec:filtro}).
 \end{itemize}
@@ -532,7 +541,11 @@ configuração. Essa regra é também imposta pelo código: a avaliação no tes
 recusada sem um registro de congelamento que identifique a execução, pelos
 \emph{hashes} de sua configuração, de suas predições no DEV e de seus pesos. Cada
 avaliação fica registrada em trilha própria, e uma segunda avaliação é recusada,
-salvo pedido explícito, que também fica registrado. Até a conclusão deste texto, a configuração final não havia sido
+salvo pedido explícito, que também fica registrado. Na configuração final, que aplica
+um limiar às probabilidades de um modelo treinado, o registro inclui também os
+\emph{hashes} desse modelo, e a avaliação tem dois passos sob a mesma liberação: o
+modelo prevê o teste uma vez e o limiar congelado é aplicado a essas predições. Até
+a conclusão deste texto, a configuração final havia sido definida, mas não
 congelada, e nenhuma das configurações apresentadas foi avaliada no teste. Por
 isso, todos os resultados do Capítulo~\ref{cap:experimentos} são de DEV. Os do
 Two-Stage e do baseline calibrado são, além disso, otimistas por construção, porque

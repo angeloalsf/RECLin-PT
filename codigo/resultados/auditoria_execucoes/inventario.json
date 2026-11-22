@@ -4,6 +4,22 @@
       "0526d9123ecc|22339ff5cbfb": [
         "reclin/config.py"
       ],
+      "0526d9123ecc|6d37bb304dfc": [
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/ablacao_pooler/__init__.py",
+        "reclin/estrategias/ablacao_pooler/cabeca.py",
+        "reclin/estrategias/baseline_calibrado.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/two_stage/composicao.py",
+        "reclin/execucao/congelamento.py",
+        "reclin/treino/classificador.py",
+        "scripts/avaliar_test.py",
+        "scripts/baseline_calibrado.py",
+        "scripts/congelar.py",
+        "scripts/treinar.py",
+        "scripts/two_stage.py"
+      ],
       "0526d9123ecc|8a6c194680c7": [
         "reclin/config.py",
         "reclin/estrategias/__init__.py",
@@ -24,6 +40,23 @@
         "scripts/avaliar_test.py",
         "scripts/treinar.py"
       ],
+      "22339ff5cbfb|6d37bb304dfc": [
+        "reclin/config.py",
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/ablacao_pooler/__init__.py",
+        "reclin/estrategias/ablacao_pooler/cabeca.py",
+        "reclin/estrategias/baseline_calibrado.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/two_stage/composicao.py",
+        "reclin/execucao/congelamento.py",
+        "reclin/treino/classificador.py",
+        "scripts/avaliar_test.py",
+        "scripts/baseline_calibrado.py",
+        "scripts/congelar.py",
+        "scripts/treinar.py",
+        "scripts/two_stage.py"
+      ],
       "22339ff5cbfb|8a6c194680c7": [
         "reclin/estrategias/__init__.py",
         "reclin/estrategias/pair_aware/__init__.py",
@@ -42,6 +75,45 @@
         "scripts/avaliar_test.py",
         "scripts/treinar.py"
       ],
+      "6d37bb304dfc|8a6c194680c7": [
+        "reclin/config.py",
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/ablacao_pooler/__init__.py",
+        "reclin/estrategias/ablacao_pooler/cabeca.py",
+        "reclin/estrategias/baseline_calibrado.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware/cabeca.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "reclin/estrategias/restrito.py",
+        "reclin/estrategias/two_stage/composicao.py",
+        "reclin/execucao/congelamento.py",
+        "reclin/execucao/subconjunto.py",
+        "reclin/treino/classificador.py",
+        "scripts/avaliar_test.py",
+        "scripts/baseline_calibrado.py",
+        "scripts/congelar.py",
+        "scripts/treinar.py",
+        "scripts/two_stage.py"
+      ],
+      "6d37bb304dfc|ecbb98cae7bc": [
+        "reclin/config.py",
+        "reclin/estrategias/__init__.py",
+        "reclin/estrategias/ablacao_pooler/__init__.py",
+        "reclin/estrategias/ablacao_pooler/cabeca.py",
+        "reclin/estrategias/baseline_calibrado.py",
+        "reclin/estrategias/pair_aware/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/__init__.py",
+        "reclin/estrategias/pair_aware_mlp/cabeca.py",
+        "reclin/estrategias/two_stage/composicao.py",
+        "reclin/execucao/congelamento.py",
+        "reclin/treino/classificador.py",
+        "scripts/avaliar_test.py",
+        "scripts/baseline_calibrado.py",
+        "scripts/congelar.py",
+        "scripts/treinar.py",
+        "scripts/two_stage.py"
+      ],
       "8a6c194680c7|ecbb98cae7bc": [
         "reclin/estrategias/__init__.py",
         "reclin/estrategias/pair_aware/__init__.py",
@@ -55,6 +127,7 @@
     "identidades": {
       "0526d9123ecc": 71,
       "22339ff5cbfb": 71,
+      "6d37bb304dfc": 75,
       "8a6c194680c7": 69,
       "ecbb98cae7bc": 69
     }
@@ -2845,6 +2918,326 @@
       "versoes_dados": {
         "dev": "v2-texto-fonte"
       }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "cls_direto",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/cls_direto__a59feee112b9__t1",
+          "hf": null,
+          "n_arquivos_drive": 15
+        },
+        "commit": "24596718b570c2a72dec08142d0e685a983c7b4c",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-11-20T15:15:41+0000"
+          ],
+          [
+            "iniciada",
+            "2026-11-20T15:15:41+0000"
+          ],
+          [
+            "concluida",
+            "2026-11-20T21:21:11+0000"
+          ]
+        ],
+        "identidade_global": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+        "publicacoes": [],
+        "run_id": "cls_direto__a59feee112b9__t1",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "c8d5506baa33dfe75797917c66103c97f08deae71b078eb9cb95ce36418a24da",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+      "n_arquivos_codigo": 75,
+      "nome_registrado": "cls_direto__a59feee112b9__t1",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "cls_direto__a59feee112b9__t1",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "df1e3c9eff92170419fa03e792ead882a7281e30f0cba5e9ca37ac5897066b4a",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.5046007969333077,
+            "dev_macro_f1": 0.6999786161831394,
+            "dev_negation_of_f1": 0.7774647887323943,
+            "duration_s": 3937.3,
+            "epoch": 1,
+            "train_loss": 0.5774650152691477
+          },
+          {
+            "dev_loss": 0.3455089329610635,
+            "dev_macro_f1": 0.7055360556095821,
+            "dev_negation_of_f1": 0.7988505747126436,
+            "duration_s": 4021.5,
+            "epoch": 2,
+            "train_loss": 0.3025348348299483
+          },
+          {
+            "dev_loss": 0.3866781651727221,
+            "dev_macro_f1": 0.7287431641208721,
+            "dev_negation_of_f1": 0.8200589970501475,
+            "duration_s": 2671.6,
+            "epoch": 3,
+            "train_loss": 0.24087129924399506
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.6999786161831394,
+          0.7055360556095821,
+          0.7287431641208721
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7287431641208721,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177268227,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 4,
+            "fim": "2026-11-20T21:18:58+0000",
+            "identidade_codigo": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+            "inicio": "2026-11-20T20:28:50+0000",
+            "retomada_do_passo": 5500,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
+    },
+    {
+      "arquivos": [
+        "config.json",
+        "experimento.json",
+        "metricas.json",
+        "predicoes_dev.json",
+        "treino.json"
+      ],
+      "conjunto_dev": {
+        "candidatos_sha256": "d3401d56b109baa9ca913798f65270a9de403ed36c0b45e3f57dd037cedf6c31",
+        "max_gap": 25,
+        "n_candidatos": 19064,
+        "particao": "dev",
+        "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+      },
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware_pooler",
+      "experimento": {
+        "alias_oficial": null,
+        "branch": "main",
+        "checkpoints": {
+          "drive": "/content/drive/MyDrive/RECLin-PT/execucoes/pair_aware_pooler__2d00c2e15bfb__t3",
+          "hf": null,
+          "n_arquivos_drive": 15
+        },
+        "commit": "24596718b570c2a72dec08142d0e685a983c7b4c",
+        "estado": "concluida",
+        "gpu": "Tesla T4",
+        "historico_de_estados": [
+          [
+            "planejada",
+            "2026-11-20T15:05:45+0000"
+          ],
+          [
+            "iniciada",
+            "2026-11-20T15:05:45+0000"
+          ],
+          [
+            "concluida",
+            "2026-11-20T20:52:25+0000"
+          ]
+        ],
+        "identidade_global": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+        "publicacoes": [],
+        "run_id": "pair_aware_pooler__2d00c2e15bfb__t3",
+        "sha256_metricas_confere": true,
+        "sha256_metricas_registrado": "59b6e1413fedda803a15824db0f5b936b631fff762f6711e9a414e4f5274c3fc",
+        "versoes": {
+          "huggingface_hub": "1.29.0",
+          "numpy": "2.1.3",
+          "safetensors": "0.8.0",
+          "scipy": "1.16.3",
+          "tokenizers": "0.23.2",
+          "torch": "2.11.0",
+          "transformers": "5.16.1"
+        }
+      },
+      "fora_do_repositorio": [
+        "checkpoints (Drive)",
+        "logs de console do Colab"
+      ],
+      "hiperparametros": {
+        "batch_size": 64,
+        "class_weight": "balanced",
+        "ctx_chars": 128,
+        "epochs": 3,
+        "lr": 2e-05,
+        "max_gap": 25,
+        "max_grad_norm": 1.0,
+        "max_length": 128,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      },
+      "identidade_codigo": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+      "n_arquivos_codigo": 75,
+      "nome_registrado": "pair_aware_pooler__2d00c2e15bfb__t3",
+      "particoes_sha256": {
+        "dev": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
+        "train": "b8aaafce423afb9cda49fa5d116c14b14d6b9c2d09a0521bff4ef8733305d034"
+      },
+      "pasta": "pair_aware_pooler__2d00c2e15bfb__t3",
+      "pesos": {
+        "commit": "36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "hash_manifesto": "d688e736de72eb8658da43255aab4a960d84231bdf2717c826bdc6cdd303e4fd",
+        "repositorio": "pucpr/biobertpt-all"
+      },
+      "predicoes": {
+        "melhor_epoca": 3,
+        "modelo": "/content/reclin_pesos/biobertpt-all@36b11cfdfa49876b108fdbe88eaeeb9be3b03f1c",
+        "n": 19064,
+        "tem_probabilidades": true
+      },
+      "seed": 42,
+      "sha256_config_canonico": "e112cc8051ab65f637e7caada4773a03cfa3bcc7e89b05aac4cafac261233b43",
+      "tipo": "execucao",
+      "treino": {
+        "campo_selecao": "dev_macro_f1",
+        "concluido": true,
+        "dev_history": [
+          {
+            "dev_loss": 0.37586663856595715,
+            "dev_macro_f1": 0.7150046338736727,
+            "dev_negation_of_f1": 0.8034188034188035,
+            "duration_s": 3445.2,
+            "epoch": 1,
+            "train_loss": 0.40552822585012344
+          },
+          {
+            "dev_loss": 0.34252053640277713,
+            "dev_macro_f1": 0.7332121411968898,
+            "dev_negation_of_f1": 0.8197674418604651,
+            "duration_s": 3522.3,
+            "epoch": 2,
+            "train_loss": 0.2451506298461231
+          },
+          {
+            "dev_loss": 0.3905069739372974,
+            "dev_macro_f1": 0.7498251983794736,
+            "dev_negation_of_f1": 0.8367952522255193,
+            "duration_s": 1284.6,
+            "epoch": 3,
+            "train_loss": 0.18214283970673315
+          }
+        ],
+        "epocas_previstas": 3,
+        "epocas_registradas": 3,
+        "historico_selecao": [
+          0.7150046338736727,
+          0.7332121411968898,
+          0.7498251983794736
+        ],
+        "melhor_epoca": 3,
+        "melhor_epoca_confere": true,
+        "melhor_valor": 0.7498251983794736,
+        "n_candidatos": {
+          "dev": 19064,
+          "train": 152686
+        },
+        "n_params": 177863427,
+        "passos_por_epoca": 2386,
+        "restaurou_melhor_estado": true,
+        "sessoes": [
+          {
+            "checkpoints_gravados": 2,
+            "fim": "2026-11-20T20:52:19+0000",
+            "identidade_codigo": "6d37bb304dfc9157f5be4f7a282ddb1d6dd6ac1e5d9cab9f64df241867762f26",
+            "inicio": "2026-11-20T20:27:00+0000",
+            "retomada_do_passo": 6500,
+            "status": "concluido",
+            "tipo": "retomada"
+          }
+        ],
+        "sha256_melhor_modelo": null,
+        "test_avaliado": false
+      },
+      "versoes_dados": {
+        "dev": "v2-texto-fonte"
+      }
     }
   ],
   "proveniencia": {
@@ -2863,7 +3256,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "execucoes",
+    "execucoes": "resultados-colab@0c08b746385b",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },

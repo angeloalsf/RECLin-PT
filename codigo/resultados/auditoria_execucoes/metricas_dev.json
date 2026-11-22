@@ -15,7 +15,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "execucoes",
+    "execucoes": "resultados-colab@0c08b746385b",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },
@@ -434,6 +434,75 @@
       "sha256_predicoes": "421d91c644625873afd55e3128cb137f50e08be1448f27b69dffe57d089ff986",
       "weighted_f1": 0.9302671071575799
     },
+    "cls_direto|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.39638846260540617,
+        "negation_of": 0.8644860108897237,
+        "no_relation": 0.9972856585193397
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "cls_direto",
+      "macro_f1": 0.7287431641208721,
+      "matriz_confusao": [
+        [
+          139,
+          3,
+          8
+        ],
+        [
+          4,
+          594,
+          165
+        ],
+        [
+          46,
+          1500,
+          16605
+        ]
+      ],
+      "mcc": 0.4791039987375224,
+      "micro_f1": 0.9094628619387327,
+      "n": 19064,
+      "papel": "ablação do pooler (exploratória)",
+      "pasta": "cls_direto__a59feee112b9__t1",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.4153846153846154,
+          "fn": 169,
+          "fp": 1503,
+          "precision": 0.2832618025751073,
+          "recall": 0.7785058977719528,
+          "support": 763,
+          "tp": 594
+        },
+        "negation_of": {
+          "f1": 0.8200589970501475,
+          "fn": 11,
+          "fp": 50,
+          "precision": 0.7354497354497355,
+          "recall": 0.9266666666666666,
+          "support": 150,
+          "tp": 139
+        },
+        "no_relation": {
+          "f1": 0.9507858799278537,
+          "fn": 1546,
+          "fp": 173,
+          "precision": 0.9896888782930028,
+          "recall": 0.914825629441904,
+          "support": 18151,
+          "tp": 16605
+        }
+      },
+      "rotulo": "Baseline sem pooler ([CLS] direto) (BioBERTpt-all)",
+      "sha256_predicoes": "325554b3cfb4f6faed5080385bc80d7180aabd00a53d2ce309da21fee4e52af8",
+      "weighted_f1": 0.9283288825884629
+    },
     "filtro_pistas|BERTimbau": {
       "confere_matriz_gravada": true,
       "confere_metricas_json": true,
@@ -691,6 +760,75 @@
       "rotulo": "Pair-Aware MLP (BioBERTpt-all)",
       "sha256_predicoes": "4177351fe3f74d1097a6926d218324e96f91588a79963f10c8c0cc836999f0d0",
       "weighted_f1": 0.9344415799363021
+    },
+    "pair_aware_pooler|BioBERTpt-all": {
+      "ap": {
+        "associated_with": 0.4437355052116251,
+        "negation_of": 0.8373208633301199,
+        "no_relation": 0.9974244483099991
+      },
+      "confere_macro_f1_sidecar": true,
+      "confere_matriz_gravada": true,
+      "confere_metricas_json": true,
+      "confere_y_true_particao": true,
+      "confere_y_true_sha256": true,
+      "encoder": "BioBERTpt-all",
+      "estrategia": "pair_aware_pooler",
+      "macro_f1": 0.7498251983794736,
+      "matriz_confusao": [
+        [
+          141,
+          3,
+          6
+        ],
+        [
+          4,
+          584,
+          175
+        ],
+        [
+          42,
+          1224,
+          16885
+        ]
+      ],
+      "mcc": 0.5119106806264637,
+      "micro_f1": 0.9237305916911456,
+      "n": 19064,
+      "papel": "ablação do pooler (exploratória)",
+      "pasta": "pair_aware_pooler__2d00c2e15bfb__t3",
+      "por_classe": {
+        "associated_with": {
+          "f1": 0.45376845376845376,
+          "fn": 179,
+          "fp": 1227,
+          "precision": 0.3224737713970182,
+          "recall": 0.765399737876802,
+          "support": 763,
+          "tp": 584
+        },
+        "negation_of": {
+          "f1": 0.8367952522255193,
+          "fn": 9,
+          "fp": 46,
+          "precision": 0.7540106951871658,
+          "recall": 0.94,
+          "support": 150,
+          "tp": 141
+        },
+        "no_relation": {
+          "f1": 0.9589118891444472,
+          "fn": 1266,
+          "fp": 181,
+          "precision": 0.9893941169576936,
+          "recall": 0.930251776761611,
+          "support": 18151,
+          "tp": 16885
+        }
+      },
+      "rotulo": "Pair-Aware linear com pooler (BioBERTpt-all)",
+      "sha256_predicoes": "9cd12647b7241eab26df37ffdc26d8e79b04876a0b31d91b2323d126f2574437",
+      "weighted_f1": 0.937733650751155
     },
     "pair_aware_sem_pesos|BioBERTpt-all": {
       "ap": {

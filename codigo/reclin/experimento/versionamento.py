@@ -40,11 +40,20 @@ ARQUIVOS_DA_EXECUCAO = ("config.json", "treino.json", "experimento.json", "predi
 #  * estagio    — um estágio do Two-Stage: configuração e histórico do treino por época;
 #  * composicao — a composição do Two-Stage: τ congelado, tabela da busca (dentro de `limiar.json`),
 #                 métricas do DEV do pipeline e as predições/probabilidades do DEV.
+#  * reempacotada — uma execução reempacotada sob o código atual (`treino.reempacotamento`): a mesma
+#                 configuração da base, o histórico dela com a prova de equivalência no DEV, as predições e
+#                 as métricas do DEV recalculadas (não tem `experimento.json`).
+#  * derivada   — uma regra de decisão sobre as probabilidades de uma base (`pair_aware_limiar`): a
+#                 configuração (com a base), o limiar congelado com a tabela da busca, as predições e as
+#                 métricas do DEV.
 PERFIS: dict[str, tuple[str, ...]] = {
     "execucao": ARQUIVOS_DA_EXECUCAO,
     "estagio": ("config.json", "treino.json"),
     "composicao": ("limiar.json", "metricas.json", "predicoes_dev.json"),
+    "reempacotada": ("config.json", "treino.json", "predicoes_dev.json", "metricas.json"),
+    "derivada": ("config.json", "limiar.json", "metricas.json", "predicoes_dev.json"),
 }
+SEM_EXPERIMENTO_JSON = ("composicao", "reempacotada", "derivada")
 BASE_DESTINO = "codigo/resultados/execucoes"
 BRANCHES_RECUSADAS = ("main", "master")
 LIMITE_DE_TEXTO = 200
@@ -163,7 +172,7 @@ def plano_de_salvamento(pasta: str | Path, perfil: str = "execucao") -> dict[str
     if not pasta.is_dir():
         return {"nome": pasta.name, "pasta": str(pasta), "arquivos": {}, "excluidos": [], "registro": None,
                 "problemas": [f"a pasta {pasta} não existe"]}
-    if perfil != "composicao":
+    if perfil not in SEM_EXPERIMENTO_JSON:
         try:
             registro = proveniencia.ler(pasta)
         except proveniencia.ErroProveniencia as erro:
@@ -192,7 +201,7 @@ def plano_de_salvamento(pasta: str | Path, perfil: str = "execucao") -> dict[str
             problemas.append("treino.json diz que o treino não foi concluído")
         if perfil == "estagio" and relativo == "config.json" and "validacao" in ((conteudo.get("config") or {})):
             problemas.append("config.json é de uma execução de validação técnica: não é resultado da fase")
-        if perfil == "composicao" and relativo == "limiar.json":
+        if perfil in ("composicao", "derivada") and relativo == "limiar.json":
             if "validacao" in conteudo:
                 problemas.append("limiar.json é de uma composição de validação técnica: não é resultado da fase")
             if "limiar" not in conteudo or "tabela" not in conteudo:
@@ -204,11 +213,11 @@ def plano_de_salvamento(pasta: str | Path, perfil: str = "execucao") -> dict[str
             if "dev" not in conteudo:
                 problemas.append("metricas.json não tem a chave 'dev'")
         if relativo == "predicoes_dev.json":
-            motivos = (_predicoes_da_composicao_sem_texto(conteudo) if perfil == "composicao"
+            motivos = (_predicoes_da_composicao_sem_texto(conteudo) if perfil in SEM_EXPERIMENTO_JSON
                        else sem_texto_clinico(conteudo))
             problemas += [f"predicoes_dev.json contém texto? {m}" for m in motivos]
-    if perfil == "composicao" and (pasta / "predicoes_test.json").exists():
-        problemas.append("há artefatos do TEST nesta composição: não é versionada por aqui")
+    if perfil in SEM_EXPERIMENTO_JSON and (pasta / "predicoes_test.json").exists():
+        problemas.append("há artefatos do TEST nesta execução: não é versionada por aqui")
     excluidos = [{"arquivo": a.relative_to(pasta).as_posix(), "motivo": _motivo_de_exclusao(a.relative_to(pasta).as_posix())}
                  for a in sorted(pasta.rglob("*")) if a.is_file() and a.relative_to(pasta).as_posix() not in arquivos]
     return {"nome": pasta.name, "pasta": str(pasta), "arquivos": arquivos, "excluidos": excluidos,

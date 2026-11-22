@@ -1,6 +1,10 @@
 # Ablação do pooler (Etapa 5, M3)
 
-Estado: **código, testes e notebooks prontos; nenhuma execução real feita.**
+Estado: **executada no Colab (T4) e analisada no DEV em 22/11/2026.** Execuções
+`cls_direto__a59feee112b9__t1` e `pair_aware_pooler__2d00c2e15bfb__t3` (a `t2` falhou na
+importação, por incompatibilidade torch/torchvision do ambiente, antes de treinar), branch
+`resultados-colab@0c08b746385b`, código `24596718` (identidade `6d37bb304dfc`), torch 2.11.0,
+transformers 5.16.1. `pooler_do_checkpoint: true` na variante com pooler.
 
 ## Por quê
 
@@ -58,3 +62,25 @@ As pastas terão nomes `cls_direto__<config_id>__t1` e
 
 `diagnosticos/auditar_execucoes.py` sobre a branch de resultados atualizada; o
 plano está em `docs/protocolo/registro-e4-experimentos-pos-fase.md`, seção 4.
+
+## Resultados (DEV, semente 42)
+
+Gerados por `diagnosticos/auditar_execucoes.py` (registros antigos conferidos e mantidos;
+2 sistemas e 4 comparações acrescentados) e pelas tabelas `dev_ablacao_pooler*` do TCC
+(`tcc/analise/gerar_tabelas_etapa5.py`).
+
+| Efeito (A − B), BioBERTpt-all | Δ F1 neg [IC doc] | Δ F1 assoc [IC doc] | Δ macro-F1 [IC doc] |
+| --- | --- | --- | --- |
+| ler marcadores, sem pooler (`pair_aware` − `cls_direto`) | +0,009 [−0,017; +0,036] | +0,021 [+0,006; +0,035]* | +0,012 [+0,001; +0,022]* |
+| ler marcadores, com pooler (`pair_aware_pooler` − `baseline`) | +0,035 [+0,007; +0,064]* | +0,046 [+0,028; +0,063]* | +0,031 [+0,020; +0,043]* |
+| retirar pooler, só [CLS] (`cls_direto` − `baseline`) | +0,018 [−0,012; +0,050] | +0,007 [−0,008; +0,022] | +0,010 [−0,0001; +0,021] (detectada só por candidato) |
+| retirar pooler, com marcadores (`pair_aware` − `pair_aware_pooler`) | −0,007 [−0,026; +0,011] | −0,017 [−0,030; −0,005]* | −0,009 [−0,017; −0,001]* |
+
+\* IC95% por documento exclui o zero. Métricas das quatro células (P/R/F1 neg, F1 assoc, macro-F1):
+baseline 0,696/0,947/0,802, 0,408, 0,719; `cls_direto` 0,735/0,927/0,820, 0,415, 0,729;
+`pair_aware_pooler` 0,754/0,940/0,837, 0,454, 0,750; Pair-Aware Linear 0,742/0,940/0,829, 0,436, 0,741.
+
+Leitura: o ganho da Pair-Aware Linear sobre o baseline vem da leitura dos marcadores; retirar o
+pooler não traz ganho detectado e, com marcadores, reduz macro-F1 e F1 de `associated_with`.
+`pair_aware_pooler` é exploratória, não elegível ao TEST e não entra na seleção (plano fixado
+antes, `docs/protocolo/registro-e4-experimentos-pos-fase.md`, §4). Uma semente, um encoder.

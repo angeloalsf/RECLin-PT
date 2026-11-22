@@ -237,10 +237,10 @@ O TCC deve formular as conclusões sobre estratégias e encoders nesses termos.
 | --- | --- | --- |
 | E3-D1 | Pair-Aware linear como arquitetura principal | **decidida** (02/11/2026): sim (A1) |
 | E3-D2 | Encoder | **decidida**: BioBERTpt-all como referência; outros encoders só experimentais (A2) |
-| E3-D3 | Critérios estatísticos das comparações no DEV e dos intervalos do TEST | **pendente** |
+| E3-D3 | Critérios estatísticos das comparações no DEV e dos intervalos do TEST | **decidida em 22/11/2026** em `emenda-configuracao-final.md` (texto a conferir pelo autor) |
 | E3-D4 | Sistemas avaliados no TEST | **decidida**: só o modelo final (A6) |
 | E3-D5 | Modelo final | **decidida**: definido depois dos experimentos e do congelamento (A5) |
-| E3-D6 | Critério de seleção da configuração final, no DEV | **pendente** (consequência de E3-D5) |
+| E3-D6 | Critério de seleção da configuração final, no DEV | **decidida em 22/11/2026** (alternativa nova, pós-DEV) em `emenda-configuracao-final.md` (texto a conferir pelo autor) |
 
 **Alternativas já levantadas para E3-D3**, nenhuma assumida:
 - (a) o procedimento atual do protocolo: bootstrap por candidato, sem correção;

@@ -20,7 +20,7 @@ sustentam e até onde.
 
 Na comparação com o baseline, cuja cabeça difere da Pair-Aware Linear na leitura dos marcadores e no uso do \emph{pooler} (Seção~\ref{sec:pairaware}), o padrão se repete nos três \emph{encoders}. A Pair-Aware Linear apresenta valores superiores de macro-F1 e de F1-score na classe \texttt{associated\_with}, com diferenças detectadas inclusive no nível de reamostragem por documento inteiro. Também apresenta F1-score superior na classe \texttt{negation\_of}, mas, nesse caso, a diferença é detectada apenas com o BioBERTpt-all. Esse padrão é compatível com um benefício da
 leitura explícita do par, que reduz os falsos positivos de \texttt{associated\_with}
-sem sacrificar o \emph{recall} de \texttt{negation\_of}, embora o desenho não separe esse efeito do da retirada do \emph{pooler}. Com uma única semente, além disso,
+sem sacrificar o \emph{recall} de \texttt{negation\_of}. A ablação do \emph{pooler} (Seção~\ref{sec:resultados_ablacao}) atribui esse benefício à leitura dos marcadores: retirar o \emph{pooler} não trouxe ganho detectado. Com uma única semente, além disso,
 ele não pode ser separado da variação do treino, e a repetição nos três
 \emph{encoders} reduz, mas não elimina, essa dúvida, porque cada combinação foi
 treinada uma única vez.
@@ -50,9 +50,26 @@ Parte deles pode corresponder a relações omitidas na anotação, já que cerca
 $37\%$ das entidades \texttt{Negation} não participam de nenhuma
 \texttt{negation\_of} anotada (Seção~\ref{sec:controles_tipo}). Distinguir erro do
 modelo de omissão da referência exige a adjudicação desses casos, e não um novo
-treino. A escolha entre os dois pontos de operação depende, por fim, do uso
+treino. A escolha entre os pontos de operação depende, por fim, do uso
 pretendido: a versão ponderada perde menos negações, e a versão sem pesos afirma
 menos negações inexistentes.
+
+A configuração final do RECLin-PT resolve essa escolha a favor da precisão, que é a
+prioridade declarada do trabalho para a classe \texttt{negation\_of}
+(Seção~\ref{sec:resultados_configuracao_final}). Com a regra
+P(\texttt{negation\_of})~$\geq 0{,}80$ sobre o modelo treinado sem pesos, o
+RECLin-PT afirma menos da metade das negações inexistentes da configuração anterior
+($22$ contra $49$ no DEV), ao custo de deixar de reconhecer $30$ das $150$ negações
+anotadas, contra $9$. Em uma aplicação em que uma negação atribuída por engano
+apaga um achado presente, como na busca de pacientes com um sintoma ou na
+sumarização de um prontuário, esse é o erro mais custoso, e o piso de \emph{recall}
+limita o custo no sentido oposto. A escolha não equivale a um modelo melhor: o F1
+de \texttt{negation\_of} não muda de forma detectável, e o que muda é o ponto da
+curva em que o modelo opera. Ela também carrega três fragilidades, que o teste
+deverá esclarecer. O critério foi definido depois de conhecida a curva do DEV, o
+limiar está exatamente no piso ($120$ de $150$ negações) e a calibração das
+probabilidades depende da semente, de modo que o mesmo limiar pode corresponder a
+outro ponto da curva com outra amostra ou outro treino.
 
 \section{O Two-Stage e o papel do limiar}
 \label{sec:discussao_twostage}
@@ -95,8 +112,8 @@ clínicas ajude a relação menos lexicalizada, mais dependente do contexto clí
 Para o RECLin-PT, a evidência disponível não basta para trocar o \emph{encoder} da
 Pair-Aware Linear. Considerando a métrica primária, os três \emph{encoders} apresentam resultados equivalentes no DEV. Pelo macro-F1 e pelo MCC, o BioBERTpt-clin apresenta os maiores valores, embora, no caso do macro-F1, não haja diferença estatisticamente detectável nos dois níveis de reamostragem. Além disso, a vantagem estatisticamente detectada concentra-se na classe \texttt{associated\_with}, que apresenta maior ruído na anotação. Quanto ao número de parâmetros, o BERTimbau-base é o \emph{encoder} de menor porte. Por isso, o BioBERTpt-all, fixado no protocolo, continua
 sendo o \emph{encoder} de referência, e os demais seguem como variantes
-experimentais, que só substituem a referência se assim indicar a seleção da
-configuração final, feita no DEV antes do congelamento.
+experimentais. A seleção da configuração final, feita no DEV antes do
+congelamento, manteve o BioBERTpt-all.
 
 \section{A classe \texttt{associated\_with}}
 
@@ -132,8 +149,9 @@ fundamentada.
 
 A limitação mais séria é a ausência de avaliação no teste. Todos os números são de
 DEV, o mesmo conjunto usado para escolher épocas e limiares. Os do Two-Stage e do
-baseline calibrado são otimistas por construção, e mesmo as escolhas de época
-introduzem algum otimismo nas demais estratégias. A avaliação definitiva será feita no teste, uma única vez, depois de congelada a configuração final, e se restringe ao modelo final. Assim, o teste estimará o desempenho do
+baseline calibrado são otimistas por construção, assim como os da configuração
+final, cujo limiar e cujo critério de escolha foram definidos no mesmo DEV, e mesmo
+as escolhas de época introduzem algum otimismo nas demais estratégias. A avaliação definitiva será feita no teste, uma única vez, depois de congelada a configuração final, e se restringe ao modelo final. Assim, o teste estimará o desempenho do
 RECLin-PT, mas não a sua vantagem sobre o baseline ou sobre as demais estratégias,
 que continuará apoiada só no DEV. Os experimentos de aprimoramento previstos até o
 congelamento, avaliados no mesmo DEV, tendem a aumentar esse otimismo.
@@ -151,7 +169,7 @@ Os achados se limitam à formulação de três classes adotada, com apenas
 \texttt{negation\_of} e \texttt{associated\_with} como relações, e à escala
 \emph{base} dos modelos (Seção~\ref{sec:encoders}). Entre as estratégias
 investigadas, o Two-Stage não tem otimização conjunta dos dois estágios e depende de
-um limiar escolhido no DEV (Seção~\ref{sec:twostage}), e a cabeça da Pair-Aware foi avaliada apenas nas formas linear e com uma camada oculta. O efeito da Pair-Aware Linear está, além disso, confundido com a retirada do \emph{pooler}, e a ablação que separaria os dois fatores não foi executada. O \emph{fine-tuning}
+um limiar escolhido no DEV (Seção~\ref{sec:twostage}), e a cabeça da Pair-Aware foi avaliada apenas nas formas linear e com uma camada oculta. A ablação que separou a leitura dos marcadores da retirada do \emph{pooler}, além disso, foi feita com um único \emph{encoder} e uma única semente. O \emph{fine-tuning}
 restrito, previsto no protocolo, não foi executado. Outras possibilidades
 arquiteturais, como modelos de maior porte ou tipos semânticos na entrada, ficaram
 deliberadamente fora deste trabalho e permanecem para investigação futura.

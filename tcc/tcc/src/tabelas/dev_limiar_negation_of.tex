@@ -1,0 +1,35 @@
+%% GERADO por analise/gerar_tabelas_etapa5.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Escolha do limiar da configuração final: \texttt{negation\_of} em função de $t$ no DEV.}
+  \label{tab:dev_limiar_negation_of}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{rrrrrrrrc}
+  \toprule
+  $t$ & VP & FP & FN & P & R & F1 & Macro-F1 & R $\geq 0{,}80$ \\
+  \midrule
+0{,}05 & 143 & 56 & 7 & 0{,}719 & 0{,}953 & 0{,}819 & 0{,}748 & sim \\
+0{,}10 & 141 & 50 & 9 & 0{,}738 & 0{,}940 & 0{,}827 & 0{,}750 & sim \\
+0{,}15 & 140 & 48 & 10 & 0{,}745 & 0{,}933 & 0{,}828 & 0{,}751 & sim \\
+0{,}20 & 138 & 45 & 12 & 0{,}754 & 0{,}920 & 0{,}829 & 0{,}751 & sim \\
+0{,}25 & 135 & 44 & 15 & 0{,}754 & 0{,}900 & 0{,}821 & 0{,}748 & sim \\
+0{,}30 & 135 & 42 & 15 & 0{,}763 & 0{,}900 & 0{,}826 & 0{,}750 & sim \\
+0{,}35 & 134 & 41 & 16 & 0{,}766 & 0{,}893 & 0{,}825 & 0{,}749 & sim \\
+0{,}40 & 133 & 40 & 17 & 0{,}769 & 0{,}887 & 0{,}824 & 0{,}749 & sim \\
+0{,}45 & 133 & 35 & 17 & 0{,}792 & 0{,}887 & 0{,}836 & 0{,}753 & sim \\
+0{,}50 & 131 & 33 & 19 & 0{,}799 & 0{,}873 & 0{,}834 & 0{,}753 & sim \\
+0{,}55 & 131 & 33 & 19 & 0{,}799 & 0{,}873 & 0{,}834 & 0{,}753 & sim \\
+0{,}60 & 129 & 32 & 21 & 0{,}801 & 0{,}860 & 0{,}830 & 0{,}751 & sim \\
+0{,}65 & 129 & 32 & 21 & 0{,}801 & 0{,}860 & 0{,}830 & 0{,}751 & sim \\
+0{,}70 & 126 & 29 & 24 & 0{,}813 & 0{,}840 & 0{,}826 & 0{,}750 & sim \\
+0{,}75 & 121 & 28 & 29 & 0{,}812 & 0{,}807 & 0{,}809 & 0{,}744 & sim \\
+\textbf{0{,}80} & \textbf{120} & \textbf{22} & \textbf{30} & \textbf{0{,}845} & \textbf{0{,}800} & \textbf{0{,}822} & \textbf{0{,}748} & \textbf{sim} \\
+0{,}85 & 115 & 21 & 35 & 0{,}846 & 0{,}767 & 0{,}804 & 0{,}743 & não \\
+0{,}90 & 112 & 20 & 38 & 0{,}848 & 0{,}747 & 0{,}794 & 0{,}739 & não \\
+0{,}95 & 95 & 10 & 55 & 0{,}905 & 0{,}633 & 0{,}745 & 0{,}723 & não \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize DEV, Pair-Aware Linear sem pesos de classe (BioBERTpt-all, semente 42). Regra: \texttt{negation\_of} se P(\texttt{negation\_of}) $\geq t$; senão, o argmax entre \texttt{associated\_with} e \texttt{no\_relation}. Critério: maior precisão de \texttt{negation\_of} entre os limiares com \emph{recall} $\geq 0{,}80$; desempates: maior F1 de \texttt{negation\_of}, maior macro-F1, menor limiar. Em negrito, o limiar escolhido. Critério formulado depois de conhecida a curva (pós-DEV). Não são resultados de teste.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

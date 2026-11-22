@@ -15,7 +15,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "execucoes",
+    "execucoes": "resultados-colab@0c08b746385b",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },
@@ -258,6 +258,45 @@
         }
       }
     },
+    "cls_direto|BioBERTpt-all": {
+      "fp_por_origem": {
+        "inverso_associated_with": 396,
+        "inverso_negation_of": 0,
+        "sem_relacao_nas_duas_direcoes": 1104,
+        "verdadeiro_negation_of": 3
+      },
+      "fp_total": 1503,
+      "por_distancia": {
+        "0-1": {
+          "fn": 42,
+          "fp": 493,
+          "precision": 0.3646907216494845,
+          "recall": 0.8707692307692307,
+          "tp": 283
+        },
+        "11-25": {
+          "fn": 53,
+          "fp": 340,
+          "precision": 0.15,
+          "recall": 0.5309734513274337,
+          "tp": 60
+        },
+        "2-5": {
+          "fn": 47,
+          "fp": 490,
+          "precision": 0.2877906976744186,
+          "recall": 0.8081632653061225,
+          "tp": 198
+        },
+        "6-10": {
+          "fn": 27,
+          "fp": 180,
+          "precision": 0.22746781115879827,
+          "recall": 0.6625,
+          "tp": 53
+        }
+      }
+    },
     "filtro_pistas|BERTimbau": {
       "fp_por_origem": {
         "inverso_associated_with": 383,
@@ -411,6 +450,45 @@
           "precision": 0.24761904761904763,
           "recall": 0.65,
           "tp": 52
+        }
+      }
+    },
+    "pair_aware_pooler|BioBERTpt-all": {
+      "fp_por_origem": {
+        "inverso_associated_with": 326,
+        "inverso_negation_of": 0,
+        "sem_relacao_nas_duas_direcoes": 898,
+        "verdadeiro_negation_of": 3
+      },
+      "fp_total": 1227,
+      "por_distancia": {
+        "0-1": {
+          "fn": 43,
+          "fp": 449,
+          "precision": 0.3857729138166895,
+          "recall": 0.8676923076923077,
+          "tp": 282
+        },
+        "11-25": {
+          "fn": 58,
+          "fp": 238,
+          "precision": 0.18771331058020477,
+          "recall": 0.48672566371681414,
+          "tp": 55
+        },
+        "2-5": {
+          "fn": 53,
+          "fp": 410,
+          "precision": 0.31893687707641194,
+          "recall": 0.7836734693877551,
+          "tp": 192
+        },
+        "6-10": {
+          "fn": 25,
+          "fp": 130,
+          "precision": 0.2972972972972973,
+          "recall": 0.6875,
+          "tp": 55
         }
       }
     },

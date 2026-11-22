@@ -14,7 +14,10 @@ números são do DEV; nenhum vem do TEST.
 
 Tabelas: `dev_sem_pesos` (substitui a gerada por `gerar_tabela_sem_pesos.py`, agora
 com o bootstrap por documento), `dev_sem_pesos_comparacoes`, `dev_controles_encoders`
-e `dev_assoc_sem_direcao`. As tabelas de `gerar_tabelas_etapa3.py` não são regeradas:
+`dev_assoc_sem_direcao` e, depois da ablação do pooler (M3),
+`dev_ablacao_pooler_sistemas` e `dev_ablacao_pooler`; depois da decisão da configuração final
+(`codigo/resultados/diagnosticos/configuracao_final_dev.json`), `dev_limiar_negation_of` e
+`dev_configuracao_final`. As tabelas de `gerar_tabelas_etapa3.py` não são regeradas:
 as que estão em `tcc/src/tabelas/` receberam ajustes de redação depois de geradas.
 
 Uso: python3 gerar_tabelas_etapa5.py <repo> <tcc/src>
@@ -189,15 +192,120 @@ def t_assoc_sem_direcao(sd):
                   linhas, nota)
 
 
+ABLACAO = (("pair_aware|BioBERTpt-all", "cls_direto|BioBERTpt-all", "Ler os marcadores, sem \\emph{pooler}"),
+           ("pair_aware_pooler|BioBERTpt-all", "baseline|BioBERTpt-all", "Ler os marcadores, com \\emph{pooler}"),
+           ("cls_direto|BioBERTpt-all", "baseline|BioBERTpt-all", "Retirar o \\emph{pooler}, só \\texttt{[CLS]}"),
+           ("pair_aware|BioBERTpt-all", "pair_aware_pooler|BioBERTpt-all",
+            "Retirar o \\emph{pooler}, com marcadores"))
+CELULAS = (("baseline", "só \\texttt{[CLS]}", "com"), ("cls_direto", "só \\texttt{[CLS]}", "sem"),
+           ("pair_aware_pooler", "\\texttt{[CLS]}+\\texttt{[E1]}+\\texttt{[E2]}", "com"),
+           ("pair_aware", "\\texttt{[CLS]}+\\texttt{[E1]}+\\texttt{[E2]}", "sem"))
+
+
+def t_ablacao_pooler_sistemas(met):
+    linhas = []
+    for est, rep, pooler in CELULAS:
+        m = met["sistemas"][f"{est}|{ALL}"]
+        n, a = m["por_classe"][NEG], m["por_classe"][ASSOC]
+        nome = {"cls_direto": "\\texttt{cls\\_direto}", "pair_aware_pooler": "\\texttt{pair\\_aware\\_pooler}",
+                "baseline": "Baseline", "pair_aware": "Pair-Aware Linear"}[est]
+        linhas.append([nome, rep, pooler, f(n["precision"]), f(n["recall"]), f(n["f1"]), f(a["f1"]), f(m["macro_f1"])])
+    nota = ("BioBERTpt-all, semente 42, mesmos hiperparâmetros e mesma entrada (o texto leva os marcadores nas quatro "
+            "células); muda só o que a cabeça lê e se o \\texttt{[CLS]} passa pelo \\emph{pooler}. "
+            "\\texttt{cls\\_direto} e \\texttt{pair\\_aware\\_pooler} são exploratórias, posteriores ao protocolo e não "
+            "elegíveis ao teste. Não são resultados de teste.")
+    return tabela("tab:dev_ablacao_pooler_sistemas",
+                  "Fatorial da ablação do \\emph{pooler}: métricas das quatro cabeças no DEV.",
+                  "lllrrrrr", "Cabeça & Representação & \\emph{Pooler} & P neg & R neg & F1 neg & F1 assoc & Macro-F1",
+                  linhas, nota)
+
+
+def t_ablacao_pooler(comp):
+    linhas = []
+    for chave, rotulo in METRICAS:
+        linhas.append(f"\\multicolumn{{4}}{{l}}{{\\textit{{Métrica:}} {rotulo}}} \\\\")
+        for a, b, efeito in ABLACAO:
+            c = comparacao(comp, a, b)
+            linhas.append([f"\\quad {efeito}", s(c["por_candidato"][chave]["diferenca"], 4),
+                           ic(c["por_candidato"][chave]), ic(c["por_documento"][chave])])
+        linhas.append("\\midrule")
+    linhas.pop()
+    nota = ("Cada linha compara duas cabeças que diferem num único fator (A $-$ B): ler os marcadores é "
+            "Pair-Aware Linear $-$ \\texttt{cls\\_direto} e \\texttt{pair\\_aware\\_pooler} $-$ baseline; retirar o "
+            "\\emph{pooler} é \\texttt{cls\\_direto} $-$ baseline e Pair-Aware Linear $-$ \\texttt{pair\\_aware\\_pooler}. "
+            "\\emph{Bootstrap} pareado, $10\\,000$ reamostras, semente 42, IC95\\% por percentis; $^{\\ast}$ o intervalo "
+            "exclui o zero. Descritivas, no DEV, com uma única semente. Não são resultados de teste.")
+    return tabela("tab:dev_ablacao_pooler",
+                  "Ablação do \\emph{pooler}: efeitos simples de cada fator no DEV (BioBERTpt-all).",
+                  "lrcc", "Efeito & $\\Delta$ & IC95\\% (candidato) & IC95\\% (documento)", linhas, nota)
+
+
+def t_limiar_negation_of(cf):
+    """A busca de t da configuração final: a grade inteira, com o ponto escolhido em negrito."""
+    linhas = []
+    for linha in cf["tabela"]:
+        c = linha["contagens"][NEG]
+        p = c["tp"] / (c["tp"] + c["fp"]) if c["tp"] + c["fp"] else 0.0
+        r = c["tp"] / (c["tp"] + c["fn"])
+        celulas = [f(linha["limiar"], 2), str(c["tp"]), str(c["fp"]), str(c["fn"]), f(p), f(r),
+                   f(linha["f1_negation_of"]), f(linha["macro_f1"]), "sim" if r >= 0.8 else "não"]
+        if linha["limiar"] == cf["t"]:
+            celulas = [f"\\textbf{{{x}}}" for x in celulas]
+        linhas.append(celulas)
+    nota = ("DEV, Pair-Aware Linear sem pesos de classe (BioBERTpt-all, semente 42). Regra: \\texttt{negation\\_of} "
+            "se P(\\texttt{negation\\_of}) $\\geq t$; senão, o argmax entre \\texttt{associated\\_with} e "
+            "\\texttt{no\\_relation}. Critério: maior precisão de \\texttt{negation\\_of} entre os limiares com "
+            "\\emph{recall} $\\geq 0{,}80$; desempates: maior F1 de \\texttt{negation\\_of}, maior macro-F1, menor "
+            "limiar. Em negrito, o limiar escolhido. Critério formulado depois de conhecida a curva (pós-DEV). "
+            "Não são resultados de teste.")
+    return tabela("tab:dev_limiar_negation_of",
+                  "Escolha do limiar da configuração final: \\texttt{negation\\_of} em função de $t$ no DEV.",
+                  "rrrrrrrrc", "$t$ & VP & FP & FN & P & R & F1 & Macro-F1 & R $\\geq 0{,}80$", linhas, nota)
+
+
+def t_configuracao_final(cf):
+    """A configuração final (A) contra as alternativas (B), no DEV."""
+    metricas_ic = (("precision", "Precisão de \\texttt{negation\\_of}", "precisao_recall_negation_of"),
+                   ("recall", "\\emph{Recall} de \\texttt{negation\\_of}", "precisao_recall_negation_of"),
+                   ("f1_negation_of", "F1 de \\texttt{negation\\_of}", "f1_e_macro"),
+                   ("macro_f1", "Macro-F1", "f1_e_macro"))
+    linhas = []
+    for chave, rotulo, fonte in metricas_ic:
+        linhas.append(f"\\multicolumn{{4}}{{l}}{{\\textit{{Métrica:}} {rotulo}}} \\\\")
+        for nome, comp in cf["comparacoes"].items():
+            r = comp[fonte]
+            cand, doc = r["por_candidato"][chave], r["por_documento"][chave]
+            rotulo_b = comp["rotulo"].replace("τ", "$\\tau$")
+            linhas.append(["\\quad " + rotulo_b, s(cand["diferenca"]), ic(cand), ic(doc)])
+        linhas.append("\\midrule")
+    linhas.pop()
+    m = cf["metricas_dev"]
+    neg = m["por_classe"][NEG]
+    nota = (f"A = configuração final (Pair-Aware Linear sem pesos, $t={f(cf['t'], 2)}$): P ${f(neg['precision'])}$, "
+            f"R ${f(neg['recall'])}$, F1 ${f(neg['f1'])}$, F1 de \\texttt{{associated\\_with}} "
+            f"${f(m['f1_per_class'][ASSOC])}$, macro-F1 ${f(m['macro_f1'])}$. \\emph{{Bootstrap}} pareado, "
+            "$10\\,000$ reamostras, semente 42, IC95\\% por percentis; $^{\\ast}$ o intervalo exclui o zero. "
+            "Descritivas, no DEV, com uma única semente; $t$ e $\\tau$ foram escolhidos neste mesmo conjunto. "
+            "Não são resultados de teste.")
+    return tabela("tab:dev_configuracao_final",
+                  "Configuração final frente às alternativas no DEV (A $-$ B).",
+                  "lrcc", "B & $\\Delta$ & IC95\\% (candidato) & IC95\\% (documento)", linhas, nota)
+
+
 def main(repo: Path, src: Path) -> None:
     ler = lambda *p: json.loads(repo.joinpath("codigo", "resultados", *p).read_text(encoding="utf-8"))  # noqa: E731
     met, comp = ler("auditoria_execucoes", "metricas_dev.json"), ler("auditoria_execucoes", "comparacoes_dev.json")
     pr = ler("diagnosticos", "precisao_recall_sem_pesos_x_ponderada.json")
     sd = ler("diagnosticos", "associated_with_sem_direcao.json")
+    cf = ler("diagnosticos", "configuracao_final_dev.json")
+    if cf.get("test_lido") is not False:
+        raise SystemExit("configuracao_final_dev.json não declara que o TEST não foi lido")
     if pr.get("test_lido") is not False or sd["proveniencia"].get("test_lido") is not False:
         raise SystemExit("os arquivos de diagnóstico não declaram que o TEST não foi lido")
     saidas = {"dev_sem_pesos": t_sem_pesos(met, comp, pr), "dev_sem_pesos_comparacoes": t_sem_pesos_comparacoes(met, comp),
-              "dev_controles_encoders": t_controles_encoders(met, comp), "dev_assoc_sem_direcao": t_assoc_sem_direcao(sd)}
+              "dev_controles_encoders": t_controles_encoders(met, comp), "dev_assoc_sem_direcao": t_assoc_sem_direcao(sd),
+              "dev_ablacao_pooler_sistemas": t_ablacao_pooler_sistemas(met), "dev_ablacao_pooler": t_ablacao_pooler(comp),
+              "dev_limiar_negation_of": t_limiar_negation_of(cf), "dev_configuracao_final": t_configuracao_final(cf)}
     for nome, texto in saidas.items():
         (src / "tabelas" / f"{nome}.tex").write_text(texto, encoding="utf-8", newline="\n")
     print("tabelas:", sorted(saidas))

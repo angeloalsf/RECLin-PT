@@ -1,0 +1,20 @@
+%% GERADO por analise/gerar_tabelas_etapa5.py -- nao edite a mao.
+\begin{table}[htbp]
+  \centering
+  \caption{Fatorial da ablação do \emph{pooler}: métricas das quatro cabeças no DEV.}
+  \label{tab:dev_ablacao_pooler_sistemas}
+  \small\setlength{\tabcolsep}{4pt}
+\adjustbox{max width=\textwidth}{%
+  \begin{tabular}{lllrrrrr}
+  \toprule
+  Cabeça & Representação & \emph{Pooler} & P neg & R neg & F1 neg & F1 assoc & Macro-F1 \\
+  \midrule
+Baseline & só \texttt{[CLS]} & com & 0{,}696 & 0{,}947 & 0{,}802 & 0{,}408 & 0{,}719 \\
+\texttt{cls\_direto} & só \texttt{[CLS]} & sem & 0{,}735 & 0{,}927 & 0{,}820 & 0{,}415 & 0{,}729 \\
+\texttt{pair\_aware\_pooler} & \texttt{[CLS]}+\texttt{[E1]}+\texttt{[E2]} & com & 0{,}754 & 0{,}940 & 0{,}837 & 0{,}454 & 0{,}750 \\
+Pair-Aware Linear & \texttt{[CLS]}+\texttt{[E1]}+\texttt{[E2]} & sem & 0{,}742 & 0{,}940 & 0{,}829 & 0{,}436 & 0{,}741 \\
+  \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize BioBERTpt-all, semente 42, mesmos hiperparâmetros e mesma entrada (o texto leva os marcadores nas quatro células); muda só o que a cabeça lê e se o \texttt{[CLS]} passa pelo \emph{pooler}. \texttt{cls\_direto} e \texttt{pair\_aware\_pooler} são exploratórias, posteriores ao protocolo e não elegíveis ao teste. Não são resultados de teste.}\\[4pt]
+  {\footnotesize Fonte: elaborado pelo autor.}
+\end{table}

@@ -14,6 +14,12 @@ Two-Stage e do baseline calibrado) só aceitam essa execução, e só com
 `--liberacao <código>`. O código deve ser usado apenas depois da autorização
 explícita do autor: o TEST é avaliado uma única vez.
 
+Uma configuração derivada (um limiar sobre as probabilidades de uma execução
+treinada, como `pair_aware_limiar`) é congelada pela pasta da derivada: o
+registro inclui as impressões da base (ao lado dela), com o hash dos pesos.
+A avaliação, depois, tem dois passos sob a mesma liberação: `avaliar_test.py`
+na base e `pair_aware_limiar.py aplicar-test` na derivada.
+
 `--conferir` só verifica um congelamento existente contra a execução.
 """
 from __future__ import annotations

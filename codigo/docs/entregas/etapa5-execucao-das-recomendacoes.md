@@ -15,7 +15,7 @@ Git foi executado na pasta de trabalho.
 | M4 | controles para BioBERTpt-clin e BERTimbau-base | **feito** (DEV) | — |
 | M5 | `associated_with` sem direção | **feito** (DEV) | — |
 | M1 | adjudicação cega dos FP | **pacote pronto**; a adjudicação é humana | autor |
-| M3 | ablação do pooler | **código, testes e notebooks prontos**; execução em GPU pendente | autor (Colab) |
+| M3 | ablação do pooler | **executada (Colab) e analisada no DEV em 22/11** (ver adendo) | concluída |
 | G1 | repositórios privados | **README, `.gitignore` e guia alinhados**; visibilidade não alterada | autor |
 
 ## 2. O que foi implementado
@@ -208,3 +208,134 @@ parte do erro, não a maior parte.
 5. Decidir sobre a trava de `regra_pura.py` no TEST e sobre a suíte de
    equivalência que processa o TEST v1.
 6. Autorizar explicitamente o congelamento e, depois, a avaliação única do TEST.
+
+## Adendo de 22/11/2026 — M3 executado e curva de limiar
+
+**M3.** O autor executou os dois notebooks; a análise usou clone só leitura de
+`resultados-colab@0c08b746385b` (apenas `dev.jsonl` e `MANIFEST.json` da partição; TEST não
+lido), apagado ao final. `auditar_execucoes.py` rodou sobre os registros existentes: os 17
+sistemas, 35 comparações, 18 registros de `associated_with`, 3 de τ e 23 execuções antigos
+foram conferidos e mantidos sem alteração; acrescentados 2 sistemas e 4 comparações. Única
+mudança em campo existente: `proveniencia.execucoes` passou a registrar a origem
+(`resultados-colab@0c08b746385b`).
+
+| Efeito (A − B), BioBERTpt-all | Δ F1 neg [IC doc] | Δ F1 assoc [IC doc] | Δ macro-F1 [IC doc] |
+| --- | --- | --- | --- |
+| ler marcadores, sem pooler (`pair_aware` − `cls_direto`) | +0,009 [−0,017; +0,036] | +0,021 [+0,006; +0,035]* | +0,012 [+0,001; +0,022]* |
+| ler marcadores, com pooler (`pair_aware_pooler` − `baseline`) | +0,035 [+0,007; +0,064]* | +0,046 [+0,028; +0,063]* | +0,031 [+0,020; +0,043]* |
+| retirar pooler, só [CLS] (`cls_direto` − `baseline`) | +0,018 [−0,012; +0,050] | +0,007 [−0,008; +0,022] | +0,010 [−0,0001; +0,021] (detectada só por candidato) |
+| retirar pooler, com marcadores (`pair_aware` − `pair_aware_pooler`) | −0,007 [−0,026; +0,011] | −0,017 [−0,030; −0,005]* | −0,009 [−0,017; −0,001]* |
+
+\* IC95% por documento exclui o zero. Métricas das quatro células (P/R/F1 neg, F1 assoc, macro-F1):
+baseline 0,696/0,947/0,802, 0,408, 0,719; `cls_direto` 0,735/0,927/0,820, 0,415, 0,729;
+`pair_aware_pooler` 0,754/0,940/0,837, 0,454, 0,750; Pair-Aware Linear 0,742/0,940/0,829, 0,436, 0,741.
+
+Leitura: o ganho da Pair-Aware Linear sobre o baseline vem da leitura dos marcadores; retirar o
+pooler não traz ganho detectado e, com marcadores, reduz macro-F1 e F1 de `associated_with`.
+`pair_aware_pooler` é exploratória, não elegível ao TEST e não entra na seleção (plano fixado
+antes, `docs/protocolo/registro-e4-experimentos-pos-fase.md`, §4). Uma semente, um encoder.
+
+Não altera a recomendação preliminar: a ablação não participa da seleção. Se o autor quiser
+adotar a cabeça com pooler, é decisão nova, que exige emenda antes do congelamento e é
+pós-hoc (uma semente; diferença para a Pair-Aware Linear não detectada em F1 neg).
+
+**Curva de limiar (17/11).** `diagnosticos/curva_limiar_negation_of.py` →
+`resultados/diagnosticos/curva_limiar_negation_of.json`: P/R/F1 de `negation_of` por limiar
+de P(neg) (0,50–0,99) para as execuções sem pesos e ponderada, com IC por documento das
+diferenças ao argmax. Sem pesos, t = 0,80: P 0,845, R 0,800, F1 0,822 (ΔP +0,051
+[+0,016; +0,094]; ΔR −0,073 [−0,117; −0,034]; ΔF1 −0,010 [−0,041; +0,020]). É um candidato a
+regra de decisão; exige emenda com grade e critério declarados. Sem teste de unidade.
+
+**TCC.** Nova seção "Resultado exploratório: ablação do pooler" (cap. 6) com as tabelas
+`dev_ablacao_pooler_sistemas` e `dev_ablacao_pooler`; ajustes em Proposta (5.3), Discussão
+(7.1 e Limitações) e Conclusão (principais resultados, limitações, trabalhos futuros).
+Prévia e diff: `tcc/tcc/revisao/TCC_etapa5_ablacao_{previa,diff}.pdf`. As quatro tabelas da
+Etapa 5 regeradas saíram idênticas.
+
+**Arquivos (22/11).** Modificados: `resultados/auditoria_execucoes/*.json` (5, só
+acréscimos), `tcc/analise/gerar_tabelas_etapa5.py`, TCC `textuais/{experimentos_e_resultados,
+proposta_prototipo,discussao,conclusao}.tex`, `docs/estrategias/ablacao-pooler.md`,
+`docs/protocolo/registro-e4-experimentos-pos-fase.md`, este relatório. Criados:
+`tcc/tcc/src/tabelas/dev_ablacao_pooler{,_sistemas}.tex`, os dois PDFs. Nenhum removido.
+Nenhum comando Git na pasta de trabalho.
+
+## Adendo de 22/11/2026 (tarde) — configuração final decidida e preparada para o congelamento
+
+**Decisão do autor:** configuração final = Pair-Aware Linear sem pesos de classe
+(`pair_aware__a3ac671a77e2__t2`) com a regra P(`negation_of`) ≥ 0,80. Sem treino
+novo. Pedido: fazer tudo, exceto a avaliação do TEST, que fica pausada.
+
+**Registro.** `docs/protocolo/emenda-configuracao-final.md` (E3-D3, E3-D6 como
+alternativa nova pós-DEV, evidência, riscos; SHA-256 do texto
+`f0eb26fd737b3bea…` (versão de 22/11; recalcule se editar), a conferir e registrar pelo autor na seção 8 do protocolo,
+que não foi alterada). `emenda-e3-pair-aware.md` (tabela de decisões) e
+`congelamento-e-test-final.md` (atualização) apontam para ela.
+
+**Código.**
+- `reclin/avaliacao/limiar.py`: critério opcional `PrecisaoComPisoDeRecall`
+  (maior precisão de `negation_of` com recall ≥ piso; desempates F1, macro-F1,
+  menor limiar). Sem o critério, configuração e hashes idênticos aos anteriores.
+- `reclin/estrategias/pair_aware_limiar.py` + `scripts/pair_aware_limiar.py`:
+  a regra da configuração final (mesma regra do baseline calibrado, base
+  Pair-Aware, piso 4/5), `calibrar-dev` e `aplicar-test`.
+- `reclin/treino/reempacotamento.py` + `scripts/reempacotar.py`: a base foi
+  treinada com o código `0526d912…`; o código atual só a aceita depois de
+  reproduzir o DEV (mesma classe nos 19.064 pares, probabilidades com diferença
+  ≤ 0,001). Cria uma execução nova com cópia conferida dos pesos; nada é gravado
+  se divergir; a base fica intacta.
+- `reclin/execucao/congelamento.py`: configuração derivada congelada com as
+  impressões da base (inclusive pesos); a trava aceita a base (primeiro) e a
+  derivada (depois), uma vez cada, sob a mesma liberação; trilha com o papel de
+  cada passo; do `config.json` entram a configuração e a identidade do código.
+- `reclin/experimento/versionamento.py`: perfis `reempacotada` e `derivada`.
+- `reclin/relatorios/tabelas.py`: lê o critério gravado no `limiar.json`.
+- `notebooks/final/reclin_configuracao_final.ipynb`: Colab, só DEV — confere
+  os SHA-256 dos pesos no Drive, reempacota, congela t (exige t = 0,80 com
+  120/22/30), grava o registro de congelamento no Drive e, com confirmação,
+  publica os arquivos do DEV. Não chama avaliação do TEST.
+- `diagnosticos/avaliar_configuracao_final_dev.py` →
+  `resultados/diagnosticos/configuracao_final_dev.json` (curva, métricas e
+  comparações da configuração final no DEV; clone só leitura de
+  `resultados-colab`, só DEV, apagado).
+
+**Resultado no DEV (verificado).** t = 0,80; P 0,845, R 0,800, F1 0,822
+(120/22/30), F1 assoc 0,448, macro-F1 0,748. Contra a referência anterior
+(ponderada, argmax), por documento: precisão +0,103 [+0,059; +0,151], recall
+−0,140 [−0,212; −0,076], F1 neg −0,007 [−0,053; +0,035], macro +0,008
+[−0,013; +0,028].
+
+**TCC.** Resumo/Abstract, Proposta (nova subseção 5.3.1 Regra de decisão),
+Metodologia (perda, critério de t, trava em dois passos), Resultados (nova seção
+6.9 com as tabelas `dev_limiar_negation_of` e `dev_configuracao_final`),
+Discussão (justificativa e fragilidades), Conclusão. Prévia e diff:
+`tcc/tcc/revisao/TCC_configuracao_final_{previa,diff}.pdf`. A afirmação antiga
+de que, sem ponderação, o modelo preveria `no_relation` para quase tudo foi
+corrigida (contradizia o experimento sem pesos). Slides não atualizados.
+
+**Testes (nuvem, torch 2.11.0, transformers 5.16.1).** Suíte de unidade: 707
+passaram, 48 falharam, 21 erros; as falhas e erros são os mesmos do `main`
+antes das mudanças (arquivos de dados e da raiz ausentes na nuvem), mais o
+`--help` dos dois scripts novos, que falha pela mesma razão de todos os
+scripts (pacote não instalado) e passa com `PYTHONPATH` — com ele,
+`test_pacote` só falha nos arquivos ausentes. Novos testes passaram:
+`test_limiar` (+3), `test_congelamento` (+3), `test_configuracao_final` (5, de
+ponta a ponta com o modelo minúsculo: treino sem pesos → reempacotamento →
+limiar → congelamento → trava em dois passos com as partições sintéticas no
+papel das oficiais). **Não executados:** integração, equivalência e a suíte na
+máquina do autor; o notebook no Colab.
+
+**Arquivos (22/11, tarde).** Criados: os 4 módulos/scripts acima, o notebook,
+`testes/unidade/test_configuracao_final.py`, o diagnóstico e seu JSON,
+`docs/protocolo/emenda-configuracao-final.md`, as tabelas
+`dev_limiar_negation_of.tex` e `dev_configuracao_final.tex`, os dois PDFs.
+Modificados: `limiar.py`, `congelamento.py`, `versionamento.py`, `tabelas.py`,
+`estrategias/__init__.py`, `scripts/{avaliar_test,congelar}.py`,
+`testes/unidade/test_{limiar,congelamento}.py`,
+`tcc/analise/gerar_tabelas_etapa5.py`, 5 `.tex` textuais e o resumo,
+`docs/protocolo/{emenda-e3-pair-aware,congelamento-e-test-final}.md`, este
+relatório. Nenhum removido. Nenhum comando Git na pasta de trabalho.
+
+**Pendências do autor.** Conferir a emenda e registrar o SHA; rodar a suíte;
+commit e push; rodar o notebook da configuração final; guardar o
+`configuracao_final.json` (Drive) em `codigo/resultados/congelamento/`; depois,
+autorizar explicitamente a avaliação única do TEST.

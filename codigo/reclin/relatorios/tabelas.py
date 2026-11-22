@@ -218,7 +218,8 @@ def limiares(inventario: inv.Inventario, *, natureza: str = "cientifica",
             raise ErroTabela(f"{ex.nome} não tem {busca_limiar.ARQUIVO}")
         gravado = ler_json(arquivo)
         valor = float(gravado["limiar"])
-        if busca_limiar.escolhido_da_tabela(gravado["tabela"]) != valor:
+        criterio = busca_limiar.criterio_do_registro(gravado.get("configuracao_busca"))
+        if busca_limiar.escolhido_da_tabela(gravado["tabela"], criterio) != valor:
             raise ErroTabela(f"{ex.nome}: o limiar gravado não é o que a regra escolhe na tabela da busca")
         sidecar = ex.predicoes("dev")
         if sidecar.get(CAMPO_LIMIAR[s.chave]) != valor:

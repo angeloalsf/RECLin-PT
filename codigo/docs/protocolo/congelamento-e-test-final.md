@@ -132,3 +132,26 @@ da aprovação do autor.**
   das partições (`test_dados_v2`). Não calculam desempenho.
 - `analisar.py --incluir-test` e `diagnosticar.py --test-autorizado` dependem só
   da opção explícita.
+
+## Atualização de 22/11/2026 — configuração final decidida
+
+O autor decidiu a configuração final: **Pair-Aware Linear sem pesos de classe
+(`pair_aware__a3ac671a77e2__t2`) com a regra P(`negation_of`) ≥ 0,80**. As
+decisões E3-D3 e E3-D6, o critério do limiar e a evidência do DEV estão em
+`emenda-configuracao-final.md`. A sugestão anterior desta página para E3-D6
+(manter a referência ponderada) não foi a adotada; a regra de troca ligada à
+adjudicação deixa de ser necessária para a seleção.
+
+O que mudou no código para isso (ver o relatório da Etapa 5, adendo de 22/11):
+
+- `estrategias/pair_aware_limiar.py` e `scripts/pair_aware_limiar.py`: a regra e
+  a busca de t (critério `avaliacao.limiar.PrecisaoComPisoDeRecall`);
+- `treino/reempacotamento.py` e `scripts/reempacotar.py`: a base, treinada com
+  outro código, passa ao código atual depois de reproduzir o DEV;
+- `execucao/congelamento.py`: uma configuração derivada é congelada com as
+  impressões da base (incluindo os pesos); a trava aceita, sob a mesma
+  liberação e uma vez cada, a base (primeiro) e a derivada (depois); do
+  `config.json` entram a configuração e a identidade do código, não o arquivo
+  inteiro (a avaliação do TEST acrescenta a ele o conjunto do TEST);
+- `notebooks/final/reclin_configuracao_final.ipynb`: o procedimento no Colab,
+  só DEV, até o registro de congelamento.

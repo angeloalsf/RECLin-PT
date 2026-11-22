@@ -11,14 +11,25 @@ O que a trava garante:
 * nenhuma avaliação acidental: quem chama `avaliar_test` precisa apontar o
   registro e digitar o código, que só existe depois do congelamento;
 * uma configuração só: o registro guarda as impressões digitais da execução
-  (configuração, predições do DEV, pesos do melhor modelo, limiar) e a
-  avaliação recusa qualquer divergência;
+  (configuração e identidade do código gravadas no `config.json`, predições do
+  DEV, pesos do melhor modelo, limiar) e a avaliação recusa qualquer
+  divergência;
 * uma vez só: a trilha final fica ao lado do registro; uma segunda avaliação
   exige `reavaliar=True` e fica registrada.
 
 O que ela **não** substitui: a autorização do autor. O código de liberação é
 derivado do registro; a regra do projeto continua sendo usá-lo apenas depois
 da autorização explícita.
+
+Configuração derivada (um limiar aplicado às probabilidades de uma execução
+treinada, como a `pair_aware_limiar` ou o `baseline_calibrado`): o registro
+guarda também as impressões digitais da execução de base, com o hash dos pesos
+do melhor modelo dela, e o congelamento exige esses pesos. A avaliação do TEST
+de uma configuração derivada tem dois passos, ambos sob a mesma liberação: a
+base prevê o TEST (o único passo que lê a partição; `avaliar_test` da base) e a
+derivada aplica o limiar congelado a essas predições. A trilha final registra
+os dois, com o papel de cada um; cada um é recusado se já tiver sido feito.
+Nenhuma outra execução é aceita.
 
 As partições técnicas dos testes automatizados (subconjuntos com MANIFEST
 próprio, em pastas temporárias) não são o TEST científico e não passam pela
@@ -45,8 +56,14 @@ TRILHA = "avaliacoes_test_final.jsonl"
 PASTA_CHECKPOINTS, MELHOR_MODELO = "checkpoints", "melhor_modelo"     # os de reclin.treino.checkpoint (que importa torch)
 VERSAO = 1
 # Arquivos da execução cujas impressões digitais entram no congelamento, quando existem.
-ARQUIVOS_DA_EXECUCAO = ("config.json", "predicoes_dev.json", "limiar.json")
+ARQUIVOS_DA_EXECUCAO = ("predicoes_dev.json", "limiar.json")
+# Do config.json entram a configuração (`config`) e a identidade do código, não o arquivo inteiro: a
+# avaliação do TEST acrescenta a ele o conjunto do TEST, e a base de uma configuração derivada é
+# avaliada antes da derivada.
+CAMPOS_DO_CONFIG = ("nome", "estrategia", "config", "codigo")
 MANIFESTO = "MANIFEST.json"
+PAPEL_FINAL = "configuração final"
+PAPEL_BASE = "base da configuração final (predições do TEST para o limiar)"
 
 
 class ErroCongelamento(ValueError):
@@ -85,12 +102,36 @@ def test_cientifico(pasta_particoes: str | Path,
 
 # ------------------------------------------------------------------ o registro
 
+def pasta_da_base(pasta: str | Path) -> Path | None:
+    """A execução de base de uma execução derivada (`config.base.nome`), procurada
+    ao lado dela (a mesma raiz de execuções) e, se não estiver lá, no caminho
+    registrado. None quando a execução não é derivada."""
+    pasta = Path(pasta)
+    base = ((ler_json(pasta / "config.json").get("config") or {}).get("base") or {})
+    if not base.get("nome"):
+        return None
+    vizinha = pasta.parent / base["nome"]
+    if (vizinha / "config.json").is_file():
+        return vizinha
+    registrada = Path(base["pasta"]) if base.get("pasta") else None
+    if registrada is not None and (registrada / "config.json").is_file():
+        return registrada
+    raise ErroCongelamento(f"{pasta.name} é derivada de {base['nome']!r}, que não foi encontrada ao lado dela "
+                           f"({vizinha}) nem em {registrada}: a base é parte da configuração")
+
+
 def impressoes_da_execucao(pasta: str | Path) -> dict[str, Any]:
-    """As impressões digitais de uma execução: só registros e predições do DEV."""
+    """As impressões digitais de uma execução: só registros e predições do DEV.
+    Numa execução derivada, inclui as da execução de base (`base`)."""
     pasta = Path(pasta)
     if not (pasta / "config.json").is_file():
         raise ErroCongelamento(f"{pasta} não é uma execução (sem config.json)")
+    base = pasta_da_base(pasta)
     arquivos = {nome: sha256_arquivo(pasta / nome) for nome in ARQUIVOS_DA_EXECUCAO if (pasta / nome).is_file()}
+    config = ler_json(pasta / "config.json")
+    arquivos["config.json:" + "+".join(CAMPOS_DO_CONFIG)] = hashlib.sha256(json.dumps(
+        {k: config.get(k) for k in CAMPOS_DO_CONFIG}, sort_keys=True, ensure_ascii=False,
+        separators=(",", ":")).encode("utf-8")).hexdigest()
     treino = ler_json(pasta / "treino.json") if (pasta / "treino.json").is_file() else {}
     melhor = pasta / PASTA_CHECKPOINTS / MELHOR_MODELO
     if melhor.is_dir():                    # os pesos presentes: o hash é calculado, não só lido do registro
@@ -98,7 +139,10 @@ def impressoes_da_execucao(pasta: str | Path) -> dict[str, Any]:
         sha_modelo = pretreino.hash_pasta(melhor)
     else:
         sha_modelo = (treino.get("final") or {}).get("sha256_melhor_modelo")
-    return {"pasta": pasta.name, "arquivos_sha256": arquivos, "sha256_melhor_modelo": sha_modelo}
+    impressoes = {"pasta": pasta.name, "arquivos_sha256": arquivos, "sha256_melhor_modelo": sha_modelo}
+    if base is not None:
+        impressoes["base"] = impressoes_da_execucao(base)
+    return impressoes
 
 
 def _canonico(registro: Mapping[str, Any]) -> bytes:
@@ -133,6 +177,17 @@ def criar(pasta_execucao: str | Path, *, responsavel: str, justificativa: str,
         raise ErroCongelamento(
             f"{pasta.name} não tem {PASTA_CHECKPOINTS}/{MELHOR_MODELO}: congele na máquina em que os pesos do "
             "melhor modelo estão, para que o registro guarde o hash deles")
+    if "base" in impressoes:
+        base = pasta_da_base(pasta)
+        if not impressoes["base"]["sha256_melhor_modelo"]:
+            raise ErroCongelamento(
+                f"a base {base.name} de {pasta.name} não tem {PASTA_CHECKPOINTS}/{MELHOR_MODELO}: congele na "
+                "máquina em que os pesos do melhor modelo da base estão")
+        treino_base = ler_json(base / "treino.json") if (base / "treino.json").is_file() else {}
+        if (base / "predicoes_test.json").exists() or treino_base.get("test_avaliado"):
+            raise ErroCongelamento(f"o TEST da base {base.name} já foi avaliado: a configuração não é congelada")
+        if not treino_base.get("concluido"):
+            raise ErroCongelamento(f"o treino da base {base.name} não foi concluído")
     config = ler_json(pasta / "config.json")
     manifesto = Path(pasta_particoes) / MANIFESTO
     return {
@@ -205,25 +260,37 @@ def exigir_liberacao(pasta_execucao: str | Path, pasta_particoes: str | Path | N
     esperado = codigo_de_liberacao(registro)
     if (registro.get("liberacao") or {}).get("codigo") != esperado:
         raise ErroCongelamento(f"avaliação do TEST recusada: o registro {caminho.name} foi alterado depois de gravado")
-    if registro["execucao"]["pasta"] != pasta.name:
+    final = registro["execucao"]
+    base = final.get("base")
+    if pasta.name == final["pasta"]:
+        papel, esperadas = PAPEL_FINAL, final
+    elif base is not None and pasta.name == base["pasta"]:
+        papel, esperadas = PAPEL_BASE, base
+    else:
         raise ErroCongelamento(
-            f"avaliação do TEST recusada: a configuração congelada é {registro['execucao']['pasta']!r}, "
-            f"não {pasta.name!r}. O TEST só é avaliado para a configuração final.")
+            f"avaliação do TEST recusada: a configuração congelada é {final['pasta']!r}"
+            + (f" (com a base {base['pasta']!r})" if base else "")
+            + f", não {pasta.name!r}. O TEST só é avaliado para a configuração final.")
     atuais = impressoes_da_execucao(pasta)
-    if atuais != registro["execucao"]:
+    if atuais != esperadas:
         raise ErroCongelamento(
             f"avaliação do TEST recusada: a execução {pasta.name} mudou depois do congelamento "
             "(configuração, predições do DEV, limiar ou pesos do melhor modelo diferem do registro)")
+    if papel == PAPEL_FINAL and base is not None and \
+            not any(a.get("execucao") == base["pasta"] for a in avaliacoes_registradas(caminho)):
+        raise ErroCongelamento(
+            f"avaliação do TEST recusada: a configuração {pasta.name} aplica um limiar às predições do TEST "
+            f"da base {base['pasta']!r}, que ainda não foram feitas sob esta liberação (avalie a base primeiro)")
     if not liberacao or liberacao.strip() != esperado:
         raise ErroCongelamento(
             "avaliação do TEST recusada: código de liberação ausente ou incorreto. O código está no "
             f"registro {caminho.name} e só deve ser usado depois da autorização explícita do autor.")
-    anteriores = avaliacoes_registradas(caminho)
+    anteriores = [a for a in avaliacoes_registradas(caminho) if a.get("execucao") == pasta.name]
     if anteriores and not reavaliar:
         raise ErroCongelamento(
-            f"avaliação do TEST recusada: a configuração final já foi avaliada em {anteriores[0].get('timestamp')}. "
-            "Uma nova avaliação exige reavaliar e fica registrada na trilha final.")
-    return {**registro, "_caminho": str(caminho)}
+            f"avaliação do TEST recusada: {pasta.name} ({papel}) já foi avaliada em "
+            f"{anteriores[0].get('timestamp')}. Uma nova avaliação exige reavaliar e fica registrada na trilha final.")
+    return {**registro, "_caminho": str(caminho), "_avaliada": pasta.name, "_papel": papel}
 
 
 def registrar_avaliacao(registro: Mapping[str, Any] | None, *, macro_f1: float, negation_of_f1: float,
@@ -235,7 +302,9 @@ def registrar_avaliacao(registro: Mapping[str, Any] | None, *, macro_f1: float, 
     caminho = Path(registro["_caminho"])
     anteriores = avaliacoes_registradas(caminho)
     linha = {"timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "indice": len(anteriores) + 1,
-             "execucao": registro["execucao"]["pasta"], "liberacao": (registro.get("liberacao") or {}).get("codigo"),
+             "execucao": registro.get("_avaliada", registro["execucao"]["pasta"]),
+             "papel": registro.get("_papel", PAPEL_FINAL),
+             "liberacao": (registro.get("liberacao") or {}).get("codigo"),
              "n_test": int(n_test), "test_macro_f1": round(float(macro_f1), 6),
              "test_negation_of_f1": round(float(negation_of_f1), 6),
              "codigo": identidade_codigo.atual()["identidade"]}

@@ -18,10 +18,12 @@ Os quatro primeiros objetivos específicos foram cumpridos. Os dados foram
 preparados, as relações foram caracterizadas, os pares candidatos foram gerados, o
 RECLin-PT foi desenvolvido com a Pair-Aware Linear e comparado com estratégias
 alternativas, e as configurações foram avaliadas no conjunto de desenvolvimento com
-três \emph{encoders}. O quinto objetivo foi cumprido em parte. Há uma configuração
-de referência, a Pair-Aware Linear com o BioBERTpt-all, e os procedimentos para o
-congelamento e para a avaliação única no conjunto de teste estão definidos
-(Seção~\ref{sec:protocolo}), mas a configuração final ainda não foi congelada nem
+três \emph{encoders}. O quinto objetivo foi cumprido em parte. A configuração final
+foi definida no conjunto de desenvolvimento, a Pair-Aware Linear com o BioBERTpt-all
+treinada sem ponderação de classes e operada com o limiar
+P(\texttt{negation\_of})~$\geq 0{,}80$, e os procedimentos para o congelamento e
+para a avaliação única no conjunto de teste estão definidos e implementados
+(Seção~\ref{sec:protocolo}), mas essa configuração ainda não foi congelada nem
 avaliada no teste. As conclusões a seguir valem, portanto, para o conjunto de
 desenvolvimento e para uma única semente.
 
@@ -32,7 +34,9 @@ que o do baseline ($0{,}829$, $0{,}826$ e $0{,}818$ com o BioBERTpt-all, o
 BioBERTpt-clin e o BERTimbau-base, contra $0{,}802$, $0{,}814$ e $0{,}800$), com
 diferença detectada só com o BioBERTpt-all, e macro-F1 e F1 de
 \texttt{associated\_with} maiores, com diferença detectada nos três, inclusive
-quando se reamostram documentos inteiros. O Two-Stage alcança F1 de
+quando se reamostram documentos inteiros. A ablação do \emph{pooler}, feita com o
+BioBERTpt-all, atribui essa vantagem à leitura dos marcadores, e não à retirada do
+\emph{pooler}. O Two-Stage alcança F1 de
 \texttt{negation\_of} equivalente ($0{,}825$ a $0{,}832$), sem diferença detectada
 para a Pair-Aware Linear, mas depende de um limiar escolhido no DEV, que, com os
 dois BioBERTpt, ficou no extremo da grade e sacrificou a classe
@@ -49,16 +53,20 @@ pode ser elevada de $0{,}742$ para $0{,}794$ ao custo de \emph{recall}, que cai 
 $0{,}940$ para $0{,}873$, sem diferença detectada no F1. As duas variações, de
 precisão e de \emph{recall}, são detectadas. Os falsos positivos que
 persistem nas duas execuções são os mesmos, o que indica um limite que a simples
-mudança do ponto de operação não remove. Por fim, a análise dos falsos positivos de
+mudança do ponto de operação não remove. Sobre esse modelo, o limiar
+P(\texttt{negation\_of})~$\geq 0{,}80$, o de maior precisão entre os que mantêm o
+\emph{recall} em pelo menos $0{,}80$, leva a precisão a $0{,}845$, com \emph{recall} de
+$0{,}800$ e F1 de $0{,}822$, e é o ponto de operação adotado na configuração final. Por fim, a análise dos falsos positivos de
 \texttt{associated\_with} mostrou que cerca de um quarto deles são pares cuja
 direção inversa está anotada. Avaliada sem a direção, a classe ganha entre $0{,}09$ e
 $0{,}16$ de F1 e continua a mais difícil das três.
 
 Para o desenvolvimento do RECLin-PT, esses resultados são compatíveis com a escolha
 da Pair-Aware Linear, que alcança o desempenho das alternativas na classe-alvo com
-um único modelo e sem limiar ajustado, mas não a demonstram superior nessa classe.
-Também não justificam trocar o BioBERTpt-all, que segue como \emph{encoder} de
-referência.
+um único modelo, mas não a demonstram superior nessa classe. Também não justificam
+trocar o BioBERTpt-all, que segue como \emph{encoder}. A configuração final troca
+\emph{recall} por precisão de forma deliberada, de acordo com a prioridade do
+trabalho, sem melhorar o F1 da classe-alvo.
 
 \section{Limitações}
 
@@ -66,8 +74,9 @@ Essas conclusões são preliminares. Todos os resultados vêm do DEV, o mesmo co
 usado para selecionar épocas e limiares, e de uma única semente, de modo que os
 intervalos de confiança não incluem a variação entre treinos. A escolha da
 Pair-Aware Linear foi feita depois de conhecidos esses resultados e não tem caráter
-confirmatório, e seu efeito está confundido com a retirada do \emph{pooler} do
-\texttt{[CLS]}. O conjunto de teste, por sua vez, já foi usado em uma fase anterior
+confirmatório, e a ablação que atribui seu efeito à leitura dos marcadores usou
+um único \emph{encoder} e uma única semente. O mesmo vale para a configuração
+final, cujo limiar e cujo critério foram definidos com a curva do DEV conhecida. O conjunto de teste, por sua vez, já foi usado em uma fase anterior
 do projeto, e suas anotações participaram da definição da janela de candidatos.
 Somam-se a isso limitações da formulação (três classes e modelos de porte
 \emph{base}), dos dados (inconsistências de anotação e uma única partição), de
@@ -114,14 +123,14 @@ concluir a avaliação do RECLin-PT:
 \begin{itemize}
   \item repetir os treinos com mais sementes, para separar o efeito das estratégias
         e dos \emph{encoders} da variação entre treinos;
-  \item separar, por ablação, o efeito da leitura dos marcadores do efeito da
-        retirada do \emph{pooler};
+  \item repetir a ablação do \emph{pooler} com mais sementes e com os outros dois
+        \emph{encoders};
   \item realizar a adjudicação cega dos falsos positivos de \texttt{negation\_of}
         cuja pista não tem relação anotada, para distinguir erros do modelo de
         omissões da anotação;
-  \item definir o critério de seleção, congelar a configuração final e avaliá-la
-        uma única vez no conjunto de teste, relatando também a análise sem as três
-        notas que têm cópia no treino.
+  \item congelar a configuração final e avaliá-la uma única vez no conjunto de
+        teste, relatando também a análise sem as três notas que têm cópia no treino
+        e verificando se o \emph{recall} se mantém próximo do piso adotado.
 \end{itemize}
 
 O segundo grupo reúne possibilidades de evolução do modelo e de pesquisa:

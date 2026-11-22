@@ -20,6 +20,10 @@ avaliação é recusada antes de carregar o modelo ou abrir a partição (a trav
 primeira instrução de `classificador.avaliar_test`). O código só deve
 ser usado depois da autorização explícita do autor.
 
+Quando a configuração congelada é derivada (`pair_aware_limiar`), este comando
+é o primeiro passo, na base: a trava aceita a base da configuração congelada,
+e o limiar é aplicado depois por `pair_aware_limiar.py aplicar-test`.
+
 O TEST de uma execução é avaliado uma vez. Avaliar de novo exige
 `--reavaliar` e fica registrado na trilha como uma segunda avaliação da mesma
 configuração, que precisa ser declarada.

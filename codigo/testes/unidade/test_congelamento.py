@@ -125,9 +125,10 @@ def test_o_que_nao_pode_ser_congelado(tmp_path, cientificas):
     ("reclin/treino/classificador.py", "avaliar_test", ("ler_particao(", "_conferir_particoes(")),
     ("reclin/estrategias/two_stage/composicao.py", "avaliar_test", ('_particao(pasta_particoes, "test"',)),
     ("reclin/estrategias/baseline_calibrado.py", "aplicar_test", ("predicoes.ler(origem)",)),
+    ("reclin/estrategias/pair_aware_limiar.py", "aplicar_test", ("predicoes.ler(origem)",)),
 ])
 def test_a_trava_vem_antes_de_toda_leitura_do_test(arquivo, funcao, leituras):
-    """Nas três funções que leem o TEST, `exigir_liberacao` aparece antes da primeira leitura."""
+    """Nas funções que leem o TEST, `exigir_liberacao` aparece antes da primeira leitura."""
     texto = (CODIGO / arquivo).read_text(encoding="utf-8")
     corpo = re.search(rf"^def {funcao}\(.*?(?=^def |\Z)", texto, re.S | re.M).group(0)
     trava = corpo.index("congelamento_final.exigir_liberacao(")
@@ -168,3 +169,90 @@ def test_nomes_das_pastas_de_pesos_sao_os_do_treino():
     pytest.importorskip("torch")
     from reclin.treino import checkpoint
     assert checkpoint.pasta_checkpoints(Path("x")) / checkpoint.MELHOR == Path("x") / cg.PASTA_CHECKPOINTS / cg.MELHOR_MODELO
+
+
+# --------------------------------------------------------------------------- #
+# Configuração derivada (limiar sobre as probabilidades de uma base treinada)   #
+# --------------------------------------------------------------------------- #
+def _derivada(raiz: Path, base: Path, nome: str = "derivada") -> Path:
+    pasta = raiz / nome
+    pasta.mkdir(parents=True)
+    (pasta / "config.json").write_text(json.dumps({"nome": nome, "estrategia": "pair_aware_limiar",
+                                                   "config": {"estrategia": "pair_aware_limiar",
+                                                              "base": {"nome": base.name, "pasta": "/outro/lugar"}}}),
+                                       "utf-8")
+    (pasta / "predicoes_dev.json").write_text(json.dumps({"split": "dev", "y_true": [0, 1], "y_pred": [2, 2]}), "utf-8")
+    (pasta / "limiar.json").write_text(json.dumps({"limiar": 0.8}), "utf-8")
+    return pasta
+
+
+def test_derivada_congela_os_pesos_da_base_e_libera_base_e_derivada(tmp_path, cientificas):
+    raiz = tmp_path / "execucoes"
+    base = _execucao(raiz / "base")
+    der = _derivada(raiz, base)
+    destino = tmp_path / "c" / cg.ARQUIVO
+    registro = cg.criar(der, responsavel="Autor", justificativa="emenda", pasta_particoes=cientificas)
+    assert registro["execucao"]["sha256_melhor_modelo"] is None
+    assert registro["execucao"]["base"]["pasta"] == "base" and len(registro["execucao"]["base"]["sha256_melhor_modelo"]) == 64
+    assert "limiar.json" in registro["execucao"]["arquivos_sha256"]
+    cg.gravar(registro, destino)
+    codigo = cg.codigo_de_liberacao(registro)
+    kw = {"congelamento": destino, "liberacao": codigo}
+
+    # a derivada só depois da base; outra execução, nunca
+    with pytest.raises(cg.ErroCongelamento, match="avalie a base primeiro"):
+        cg.exigir_liberacao(der, cientificas, **kw)
+    with pytest.raises(cg.ErroCongelamento, match="com a base 'base'"):
+        cg.exigir_liberacao(_execucao(raiz / "outra"), cientificas, **kw)
+
+    liberado = cg.exigir_liberacao(base, cientificas, **kw)
+    assert liberado["_papel"] == cg.PAPEL_BASE
+    linha = cg.registrar_avaliacao(liberado, macro_f1=0.5, negation_of_f1=0.6, n_test=10)
+    assert linha["execucao"] == "base" and linha["papel"] == cg.PAPEL_BASE
+    with pytest.raises(cg.ErroCongelamento, match="já foi avaliada"):
+        cg.exigir_liberacao(base, cientificas, **kw)
+
+    liberado = cg.exigir_liberacao(der, cientificas, **kw)
+    assert liberado["_papel"] == cg.PAPEL_FINAL
+    cg.registrar_avaliacao(liberado, macro_f1=0.5, negation_of_f1=0.7, n_test=10)
+    assert [a["papel"] for a in cg.avaliacoes_registradas(destino)] == [cg.PAPEL_BASE, cg.PAPEL_FINAL]
+    with pytest.raises(cg.ErroCongelamento, match="já foi avaliada"):
+        cg.exigir_liberacao(der, cientificas, **kw)
+
+
+def test_derivada_recusada_se_a_base_mudar_ou_faltar(tmp_path, cientificas):
+    raiz = tmp_path / "execucoes"
+    base = _execucao(raiz / "base")
+    der = _derivada(raiz, base)
+    destino = tmp_path / "c" / cg.ARQUIVO
+    registro = cg.criar(der, responsavel="Autor", justificativa="emenda", pasta_particoes=cientificas)
+    cg.gravar(registro, destino)
+    codigo = cg.codigo_de_liberacao(registro)
+    (base / cg.PASTA_CHECKPOINTS / cg.MELHOR_MODELO / "model.safetensors").write_bytes(b"outros pesos")
+    with pytest.raises(cg.ErroCongelamento, match="mudou depois do congelamento"):
+        cg.exigir_liberacao(base, cientificas, congelamento=destino, liberacao=codigo)
+
+    sem_pesos = _execucao(tmp_path / "r2" / "base")
+    (sem_pesos / cg.PASTA_CHECKPOINTS / cg.MELHOR_MODELO / "model.safetensors").unlink()
+    (sem_pesos / cg.PASTA_CHECKPOINTS / cg.MELHOR_MODELO).rmdir()
+    with pytest.raises(cg.ErroCongelamento, match="pesos do melhor modelo da base"):
+        cg.criar(_derivada(tmp_path / "r2", sem_pesos), responsavel="A", justificativa="j", pasta_particoes=cientificas)
+
+    avaliada = _execucao(tmp_path / "r3" / "base")
+    (avaliada / "predicoes_test.json").write_text("{}", "utf-8")
+    with pytest.raises(cg.ErroCongelamento, match="TEST da base base já foi avaliado"):
+        cg.criar(_derivada(tmp_path / "r3", avaliada), responsavel="A", justificativa="j", pasta_particoes=cientificas)
+
+    orfa = _derivada(tmp_path / "r4", tmp_path / "inexistente")
+    with pytest.raises(cg.ErroCongelamento, match="não foi encontrada"):
+        cg.criar(orfa, responsavel="A", justificativa="j", pasta_particoes=cientificas)
+
+
+def test_config_conta_pela_configuracao_nao_pelos_conjuntos_avaliados(tmp_path, cientificas):
+    ex = _execucao(tmp_path / "final")
+    antes = cg.impressoes_da_execucao(ex)
+    cfg = json.loads((ex / "config.json").read_text("utf-8"))
+    (ex / "config.json").write_text(json.dumps({**cfg, "conjuntos": {"test": {"particao": "test"}}}), "utf-8")
+    assert cg.impressoes_da_execucao(ex) == antes                 # a avaliação do TEST acrescenta isto
+    (ex / "config.json").write_text(json.dumps({**cfg, "config": {"seed": 43}}), "utf-8")
+    assert cg.impressoes_da_execucao(ex) != antes                 # outra configuração

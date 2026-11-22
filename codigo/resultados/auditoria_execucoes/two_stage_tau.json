@@ -15,7 +15,7 @@
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
     },
-    "execucoes": "execucoes",
+    "execucoes": "resultados-colab@0c08b746385b",
     "n_boot": 10000,
     "seed_bootstrap": 42
   },

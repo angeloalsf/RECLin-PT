@@ -15,6 +15,13 @@ os dois sejam idênticos por construção:
 Quem chama fornece a regra (`prever(limiar) -> y_pred`) e uma descrição dela;
 este módulo não conhece estratégias.
 
+Critério alternativo (`PrecisaoComPisoDeRecall`), usado só quando quem chama o
+informa: entre os pontos da grade com *recall* de `negation_of` maior ou igual
+a um piso declarado, o de maior precisão de `negation_of`; desempates: maior
+F1 de `negation_of`, maior macro-F1, menor limiar. Sem ponto que alcance o
+piso, a busca falha. O critério e o piso entram na configuração da busca (e no
+hash dela); sem ele, a configuração e os hashes são exatamente os de antes.
+
 O limiar escolhido é congelado num `limiar.json` junto com os vínculos que o
 tornam válido (hashes dos checkpoints ou das predições de origem, identidade
 do DEV, seed, proveniência), com o hash da configuração da busca e com um
@@ -29,6 +36,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
+from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
@@ -48,20 +56,67 @@ class ErroLimiar(ValueError):
     """O limiar congelado não vale para as entradas atuais."""
 
 
+@dataclass(frozen=True)
+class PrecisaoComPisoDeRecall:
+    """Maior precisão de `negation_of` entre os limiares com recall >= piso."""
+    piso_recall: Fraction
+
+    NOME = "precisao_com_piso_de_recall"
+    DESEMPATES = ("maior F1 de negation_of (contagens)", "maior macro-F1 (contagens)", "menor limiar")
+
+    def __post_init__(self) -> None:
+        piso = Fraction(self.piso_recall)
+        if not 0 < piso <= 1:
+            raise ValueError(f"piso de recall fora de (0, 1]: {piso}")
+        object.__setattr__(self, "piso_recall", piso)
+
+    def descricao(self) -> str:
+        return (f"maior precisão de negation_of (contagens) da saída final no DEV entre os limiares com "
+                f"recall de negation_of >= {self.piso_recall.numerator}/{self.piso_recall.denominator}")
+
+    def registro(self) -> dict[str, Any]:
+        return {"nome": self.NOME, "piso_recall": f"{self.piso_recall.numerator}/{self.piso_recall.denominator}"}
+
+    def elegivel(self, linha: Mapping[str, Any]) -> bool:
+        return linha["_recall_exato"] >= self.piso_recall
+
+    def chave(self, linha: Mapping[str, Any]) -> tuple:
+        return (linha["_precisao_exata"], linha["_f1_exato"], linha["_macro_exato"],
+                -Fraction(str(linha["limiar"])))
+
+
+def criterio_do_registro(configuracao: Mapping[str, Any] | None) -> PrecisaoComPisoDeRecall | None:
+    """O critério gravado na configuração da busca (None = o critério padrão)."""
+    alt = (configuracao or {}).get("criterio_alternativo")
+    if not alt:
+        return None
+    if alt.get("nome") != PrecisaoComPisoDeRecall.NOME:
+        raise ErroLimiar(f"critério de limiar desconhecido: {alt.get('nome')!r}")
+    return PrecisaoComPisoDeRecall(Fraction(alt["piso_recall"]))
+
+
 def _hash(obj: Any) -> str:
     texto = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 
-def configuracao_busca(regra: str, grade: Sequence[float] = GRADE) -> dict[str, Any]:
-    """A configuração da busca (o que o hash gravado no `limiar.json` cobre)."""
+def configuracao_busca(regra: str, grade: Sequence[float] = GRADE,
+                       criterio: PrecisaoComPisoDeRecall | None = None) -> dict[str, Any]:
+    """A configuração da busca (o que o hash gravado no `limiar.json` cobre).
+    Sem `criterio`, é exatamente a configuração anterior à opção do critério."""
+    if criterio is None:
+        return {"versao": VERSAO, "regra": regra, "grade": [float(g) for g in grade],
+                "criterio": CRITERIO, "desempates": list(DESEMPATES),
+                "comparacao": "exata, por frações das contagens"}
     return {"versao": VERSAO, "regra": regra, "grade": [float(g) for g in grade],
-            "criterio": CRITERIO, "desempates": list(DESEMPATES),
+            "criterio": criterio.descricao(), "desempates": list(criterio.DESEMPATES),
+            "criterio_alternativo": criterio.registro(),
             "comparacao": "exata, por frações das contagens"}
 
 
-def hash_configuracao(regra: str, grade: Sequence[float] = GRADE) -> str:
-    return _hash(configuracao_busca(regra, grade))
+def hash_configuracao(regra: str, grade: Sequence[float] = GRADE,
+                      criterio: PrecisaoComPisoDeRecall | None = None) -> str:
+    return _hash(configuracao_busca(regra, grade, criterio))
 
 
 def _f1(tp: int, fp: int, fn: int) -> Fraction:
@@ -84,8 +139,11 @@ def pontuar(y_true: Sequence[int], y_pred: Sequence[int]) -> dict[str, Any]:
         f1s.append(_f1(tp, fp, fn))
     f1_neg = f1s[NEG]
     macro = sum(f1s, Fraction(0)) / len(f1s)
+    neg = contagens[LABELS[NEG]]
+    precisao = Fraction(neg["tp"], neg["tp"] + neg["fp"]) if neg["tp"] + neg["fp"] else Fraction(0)
+    recall = Fraction(neg["tp"], neg["tp"] + neg["fn"]) if neg["tp"] + neg["fn"] else Fraction(0)
     return {"contagens": contagens, "f1_negation_of": float(f1_neg), "macro_f1": float(macro),
-            "_f1_exato": f1_neg, "_macro_exato": macro}
+            "_f1_exato": f1_neg, "_macro_exato": macro, "_precisao_exata": precisao, "_recall_exato": recall}
 
 
 def _chave(linha: Mapping[str, Any]) -> tuple:
@@ -93,26 +151,39 @@ def _chave(linha: Mapping[str, Any]) -> tuple:
     return (linha["_f1_exato"], linha["_macro_exato"], -abs(t - Fraction(1, 2)), t)
 
 
-def escolher(tabela: Sequence[Mapping[str, Any]]) -> Mapping[str, Any]:
+def escolher(tabela: Sequence[Mapping[str, Any]],
+             criterio: PrecisaoComPisoDeRecall | None = None) -> Mapping[str, Any]:
     """A linha vencedora pelo critério e pelos desempates (ver o módulo)."""
     if not tabela:
         raise ValueError("tabela vazia")
-    return max(tabela, key=_chave)
+    if criterio is None:
+        return max(tabela, key=_chave)
+    elegiveis = [linha for linha in tabela if criterio.elegivel(linha)]
+    if not elegiveis:
+        raise ErroLimiar(f"nenhum limiar da grade alcança o piso de recall ({criterio.descricao()})")
+    return max(elegiveis, key=criterio.chave)
 
 
-def escolhido_da_tabela(tabela: Sequence[Mapping[str, Any]]) -> float:
+def escolhido_da_tabela(tabela: Sequence[Mapping[str, Any]],
+                        criterio: PrecisaoComPisoDeRecall | None = None) -> float:
     """Refaz a escolha a partir das contagens gravadas numa tabela."""
     linhas = []
     for linha in tabela:
-        f1s = [_f1(**{k: linha["contagens"][r][k] for k in ("tp", "fp", "fn")}) for r in LABELS]
+        c = {r: {k: linha["contagens"][r][k] for k in ("tp", "fp", "fn")} for r in LABELS}
+        f1s = [_f1(**c[r]) for r in LABELS]
+        neg = c[LABELS[NEG]]
         linhas.append({"limiar": linha["limiar"], "_f1_exato": f1s[NEG],
-                       "_macro_exato": sum(f1s, Fraction(0)) / len(f1s)})
-    return float(escolher(linhas)["limiar"])
+                       "_macro_exato": sum(f1s, Fraction(0)) / len(f1s),
+                       "_precisao_exata": Fraction(neg["tp"], neg["tp"] + neg["fp"]) if neg["tp"] + neg["fp"]
+                       else Fraction(0),
+                       "_recall_exato": Fraction(neg["tp"], neg["tp"] + neg["fn"]) if neg["tp"] + neg["fn"]
+                       else Fraction(0)})
+    return float(escolher(linhas, criterio)["limiar"])
 
 
 def buscar(y_true: Sequence[int], prever: Callable[[float], Sequence[int]],
-           grade: Sequence[float] = GRADE, extra: Callable[[float, Sequence[int]], dict] | None = None
-           ) -> tuple[float, list[dict[str, Any]]]:
+           grade: Sequence[float] = GRADE, extra: Callable[[float, Sequence[int]], dict] | None = None,
+           criterio: PrecisaoComPisoDeRecall | None = None) -> tuple[float, list[dict[str, Any]]]:
     """Avalia `prever(limiar)` em cada ponto da grade; devolve o limiar escolhido
     e a tabela (sem os campos exatos, pronta para gravar). `extra(limiar,
     y_pred)` acrescenta campos informativos a cada linha (pares roteados, por
@@ -124,14 +195,15 @@ def buscar(y_true: Sequence[int], prever: Callable[[float], Sequence[int]],
         if extra is not None:
             linha.update(extra(limiar, y_pred))
         linhas.append(linha)
-    vencedora = escolher(linhas)
+    vencedora = escolher(linhas, criterio)
     tabela = [{k: v for k, v in linha.items() if not k.startswith("_")} for linha in linhas]
     return vencedora["limiar"], tabela
 
 
 def congelar(caminho: str | Path, *, limiar: float, regra: str, vinculos: Mapping[str, Any],
              tabela: Sequence[Mapping[str, Any]], grade: Sequence[float] = GRADE,
-             validacao: Mapping[str, Any] | None = None) -> dict[str, Any]:
+             validacao: Mapping[str, Any] | None = None,
+             criterio: PrecisaoComPisoDeRecall | None = None) -> dict[str, Any]:
     """Grava o `limiar.json`. Falha se já existir: um limiar congelado não é
     regravado."""
     caminho = Path(caminho)
@@ -141,12 +213,12 @@ def congelar(caminho: str | Path, *, limiar: float, regra: str, vinculos: Mappin
         raise ErroLimiar(f"limiar {limiar} fora da grade")
     registro = {
         "limiar": float(limiar),
-        "configuracao_busca": configuracao_busca(regra, grade),
-        "hash_configuracao_busca": hash_configuracao(regra, grade),
+        "configuracao_busca": configuracao_busca(regra, grade, criterio),
+        "hash_configuracao_busca": hash_configuracao(regra, grade, criterio),
         "vinculos": dict(vinculos),
         "tabela": [dict(t) for t in tabela],
     }
-    if escolhido_da_tabela(registro["tabela"]) != float(limiar):
+    if escolhido_da_tabela(registro["tabela"], criterio) != float(limiar):
         raise ErroLimiar(f"o limiar {limiar} não é o que a regra escolhe na tabela")
     registro["hash_registro"] = _hash(registro)
     registro["congelado_em"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
@@ -157,7 +229,8 @@ def congelar(caminho: str | Path, *, limiar: float, regra: str, vinculos: Mappin
 
 
 def conferir_congelado(caminho: str | Path, *, regra: str, vinculos: Mapping[str, Any],
-                       grade: Sequence[float] = GRADE) -> float:
+                       grade: Sequence[float] = GRADE,
+                       criterio: PrecisaoComPisoDeRecall | None = None) -> float:
     """O limiar congelado, se os vínculos atuais e a configuração da busca
     forem exatamente os gravados; caso contrário, `ErroLimiar` com as
     divergências."""
@@ -166,7 +239,7 @@ def conferir_congelado(caminho: str | Path, *, regra: str, vinculos: Mapping[str
         raise ErroLimiar(f"não há limiar congelado em {caminho}: escolha-o no DEV antes do TEST")
     gravado = ler_json(caminho)
     problemas = []
-    if gravado.get("hash_configuracao_busca") != hash_configuracao(regra, grade):
+    if gravado.get("hash_configuracao_busca") != hash_configuracao(regra, grade, criterio):
         problemas.append("a configuração da busca (grade, regra, critério ou desempates) mudou")
     antigos = gravado.get("vinculos", {})
     for chave in sorted(set(antigos) | set(vinculos)):
@@ -176,7 +249,7 @@ def conferir_congelado(caminho: str | Path, *, regra: str, vinculos: Mapping[str
                                           "vinculos", "tabela")}
     if gravado.get("hash_registro") != _hash(nucleo):
         problemas.append("o limiar.json foi editado (hash_registro não confere)")
-    elif escolhido_da_tabela(gravado["tabela"]) != float(gravado["limiar"]):
+    elif escolhido_da_tabela(gravado["tabela"], criterio) != float(gravado["limiar"]):
         problemas.append("o limiar gravado não é o que a regra escolhe na tabela gravada")
     if problemas:
         raise ErroLimiar("o limiar congelado não vale para estas entradas: " + "; ".join(problemas))

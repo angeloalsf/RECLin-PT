@@ -29,8 +29,12 @@ os três rótulos. O RECLin-PT é o modelo em desenvolvimento, formado por um
 descritos no Capítulo~\ref{cap:metodologia}. O encoder e a cabeça de classificação não são componentes independentes, pois são ajustados conjuntamente. Durante o treinamento, todos os pesos do \emph{encoder} são atualizados, e não apenas os da camada de classificação (Seção~\ref{sec:finetuning}).
 
 A arquitetura adotada para o RECLin-PT é a Pair-Aware Linear
-(Seção~\ref{sec:pairaware}), e a configuração de referência atual a combina com o
-BioBERTpt-all e a semente $42$. Essa configuração ainda não é definitiva. A versão final do modelo, incluindo o \emph{encoder}, será selecionada e fixada após os experimentos de aprimoramento. Somente essa versão será avaliada no conjunto de teste (Seção~\ref{sec:protocolo}).
+(Seção~\ref{sec:pairaware}), com o BioBERTpt-all e a semente $42$. A configuração
+final do modelo, definida depois dos experimentos de aprimoramento, usa essa
+arquitetura treinada sem ponderação de classes na perda e uma regra de decisão com
+limiar sobre a probabilidade de \texttt{negation\_of}
+(Seção~\ref{sec:regra_final}). Somente essa configuração será avaliada no conjunto
+de teste (Seção~\ref{sec:protocolo}).
 
 \section{Representação de entrada: marcadores de posição}
 \label{sec:markers}
@@ -118,9 +122,35 @@ são diretamente comparáveis às do baseline. Há, porém, duas diferenças ent
 duas cabeças, e não uma. Além de ler os estados dos marcadores, a Pair-Aware Linear
 toma o vetor de \texttt{[CLS]} diretamente da última camada, enquanto a cabeça de
 classificação de sequência do baseline o faz passar antes por uma camada densa com
-tangente hiperbólica (o \emph{pooler} do BERT). O efeito observado não pode,
-portanto, ser atribuído apenas à leitura explícita do par
-(Seção~\ref{sec:limitacoes}).
+tangente hiperbólica (o \emph{pooler} do BERT). Os dois efeitos foram separados
+por uma ablação exploratória (Seção~\ref{sec:resultados_ablacao}).
+
+\subsection{Regra de decisão da configuração final}
+\label{sec:regra_final}
+
+Como as demais estratégias, a Pair-Aware Linear produz, para cada par, uma
+probabilidade por rótulo, e a forma padrão de transformá-las em uma predição é
+escolher o rótulo de maior probabilidade (\emph{argmax}). A configuração final do
+RECLin-PT mantém o modelo e muda apenas essa regra: o par recebe
+\texttt{negation\_of} quando a probabilidade dessa classe é maior ou igual a um
+limiar $t$; caso contrário, recebe o rótulo mais provável entre
+\texttt{associated\_with} e \texttt{no\_relation}. A regra não participa do
+treinamento, que ajusta os pesos a partir das probabilidades, e não exige um novo
+treino: o modelo entregue é formado pelos pesos treinados e pelo valor de $t$,
+registrado junto com eles. É a mesma regra do baseline calibrado
+(Seção~\ref{sec:calibrado}), aplicada à Pair-Aware Linear, mas com outro
+critério de escolha de $t$.
+
+O critério reflete o objetivo de priorizar a precisão de \texttt{negation\_of}:
+entre os valores da grade de $0{,}05$ a $0{,}95$, com passo de $0{,}05$, escolhe-se
+o de maior precisão de \texttt{negation\_of} no DEV entre os que mantêm o
+\emph{recall} dessa classe em pelo menos $0{,}80$ (desempates: maior F1 de
+\texttt{negation\_of}, maior macro-F1 e menor limiar). O piso de \emph{recall}
+impede que a precisão seja obtida às custas de deixar de reconhecer mais de uma em
+cada cinco negações. O modelo de base é a Pair-Aware Linear treinada sem ponderação
+de classes, cujo ponto de operação já favorece a precisão
+(Seção~\ref{sec:resultados_sem_pesos}). O limiar escolhido e a sua justificativa
+estão na Seção~\ref{sec:resultados_configuracao_final}.
 
 \section{Os \emph{encoders}}
 \label{sec:encoders}

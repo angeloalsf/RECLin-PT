@@ -41,5 +41,13 @@ Etapa 6.1:
   P(negation_of) escolhido no DEV sobre as probabilidades do baseline, pela
   mesma busca do τ (`avaliacao.limiar`).
 
+Configuração final (emenda de 22/11/2026):
+
+* `pair_aware_limiar` — a regra de decisão da configuração final: P(negation_of) >= t sobre as
+  probabilidades de uma execução da Pair-Aware (a treinada sem pesos de classe), com t escolhido no
+  DEV pela maior precisão de `negation_of` entre os limiares com recall >= 0,80
+  (`avaliacao.limiar.PrecisaoComPisoDeRecall`). Sem treino: um pós-processamento, como o
+  `baseline_calibrado`.
+
 Uma estratégia é um módulo ou um pacote e só importa o núcleo e `negacao/`.
 """
