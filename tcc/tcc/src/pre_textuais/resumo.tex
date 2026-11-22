@@ -29,8 +29,8 @@
   0,742 para 0,794 e reduziu o \emph{recall} de 0,940 para 0,873, sem diferença
   detectada no F1. Com prioridade à precisão, a configuração final adota esse modelo
   com a regra P(\texttt{negation\_of})~$\geq$~0,80, limiar escolhido no conjunto de
-  desenvolvimento pela maior precisão entre os pontos com \emph{recall} de pelo menos
-  0,80: precisão de 0,845, \emph{recall} de 0,800 e F1 de 0,822. O conjunto de teste
+  desenvolvimento como o de maior precisão entre os que recuperam pelo menos 80\% das
+  negações anotadas: precisão de 0,845, \emph{recall} de 0,800 e F1 de 0,822. O conjunto de teste
   permanece reservado para a avaliação única dessa configuração.
 
   \vspace{\onelineskip}
@@ -70,7 +70,8 @@
   precision from 0.742 to 0.794 and lowered recall from 0.940 to 0.873, with no
   difference detected in F1. Prioritising precision, the final configuration adopts
   this model with the rule P(\texttt{negation\_of})~$\geq$~0.80, a threshold chosen
-  on the development set as the most precise point with recall of at least 0.80:
+  on the development set as the most precise one among those that recover at least
+  80\% of the annotated negations:
   precision 0.845, recall 0.800 and F1 0.822. The test set remains reserved for a
   single evaluation of this configuration.
 

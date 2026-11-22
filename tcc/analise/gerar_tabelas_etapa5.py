@@ -255,12 +255,12 @@ def t_limiar_negation_of(cf):
     nota = ("DEV, Pair-Aware Linear sem pesos de classe (BioBERTpt-all, semente 42). Regra: \\texttt{negation\\_of} "
             "se P(\\texttt{negation\\_of}) $\\geq t$; senão, o argmax entre \\texttt{associated\\_with} e "
             "\\texttt{no\\_relation}. Critério: maior precisão de \\texttt{negation\\_of} entre os limiares com "
-            "\\emph{recall} $\\geq 0{,}80$; desempates: maior F1 de \\texttt{negation\\_of}, maior macro-F1, menor "
+            "\\emph{recall} de pelo menos 80\\%; desempates: maior F1 de \\texttt{negation\\_of}, maior macro-F1, menor "
             "limiar. Em negrito, o limiar escolhido. Critério formulado depois de conhecida a curva (pós-DEV). "
             "Não são resultados de teste.")
     return tabela("tab:dev_limiar_negation_of",
                   "Escolha do limiar da configuração final: \\texttt{negation\\_of} em função de $t$ no DEV.",
-                  "rrrrrrrrc", "$t$ & VP & FP & FN & P & R & F1 & Macro-F1 & R $\\geq 0{,}80$", linhas, nota)
+                  "rrrrrrrrc", "$t$ & VP & FP & FN & P & R & F1 & Macro-F1 & R $\\geq 80\\%$", linhas, nota)
 
 
 def t_configuracao_final(cf):

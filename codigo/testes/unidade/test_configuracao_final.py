@@ -142,3 +142,17 @@ def test_notebook_da_configuracao_final_nao_toca_o_test():
             continue
         assert proibido not in codigo, proibido
     assert "PUBLICAR_NO_GITHUB = False" in codigo and "(0.8, 120, 22, 30)" in codigo
+
+
+def test_notebook_de_5_epocas_so_muda_epocas_e_aplica_a_regra():
+    nb = json.loads((CODIGO / "notebooks" / "teste" / "reclin_pair_aware_sem_pesos_5epocas.ipynb").read_text(encoding="utf-8"))
+    codigo = "\n".join("".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code")
+    assert "'epochs': 5" in codigo and "'class_weight': 'none'" in codigo
+    assert "DIFERENCAS['epochs'] == (3, 5)" in codigo
+    assert "pair_aware__a3ac671a77e2__t2" in codigo and "_pal.criterio()" in codigo
+    assert "DECISAO = '5 épocas' if ic[0] > 0 else '3 épocas'" in codigo
+    # a seção 5 herdada só confere que os quatro arquivos da partição existem (o do TEST não é aberto)
+    for proibido in ("avaliar_test", "aplicar_test", "predicoes_test", "cg.criar", "congelar.py", "OP_TEST", "ler_particao"):
+        assert proibido not in codigo, proibido
+    assert codigo.count("test.jsonl") == 1 and "need = ['train.jsonl', 'dev.jsonl', 'test.jsonl'" in codigo
+    assert "PUBLICAR_NO_GITHUB = False" in codigo and "PUBLICAR_NO_HF = False" in codigo

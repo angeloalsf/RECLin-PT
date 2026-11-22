@@ -17,7 +17,7 @@ semente, hiperparâmetros de treino nem a regra de uma única avaliação do TES
 | # | Decisão | Texto |
 | --- | --- | --- |
 | E3-D3 | Critérios estatísticos | Bootstrap pareado (10.000 reamostras, semente 42, IC95% por percentis) **por candidato e por documento**; uma diferença é "detectada" quando o intervalo exclui o zero, lida nos dois níveis (o nível por documento prevalece quando divergem). Sem correção para múltiplas comparações, o que é declarado como limitação. No TEST, o intervalo das métricas do modelo final é o do bootstrap por documento. |
-| E3-D6 | Critério de seleção da configuração final, no DEV | **Alternativa nova (d), pós-DEV:** prioridade à precisão de `negation_of`, objetivo declarado do projeto. Entre as configurações já medidas no DEV, escolhe-se a Pair-Aware Linear treinada sem pesos de classe, e o ponto de operação é o limiar t de P(`negation_of`) de **maior precisão de `negation_of` entre os limiares com recall de `negation_of` ≥ 0,80**, na grade 0,05…0,95 (passo 0,05); desempates: maior F1 de `negation_of`, maior macro-F1, menor limiar. O critério foi formulado **depois** de conhecida a curva do DEV (17/11/2026) e é declarado assim. |
+| E3-D6 | Critério de seleção da configuração final, no DEV | **Alternativa nova (d), pós-DEV:** prioridade à precisão de `negation_of`, objetivo declarado do projeto. Entre as configurações já medidas no DEV, escolhe-se a Pair-Aware Linear treinada sem pesos de classe, e o ponto de operação é o limiar t de P(`negation_of`) de **maior precisão de `negation_of` entre os limiares que recuperam pelo menos 80% das negações anotadas (recall ≥ 80%)**, na grade 0,05…0,95 (passo 0,05); desempates: maior F1 de `negation_of`, maior macro-F1, menor limiar. O critério foi formulado **depois** de conhecida a curva do DEV (17/11/2026) e é declarado assim. |
 
 ## 2. A configuração final
 
@@ -25,7 +25,8 @@ semente, hiperparâmetros de treino nem a regra de uma única avaliação do TES
 | --- | --- |
 | Modelo | execução `pair_aware__a3ac671a77e2__t2`: Pair-Aware Linear, BioBERTpt-all (`pucpr/biobertpt-all@36b11cfd…`), semente 42, `class_weight = none`, 3 épocas, melhor época 3 (macro-F1 do DEV), mesmos demais hiperparâmetros da referência anterior. **Sem treino novo.** |
 | Regra de decisão | `negation_of` se P(`negation_of`) ≥ t; senão, argmax entre `associated_with` e `no_relation` (empate → `associated_with`) |
-| t | 0,80, escolhido pelo critério de E3-D6: entre os limiares da grade com recall ≥ 0,80, o de maior precisão (0,845) |
+| t | 0,80, escolhido pelo critério de E3-D6: entre os limiares da grade com recall ≥ 80%, o de maior precisão (0,845) |
+| Atenção | t e o piso de recall são grandezas diferentes com o mesmo valor por coincidência: t é a probabilidade mínima de `negation_of` para o modelo afirmar a relação num par; o piso é a fração mínima das negações anotadas que o modelo precisa recuperar no DEV para que t seja aceito |
 | Execuções a criar (Colab, só DEV) | `pair_aware_sem_pesos_biobertpt_seed42` (reempacotamento da base sob o código atual; ver §4) e `pair_aware_limiar_sem_pesos_biobertpt_seed42` (o `limiar.json` com t e a tabela da busca) |
 | O que é congelado | a derivada, com as impressões da base: configuração, identidade do código, predições do DEV, `limiar.json` e o hash da pasta `melhor_modelo/` |
 
@@ -60,7 +61,7 @@ Diferenças da configuração final (A − B), IC95% por documento:
 
 Leitura: a configuração final não melhora o F1 de `negation_of` de nenhuma
 alternativa; ela troca recall por precisão, de forma detectada, num ponto que
-o critério fixa em recall ≥ 0,80. Na grade, 0,80 é o joelho: de 0,75 a 0,80 os
+o critério fixa em recall ≥ 80%. Na grade, 0,80 é o joelho: de 0,75 a 0,80 os
 falsos positivos caem de 28 para 22 com a perda de um verdadeiro positivo; acima
 de 0,80 a precisão fica em 0,846–0,848 e o recall continua caindo.
 
@@ -95,7 +96,7 @@ pesos são uma cópia conferida por hash; a base não é alterada.
 - **Seleção pós-DEV e otimista.** O modelo, o limiar e o critério foram escolhidos
   com o DEV conhecido; o desempenho no DEV superestima o esperado. O TEST é a
   estimativa honesta.
-- **Limiar no limite do piso.** No DEV, t = 0,80 tem recall exatamente 0,800
+- **Limiar no limite do piso.** No DEV, t = 0,80 tem recall exatamente 80%
   (120 de 150). Com outra amostra, o recall pode ficar abaixo do piso.
 - **Uma semente.** A calibração das probabilidades muda entre sementes; o mesmo
   t pode não ser o mesmo ponto em outro treino.
@@ -104,7 +105,25 @@ pesos são uma cópia conferida por hash; a base não é alterada.
 - **Sem comparação confirmatória** entre sistemas (A6 da E3): o TEST estima só o
   modelo final.
 
-## 7. Registro verificável
+## 7. Experimento pré-registrado: 5 épocas (antes do congelamento)
+
+Aprovado pelo autor em 22/11/2026, **antes** do treino. A execução sem pesos é
+repetida com `epochs = 5` e nada mais alterado
+(`codigo/notebooks/teste/reclin_pair_aware_sem_pesos_5epocas.ipynb`; melhor época
+pelo macro-F1 do DEV, entre 1 e 5).
+
+**Regra de decisão:** em cada modelo (3 e 5 épocas), t é escolhido pelo critério
+de E3-D6. **A versão de 5 épocas substitui a de 3 só se a precisão de
+`negation_of` dela, no seu t, for maior que a da versão de 3 épocas no seu t,
+com o IC95% por documento da diferença (bootstrap pareado, 10.000 reamostras,
+semente 42) todo acima de zero.** Caso contrário, a configuração final continua a
+da §2. Recall, F1 e macro-F1 são relatados, mas não entram na regra.
+
+O congelamento (§5, passo 3) só é feito depois de aplicada esta regra. Se a
+escolha for 5 épocas, a §2, o notebook da configuração final e o TCC são
+atualizados para a nova base antes do congelamento.
+
+## 8. Registro verificável
 
 ```json
 {
@@ -118,6 +137,7 @@ pesos são uma cópia conferida por hash; a base não é alterada.
   "regra": "P(negation_of) >= t -> negation_of; senao argmax(associated_with, no_relation)",
   "t_esperado": 0.8,
   "dev_esperado": {"tp": 120, "fp": 22, "fn": 30},
+  "experimento_5_epocas": "5 epocas so se IC95% por documento da diferenca de precisao (cada modelo no seu t) > 0; senao 3 epocas",
   "test": {"avaliacoes": 1, "autorizacao": "pendente"}
 }
 ```

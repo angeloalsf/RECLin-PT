@@ -267,7 +267,7 @@ novo. Pedido: fazer tudo, exceto a avaliação do TEST, que fica pausada.
 
 **Registro.** `docs/protocolo/emenda-configuracao-final.md` (E3-D3, E3-D6 como
 alternativa nova pós-DEV, evidência, riscos; SHA-256 do texto
-`f0eb26fd737b3bea…` (versão de 22/11; recalcule se editar), a conferir e registrar pelo autor na seção 8 do protocolo,
+`b866f6fb32b99625…` (versão de 22/11 com a §7 do experimento de 5 épocas; recalcule se editar), a conferir e registrar pelo autor na seção 8 do protocolo,
 que não foi alterada). `emenda-e3-pair-aware.md` (tabela de decisões) e
 `congelamento-e-test-final.md` (atualização) apontam para ela.
 
@@ -339,3 +339,14 @@ relatório. Nenhum removido. Nenhum comando Git na pasta de trabalho.
 commit e push; rodar o notebook da configuração final; guardar o
 `configuracao_final.json` (Drive) em `codigo/resultados/congelamento/`; depois,
 autorizar explicitamente a avaliação única do TEST.
+
+**Experimento de 5 épocas (22/11, pré-registrado).** O autor aprovou, antes do
+treino, repetir a execução sem pesos com `epochs = 5` e a regra: 5 épocas só
+substitui 3 se a precisão de `negation_of` (cada modelo no seu t, pelo mesmo
+critério) for maior com o IC95% por documento acima de zero. Registrado na §7
+da emenda. Notebook: `notebooks/teste/reclin_pair_aware_sem_pesos_5epocas.ipynb`
+(cópia do notebook sem pesos com `epochs` 5; a seção 8.3 aplica a regra e
+imprime a decisão; não lê o TEST nem congela). Teste novo em
+`test_configuracao_final.py` (conteúdo do notebook) conferido com as mesmas
+asserções rodadas à parte; a suíte não foi rodada de novo. O congelamento fica
+para depois da decisão.

@@ -143,11 +143,15 @@ critério de escolha de $t$.
 
 O critério reflete o objetivo de priorizar a precisão de \texttt{negation\_of}:
 entre os valores da grade de $0{,}05$ a $0{,}95$, com passo de $0{,}05$, escolhe-se
-o de maior precisão de \texttt{negation\_of} no DEV entre os que mantêm o
-\emph{recall} dessa classe em pelo menos $0{,}80$ (desempates: maior F1 de
-\texttt{negation\_of}, maior macro-F1 e menor limiar). O piso de \emph{recall}
+o de maior precisão de \texttt{negation\_of} no DEV entre os que recuperam pelo
+menos $80\%$ das negações anotadas (desempates: maior F1 de
+\texttt{negation\_of}, maior macro-F1 e menor limiar). Esse piso de \emph{recall}
 impede que a precisão seja obtida às custas de deixar de reconhecer mais de uma em
-cada cinco negações. O modelo de base é a Pair-Aware Linear treinada sem ponderação
+cada cinco negações. O limiar e o piso são grandezas distintas, embora o limiar
+escolhido tenha resultado no mesmo valor numérico: $t$ é a probabilidade mínima
+que o modelo precisa atribuir a \texttt{negation\_of} para afirmar a relação em
+um par, enquanto o piso é a fração mínima das negações anotadas que o modelo
+precisa recuperar no DEV para que o limiar seja aceito. O modelo de base é a Pair-Aware Linear treinada sem ponderação
 de classes, cujo ponto de operação já favorece a precisão
 (Seção~\ref{sec:resultados_sem_pesos}). O limiar escolhido e a sua justificativa
 estão na Seção~\ref{sec:resultados_configuracao_final}.
