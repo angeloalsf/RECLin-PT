@@ -1,0 +1,164 @@
+{
+ "modelo": "RECLin-PT, configuração final (Pair-Aware Linear sem pesos, P(negation_of) >= t)",
+ "congelado_em": "2026-11-24T13:26:48+0000",
+ "execucao_final": "pair_aware_limiar_sem_pesos_biobertpt_seed42",
+ "base": "pair_aware_sem_pesos_biobertpt_seed42",
+ "limiar_t": 0.8,
+ "identidade_codigo": "245be52d9089be5a2957528d39f55a191c9c0616a0ad398c3873feb2c67a8ed8",
+ "sha_commit_clonado": "bff301d6ea5760582738ad9d55040dc428111aa1",
+ "metricas_test": {
+  "n": 19210,
+  "macro_f1": 0.7785063758932051,
+  "micro_f1": 0.9494013534617387,
+  "weighted_f1": 0.9480851599431006,
+  "mcc": 0.5323118156543842,
+  "f1_per_class": {
+   "associated_with": 0.5061007957559682,
+   "negation_of": 0.8561872909698997,
+   "no_relation": 0.9732310409537477
+  },
+  "por_classe": {
+   "associated_with": {
+    "f1": 0.5061007957559682,
+    "fn": 519,
+    "fp": 412,
+    "precision": 0.5365579302587177,
+    "recall": 0.4789156626506024,
+    "support": 996,
+    "tp": 477
+   },
+   "negation_of": {
+    "f1": 0.8561872909698997,
+    "fn": 24,
+    "fp": 19,
+    "precision": 0.8707482993197279,
+    "recall": 0.8421052631578947,
+    "support": 152,
+    "tp": 128
+   },
+   "no_relation": {
+    "f1": 0.9732310409537477,
+    "fn": 429,
+    "fp": 541,
+    "precision": 0.9702321998459338,
+    "recall": 0.9762484774665042,
+    "support": 18062,
+    "tp": 17633
+   }
+  },
+  "confusion_matrix": {
+   "labels": [
+    "negation_of",
+    "associated_with",
+    "no_relation"
+   ],
+   "matrix": [
+    [
+     128,
+     1,
+     23
+    ],
+    [
+     1,
+     477,
+     518
+    ],
+    [
+     18,
+     411,
+     17633
+    ]
+   ]
+  }
+ },
+ "negation_of_anotadas_test": 152,
+ "ic95_bootstrap_documentos": {
+  "n_boot": 10000,
+  "seed": 42,
+  "n_documentos": 100,
+  "intervalos": {
+   "P neg": [
+    0.8114715434580885,
+    0.9236111111111112
+   ],
+   "R neg": [
+    0.7734375,
+    0.9044661813770093
+   ],
+   "F1 neg": [
+    0.8064490527393752,
+    0.8989366335532656
+   ],
+   "F1 assoc": [
+    0.4611139422099319,
+    0.5533464320456143
+   ],
+   "macro-F1": [
+    0.7542417162755874,
+    0.801494213050561
+   ]
+  }
+ },
+ "sem_copias_no_treino": {
+  "particao": "test",
+  "documentos_excluidos": [
+   "9534",
+   "9535",
+   "9536"
+  ],
+  "contagens": {
+   "candidatos": 19210,
+   "mantidos": 18092,
+   "excluidos": 1118,
+   "documentos_excluidos": 3
+  },
+  "completo": {
+   "negation_of": {
+    "tp": 128,
+    "fp": 19,
+    "fn": 24,
+    "precision": 0.8707482993197279,
+    "recall": 0.8421052631578947,
+    "f1": 0.8561872909698997
+   },
+   "macro_f1": 0.7785063758932051,
+   "mcc": 0.5323118156543842
+  },
+  "sem_excluidos": {
+   "negation_of": {
+    "tp": 123,
+    "fp": 19,
+    "fn": 24,
+    "precision": 0.8661971830985915,
+    "recall": 0.8367346938775511,
+    "f1": 0.8512110726643599
+   },
+   "macro_f1": 0.77216628059488,
+   "mcc": 0.5211224950244431
+  }
+ },
+ "trilha": [
+  {
+   "timestamp": "2026-11-25T10:56:04+0000",
+   "indice": 1,
+   "execucao": "pair_aware_sem_pesos_biobertpt_seed42",
+   "papel": "base da configuração final (predições do TEST para o limiar)",
+   "liberacao": "18f992676d59",
+   "n_test": 19210,
+   "test_macro_f1": 0.781351,
+   "test_negation_of_f1": 0.865204,
+   "codigo": "245be52d9089be5a2957528d39f55a191c9c0616a0ad398c3873feb2c67a8ed8"
+  },
+  {
+   "timestamp": "2026-11-25T10:56:19+0000",
+   "indice": 2,
+   "execucao": "pair_aware_limiar_sem_pesos_biobertpt_seed42",
+   "papel": "configuração final",
+   "liberacao": "18f992676d59",
+   "n_test": 19210,
+   "test_macro_f1": 0.778506,
+   "test_negation_of_f1": 0.856187,
+   "codigo": "245be52d9089be5a2957528d39f55a191c9c0616a0ad398c3873feb2c67a8ed8"
+  }
+ ]
+}

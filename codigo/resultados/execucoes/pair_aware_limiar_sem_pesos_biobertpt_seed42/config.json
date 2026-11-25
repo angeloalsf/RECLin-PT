@@ -111,11 +111,20 @@
       "particao": "dev",
       "particao_sha256": "19feb024ca9d60f0016491b2e9bc35ab7de9b5cc384e0d22ba34b21a85a9f99c",
       "y_true_sha256": "a6012dcff283717f5befa67930f12eeb143661fc746a45dff04e6703c762b019"
+    },
+    "test": {
+      "candidatos_sha256": "a4f84d22044482833bcef05013383bb6f6ef6b48a2e83e495d961b694487be95",
+      "max_gap": 25,
+      "n_candidatos": 19210,
+      "particao": "test",
+      "particao_sha256": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666",
+      "y_true_sha256": "1e135ee3c2d343b7575d50e150b2edd2fb1df6cc875ef427c843a1bbb8e5872e"
     }
   },
   "estrategia": "pair_aware_limiar",
   "nome": "pair_aware_limiar_sem_pesos_biobertpt_seed42",
   "versoes_dados": {
-    "dev": "v2-texto-fonte"
+    "dev": "v2-texto-fonte",
+    "test": "v2-texto-fonte"
   }
 }

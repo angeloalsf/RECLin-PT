@@ -1,0 +1,37 @@
+{
+  "codigo_da_execucao": "245be52d9089be5a2957528d39f55a191c9c0616a0ad398c3873feb2c67a8ed8",
+  "codigo_no_congelamento": "245be52d9089be5a2957528d39f55a191c9c0616a0ad398c3873feb2c67a8ed8",
+  "congelado_em": "2026-11-24T13:26:48+0000",
+  "descricao": {},
+  "estrategia": "pair_aware_limiar",
+  "execucao": {
+    "arquivos_sha256": {
+      "config.json:nome+estrategia+config+codigo": "c0d9a46bc7dabf663582773381d97377860e3bb6eb8d6c256230ad79c0a3852a",
+      "limiar.json": "4fd62357b0fae45ef4212982e2fb7c348fbe02259241b0bbfeda3d7ddcd07eec",
+      "predicoes_dev.json": "18af194ad03f545ba6590bf9a84174a0c9634252a76dea781a2c89cf4fb54681"
+    },
+    "base": {
+      "arquivos_sha256": {
+        "config.json:nome+estrategia+config+codigo": "8fe87fa0d2b96ca39a1795cb68f3420f22bf80539020bdf59f3d7bde6b7cdb03",
+        "predicoes_dev.json": "fba403ff8f4d04a923019f98895afef6b00edcb9bd667d96a14c465a97f08cbe"
+      },
+      "pasta": "pair_aware_sem_pesos_biobertpt_seed42",
+      "sha256_melhor_modelo": "499f0aad6671d6abed366ebb428d4a975becaca11593d45f799f2f4bb76eb91e"
+    },
+    "pasta": "pair_aware_limiar_sem_pesos_biobertpt_seed42",
+    "sha256_melhor_modelo": null
+  },
+  "justificativa": "Emenda de 22/11/2026: Pair-Aware Linear (BioBERTpt-all, semente 42) treinada sem pesos de classe, com a regra P(negation_of) >= t; t escolhido no DEV, na grade 0,05-0,95, pela maior precisão de negation_of com recall de pelo menos 80% (t = 0,80: P 0,845, R 0,800, F1 0,822 no DEV). Prioridade do projeto: precisão de negation_of. Escolha feita só com o DEV.",
+  "liberacao": {
+    "codigo": "18f992676d59",
+    "uso": "informe em --liberacao apenas depois da autorização do autor"
+  },
+  "nome_registrado": "pair_aware_limiar_sem_pesos_biobertpt_seed42",
+  "particoes": {
+    "manifest_sha256": "18264860a3d8fff7bcc335b8f5703a55d60e08893a09be2afa20b1ea446d3b70",
+    "test_sha256_registrado_no_manifest": "47d40d0b06f23714a8f332e3f8455bff0471bb68fad7b4a835b2aa72812e9666"
+  },
+  "regra": "o TEST é avaliado uma única vez, só para esta execução, depois da autorização explícita do autor",
+  "responsavel": "Angelo Antonio Lima Silveira Filho",
+  "versao_do_registro": 1
+}

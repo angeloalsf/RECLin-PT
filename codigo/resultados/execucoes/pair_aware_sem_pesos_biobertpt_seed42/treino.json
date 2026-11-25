@@ -67,6 +67,45 @@
     },
     "n_params_cabeca": 6915
   },
+  "descricao_test": {
+    "cabeca": {
+      "arquitetura": "concat[h_cls ; h_[E1] ; h_[E2]] (ultima camada) -> Dropout(p) -> Linear(3d, C) (sem MLP)",
+      "dropout": 0.1,
+      "e1_token_id": 119547,
+      "e2_token_id": 119549,
+      "encoder_class": "BertModel",
+      "fallback_marcador_ausente": "posicao 0 (h_cls)",
+      "formato": 2,
+      "hidden_size": 768,
+      "id2label": {
+        "0": "negation_of",
+        "1": "associated_with",
+        "2": "no_relation"
+      },
+      "initializer_range": 0.02,
+      "label2id": {
+        "associated_with": 1,
+        "negation_of": 0,
+        "no_relation": 2
+      },
+      "num_labels": 3,
+      "tem_pooler": false
+    },
+    "marcadores_ausentes": {
+      "test": {
+        "E1_ausente": 0,
+        "E1_fora_do_texto": 0,
+        "E1_truncado": 0,
+        "E2_ausente": 0,
+        "E2_fora_do_texto": 0,
+        "E2_truncado": 0,
+        "algum_ausente": 0,
+        "max_length": 128,
+        "n": 19210
+      }
+    },
+    "n_params_cabeca": 6915
+  },
   "dev_history": [
     {
       "dev_loss": 0.11541573455164228,
@@ -221,5 +260,5 @@
       "tipo": "nova"
     }
   ],
-  "test_avaliado": false
+  "test_avaliado": true
 }
